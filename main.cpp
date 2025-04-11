@@ -16,7 +16,7 @@
 #pragma comment(lib,"dxgi.lib")
 //ウィンドウズアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	
+	 
 	MyGame game;
 	game.Run();
 	return 0;
