@@ -28,12 +28,12 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/uvChecker.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Primitive", "resources/circle2.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
 	particleEmitter->SetTransform({ {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f},{1.0f,1.0f,1.0f} });
-	particleEmitter->SetParticleName("Particle");
+	particleEmitter->SetParticleName("Primitive");
 
 }
 
@@ -65,7 +65,8 @@ void TitleScene::Finalize()
 
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
-	ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
+	ParticleManager::GetInstance()->DeleteParticleGroup("Primitive");
+
 	// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
 }

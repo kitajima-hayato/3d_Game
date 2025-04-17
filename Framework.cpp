@@ -59,8 +59,8 @@ void Framework::Update()
 		return;
 	}
 #pragma endregion
-	SceneManager::GetInstance()->Update(dxCommon.get());
 
+	SceneManager::GetInstance()->Update(dxCommon.get());
 	Input::GetInstance()->Update();
 
 	ParticleManager::GetInstance()->Update();
