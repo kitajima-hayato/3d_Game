@@ -481,9 +481,6 @@ Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, cons
 	particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine)};
 	particle.transform.translate = Vector3(translate.x, translate.y, 15.0f);
 	particle.velocity = { 0.0f,0.0f,0.0f };
-	//purple
-	//particle.color = { 102.0f, 51.0f, 153.0f, 1.0f };
-	
 	//white
 	particle.color = { 1.0f,1.0f,1.0f,1.0f };
 	particle.lifeTime = 10.0f;
