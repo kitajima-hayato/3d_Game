@@ -89,6 +89,9 @@ public:
 	// 通常パーティクル
 	Particle MakeParticle(std::mt19937& randomEngine, const Vector3& position);
 
+	// PrimitiveParticle
+	Particle MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate);
+
 
 private:
 	DirectXCommon* dxCommon;

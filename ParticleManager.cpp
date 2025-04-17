@@ -445,7 +445,7 @@ void ParticleManager::Emit(const std::string& name, const Vector3& position, uin
 	ParticleGroup& group = it->second;
 	// 各パーティクルを生成し追加
 	for (uint32_t i = 0; i < count; ++i) {
-		Particle newParticle = MakeParticle(randomEngine, position);
+		Particle newParticle = MakePrimitiveParticle(randomEngine, position);
 		group.particles.push_back(newParticle);
 	}
 }
@@ -468,6 +468,41 @@ Particle ParticleManager::MakeParticle(std::mt19937& randomEngine, const  Vector
 	particle.currentTime = 0;
 
 	return particle;
+}
+
+Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate)
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float>distScale(0.4f, 1.5f);
+
+	particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f};// 横につぶす
+	particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine)};
+	particle.transform.translate = Vector3(translate.x, translate.y, 15.0f);
+	particle.velocity = { 0.0f,0.0f,0.0f };
+	//purple
+	//particle.color = { 102.0f, 51.0f, 153.0f, 1.0f };
+	
+	//white
+	particle.color = { 1.0f,1.0f,1.0f,1.0f };
+	particle.lifeTime = 10.0f;
+	particle.currentTime = 0;
+	return particle;
+
+
+#pragma region ボンドルド
+	//Particle particle;
+	//particle.transform.scale = { 0.05f,1.0f,1.0f };// 横につぶす
+	//particle.transform.rotate = { 0.0f,0.0f,0.0f, };
+	//particle.transform.translate = Vector3(translate.x, translate.y, 15.0f);
+	//particle.velocity = { 0.0f,0.0f,0.0f };
+	////purple
+	//particle.color = { 102.0f, 51.0f, 153.0f, 1.0f };
+	//particle.lifeTime = 10.0f;
+	//particle.currentTime = 0;
+	//return particle;
+#pragma endregion
 }
 
 
