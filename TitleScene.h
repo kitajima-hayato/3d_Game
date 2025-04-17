@@ -27,8 +27,8 @@ private:
 
 	// オーディオ
 	// サウンドデータ
-	SoundData soundData;
-	IXAudio2* xaudio2_;
+	//SoundData soundData;
+	//IXAudio2* xaudio2_;
 
 	// スプライト
 	std::unique_ptr<Sprite> sprite_;

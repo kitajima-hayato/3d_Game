@@ -6,7 +6,7 @@
 #include <dxcapi.h>
 #include <chrono>
 #include "WinAPI.h"
-
+#include <cstdlib>
 #include"../externals/DirectXTex/DirectXTex.h"
 #include"../externals/DirectXTex/d3dx12.h"
 

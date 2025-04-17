@@ -17,11 +17,8 @@ ParticleManager* ParticleManager::GetInstance()
 
 void ParticleManager::DeleteInstance()
 {
-	if (instance != nullptr)
-	{
-		delete instance;
-		instance = nullptr;
-	}
+	delete instance;
+	instance = nullptr;
 }
 
 void ParticleManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera)
@@ -61,7 +58,10 @@ void ParticleManager::CreatePipeline()
 
 void ParticleManager::CreateRootSignature()
 {
+
+	
     D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
     descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
     descriptorRange[0].NumDescriptors = 1; // 数は1つ
     descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
@@ -76,6 +76,7 @@ void ParticleManager::CreateRootSignature()
     rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
     rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
     rootParameters[0].Descriptor.ShaderRegister = 0;
+
     // 1. パーティクルのRootSignatureの作成
     descriptorRangeInstancing[0].BaseShaderRegister = 0;
     descriptorRangeInstancing[0].NumDescriptors = 1;
@@ -161,7 +162,7 @@ void ParticleManager::CreateRootSignature()
 	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.PS.hlsl",
+	pixelShaderBlob  = dxCommon->CompileShader(L"resources/shaders/Particle.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
@@ -182,9 +183,9 @@ void ParticleManager::SetGraphicsPipeline()
 	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
-	vertexShaderBlob->GetBufferSize() };
+										vertexShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
-	pixelShaderBlob->GetBufferSize() };
+										pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
 	// Depthstencitの設定
@@ -239,14 +240,6 @@ void ParticleManager::SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode)
 void ParticleManager::InitializeVertexData()
 {
 	
-
-	// パーティクルの初期化
-	/*for (int i = 0; i < kMaxParticle; i++)
-	{
-		instancingData[i].WVP = MakeIdentity4x4();
-		instancingData[i].World = MakeIdentity4x4();
-		instancingData[i].color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	}*/
 	// パーティクルの頂点データを初期化
 	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f},   .texcoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
 	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
@@ -262,7 +255,7 @@ void ParticleManager::InitializeVertexData()
 void ParticleManager::CreateVertexBufferView()
 {
 	vertexResource = dxCommon->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-	// 頂点バッファービューしゅうちゃく
+	// 頂点バッファービュー
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 1頂点分のサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
@@ -287,7 +280,7 @@ void ParticleManager::InitializeMaterial()
 	materialData->uvTransform = MakeIdentity4x4();
 }
 
-void ParticleManager::CreateParticleGroup(const std::string& name, const std::string textureFilrPath)
+void ParticleManager::CreateParticleGroup(const std::string& name, const std::string textureFilePath)
 {
 	// 登録済みの名前か確認
 	if (particleGroups.contains(name))
@@ -302,7 +295,7 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const std::st
 	ParticleGroup& particleGroup = particleGroups[name];
 
 	// 新たなパーティクルのマテリアルデータを作成
-	particleGroup.materialData.textureFilePath = textureFilrPath;
+	particleGroup.materialData.textureFilePath = textureFilePath;
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(particleGroup.materialData.textureFilePath);
 	// マテリアルデータにテクスチャのSRVインデックスを設定
@@ -401,7 +394,7 @@ void ParticleManager::Draw()
 	// コマンド : ルートシグネチャを設定
 	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	// コマンド : パイプラインステートオブジェクトを設定
-	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState);
+	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
 	// コマンド : プリミティブトロポジ(描画形状)を設定
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : VertexBufferViewを設定
@@ -418,6 +411,25 @@ void ParticleManager::Draw()
 		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
 		// 描画
 		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
+	}
+}
+
+void ParticleManager::DeleteParticleGroup(const std::string& name)
+{
+	auto it = particleGroups.find(name);
+	if (it != particleGroups.end()) {
+		// Unmapでリークしないようにする
+		if (it->second.instancingResource) {
+			it->second.instancingResource->Unmap(0, nullptr);
+			it->second.instancingData = nullptr; // ポインタの無効化
+			it->second.instancingResource.Reset(); // ComPtrの解放
+		}
+
+		// SRVの解放も（もし必要であれば）
+		// srvManager->Release(it->second.srvIndex); // 必要なら
+
+		// Mapから削除
+		particleGroups.erase(it);
 	}
 }
 

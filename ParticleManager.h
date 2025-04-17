@@ -81,6 +81,9 @@ public:
 	// 描画処理
 	void Draw();
 
+	// パーティクルグループの削除
+	void DeleteParticleGroup(const std::string& name);
+
 	// パーティクルの発生
 	void Emit(const std::string& name, const Vector3& position, uint32_t count);
 	// 通常パーティクル
@@ -98,7 +101,7 @@ private:
 
 	// ルートシグネチャ
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
+	
 	// ルートパラメーター
 	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	// サンプラー
@@ -109,7 +112,6 @@ private:
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3];
 	// パイプラインステート
 
-	Microsoft::WRL::ComPtr<ID3D12PipelineState> pipelineState;
 	// インプットレイアウト
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 
@@ -120,7 +122,7 @@ private:
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 	D3D12_RASTERIZER_DESC rasterrizerDesc{};
 	// グラフィックスパイプライン
-	ID3D12PipelineState* graphicsPipelineState = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc;
 	// シェーダーバイナリ
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob;

@@ -86,7 +86,6 @@ void DirectXCommon::InitDevice()
 	HRESULT hr;
 
 #pragma region デバッグレイヤーをオン
-	//移植前はここにifdefDEBUGがあった
 	Microsoft::WRL::ComPtr < ID3D12Debug1> debugController = nullptr;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 		//
@@ -127,7 +126,7 @@ void DirectXCommon::InitDevice()
 
 #pragma endregion
 #pragma region Deviceの生成
-
+	_putenv("D3D12_ENABLE_LEAK_TRACKING=1");
 	//機能レベルとログ出力用の文字列
 	D3D_FEATURE_LEVEL featureLevels[] = {
 		D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0

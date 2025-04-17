@@ -53,7 +53,7 @@ void TitleScene::Draw()
 	//Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
-	sprite_->Draw();
+	//sprite_->Draw();
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
@@ -64,8 +64,8 @@ void TitleScene::Finalize()
 
 
 	// オーディオの終了処理
-	Audio::GetInstance()->SoundUnload(&soundData);
-
+	//Audio::GetInstance()->SoundUnload(&soundData);
+	ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
 	// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
 }
@@ -73,10 +73,10 @@ void TitleScene::Finalize()
 void TitleScene::LoadAudio()
 {
 	// オーディオの初期化
-	Audio::GetInstance()->Initialize();
-	soundData = Audio::GetInstance()->LoadWave("resources/fanfare.wav");
-	xaudio2_ = Audio::GetInstance()->GetXAudio2();
-	Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
+	//Audio::GetInstance()->Initialize();
+	//soundData = Audio::GetInstance()->LoadWave("resources/fanfare.wav");
+	//xaudio2_ = Audio::GetInstance()->GetXAudio2();
+	//Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
 
 }
 
