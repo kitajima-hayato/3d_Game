@@ -8,6 +8,7 @@
 #include <cassert>
 #include <wrl.h>
 #include <d3d12.h>
+#include <numbers>
 #include "MakeMatrix.h"
 #include "MyMath.h"
 using namespace std;
@@ -21,6 +22,8 @@ public: // メンバ関数
 	// 描画
 	void Draw();
 
+	// Ringのエフェクト
+	void CreateRing();
 
 	// objファイルの読み込み
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
