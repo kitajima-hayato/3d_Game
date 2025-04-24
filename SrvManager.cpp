@@ -78,6 +78,12 @@ bool SrvManager::IsAllocate()
 	}
 }
 
+Microsoft::WRL::ComPtr<ID3D12Resource> SrvManager::CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, Vector4& clearColor)
+{
+
+	return Microsoft::WRL::ComPtr<ID3D12Resource>();
+}
+
 D3D12_CPU_DESCRIPTOR_HANDLE SrvManager::GetCPUDescriptorHandle(uint32_t index)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();

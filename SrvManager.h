@@ -1,5 +1,6 @@
 #pragma once
 #include "DirectXCommon.h"
+#include "MyMath.h"
 class SrvManager
 {
 public:
@@ -20,6 +21,10 @@ public:
 	void SetGraphicsDescriptorTable(UINT RootParameterIndex, uint32_t srvIndex);
 	// 最大数を超えているか
 	bool IsAllocate();
+
+	// RenderTexture
+	Microsoft::WRL::ComPtr<ID3D12Resource>
+		CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, Vector4& clearColor);
 public:	// 
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
