@@ -58,8 +58,6 @@ void ParticleManager::CreatePipeline()
 
 void ParticleManager::CreateRootSignature()
 {
-
-	
     D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
     descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
@@ -99,7 +97,7 @@ void ParticleManager::CreateRootSignature()
     // Samplerの設定
     staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
     staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-    staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+    staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
     staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
     staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
     staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
@@ -502,4 +500,49 @@ Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, cons
 #pragma endregion
 }
 
+void ParticleManager::CreateRing()
+{
+	// リングの分割数 / 大きくするほど円に近づく
+	const uint32_t kRingDivide = 32;
+	// 外径 / 外側の円の直径
+	const float kOuterRadius = 1.0f;
+	// 内径 / 内側の円の直径
+	const float kInnerRadius = 0.2f;
+	// 1周をdivide個分に分割したときの1分割分の角度
+	const float radianPerDivide = 1.0f * std::numbers::pi_v<float> / (kRingDivide);
 
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float u = (float)index / (float)kRingDivide;
+		float uNext = (float)(index + 1) / (float)kRingDivide;
+
+		// 外側と内側の頂点
+		Vector4 p0 = { -sin * kOuterRadius,cos * kOuterRadius,0.0f,1.0f };
+		Vector4 p1 = { -sinNext * kOuterRadius,cosNext * kOuterRadius,0.0f,1.0f };
+		Vector4 p2 = { -sin * kInnerRadius,cos * kInnerRadius,0.0f,1.0f };
+		Vector4 p3 = { -sinNext * kInnerRadius,cosNext * kInnerRadius,0.0f,1.0f };
+
+		Vector2 uv0 = { u,0.0f };
+		Vector2 uv1 = { uNext,0.0f };
+		Vector2 uv2 = { u,0.0f };
+		Vector2 uv3 = { uNext,0.0f };
+
+		Vector3 normal = { 0.0f,0.0f,0.0f };
+
+		// 三角形１枚目
+		modelData.vertices.push_back({ p0,uv0,normal });
+		modelData.vertices.push_back({ p1,uv1,normal });
+		modelData.vertices.push_back({ p2,uv2,normal });
+
+		// 三角形２枚目
+		modelData.vertices.push_back({ p2,uv2,normal });
+		modelData.vertices.push_back({ p1,uv1,normal });
+		modelData.vertices.push_back({ p3,uv3,normal });
+	}
+	// 頂点バッファーの生成
+	CreateVertexBufferView();
+
+}

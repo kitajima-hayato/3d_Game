@@ -91,7 +91,10 @@ public:
 
 	// PrimitiveParticle
 	Particle MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate);
-
+	// Ringのエフェクト
+	void CreateRing();
+	// Ringエフェクトの描画処理
+	void DrawRing();
 
 private:
 	DirectXCommon* dxCommon;
