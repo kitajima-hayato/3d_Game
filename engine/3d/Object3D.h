@@ -7,7 +7,7 @@
 #include "TextureManager.h"
 #include "Object3DCommon.h"
 #include "Model.h"
-#include "Camera.h"
+#include "Game/Camera/Camera.h"
 // 3Dオブジェクト
 // 3Dオブジェクト共通部前方宣言
 class Object3DCommon;

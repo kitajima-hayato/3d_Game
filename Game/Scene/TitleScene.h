@@ -1,11 +1,11 @@
 #pragma once
 #include "Audio.h"
 #include "SpriteCommon.h"
-#include "BaseScene.h"
+#include "InsideScene/BaseScene.h"
 #include "Sprite.h"
-#include "SceneManager.h"
-#include "ParticleManager.h"
-#include "ParticleEmitter.h"
+#include "InsideScene/SceneManager.h"
+#include "Game/Particle/ParticleManager.h"
+#include "Game/Particle/ParticleEmitter.h"
 class TitleScene :public BaseScene
 {
 public:

@@ -14,8 +14,8 @@
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "SceneManager.h"
-#include "ParticleManager.h"
-#include "AbstractSceneFactory.h"
+#include "Game/Particle/ParticleManager.h"
+#include "InsideScene/AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
 class Framework

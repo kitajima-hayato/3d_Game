@@ -1,5 +1,5 @@
 #pragma once
-#include "AbstractSceneFactory.h"
+#include "InsideScene/AbstractSceneFactory.h"
 class SceneFactory : public AbstractSceneFactory
 {
 public:

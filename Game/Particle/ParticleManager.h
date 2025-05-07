@@ -3,7 +3,7 @@
 #include "SrvManager.h"
 #include "MyMath.h"
 #include <random>
-#include "Camera.h"
+#include "Game/Camera/Camera.h"
 
 // パーティクルマネージャークラス
 // シングルトンクラス

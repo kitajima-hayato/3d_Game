@@ -1,9 +1,20 @@
 #pragma once
 #include "DirectXCommon.h"
-#include "Camera.h"
+#include "Game/Camera/Camera.h"
+
+
+
 // 3Dオブジェクト共通部
+// シングルトンクラス
 class Object3DCommon
 {
+public:	// シングルトン
+	// シングルトンインスタンスの取得(Modern)
+	static Object3DCommon& GetInstance();
+	// コピー・代入を禁止
+	Object3DCommon(const Object3DCommon&) = delete;
+	Object3DCommon& operator=(const Object3DCommon&) = delete;
+
 public:	// メンバ関数
 	// 初期化
 	void Initialize(DirectXCommon* dxCommon);
@@ -15,7 +26,7 @@ public:	// Getter/Setter
 	
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
 	Camera* GetDefaultCamera()const { return defaultCamera; }
-private:	// メンバ関数
+private:	// メンバ関数 / クラス内処理
 	// ルートシグネチャの作成
 	void CreateRootSignatrue();
 	// グラフィックスパイプラインの生成
