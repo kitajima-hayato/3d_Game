@@ -40,6 +40,12 @@ private:	// メンバ関数
 	/// PSO
 	/// </summary>
 	void InitializePixelShaderOutput();
+
+	// レンダーテクスチャ作成関数
+	Microsoft::WRL::ComPtr<ID3D12Resource>
+		CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device,
+			uint32_t width, uint32_t height,
+			DXGI_FORMAT format, const Vector4& clearColor);
 	
 
 private:

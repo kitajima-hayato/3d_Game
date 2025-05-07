@@ -97,6 +97,8 @@ void SpriteCommon::InitializePixelShaderOutput()
 	
 }
 
+
+
 void SpriteCommon::DrawSettingCommon()
 {
 	
@@ -209,4 +211,52 @@ SpriteCommon::CreateSpriteIndexResource()
 	indexResource = nullptr;
 	indexResource = dxCommon_->CreateBufferResource(sizeof(uint32_t) * 6);
 	return indexResource;
+}
+
+
+Microsoft::WRL::ComPtr<ID3D12Resource> SpriteCommon::CreateRenderTextureResource(
+	Microsoft::WRL::ComPtr<ID3D12Device> device,
+	uint32_t width,
+	uint32_t height,
+	DXGI_FORMAT format,
+	const Vector4& clearColor)
+{
+	// 1. ヒーププロパティ：GPU上（DEFAULTヒープ）
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+
+	// 2. リソースディスクリプション
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Width = width;
+	resourceDesc.Height = height;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.Format = format;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.SampleDesc.Quality = 0;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+
+	// 3. クリア値の設定（最適化用）
+	D3D12_CLEAR_VALUE clearValue{};
+	clearValue.Format = format;
+	clearValue.Color[0] = clearColor.x;
+	clearValue.Color[1] = clearColor.y;
+	clearValue.Color[2] = clearColor.z;
+	clearValue.Color[3] = clearColor.w;
+
+	// 4. CommittedResource の作成
+	Microsoft::WRL::ComPtr<ID3D12Resource> renderTexture;
+	HRESULT hr = device->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		&clearValue,
+		IID_PPV_ARGS(&renderTexture)
+	);
+	assert(SUCCEEDED(hr));
+
+	return renderTexture;
 }

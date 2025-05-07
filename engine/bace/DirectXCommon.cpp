@@ -254,6 +254,10 @@ DirectXCommon::CreateDescriptorHeap(
 	return descriptorHeap;
 }
 
+void DirectXCommon::CreateOffscreenRenderTarget(UINT width, UINT height)
+{
+}
+
 void DirectXCommon::CreateDescriptorHeaps()
 {
 	//descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
