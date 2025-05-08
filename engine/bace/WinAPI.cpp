@@ -29,7 +29,7 @@ void WinAPI::Finalize()
 	CoUninitialize();
 }
 
-void WinAPI::Initialize()
+void WinAPI::Initialize() 
 {
 	// システムタイマーの分解能を上げる
 	timeBeginPeriod(1);
