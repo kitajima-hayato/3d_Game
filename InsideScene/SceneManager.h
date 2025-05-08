@@ -1,6 +1,6 @@
 #pragma once
-#include "BaseScene.h"
-#include "AbstractSceneFactory.h"
+#include "InsideScene/BaseScene.h"
+#include "InsideScene/AbstractSceneFactory.h"
 // シーン管理クラス
 // シングルトンクラス
 class SceneManager

@@ -16,7 +16,7 @@ void Object3D::Initialize(Object3DCommon* obj3dCommon)
 
 	// Transformの初期化
 	transform={ { 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f  } };
-	}
+}
 
 void Object3D::Update()
 {

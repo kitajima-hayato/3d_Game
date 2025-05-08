@@ -1,7 +1,7 @@
 #pragma once
 #include "Audio.h"
 #include "SpriteCommon.h"
-#include "BaseScene.h"
+#include "InsideScene/BaseScene.h"
 class GamePlayScene :public BaseScene
 {
 public:

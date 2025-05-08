@@ -1,5 +1,5 @@
 #include "MyGame.h"
-#include "SceneFactory.h"
+#include "InsideScene/SceneFactory.h"
 void MyGame::Initialize()
 {
 	Framework::Initialize();
@@ -31,8 +31,7 @@ void MyGame::Draw()
 	srvManager->PreDraw();
 	
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-	object3DCommon->DrawSettingCommon();
-
+	Object3DCommon::GetInstance().DrawSettingCommon();
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();

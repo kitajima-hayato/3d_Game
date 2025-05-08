@@ -22,12 +22,12 @@
 #include "ModelCommon.h"
 #include "ModelManager.h"
 #include "srvManager.h"
-#include "Framework.h"
+#include "InsideScene/Framework.h"
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif
-#include "GamePlayScene.h"
-#include "TitleScene.h"
+#include "Game/Scene/GamePlayScene.h"
+#include "Game/Scene/TitleScene.h"
 
 // ゲーム全体 : フレームワーククラス継承
 class MyGame :public Framework

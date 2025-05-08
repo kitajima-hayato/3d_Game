@@ -1,6 +1,14 @@
 #include "Object3DCommon.h"
 #include "Logger.h"
 
+
+
+Object3DCommon& Object3DCommon::GetInstance()
+{
+	static Object3DCommon instance;
+	return instance;
+}
+
 void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 {
 	dxCommon_ = dxCommon;

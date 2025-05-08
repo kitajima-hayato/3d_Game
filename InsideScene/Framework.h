@@ -14,8 +14,8 @@
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "SceneManager.h"
-#include "ParticleManager.h"
-#include "AbstractSceneFactory.h"
+#include "Game/Particle/ParticleManager.h"
+#include "InsideScene/AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
 class Framework
@@ -53,8 +53,7 @@ protected:// Initialize関連
 	std::unique_ptr<SrvManager> srvManager;
 	// モデル共通部
 	std::unique_ptr<ModelCommon> modelCommon;
-	// 3Dオブジェクト共通部
-	std::unique_ptr<Object3DCommon> object3DCommon;
+	
 	// カメラ
 	std::unique_ptr<Camera> camera;
 public:
