@@ -156,6 +156,15 @@ struct ParticleForGPU
 	Matrix4x4 World;
 	Vector4 color;
 };
+struct RingEffect
+{
+    Transform transform;     // 位置・回転・スケール
+    Vector4 color;           // 色や透明度（フェード用）
+    float lifeTime;          // 全体の寿命
+    float currentTime;       // 経過時間
+    bool isActive = true;    // 表示中かどうか
+};
+
 
 
 #pragma endregion

@@ -37,6 +37,8 @@ void Model::Draw()
 
 }
 
+
+
 ModelData Model::LoadObjFile(const std::string& directoryPath, const std::string& filename)
 {
 
