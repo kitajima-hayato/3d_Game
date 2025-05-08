@@ -8,6 +8,13 @@
 #include "Object3DCommon.h"
 #include "Model.h"
 #include "Camera.h"
+
+struct RingVertex {
+	Vector4 position;
+	Vector3 normal;
+	Vector2 uv;
+};
+
 // 3Dオブジェクト
 // 3Dオブジェクト共通部前方宣言
 class Object3DCommon;
@@ -21,9 +28,13 @@ public:	// メンバ関数
 	void Update();
 	// 描画
 	void Draw();
+#pragma region リングエフェクト関連関数群
+	// リングの頂点作成
+	void CreateRingMesh(uint32_t divide, float outerRadius, float innnerRadius);
 
-
-
+	// サンプラーステートの設定
+	static const D3D12_STATIC_SAMPLER_DESC staticSampler[];
+#pragma endregion
 public:	// Getter/Setter
 	void SetCamera(Camera* camera) { this->camera = camera; }
 
@@ -61,5 +72,12 @@ private:// メンバ変数
 
 	// Transform
 	Transform transform;
+
+
+	Microsoft::WRL::ComPtr<ID3D12Resource>vertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D12Resource>indexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW vbView{};
+	D3D12_INDEX_BUFFER_VIEW ibView{};
+	uint32_t indexCount = 0;
 };
 

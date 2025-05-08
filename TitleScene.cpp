@@ -1,7 +1,7 @@
 #include <thread>
 #include "TitleScene.h"
 #include "Input.h"
-
+#include "Object3D.h"
 TitleScene::TitleScene()
 {
 
@@ -35,6 +35,8 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	particleEmitter->SetTransform({ {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f},{1.0f,1.0f,1.0f} });
 	particleEmitter->SetParticleName("Primitive");
 
+	object3D = make_unique<Object3D>();
+	//object3D->Initialize()
 }
 
 void TitleScene::Update()
