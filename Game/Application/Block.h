@@ -1,5 +1,6 @@
 #pragma once
 #include "Object3D.h"
+class ModelCommon;
 class Block
 {
 public:
@@ -14,5 +15,6 @@ private:
 	// モデル
 	std::unique_ptr<Object3D> object3D;
 	std::unique_ptr<Model> model;
+	ModelCommon* modelCommon;
 };
 

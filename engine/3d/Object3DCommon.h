@@ -9,30 +9,43 @@
 class Object3DCommon
 {
 public:	// シングルトン
+
 	// シングルトンインスタンスの取得(Modern)
 	static Object3DCommon& GetInstance();
 	// コピー・代入を禁止
 	Object3DCommon(const Object3DCommon&) = delete;
 	Object3DCommon& operator=(const Object3DCommon&) = delete;
 
+private:
+
+	// コンストラクタ/デストラクタ/ 外部生成防止
+	Object3DCommon() = default;
+	~Object3DCommon() = default;
+
 public:	// メンバ関数
+
 	// 初期化
 	void Initialize(DirectXCommon* dxCommon);
 	// 共通描画設定
 	void DrawSettingCommon();
+
 public:	// Getter/Setter
+
 	// DirectXCommon
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
 	
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
 	Camera* GetDefaultCamera()const { return defaultCamera; }
+
 private:	// メンバ関数 / クラス内処理
+
 	// ルートシグネチャの作成
 	void CreateRootSignatrue();
 	// グラフィックスパイプラインの生成
 	void CreateGraficsPipeLine();
 
 private:	// メンバ変数
+
 	// カメラ
 	Camera* defaultCamera = nullptr;
 	// 絶対にnew,deleteしない
