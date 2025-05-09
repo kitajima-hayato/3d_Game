@@ -1,14 +1,12 @@
 #include "ModelCommon.h"
 
-
-
-ModelCommon::ModelCommon()
+ModelCommon* ModelCommon::GetInstance()
 {
+	static ModelCommon instance;
+	return &instance;
 }
 
-ModelCommon::~ModelCommon()
-{
-}
+
 
 void ModelCommon::Initialize(DirectXCommon* dxCommon)
 {

@@ -31,7 +31,7 @@ void MyGame::Draw()
 	srvManager->PreDraw();
 	
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-	Object3DCommon::GetInstance().DrawSettingCommon();
+	Object3DCommon::GetInstance()->DrawSettingCommon();
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();

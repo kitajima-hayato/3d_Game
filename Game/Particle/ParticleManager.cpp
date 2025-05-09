@@ -4,6 +4,7 @@
 #include <TextureManager.h>
 #include "WinAPI.h"
 #include <numbers>
+#include "Object3D.h"
 ParticleManager* ParticleManager::instance = nullptr;
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -410,6 +411,9 @@ void ParticleManager::Draw()
 		// 描画
 		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
 	}
+	for (auto& ring : ringParticles_) {
+		ring->Draw();
+	}
 }
 
 void ParticleManager::DeleteParticleGroup(const std::string& name)
@@ -444,7 +448,7 @@ void ParticleManager::Emit(const std::string& name, const Vector3& position, uin
 	// 各パーティクルを生成し追加
 	for (uint32_t i = 0; i < count; ++i) {
 		Particle newParticle = MakePrimitiveParticle(randomEngine, position);
-		group.particles.push_back(newParticle);
+		//group.particles.push_back(newParticle);
 	}
 }
 
@@ -500,49 +504,27 @@ Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, cons
 #pragma endregion
 }
 
-void ParticleManager::CreateRing()
-{
-	// リングの分割数 / 大きくするほど円に近づく
-	const uint32_t kRingDivide = 32;
-	// 外径 / 外側の円の直径
-	const float kOuterRadius = 1.0f;
-	// 内径 / 内側の円の直径
-	const float kInnerRadius = 0.2f;
-	// 1周をdivide個分に分割したときの1分割分の角度
-	const float radianPerDivide = 1.0f * std::numbers::pi_v<float> / (kRingDivide);
+void ParticleManager::EmitRing(const Vector3& pos, float outerRadius, float innerRadius, const std::string& texturePath) {
+	//Particle ringEffect;
 
-	for (uint32_t index = 0; index < kRingDivide; ++index) {
-		float sin = std::sin(index * radianPerDivide);
-		float cos = std::cos(index * radianPerDivide);
-		float sinNext = std::sin((index + 1) * radianPerDivide);
-		float cosNext = std::cos((index + 1) * radianPerDivide);
-		float u = (float)index / (float)kRingDivide;
-		float uNext = (float)(index + 1) / (float)kRingDivide;
+	// Object3Dのインスタンスを作成し初期化
+	auto object = std::make_unique<Object3D>();
+	object->Initialize(Object3DCommon::GetInstance());
+	object->CreateRingMesh(32, outerRadius, innerRadius);
+	object->SetTranslate(pos);
 
-		// 外側と内側の頂点
-		Vector4 p0 = { -sin * kOuterRadius,cos * kOuterRadius,0.0f,1.0f };
-		Vector4 p1 = { -sinNext * kOuterRadius,cosNext * kOuterRadius,0.0f,1.0f };
-		Vector4 p2 = { -sin * kInnerRadius,cos * kInnerRadius,0.0f,1.0f };
-		Vector4 p3 = { -sinNext * kInnerRadius,cosNext * kInnerRadius,0.0f,1.0f };
+	// テクスチャをロードしてSRVハンドルをセット
+	TextureManager::GetInstance()->LoadTexture(texturePath);
+	auto handle = TextureManager::GetInstance()->GetSrvHandleGPU(texturePath);
+	object->SetTextureHandle(handle);
 
-		Vector2 uv0 = { u,0.0f };
-		Vector2 uv1 = { uNext,0.0f };
-		Vector2 uv2 = { u,0.0f };
-		Vector2 uv3 = { uNext,0.0f };
+	// 寿命やアニメーションなどのパラメータを設定（必要に応じて）
+	// ringEffect.life = 60;
 
-		Vector3 normal = { 0.0f,0.0f,0.0f };
+	// Object3DをParticleにセット（構造によって代入方法は異なります）
+	//ringEffect.object3D = std::move(object);  // ポインタやユニークポインタ保持を想定
 
-		// 三角形１枚目
-		modelData.vertices.push_back({ p0,uv0,normal });
-		modelData.vertices.push_back({ p1,uv1,normal });
-		modelData.vertices.push_back({ p2,uv2,normal });
-
-		// 三角形２枚目
-		modelData.vertices.push_back({ p2,uv2,normal });
-		modelData.vertices.push_back({ p1,uv1,normal });
-		modelData.vertices.push_back({ p3,uv3,normal });
-	}
-	// 頂点バッファーの生成
-	CreateVertexBufferView();
-
+	// リストに追加
+	//ringParticles_.push_back(std::move(ringEffect));
 }
+

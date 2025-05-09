@@ -11,7 +11,7 @@ class Object3DCommon
 public:	// シングルトン
 
 	// シングルトンインスタンスの取得(Modern)
-	static Object3DCommon& GetInstance();
+	static Object3DCommon* GetInstance();
 	// コピー・代入を禁止
 	Object3DCommon(const Object3DCommon&) = delete;
 	Object3DCommon& operator=(const Object3DCommon&) = delete;

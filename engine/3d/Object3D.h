@@ -8,6 +8,12 @@
 #include "Object3DCommon.h"
 #include "Model.h"
 #include "Game/Camera/Camera.h"
+struct RingVertex {
+	Vector4 position;
+	Vector2 uv;
+	Vector3 normal;
+};
+
 // 3Dオブジェクト
 // 3Dオブジェクト共通部前方宣言
 class Object3DCommon;
@@ -21,9 +27,11 @@ public:	// メンバ関数
 	void Update();
 	// 描画
 	void Draw();
+#pragma region リングエフェクト関連関数群
+	// リングの頂点作成
+	void CreateRingMesh(uint32_t divide, float outerRadius, float innnerRadius);
 
-
-
+#pragma endregion
 public:	// Getter/Setter
 	void SetCamera(Camera* camera) { this->camera = camera; }
 
@@ -32,6 +40,9 @@ public:	// Getter/Setter
 	void SetScale(const Vector3& scale) { transform.scale = scale; }
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
+	// エフェクト用の画像セット
+	void SetTextureHandle(D3D12_GPU_DESCRIPTOR_HANDLE handle) { textureHandle_ = handle; }
+	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureHandle() const { return textureHandle_; }
 
 	const Vector3 GetScale()const { return transform.scale; }
 	const Vector3 GetRotate()const { return transform.rotate; }
@@ -42,7 +53,7 @@ private: // メンバ関数
 	// 平行光源リソースの作成
 	void CreateDirectionalLightResource();
 
-	
+
 private:// メンバ変数
 	// カメラ
 	Camera* camera = nullptr;
@@ -61,5 +72,16 @@ private:// メンバ変数
 
 	// Transform
 	Transform transform;
+
+
+
+	//リングエフェクト用の指定 
+	Microsoft::WRL::ComPtr<ID3D12Resource>vertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D12Resource>indexBuffer;
+	D3D12_VERTEX_BUFFER_VIEW vbView{};
+	D3D12_INDEX_BUFFER_VIEW ibView{};
+	uint32_t indexCount = 0;
+	
+	D3D12_GPU_DESCRIPTOR_HANDLE textureHandle_{};
 };
 

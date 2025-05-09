@@ -1,7 +1,8 @@
 #include <thread>
 #include "TitleScene.h"
 #include "Input.h"
-
+#include "Object3D.h"
+#include "Object3DCommon.h"
 TitleScene::TitleScene()
 {
 
@@ -15,7 +16,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 {
 
 
-	
+
 	// スプライトの初期化
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
@@ -26,7 +27,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	th1.join();
 	th2.join();
 
-	
+
 	// パーティクルグループを作成
 	ParticleManager::GetInstance()->CreateParticleGroup("Primitive", "resources/circle2.png");
 
@@ -35,17 +36,41 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	particleEmitter->SetTransform({ {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f},{1.0f,1.0f,1.0f} });
 	particleEmitter->SetParticleName("Primitive");
 
+	object3D = make_unique<Object3D>();
+	object3D->Initialize(Object3DCommon::GetInstance());
+	object3D->CreateRingMesh(32, 1.0f, 0.2f);
+	object3D->SetTranslate({ 0.0f, 0.0f, 0.0f });
+	object3D->SetScale({ 1.0f, 1.0f, 1.0f });
+	// テクスチャのロード
+	TextureManager::GetInstance()->LoadTexture("resources/gradationLine.png");
+	// SRVハンドル取得
+	auto handle = TextureManager::GetInstance()->GetSrvHandleGPU("resources/gradationLine.png");
+	// Object3Dにセット
+	object3D->SetTextureHandle(handle);
+
 }
 
 void TitleScene::Update()
 {
 	sprite_->Update();
 	particleEmitter->Update();
+	//if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		//ParticleManager::GetInstance()->EmitRing(
+		//	{ 0, 0, 0 },         // 位置
+		//	1.0f, 0.2f,        // 外半径・内半径
+		//	"resources/gradationLine.png" // テクスチャ
+		//);
+	//}
+	
+	
+	object3D->Update();
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 	}
+
+	
 }
 
 void TitleScene::Draw()
@@ -54,7 +79,9 @@ void TitleScene::Draw()
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
 	//sprite_->Draw();
-
+	if (object3D) {
+		object3D->Draw();
+	}
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 }
@@ -83,7 +110,7 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite()
 {
-	
+
 
 	sprite_ = make_unique<Sprite>();
 	sprite_->Initialize("resources/monsterball.png");

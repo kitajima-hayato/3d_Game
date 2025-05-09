@@ -4,6 +4,7 @@
 #include "MyMath.h"
 #include <random>
 #include "Game/Camera/Camera.h"
+#include "Object3D.h"
 
 // パーティクルマネージャークラス
 // シングルトンクラス
@@ -34,6 +35,7 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;	// インスタンシングデータ用のリソース
 		UINT kNumInstance;					// インスタンス数
 		ParticleForGPU* instancingData;		// インスタンシングデータを書き込むためのポインタ
+		Object3D object3D;
 	};
 
 	// インスタンスの取得
@@ -91,10 +93,9 @@ public:
 
 	// PrimitiveParticle
 	Particle MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate);
-	// Ringのエフェクト
-	void CreateRing();
-	// Ringエフェクトの描画処理
-	void DrawRing();
+	// リングエフェクト
+	void EmitRing(const Vector3& pos, float outerRadius, float innerRadius, const std::string& texturePath);
+
 
 private:
 	DirectXCommon* dxCommon;
@@ -176,6 +177,7 @@ private:
 	// Δtを定義６０fos固定
 	const float kDeltaTime = 1.0f / 60.0f;
 	
-
+	// リングエフェクト
+	std::vector<std::unique_ptr<Object3D>> ringParticles_;
 };
 
