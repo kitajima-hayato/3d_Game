@@ -91,8 +91,12 @@ public:
 
 	// PrimitiveParticle
 	Particle MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate);
+	// リングエフェクト
+	Particle MakeRingParticle(const Vector3& position);
 	// Ringのエフェクト
 	void CreateRing();
+	// Ringの頂点生成
+	void CreateRingVertex();
 	// Ringエフェクトの描画処理
 	void DrawRing();
 
@@ -175,7 +179,11 @@ private:
 	AccelerationField accelerationField;
 	// Δtを定義６０fos固定
 	const float kDeltaTime = 1.0f / 60.0f;
-	
+
+	// リングエフェクト
+	Microsoft::WRL::ComPtr<ID3D12Resource> ringVertexBuffer = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW ringVertexBufferView{};
+	uint32_t ringVertexCount = 0;
 
 };
 

@@ -28,12 +28,12 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Primitive", "resources/circle2.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Ring", "resources/gradationLine.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
 	particleEmitter->SetTransform({ {0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f},{1.0f,1.0f,1.0f} });
-	particleEmitter->SetParticleName("Primitive");
+	particleEmitter->SetParticleName("Ring");
 
 	object3D = make_unique<Object3D>();
 	//object3D->Initialize()
@@ -67,7 +67,7 @@ void TitleScene::Finalize()
 
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
-	ParticleManager::GetInstance()->DeleteParticleGroup("Primitive");
+	ParticleManager::GetInstance()->DeleteParticleGroup("Ring");
 
 	// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
@@ -88,7 +88,7 @@ void TitleScene::LoadSprite()
 	
 
 	sprite_ = make_unique<Sprite>();
-	sprite_->Initialize("resources/monsterball.png");
+	sprite_->Initialize("resources/gradationLine.png");
 	sprite_->SetPosition({ 0.0f,0.0f });
 	sprite_->SetRotation(0.0f);
 }

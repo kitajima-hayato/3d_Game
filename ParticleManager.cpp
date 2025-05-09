@@ -39,6 +39,9 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager
 	InitializeVertexData();
 	// マテリアルの初期化
 	InitializeMaterial();
+
+	// リングエフェクトの初期化
+	CreateRingVertex();
 }
 
 void ParticleManager::InitializeRandomEngine()
@@ -58,68 +61,68 @@ void ParticleManager::CreatePipeline()
 
 void ParticleManager::CreateRootSignature()
 {
-    D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
-    descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
-    descriptorRange[0].NumDescriptors = 1; // 数は1つ
-    descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
-    descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
+	descriptorRange[0].NumDescriptors = 1; // 数は1つ
+	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
+	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-    // 1. RootSignatureの作成
+	// 1. RootSignatureの作成
 
-    descriptionRootSignature.Flags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-    // RootParameter作成。複数設定できるので配列。
-    // 0.Material
-    rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-    rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-    rootParameters[0].Descriptor.ShaderRegister = 0;
+	descriptionRootSignature.Flags =
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+	// RootParameter作成。複数設定できるので配列。
+	// 0.Material
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[0].Descriptor.ShaderRegister = 0;
 
-    // 1. パーティクルのRootSignatureの作成
-    descriptorRangeInstancing[0].BaseShaderRegister = 0;
-    descriptorRangeInstancing[0].NumDescriptors = 1;
-    descriptorRangeInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-    descriptorRangeInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-    // 1.TransformMatrix
-    rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-    rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeInstancing;
-    rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeInstancing);
-    // 2.Texture
-    rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-    rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-    rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;
-    rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
+	// 1. パーティクルのRootSignatureの作成
+	descriptorRangeInstancing[0].BaseShaderRegister = 0;
+	descriptorRangeInstancing[0].NumDescriptors = 1;
+	descriptorRangeInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRangeInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	// 1.TransformMatrix
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeInstancing;
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeInstancing);
+	// 2.Texture
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
 
-    descriptionRootSignature.pParameters = rootParameters;
-    descriptionRootSignature.NumParameters = _countof(rootParameters);
+	descriptionRootSignature.pParameters = rootParameters;
+	descriptionRootSignature.NumParameters = _countof(rootParameters);
 
-    // Samplerの設定
-    staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
-    staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-    staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-    staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-    staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
-    staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
-    staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
-    staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-    descriptionRootSignature.pStaticSamplers = staticSamplers;
-    descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
+	// Samplerの設定
+	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
+	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
+	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
+	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	descriptionRootSignature.pStaticSamplers = staticSamplers;
+	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
-    // シリアライズしてバイナリにする
-    Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-    Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-    HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
-        D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-    if (FAILED(hr)) {
-        Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-        assert(false);
-    }
-    // バイナリを元に生成
+	// シリアライズしてバイナリにする
+	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
+	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
+	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
+		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+	if (FAILED(hr)) {
+		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+	// バイナリを元に生成
 
-    hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-        signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-    assert(SUCCEEDED(hr));
+	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
+		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+	assert(SUCCEEDED(hr));
 
 
 
@@ -160,7 +163,7 @@ void ParticleManager::CreateRootSignature()
 	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.VS.hlsl",
 		L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob  = dxCommon->CompileShader(L"resources/shaders/Particle.PS.hlsl",
+	pixelShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.PS.hlsl",
 		L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
@@ -237,7 +240,7 @@ void ParticleManager::SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode)
 
 void ParticleManager::InitializeVertexData()
 {
-	
+
 	// パーティクルの頂点データを初期化
 	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 0.0f, 1.0f},   .texcoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
 	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 0.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
@@ -280,6 +283,7 @@ void ParticleManager::InitializeMaterial()
 
 void ParticleManager::CreateParticleGroup(const std::string& name, const std::string textureFilePath)
 {
+	
 	// 登録済みの名前か確認
 	if (particleGroups.contains(name))
 	{
@@ -396,7 +400,12 @@ void ParticleManager::Draw()
 	// コマンド : プリミティブトロポジ(描画形状)を設定
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : VertexBufferViewを設定
-	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	//if (name == "Ring") {
+		dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	//} else {
+		//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	//}
+
 	// 全てのパーティクルグループについて処理
 	for (auto& [name, particleGroup] : particleGroups)
 	{
@@ -410,6 +419,7 @@ void ParticleManager::Draw()
 		// 描画
 		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
 	}
+	DrawRing();
 }
 
 void ParticleManager::DeleteParticleGroup(const std::string& name)
@@ -443,7 +453,7 @@ void ParticleManager::Emit(const std::string& name, const Vector3& position, uin
 	ParticleGroup& group = it->second;
 	// 各パーティクルを生成し追加
 	for (uint32_t i = 0; i < count; ++i) {
-		Particle newParticle = MakePrimitiveParticle(randomEngine, position);
+		Particle newParticle = MakeRingParticle(position);
 		group.particles.push_back(newParticle);
 	}
 }
@@ -475,8 +485,8 @@ Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, cons
 	std::uniform_real_distribution<float>distRotate(-std::numbers::pi_v<float>, std::numbers::pi_v<float>);
 	std::uniform_real_distribution<float>distScale(0.4f, 1.5f);
 
-	particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f};// 横につぶす
-	particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine)};
+	particle.transform.scale = { 0.05f,distScale(randomEngine),1.0f };// 横につぶす
+	particle.transform.rotate = { 0.0f,0.0f,distRotate(randomEngine) };
 	particle.transform.translate = Vector3(translate.x, translate.y, 15.0f);
 	particle.velocity = { 0.0f,0.0f,0.0f };
 	//white
@@ -546,3 +556,116 @@ void ParticleManager::CreateRing()
 	CreateVertexBufferView();
 
 }
+
+void ParticleManager::CreateRingVertex()
+{
+	std::vector<VertexData> vertices;
+	const uint32_t kRingDivide = 32;
+	const float kOuterRadius = 1.0f;
+	const float kInnerRadius = 0.2f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
+
+	for (uint32_t i = 0; i < kRingDivide; ++i) {
+		float angle0 = i * radianPerDivide;
+		float angle1 = (i + 1) * radianPerDivide;
+
+		float sin0 = std::sin(angle0);
+		float cos0 = std::cos(angle0);
+		float sin1 = std::sin(angle1);
+		float cos1 = std::cos(angle1);
+
+		// 外側・内側の各点
+		Vector4 outer0 = { sin0 * kOuterRadius, cos0 * kOuterRadius, 0.0f, 1.0f };
+		Vector4 outer1 = { sin1 * kOuterRadius, cos1 * kOuterRadius, 0.0f, 1.0f };
+		Vector4 inner0 = { sin0 * kInnerRadius, cos0 * kInnerRadius, 0.0f, 1.0f };
+		Vector4 inner1 = { sin1 * kInnerRadius, cos1 * kInnerRadius, 0.0f, 1.0f };
+
+		Vector2 uvOuter0 = { float(i) / kRingDivide, 0.0f };
+		Vector2 uvOuter1 = { float(i + 1) / kRingDivide, 0.0f };
+		Vector2 uvInner0 = { float(i) / kRingDivide, 1.0f };
+		Vector2 uvInner1 = { float(i + 1) / kRingDivide, 1.0f };
+
+		Vector3 normal = { 0.0f, 0.0f, 1.0f };
+
+		// 三角形 1（outer0, outer1, inner0）
+		vertices.push_back({ outer0, uvOuter0, normal });
+		vertices.push_back({ outer1, uvOuter1, normal });
+		vertices.push_back({ inner0, uvInner0, normal });
+
+		// 三角形 2（inner0, outer1, inner1）
+		vertices.push_back({ inner0, uvInner0, normal });
+		vertices.push_back({ outer1, uvOuter1, normal });
+		vertices.push_back({ inner1, uvInner1, normal });
+	}
+
+	// 頂点バッファの作成
+	size_t vertexSize = sizeof(VertexData) * vertices.size();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
+	D3D12_HEAP_PROPERTIES heapProp{};
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resourceDesc.Width = vertexSize;
+	resourceDesc.Height = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	dxCommon->GetDevice()->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertexBuffer));
+
+	VertexData* mapData = nullptr;
+	vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mapData));
+	memcpy(mapData, vertices.data(), vertexSize);
+	vertexBuffer->Unmap(0, nullptr);
+
+	D3D12_VERTEX_BUFFER_VIEW vbView{};
+	vbView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vbView.SizeInBytes = static_cast<UINT>(vertexSize);
+	vbView.StrideInBytes = sizeof(VertexData);
+
+	ringVertexBuffer = vertexBuffer;
+	ringVertexBufferView = vbView;
+	ringVertexCount = static_cast<uint32_t>(vertices.size());
+}
+
+void ParticleManager::DrawRing()
+{
+	if (!ringVertexBuffer) return;
+
+	auto* cmdList = dxCommon->GetCommandList();
+
+	// 必要なパイプラインセット
+	cmdList->SetGraphicsRootSignature(rootSignature.Get());
+	cmdList->SetPipelineState(graphicsPipelineState.Get());
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	cmdList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+	// テクスチャSRV（仮にindex=0とする）
+	D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+	cmdList->SetGraphicsRootDescriptorTable(2, textureHandle);
+
+	cmdList->DrawInstanced(ringVertexCount, 1, 0, 0);
+
+}
+Particle ParticleManager::MakeRingParticle(const Vector3& position) {
+	Particle particle;
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };     // サイズ（大きすぎると画面外）
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	particle.transform.translate = { 0.0f, 0.0f, 5.0f }; // Z = 5.0f で手前に表示されやすい
+	particle.velocity = { 0.0f, 0.0f, 0.0f };
+	particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	particle.lifeTime = 1.0f;
+	particle.currentTime = 0.0f;
+	return particle;
+}
+
