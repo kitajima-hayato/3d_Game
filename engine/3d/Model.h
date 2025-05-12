@@ -8,6 +8,7 @@
 #include <cassert>
 #include <wrl.h>
 #include <d3d12.h>
+#include <numbers>
 #include "MakeMatrix.h"
 #include "MyMath.h"
 using namespace std;
@@ -20,6 +21,7 @@ public: // メンバ関数
 	void Update();
 	// 描画
 	void Draw();
+
 
 
 	// objファイルの読み込み
