@@ -13,7 +13,7 @@ void MyGame::Initialize()
 void MyGame::Update()
 {
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
-	imGui->Begin();
+	imGui->Begin(); 
 #endif 
 	Framework::Update();
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
