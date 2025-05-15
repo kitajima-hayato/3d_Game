@@ -41,7 +41,10 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager
 	InitializeMaterial();
 
 	// リングエフェクトの初期化
-	CreateRingVertex();
+	//CreateRingVertex();
+
+	// シリンダーエフェクト
+	CreateCylinderVertex();
 }
 
 void ParticleManager::InitializeRandomEngine()
@@ -276,14 +279,14 @@ void ParticleManager::InitializeMaterial()
 	// マテリアルデータに書き込み
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// マテリアルデータの初期化
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData->color = Vector4(0.3f, 1.0f, 0.7f, 1.0f);
 	materialData->enableLighting = true;
 	materialData->uvTransform = MakeIdentity4x4();
 }
 
 void ParticleManager::CreateParticleGroup(const std::string& name, const std::string textureFilePath)
 {
-	
+
 	// 登録済みの名前か確認
 	if (particleGroups.contains(name))
 	{
@@ -317,6 +320,14 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const std::st
 
 void ParticleManager::Update()
 {
+	uvOffset.x += uvScrollSpeed.x * kDeltaTime;
+	uvOffset.y += uvScrollSpeed.y * kDeltaTime;
+
+	// wrap (0〜1の範囲に保つ)
+	uvOffset.x = std::fmod(uvOffset.x, 1.0f);
+	uvOffset.y = std::fmod(uvOffset.y, 1.0f);
+	materialData->uvTransform = MakeTranslateMatrix({ uvOffset.x, uvOffset.y, 0.0f });
+
 	// 行列の更新
 	UpdateMatrix();
 	// 全てのパーティクルグループの処理
@@ -401,7 +412,7 @@ void ParticleManager::Draw()
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : VertexBufferViewを設定
 	//if (name == "Ring") {
-		dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
 	//} else {
 		//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//}
@@ -419,7 +430,8 @@ void ParticleManager::Draw()
 		// 描画
 		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
 	}
-	DrawRing();
+	//DrawRing();
+	DrawCylinder();
 }
 
 void ParticleManager::DeleteParticleGroup(const std::string& name)
@@ -453,7 +465,27 @@ void ParticleManager::Emit(const std::string& name, const Vector3& position, uin
 	ParticleGroup& group = it->second;
 	// 各パーティクルを生成し追加
 	for (uint32_t i = 0; i < count; ++i) {
-		Particle newParticle = MakeRingParticle(position);
+		Particle newParticle = MakeCylinderEffect(position);
+		group.particles.push_back(newParticle);
+	}
+}
+
+void ParticleManager::EffectEmit(const std::string& name, const Vector3& position, uint32_t count)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end());
+	ParticleGroup& group = it->second;
+
+	for (uint32_t i = 0; i < count; ++i) {
+		Particle newParticle;
+		newParticle.transform.scale = { 0.1f, 0.1f, 0.1f };
+		newParticle.transform.rotate = { 0.0f,0.0f,0.0f };
+		newParticle.transform.translate = position;
+		newParticle.velocity = { 0.0f, 0.0f, 0.0f };
+		newParticle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		newParticle.lifeTime = 1.0f;
+		newParticle.currentTime = 0.0f;
+		newParticle = MakeCylinderEffect(position);
 		group.particles.push_back(newParticle);
 	}
 }
@@ -510,52 +542,7 @@ Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, cons
 #pragma endregion
 }
 
-void ParticleManager::CreateRing()
-{
-	// リングの分割数 / 大きくするほど円に近づく
-	const uint32_t kRingDivide = 32;
-	// 外径 / 外側の円の直径
-	const float kOuterRadius = 1.0f;
-	// 内径 / 内側の円の直径
-	const float kInnerRadius = 0.2f;
-	// 1周をdivide個分に分割したときの1分割分の角度
-	const float radianPerDivide = 1.0f * std::numbers::pi_v<float> / (kRingDivide);
 
-	for (uint32_t index = 0; index < kRingDivide; ++index) {
-		float sin = std::sin(index * radianPerDivide);
-		float cos = std::cos(index * radianPerDivide);
-		float sinNext = std::sin((index + 1) * radianPerDivide);
-		float cosNext = std::cos((index + 1) * radianPerDivide);
-		float u = (float)index / (float)kRingDivide;
-		float uNext = (float)(index + 1) / (float)kRingDivide;
-
-		// 外側と内側の頂点
-		Vector4 p0 = { -sin * kOuterRadius,cos * kOuterRadius,0.0f,1.0f };
-		Vector4 p1 = { -sinNext * kOuterRadius,cosNext * kOuterRadius,0.0f,1.0f };
-		Vector4 p2 = { -sin * kInnerRadius,cos * kInnerRadius,0.0f,1.0f };
-		Vector4 p3 = { -sinNext * kInnerRadius,cosNext * kInnerRadius,0.0f,1.0f };
-
-		Vector2 uv0 = { u,0.0f };
-		Vector2 uv1 = { uNext,0.0f };
-		Vector2 uv2 = { u,0.0f };
-		Vector2 uv3 = { uNext,0.0f };
-
-		Vector3 normal = { 0.0f,0.0f,0.0f };
-
-		// 三角形１枚目
-		modelData.vertices.push_back({ p0,uv0,normal });
-		modelData.vertices.push_back({ p1,uv1,normal });
-		modelData.vertices.push_back({ p2,uv2,normal });
-
-		// 三角形２枚目
-		modelData.vertices.push_back({ p2,uv2,normal });
-		modelData.vertices.push_back({ p1,uv1,normal });
-		modelData.vertices.push_back({ p3,uv3,normal });
-	}
-	// 頂点バッファーの生成
-	CreateVertexBufferView();
-
-}
 
 void ParticleManager::CreateRingVertex()
 {
@@ -657,7 +644,8 @@ void ParticleManager::DrawRing()
 	cmdList->DrawInstanced(ringVertexCount, 1, 0, 0);
 
 }
-Particle ParticleManager::MakeRingParticle(const Vector3& position) {
+
+Particle ParticleManager::MakeRingEffect(const Vector3& position) {
 	Particle particle;
 	particle.transform.scale = { 1.0f, 1.0f, 1.0f };     // サイズ（大きすぎると画面外）
 	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
@@ -669,3 +657,126 @@ Particle ParticleManager::MakeRingParticle(const Vector3& position) {
 	return particle;
 }
 
+Particle ParticleManager::MakeCylinderEffect(const Vector3& position)
+{
+	Particle particle;
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };     // サイズ（大きすぎると画面外）
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	particle.transform.translate = position;
+	particle.velocity = { 0.0f, 0.0f, 0.0f };
+	particle.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	particle.lifeTime = 1.0f;
+	particle.currentTime = 0.0f;
+	return particle;
+}
+
+void ParticleManager::CreateCylinderVertex() {
+	std::vector<VertexData> vertices;
+	const uint32_t kCylinderDivide = 32;
+	const float kTopRadius = 1.0f;
+	const float kBottomRadius = 1.0f;
+	const float kHeight = 3.0f;
+	const float halfHeight = kHeight * 0.5f;
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
+
+	for (uint32_t i = 0; i < kCylinderDivide; ++i) {
+		float angle0 = i * radianPerDivide;
+		float angle1 = (i + 1) * radianPerDivide;
+
+		float sin0 = std::sin(angle0);
+		float cos0 = std::cos(angle0);
+		float sin1 = std::sin(angle1);
+		float cos1 = std::cos(angle1);
+
+		float u0 = float(i) / float(kCylinderDivide);
+		float u1 = float(i + 1) / float(kCylinderDivide);
+
+		// 各頂点の位置
+		Vector4 top0 = { sin0 * kTopRadius, +halfHeight, cos0 * kTopRadius, 1.0f };
+		Vector4 top1 = { sin1 * kTopRadius, +halfHeight, cos1 * kTopRadius, 1.0f };
+		Vector4 bottom0 = { sin0 * kBottomRadius, -halfHeight, cos0 * kBottomRadius, 1.0f };
+		Vector4 bottom1 = { sin1 * kBottomRadius, -halfHeight, cos1 * kBottomRadius, 1.0f };
+
+		// テクスチャ座標
+		Vector2 uvTop0 = { u0, 0.0f };
+		Vector2 uvTop1 = { u1, 0.0f };
+		Vector2 uvBottom0 = { u0, 1.0f };
+		Vector2 uvBottom1 = { u1, 1.0f };
+
+		// 法線ベクトル（正規化）
+		Vector3 normal0 = Vector3{ sin0, 0.0f, cos0 }.Normalized();
+		Vector3 normal1 = Vector3{ sin1, 0.0f, cos1 }.Normalized();
+
+		// 側面：三角形2枚（1クアッド）
+		vertices.push_back({ top0,    uvTop0,    normal0 });
+		vertices.push_back({ top1,    uvTop1,    normal1 });
+		vertices.push_back({ bottom0, uvBottom0, normal0 });
+
+		vertices.push_back({ top1,    uvTop1,    normal1 });
+		vertices.push_back({ bottom1, uvBottom1, normal1 });
+		vertices.push_back({ bottom0, uvBottom0, normal0 });
+	}
+
+	// 頂点バッファ作成
+	size_t vertexSize = sizeof(VertexData) * vertices.size();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
+	D3D12_HEAP_PROPERTIES heapProp{};
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resourceDesc.Width = vertexSize;
+	resourceDesc.Height = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	HRESULT hr = dxCommon->GetDevice()->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertexBuffer));
+	assert(SUCCEEDED(hr));
+
+	VertexData* mapData = nullptr;
+	vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mapData));
+	memcpy(mapData, vertices.data(), vertexSize);
+	vertexBuffer->Unmap(0, nullptr);
+
+	D3D12_VERTEX_BUFFER_VIEW vbView{};
+	vbView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vbView.SizeInBytes = static_cast<UINT>(vertexSize);
+	vbView.StrideInBytes = sizeof(VertexData);
+
+	ringVertexBuffer = vertexBuffer;
+	ringVertexBufferView = vbView;
+	ringVertexCount = static_cast<uint32_t>(vertices.size());
+}
+
+
+
+void ParticleManager::DrawCylinder()
+{
+	if (!ringVertexBuffer) return;
+
+	auto* cmdList = dxCommon->GetCommandList();
+
+	// 必要なパイプラインセット
+	cmdList->SetGraphicsRootSignature(rootSignature.Get());
+	cmdList->SetPipelineState(graphicsPipelineState.Get());
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	cmdList->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+	// テクスチャSRV（仮にindex=0とする）
+	D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+	cmdList->SetGraphicsRootDescriptorTable(2, textureHandle);
+
+	cmdList->DrawInstanced(ringVertexCount, 1, 0, 0);
+
+
+}

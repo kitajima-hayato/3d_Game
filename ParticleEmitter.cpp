@@ -4,7 +4,7 @@ ParticleEmitter::ParticleEmitter()
     : currentTime(0.0f)
 {
     emitter.transform.translate = { 0.0f, 0.0f, 0.0f };
-    emitter.count = 2;
+    emitter.count = 1;
     emitter.frequency = 1.0f;
     emitter.frequencyTime = 0.0f;
 }
@@ -19,6 +19,7 @@ void ParticleEmitter::Update()
 {
     // 時刻を進める
     currentTime += kDeltaTime;
+    
 
     // 発生頻度より大きいなら発生
     if (currentTime >= emitter.frequency)
@@ -32,5 +33,6 @@ void ParticleEmitter::Update()
 void ParticleEmitter::Emit()
 {
     // パーティクルを発生させる
-    ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+   // ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+    ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
 }

@@ -12,14 +12,13 @@ void MyGame::Initialize()
 
 void MyGame::Update()
 {
+#ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
+	imGui->Begin();
+#endif 
 	Framework::Update();
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
 	// ImGuiの処理
-	imGui->Begin();
 	ImGui::Text("Hello, world %d", 123);
-	if (ImGui::Button("Save")) {
-		OutputDebugStringA("Save\n");
-	}
 	imGui->End();
 #endif
 }

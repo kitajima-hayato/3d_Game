@@ -1,6 +1,6 @@
 #pragma once
 #include<vector>
-
+#include<cmath>
 #include<string>
 #pragma region ベクトル
 struct Vector2 {
@@ -72,6 +72,20 @@ struct Vector3 {
     // 不等価演算子
     bool operator!=(const Vector3& other) const {
         return !(*this == other);
+    }
+
+    // ノルム（長さ）を取得
+    float Length() const {
+        return std::sqrt(x * x + y * y + z * z);
+    }
+
+    // 正規化したベクトルを返す（長さ1にする）
+    Vector3 Normalized() const {
+        float len = Length();
+        if (len == 0.0f) {
+            return { 0.0f, 0.0f, 0.0f }; // 0除算回避
+        }
+        return { x / len, y / len, z / len };
     }
 };
 

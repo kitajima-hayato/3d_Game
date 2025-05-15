@@ -6,6 +6,9 @@
 #include "SceneManager.h"
 #include "ParticleManager.h"
 #include "ParticleEmitter.h"
+#ifdef _DEBUG
+#include "ImGuiManager.h"
+#endif
 class Object3D;
 class TitleScene :public BaseScene
 {
@@ -24,6 +27,8 @@ public:
 	void LoadAudio();
 	void LoadSprite();
 
+	// Imgui一括管理 / 描画関数
+	void DrawImgui();
 private:
 
 	// オーディオ
@@ -39,6 +44,14 @@ private:
 
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;
+
+
+private: // ゲーム要素
+	// TitleScene.h
+	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
+	Vector3 emitterRotate = { 0.0f, 0.0f, 0.0f };
+	Vector3 emitterTranslate = { 0.0f, 0.0f, 10.0f };
+
 
 };
 
