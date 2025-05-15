@@ -1,4 +1,4 @@
-#include "MyGame.h"
+#include "Game/Scene//MyGame.h"
 // メモリリーク検出チェック
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

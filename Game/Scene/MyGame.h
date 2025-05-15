@@ -22,7 +22,7 @@
 #include "ModelCommon.h"
 #include "ModelManager.h"
 #include "srvManager.h"
-#include "Framework.h"
+#include "InsideScene/Framework.h"
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif

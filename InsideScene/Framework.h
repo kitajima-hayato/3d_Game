@@ -14,7 +14,7 @@
 #include "ImGuiManager.h"
 #include "Audio.h"
 #include "SceneManager.h"
-#include "ParticleManager.h"
+#include "Game/Particle/ParticleManager.h"
 #include "AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"

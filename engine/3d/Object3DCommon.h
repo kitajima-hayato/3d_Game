@@ -1,6 +1,6 @@
 #pragma once
 #include "DirectXCommon.h"
-#include "Camera.h"
+#include "Game/Camera/Camera.h"
 // 3Dオブジェクト共通部
 class Object3DCommon
 {

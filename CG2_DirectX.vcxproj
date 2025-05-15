@@ -105,17 +105,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AbstractSceneFactory.cpp" />
-    <ClCompile Include="Audio.cpp" />
-    <ClCompile Include="BaseScene.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp" />
+    <ClCompile Include="engine\Audio\Audio.cpp" />
+    <ClCompile Include="InsideScene\BaseScene.cpp" />
+    <ClCompile Include="Game\Camera\Camera.cpp" />
     <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\bace\DirectXCommon.cpp" />
     <ClCompile Include="engine\bace\Input.cpp" />
     <ClCompile Include="engine\bace\Logger.cpp" />
-    <ClCompile Include="Framework.cpp" />
-    <ClCompile Include="GamePlayScene.cpp" />
-    <ClCompile Include="ImGuiManager.cpp" />
+    <ClCompile Include="InsideScene\Framework.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
+    <ClCompile Include="engine\bace\ImGuiManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MakeMatrix.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -128,19 +128,19 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\bace\StringUtility.cpp" />
     <ClCompile Include="engine\bace\TextureManager.cpp" />
     <ClCompile Include="engine\bace\WinAPI.cpp" />
-    <ClCompile Include="MyGame.cpp" />
-    <ClCompile Include="ParticleEmitter.cpp" />
-    <ClCompile Include="ParticleManager.cpp" />
-    <ClCompile Include="SceneFactory.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="SrvManager.cpp" />
-    <ClCompile Include="TitleScene.cpp" />
+    <ClCompile Include="Game\Scene\MyGame.cpp" />
+    <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Game\Particle\ParticleManager.cpp" />
+    <ClCompile Include="InsideScene\SceneFactory.cpp" />
+    <ClCompile Include="InsideScene\SceneManager.cpp" />
+    <ClCompile Include="engine\bace\SrvManager.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractSceneFactory.h" />
-    <ClInclude Include="Audio.h" />
-    <ClInclude Include="BaseScene.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="InsideScene\AbstractSceneFactory.h" />
+    <ClInclude Include="engine\Audio\Audio.h" />
+    <ClInclude Include="InsideScene\BaseScene.h" />
+    <ClInclude Include="Game\Camera\Camera.h" />
     <ClInclude Include="engine\bace\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\bace\DirectXCommon.h" />
     <ClInclude Include="engine\bace\Input.h" />
@@ -157,16 +157,16 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\bace\StringUtility.h" />
     <ClInclude Include="engine\bace\TextureManager.h" />
     <ClInclude Include="engine\bace\WinAPI.h" />
-    <ClInclude Include="Framework.h" />
-    <ClInclude Include="GamePlayScene.h" />
-    <ClInclude Include="ImGuiManager.h" />
-    <ClInclude Include="MyGame.h" />
-    <ClInclude Include="ParticleEmitter.h" />
-    <ClInclude Include="ParticleManager.h" />
-    <ClInclude Include="SceneFactory.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="SrvManager.h" />
-    <ClInclude Include="TitleScene.h" />
+    <ClInclude Include="InsideScene\Framework.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene.h" />
+    <ClInclude Include="engine\bace\ImGuiManager.h" />
+    <ClInclude Include="Game\Scene\MyGame.h" />
+    <ClInclude Include="Game\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Game\Particle\ParticleManager.h" />
+    <ClInclude Include="InsideScene\SceneFactory.h" />
+    <ClInclude Include="InsideScene\SceneManager.h" />
+    <ClInclude Include="engine\bace\SrvManager.h" />
+    <ClInclude Include="Game\Scene\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

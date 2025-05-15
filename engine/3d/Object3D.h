@@ -7,7 +7,7 @@
 #include "TextureManager.h"
 #include "Object3DCommon.h"
 #include "Model.h"
-#include "Camera.h"
+#include "Game/Camera/Camera.h"
 
 struct RingVertex {
 	Vector4 position;
