@@ -42,4 +42,7 @@ private:
 
     // パーティクルネーム
     string particleName;
+
+private:
+    Vector3 test;
 };

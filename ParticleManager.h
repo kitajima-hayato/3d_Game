@@ -86,19 +86,33 @@ public:
 
 	// パーティクルの発生
 	void Emit(const std::string& name, const Vector3& position, uint32_t count);
+	// エフェクトの発生
+	void EffectEmit(const std::string& name, const Vector3& position, uint32_t count);
+
+	
 	// 通常パーティクル
 	Particle MakeParticle(std::mt19937& randomEngine, const Vector3& position);
 
 	// PrimitiveParticle
 	Particle MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate);
 	// リングエフェクト
-	Particle MakeRingParticle(const Vector3& position);
-	// Ringのエフェクト
-	void CreateRing();
+	Particle MakeRingEffect(const Vector3& position);
+	// Cylinderエフェクト
+	Particle MakeCylinderEffect(const Vector3& position);
+
 	// Ringの頂点生成
 	void CreateRingVertex();
 	// Ringエフェクトの描画処理
 	void DrawRing();
+
+	// Cylinder
+	void CreateCylinderVertex();
+	// CylindeEffectの描画
+	void DrawCylinder();
+
+	// 表示パーティクル / エフェクトの値調整 / 
+	void DrawImgui();
+
 
 private:
 	DirectXCommon* dxCommon;
@@ -184,6 +198,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> ringVertexBuffer = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW ringVertexBufferView{};
 	uint32_t ringVertexCount = 0;
+
+	// UV座標変更
+	Vector2 uvOffset = { 0.0f, 0.0f };  
+	Vector2 uvScrollSpeed = { 0.1f, 0.0f };  // 水平方向に流す場合
+
 
 };
 
