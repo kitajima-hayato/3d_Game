@@ -6,6 +6,8 @@
 #include "InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
+#include "engine/3d/Object3D.h"
+
 class TitleScene :public BaseScene
 {
 public:
@@ -35,6 +37,9 @@ private:
 
 	// パーティクルエミッター
 	std::unique_ptr<ParticleEmitter> particleEmitter;
+
+	// 
+	std::unique_ptr<Object3D> object3D;
 
 };
 
