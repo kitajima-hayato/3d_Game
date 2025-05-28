@@ -28,7 +28,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Ring", "resources/gradationLine_flipped.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Ring", "resources/uvChecker.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
@@ -38,6 +38,16 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	object3D = make_unique<Object3D>();
 	//object3D->Initialize()
+
+	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine_flipped.png");
+	effectEmitter = make_unique<EffectEmitter>();
+	Transform effectTransform = {
+		{0.5f,0.5f,0.5f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,30.0f},
+	};
+	effectEmitter->SetTransform(effectTransform);
+	effectEmitter->SetEffectName("Cylinder");
 }
 
 void TitleScene::Update()
@@ -51,8 +61,11 @@ void TitleScene::Update()
 		});
 	//emitterTranslate.z += 0.01f;
 	DrawImgui();
+	effectEmitter->SetTransform(effectTransform);
 	particleEmitter->Update();
 
+	effectEmitter->Update();
+	
 
 
 
@@ -72,6 +85,8 @@ void TitleScene::Draw()
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
+	// エフェクトの描画
+	EffectManager::GetInstance()->Draw();
 }
 
 void TitleScene::Finalize()
@@ -79,6 +94,7 @@ void TitleScene::Finalize()
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
 	ParticleManager::GetInstance()->DeleteParticleGroup("Ring");
+	EffectManager::GetInstance()->DeleteEffectGroup("Cylinder");
 
 	// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
@@ -105,12 +121,21 @@ void TitleScene::LoadSprite()
 }
 
 void TitleScene::DrawImgui() {
-	ImGui::Begin("Effect");
+	ImGui::Begin("ParticleEffect");
 
 	ImGui::Text("Transform");
-	ImGui::DragFloat3("Scale", &emitterScale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &emitterRotate.x, 0.1f);
-	ImGui::DragFloat3("Translate", &emitterTranslate.x, 1.0f); // ここでtest.xを操作可能に
+	ImGui::DragFloat3("Scalea", &emitterScale.x, 0.1f);
+	ImGui::DragFloat3("Rotatea", &emitterRotate.x, 0.1f);
+	ImGui::DragFloat3("Translatea", &emitterTranslate.x, 1.0f); // ここでtest.xを操作可能に
+
+	ImGui::End();
+
+	ImGui::Begin("effect");
+
+	ImGui::Text("Transform");
+	ImGui::DragFloat3("Scale", &effectTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &effectTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f); 
 
 	ImGui::End();
 }

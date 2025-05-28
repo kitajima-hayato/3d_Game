@@ -170,15 +170,30 @@ struct ParticleForGPU
 	Matrix4x4 World;
 	Vector4 color;
 };
-struct RingEffect
+struct EffectInstance
 {
     Transform transform;     // 位置・回転・スケール
     Vector4 color;           // 色や透明度（フェード用）
     float lifeTime;          // 全体の寿命
     float currentTime;       // 経過時間
-    bool isActive = true;    // 表示中かどうか
+    bool isActive = true;    // アクティブ
 };
 
-
+enum BlendMode {
+    //!< ブレンド無し
+    kBlendModeNone,
+    //!< 通常αブレンド デフォルト src * srcA + Dest * ( 1 - srcA )
+    kBelendModeNormal,
+    //!< 加算 src * srcA + Dest * 1;
+    kBlendModeAdd,
+    //!< 減算 Dest * 1 - src * srcA 
+    kBlendModeSubtract,
+    //!< 乗算 src * 0 + Dest * src
+    kBlendModeMultiply,
+    //!< スクリーン src * ( 1 - Dest )+ Dest * 1
+    kBlendModeScreen,
+    //!< 利用してはいけない
+    kCountOfBlendMode,
+};
 
 #pragma endregion

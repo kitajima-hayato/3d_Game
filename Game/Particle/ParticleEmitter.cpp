@@ -1,4 +1,5 @@
 #include "ParticleEmitter.h"
+#include "EffectEmitter.h"
 
 ParticleEmitter::ParticleEmitter()
     : currentTime(0.0f)
@@ -30,9 +31,11 @@ void ParticleEmitter::Update()
     }
 }
 
+
+
 void ParticleEmitter::Emit()
 {
     // パーティクルを発生させる
-   // ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+    //ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
     ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
 }

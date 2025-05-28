@@ -465,7 +465,7 @@ void ParticleManager::Emit(const std::string& name, const Vector3& position, uin
 	ParticleGroup& group = it->second;
 	// 各パーティクルを生成し追加
 	for (uint32_t i = 0; i < count; ++i) {
-		Particle newParticle = MakeCylinderEffect(position);
+		Particle newParticle = MakeParticle(randomEngine, position);
 		group.particles.push_back(newParticle);
 	}
 }
@@ -510,7 +510,7 @@ Particle ParticleManager::MakeParticle(std::mt19937& randomEngine, const  Vector
 	return particle;
 }
 
-Particle ParticleManager::MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate)
+Particle ParticleManager::MakePrimitiveEffect(std::mt19937& randomEngine, const Vector3& translate)
 {
 	Particle particle;
 

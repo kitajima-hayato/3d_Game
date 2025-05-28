@@ -15,6 +15,8 @@
 #include "Audio.h"
 #include "SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
+#include "Game/Particle/EffectManager.h"
+
 #include "AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
