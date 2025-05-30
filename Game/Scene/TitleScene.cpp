@@ -13,9 +13,6 @@ TitleScene::~TitleScene()
 
 void TitleScene::Initialize(DirectXCommon* dxCommon)
 {
-
-
-	
 	// スプライトの初期化
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
@@ -26,46 +23,64 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	th1.join();
 	th2.join();
 
-	
+
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Ring", "resources/uvChecker.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/uvChecker.png");
 
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
 	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,50.0f }});
 
-	particleEmitter->SetParticleName("Ring");
+	particleEmitter->SetParticleName("Particle");
 
 	object3D = make_unique<Object3D>();
 	//object3D->Initialize()
 
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine_flipped.png");
+
+
+
+	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
 	effectEmitter = make_unique<EffectEmitter>();
-	Transform effectTransform = {
+
+	effectTransform = effectEmitter->GetTransform();
+	effectTransform = {
 		{0.5f,0.5f,0.5f},
 		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,30.0f},
+		{-1.0f,0.0f,10.0f},
 	};
 	effectEmitter->SetTransform(effectTransform);
-	effectEmitter->SetEffectName("Cylinder");
+	effectEmitter->SetEffectName("Ring");
+
+	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/monsterball.png");
+	cylinder = make_unique<EffectEmitter>();
+	cylinderTransform = cylinder->GetTransform();
+
+	cylinderTransform = {
+		{0.5f,0.5f,0.5f},
+		{0.0f,0.0f,0.0f},
+		{0.0f,0.0f,10.0f},
+	};
+	cylinder->SetTransform(cylinderTransform);
+	cylinder->SetEffectName("Cylinder");
+
 }
 
 void TitleScene::Update()
 {
 	sprite_->Update();
-	
+
 	particleEmitter->SetTransform({
 	emitterScale,
 	emitterRotate,
 	emitterTranslate
 		});
-	//emitterTranslate.z += 0.01f;
 	DrawImgui();
-	effectEmitter->SetTransform(effectTransform);
-	particleEmitter->Update();
 
-	effectEmitter->Update();
-	
+
+	//particleEmitter->Update();
+
+	effectEmitter->EmitCylinder();
+	cylinder->EmitRing();
 
 
 
@@ -86,15 +101,20 @@ void TitleScene::Draw()
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
-	EffectManager::GetInstance()->Draw();
+
+	EffectManager::GetInstance()->DrawRing();
+	EffectManager::GetInstance()->DrawCylinder();
+
+	//EffectManager::GetInstance()->DrawCylinder();
 }
 
 void TitleScene::Finalize()
 {
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
-	ParticleManager::GetInstance()->DeleteParticleGroup("Ring");
+	ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
 	EffectManager::GetInstance()->DeleteEffectGroup("Cylinder");
+	EffectManager::GetInstance()->DeleteEffectGroup("Ring");
 
 	// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
@@ -112,7 +132,6 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite()
 {
-	
 
 	sprite_ = make_unique<Sprite>();
 	sprite_->Initialize("resources/gradationLine_flipped.png");
@@ -121,21 +140,27 @@ void TitleScene::LoadSprite()
 }
 
 void TitleScene::DrawImgui() {
-	ImGui::Begin("ParticleEffect");
+	//ImGui::Begin("Particle");
 
-	ImGui::Text("Transform");
-	ImGui::DragFloat3("Scalea", &emitterScale.x, 0.1f);
-	ImGui::DragFloat3("Rotatea", &emitterRotate.x, 0.1f);
-	ImGui::DragFloat3("Translatea", &emitterTranslate.x, 1.0f); // ここでtest.xを操作可能に
+	//ImGui::Text("Transform");
+	//ImGui::DragFloat3("Scalea", &emitterScale.x, 0.1f);
+	//ImGui::DragFloat3("Rotatea", &emitterRotate.x, 0.1f);
+	//ImGui::DragFloat3("Translatea", &emitterTranslate.x, 1.0f); // ここでtest.xを操作可能に
 
-	ImGui::End();
+	//ImGui::End();
 
 	ImGui::Begin("effect");
 
 	ImGui::Text("Transform");
 	ImGui::DragFloat3("Scale", &effectTransform.scale.x, 0.1f);
 	ImGui::DragFloat3("Rotate", &effectTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f); 
-
+	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f);
+	effectEmitter->SetTransform(effectTransform);
+	
+	ImGui::Text("asdf");
+	ImGui::DragFloat3("CylinderScale", &cylinderTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
+	cylinder->SetTransform(cylinderTransform);
 	ImGui::End();
 }

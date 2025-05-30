@@ -44,7 +44,7 @@ void ParticleManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager
 	//CreateRingVertex();
 
 	// シリンダーエフェクト
-	CreateCylinderVertex();
+	//CreateCylinderVertex();
 }
 
 void ParticleManager::InitializeRandomEngine()
@@ -412,9 +412,9 @@ void ParticleManager::Draw()
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : VertexBufferViewを設定
 	//if (name == "Ring") {
-	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
 	//} else {
-		//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+		dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	//}
 
 	// 全てのパーティクルグループについて処理
@@ -431,7 +431,7 @@ void ParticleManager::Draw()
 		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
 	}
 	//DrawRing();
-	DrawCylinder();
+	//DrawCylinder();
 }
 
 void ParticleManager::DeleteParticleGroup(const std::string& name)

@@ -47,15 +47,17 @@ public:
     void Update();
     
     // 描画処理
-    void Draw();
+    void DrawRing();
+    void DrawCylinder();
+
 
     // エフェクトグループの作成
     void CreateEffectGroup(const std::string& name, const std::string textureFilrPath);
     // エフェクトグループの削除
     void DeleteEffectGroup(const std::string& name);
     // エフェクトの発生
-    void Emit(const std::string& name, const Transform& transform, uint32_t count);
-    
+    void EmitCylinder(const std::string& name, const Transform& transform, uint32_t count);
+    void EmitRing(const std::string& name, const Transform& transform, uint32_t count);
 
 
     // エフェクトの生成
@@ -98,9 +100,7 @@ private:
     void CreateRingVertex();
     void CreateCylinderVertex();
 
-    // 描画処理
-    void DrawRing();
-    void DrawCylinder();
+   
 
     // 行列
     Matrix4x4 cameraMatrix;

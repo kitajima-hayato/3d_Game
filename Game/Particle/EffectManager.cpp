@@ -51,8 +51,8 @@ void EffectManager::Update()
 	uvOffset.y += uvScrollSpeed.y * kDeltaTime;
 
 	// wrap (0〜1の範囲に保つ)
-	uvOffset.x = std::fmod(uvOffset.x, 1.0f);
-	uvOffset.y = std::fmod(uvOffset.y, 1.0f);
+	uvOffset.x = std::fmod(uvOffset.x, 5.0f);
+	uvOffset.y = std::fmod(uvOffset.y, 5.0f);
 	materialData->uvTransform = MakeTranslateMatrix({ uvOffset.x, uvOffset.y, 0.0f });
 
 
@@ -64,11 +64,7 @@ void EffectManager::Update()
 	UpdateEffectInstanceData();
 }
 
-void EffectManager::Draw()
-{
-	DrawRing();
-	DrawCylinder();
-}
+
 
 void EffectManager::CreateEffectGroup(const std::string& name, const std::string textureFilrPath)
 {
@@ -119,7 +115,7 @@ void EffectManager::DeleteEffectGroup(const std::string& name)
 	}
 }
 
-void EffectManager::Emit(const std::string& name, const Transform& transform, uint32_t count)
+void EffectManager::EmitCylinder(const std::string& name, const Transform& transform, uint32_t count)
 {
 	// 登録済みのエフェクトグループ名か確認
 	auto it = effectGroups.find(name);
@@ -133,17 +129,30 @@ void EffectManager::Emit(const std::string& name, const Transform& transform, ui
 	}
 }
 
+void EffectManager::EmitRing(const std::string& name, const Transform& transform, uint32_t count)
+{
+	// 登録済みのエフェクトグループ名か確認
+	auto it = effectGroups.find(name);
+	// エフェクトグループが存在することを確認
+	assert(it != effectGroups.end());
+	// 指定されたエフェクトグループにエフェクトを追加
+	EffectGroup& group = it->second;
+	for (uint32_t i = 0; i < count; ++i) {
+		EffectInstance  newEffect;
+		CreateRing(transform);
+	}
+}
+
 
 void EffectManager::CreateRing(const Transform& transform)
 {
 	EffectInstance effect;
-	effect.transform.scale = { 1.0f, 1.0f, 1.0f };
-	effect.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	effect.transform.scale = transform.scale;
+	effect.transform.rotate = transform.rotate;
 	effect.transform.translate = transform.translate;
 	effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	effect.lifeTime = 1.0f;
 	effect.currentTime = 0.0f;
-	effect.isActive = true;
 
 	ringEffects.push_back(effect);
 }
@@ -151,8 +160,8 @@ void EffectManager::CreateRing(const Transform& transform)
 void EffectManager::CreateCylinder(const Transform& transform)
 {
 	EffectInstance effect;
-	effect.transform.scale = { 1.0f, 1.0f, 1.0f };
-	effect.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	effect.transform.scale = transform.scale;
+	effect.transform.rotate = transform.rotate;
 	effect.transform.translate = transform.translate;
 	effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	effect.lifeTime = 1.0f;
@@ -178,6 +187,7 @@ void EffectManager::CreateRingVertex()
 		float sin1 = std::sin(angle1);
 		float cos1 = std::cos(angle1);
 
+		// 外側・内側の各点
 		Vector4 outer0 = { sin0 * kOuterRadius, cos0 * kOuterRadius, 0.0f, 1.0f };
 		Vector4 outer1 = { sin1 * kOuterRadius, cos1 * kOuterRadius, 0.0f, 1.0f };
 		Vector4 inner0 = { sin0 * kInnerRadius, cos0 * kInnerRadius, 0.0f, 1.0f };
@@ -190,24 +200,53 @@ void EffectManager::CreateRingVertex()
 
 		Vector3 normal = { 0.0f, 0.0f, 1.0f };
 
+		// 三角形 1（outer0, outer1, inner0）
 		vertices.push_back({ outer0, uvOuter0, normal });
 		vertices.push_back({ outer1, uvOuter1, normal });
 		vertices.push_back({ inner0, uvInner0, normal });
 
+		// 三角形 2（inner0, outer1, inner1）
 		vertices.push_back({ inner0, uvInner0, normal });
 		vertices.push_back({ outer1, uvOuter1, normal });
 		vertices.push_back({ inner1, uvInner1, normal });
 	}
 
+	// 頂点バッファの作成
 	size_t vertexSize = sizeof(VertexData) * vertices.size();
-	ringVertexBuffer = dxCommon->CreateBufferResource(vertexSize);
-	ringVertexBufferView.BufferLocation = ringVertexBuffer->GetGPUVirtualAddress();
-	ringVertexBufferView.SizeInBytes = UINT(vertexSize);
-	ringVertexBufferView.StrideInBytes = sizeof(VertexData);
 
-	VertexData* vertexData = nullptr;
-	ringVertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-	memcpy(vertexData, vertices.data(), vertexSize);
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
+	D3D12_HEAP_PROPERTIES heapProp{};
+	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resourceDesc.Width = vertexSize;
+	resourceDesc.Height = 1;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+	dxCommon->GetDevice()->CreateCommittedResource(
+		&heapProp,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&vertexBuffer));
+
+	VertexData* mapData = nullptr;
+	vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mapData));
+	memcpy(mapData, vertices.data(), vertexSize);
+	vertexBuffer->Unmap(0, nullptr);
+
+	D3D12_VERTEX_BUFFER_VIEW vbView{};
+	vbView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+	vbView.SizeInBytes = static_cast<UINT>(vertexSize);
+	vbView.StrideInBytes = sizeof(VertexData);
+
+	ringVertexBuffer = vertexBuffer;
+	ringVertexBufferView = vbView;
 	ringVertexCount = static_cast<uint32_t>(vertices.size());
 }
 
@@ -296,26 +335,32 @@ void EffectManager::CreateCylinderVertex()
 }
 
 void EffectManager::DrawRing()
-{
-	// リングエフェクトの描画処理を実装
-	// TODO: パイプラインステートの設定や描画コマンドの発行
-
+{	
 	// コマンド : ルートシグネチャを設定
 	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	// コマンド : パイプラインステートオブジェクトを設定
 	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
 	// コマンド : プリミティブトロポジ(描画形状)を設定
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// コマンド : VertexBufferViewを設定
+	// コマンド : Ring用のVertexBufferViewを設定
 	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
+	// コマンド : マテリアルリソースを設定
+	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
+	for (auto& [name, effectGroup] : effectGroups) {
+		// インスタンシングデータの更新
+		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
+
+		// テクスチャSRV index = 0(仮)
+		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
+		// 頂点データの描画
+		dxCommon->GetCommandList()->DrawInstanced(ringVertexCount, 1, 0, 0);
+	}
 }
 
 void EffectManager::DrawCylinder()
 {
-	// シリンダーエフェクトの描画処理を実装
-	// TODO: パイプラインステートの設定や描画コマンドの発行
-
 	// コマンド : ルートシグネチャを設定
 	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	// コマンド : パイプラインステートオブジェクトを設定
@@ -339,8 +384,6 @@ void EffectManager::DrawCylinder()
 	}
 
 
-
-
 }
 
 #pragma region 内部処理 / 初期化
@@ -350,7 +393,6 @@ void EffectManager::CreatePipeline()
 	CreateRootSignature();
 	// グラフィックスパイプラインの設定
 	SetGraphicsPipeline();
-
 }
 
 void EffectManager::CreateRootSignature()
@@ -363,7 +405,6 @@ void EffectManager::CreateRootSignature()
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// 1. RootSignatureの作成
-
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	// RootParameter作成。複数設定できるので配列。
@@ -413,7 +454,6 @@ void EffectManager::CreateRootSignature()
 		assert(false);
 	}
 	// バイナリを元に生成
-
 	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
 		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
@@ -576,7 +616,22 @@ void EffectManager::UpdateEffectInstanceData()
 
 			++group.kNumInstance;
 		}
+		for (const auto& effect : ringEffects) {
+			if (group.kNumInstance >= kMaxEffectCount) break;
+
+			Matrix4x4 world = MakeAffineMatrix(effect.transform.scale, effect.transform.rotate, effect.transform.translate);
+			Matrix4x4 wvp = Multiply(world, camera->GetViewProjectionMatrix());
+
+			group.instancingData[group.kNumInstance].WVP = wvp;
+			group.instancingData[group.kNumInstance].World = world;
+			group.instancingData[group.kNumInstance].color = effect.color;
+
+			++group.kNumInstance;
+		}
 	}
+	
+		
+	
 }
 
 

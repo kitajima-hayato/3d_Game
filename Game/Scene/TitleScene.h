@@ -51,7 +51,7 @@ private:
 
 	// effect
 	std::unique_ptr<EffectEmitter>effectEmitter;
-
+	std::unique_ptr<EffectEmitter>cylinder;
 
 private: // ゲーム要素
 	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
@@ -59,5 +59,8 @@ private: // ゲーム要素
 	Vector3 emitterTranslate = { 0.0f, 0.0f, 10.0f };
 
 	Transform effectTransform;
+
+	
+	Transform cylinderTransform;
 };
 

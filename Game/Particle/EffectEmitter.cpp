@@ -10,10 +10,16 @@ EffectEmitter::~EffectEmitter()
 
 void EffectEmitter::Update()
 {
-	Emit();
+	EmitCylinder();
+	//EmitRing();
 }
 
-void EffectEmitter::Emit() 
+void EffectEmitter::EmitCylinder() 
 {
-	EffectManager::GetInstance()->Emit(effectName, emitter.transform, 1);
+	EffectManager::GetInstance()->EmitCylinder(effectName, emitter.transform, 1);
+}
+
+void EffectEmitter::EmitRing()
+{
+	EffectManager::GetInstance()->EmitRing(effectName, emitter.transform, 1);
 }

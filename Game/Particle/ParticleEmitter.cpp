@@ -36,6 +36,6 @@ void ParticleEmitter::Update()
 void ParticleEmitter::Emit()
 {
     // パーティクルを発生させる
-    //ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
-    ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
+    ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+    //ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
 }
