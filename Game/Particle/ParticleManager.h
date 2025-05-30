@@ -10,22 +10,7 @@
 class ParticleManager
 {
 public:
-	enum BlendMode {
-		//!< ブレンド無し
-		kBlendModeNone,
-		//!< 通常αブレンド デフォルト src * srcA + Dest * ( 1 - srcA )
-		kBelendModeNormal,
-		//!< 加算 src * srcA + Dest * 1;
-		kBlendModeAdd,
-		//!< 減算 Dest * 1 - src * srcA 
-		kBlendModeSubtract,
-		//!< 乗算 src * 0 + Dest * src
-		kBlendModeMultiply,
-		//!< スクリーン src * ( 1 - Dest )+ Dest * 1
-		kBlendModeScreen,
-		//!< 利用してはいけない
-		kCountOfBlendMode,
-	};
+	
 	// パーティクル構造体
 	struct ParticleGroup {		// パーティクルグループ // 使用するテクスチャごとにパーティクルグループとしてまとめる
 		MaterialData materialData;			// マテリアルデータ					
@@ -46,9 +31,8 @@ private:
 	ParticleManager(ParticleManager&) = delete;
 	ParticleManager& operator=(ParticleManager&) = delete;
 
-public:
-	// パーティクルの初期化
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
+
+
 	// ランダムエンジンの初期化 / 初期化処理内部
 	void InitializeRandomEngine();
 	// パイプラインの生成 / 初期化処理内部
@@ -65,6 +49,12 @@ public:
 	void CreateVertexBufferView();
 	// マテリアルの初期化 / 初期化処理内部
 	void InitializeMaterial();
+
+
+public:
+	// パーティクルの初期化
+	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
+	
 
 	// パーティクルグループの作成
 	void CreateParticleGroup(const std::string& name, const std::string textureFilrPath);
@@ -94,7 +84,7 @@ public:
 	Particle MakeParticle(std::mt19937& randomEngine, const Vector3& position);
 
 	// PrimitiveParticle
-	Particle MakePrimitiveParticle(std::mt19937& randomEngine, const Vector3& translate);
+	Particle MakePrimitiveEffect(std::mt19937& randomEngine, const Vector3& translate);
 	// リングエフェクト
 	Particle MakeRingEffect(const Vector3& position);
 	// Cylinderエフェクト
@@ -156,11 +146,9 @@ private:
 	static const int kMaxParticle = 1000;
 
 	// 頂点バッファ
-	//Microsoft::WRL::ComPtr<ID3D12Resource> instanceingResource = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource = nullptr;
 
 	// パーティクルデータ
-	//ParticleForGPU* instancingData = nullptr;
 	// パーティクルのモデルデータ
 	ModelData modelData;
 	// バッファービュー

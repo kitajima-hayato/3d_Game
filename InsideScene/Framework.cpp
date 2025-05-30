@@ -44,7 +44,8 @@ void Framework::Initialize()
 
 	// パーティクル
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
-
+	// エフェクト
+	EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 
 #pragma endregion
 }
@@ -64,7 +65,7 @@ void Framework::Update()
 	Input::GetInstance()->Update();
 
 	ParticleManager::GetInstance()->Update();
-
+	EffectManager::GetInstance()->Update();
 
 	// ESCキーで終了
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
@@ -87,6 +88,7 @@ void Framework::Finalize()
 	TextureManager::GetInstance()->DeleteInstance();
 	ModelManager::GetInstance()->Finalize();
 	ParticleManager::GetInstance()->DeleteInstance();
+	EffectManager::GetInstance()->DeleteInstance();
 
 }
 
