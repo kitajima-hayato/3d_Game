@@ -1,5 +1,7 @@
 #include "Object3DCommon.h"
 #include "Logger.h"
+Object3DCommon* Object3DCommon::instance = nullptr;
+
 
 void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 {
@@ -163,4 +165,18 @@ void Object3DCommon::CreateGraficsPipeLine()
 	assert(SUCCEEDED(hr));
 #pragma endregion
 
+}
+
+
+
+Object3DCommon* Object3DCommon::GetInstance() {
+	if (instance == nullptr) {
+		instance = new Object3DCommon();
+	}
+	return instance;
+}
+
+void Object3DCommon::DeleteInstance() {
+	delete instance;
+	instance = nullptr;
 }

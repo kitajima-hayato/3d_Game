@@ -29,8 +29,8 @@ void Framework::Initialize()
 	// 3Dモデルマネージャの初期化
 	ModelManager::GetInstance()->Initialize(dxCommon.get());
 	// 3Dオブジェクト共通部の初期化
-	object3DCommon = make_unique<Object3DCommon>();
-	object3DCommon->Initialize(dxCommon.get());
+	Object3DCommon::GetInstance()->Initialize(dxCommon.get());
+
 
 	// モデル共通部の初期化
 	modelCommon = make_unique<ModelCommon>();
@@ -40,7 +40,7 @@ void Framework::Initialize()
 	camera = make_unique<Camera>();
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
-	object3DCommon->SetDefaultCamera(camera.get());
+	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// パーティクル
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());

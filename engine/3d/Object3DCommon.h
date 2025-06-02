@@ -46,5 +46,18 @@ private:	// メンバ変数
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
 	// 入力要素の定義配列を初期化
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+
+public:
+	static Object3DCommon* GetInstance();
+	static void DeleteInstance();
+
+private:
+	Object3DCommon() = default;
+	~Object3DCommon() = default;
+
+	Object3DCommon(const Object3DCommon&) = delete;
+	Object3DCommon& operator=(const Object3DCommon&) = delete;
+
+	static Object3DCommon* instance;
 };
 
