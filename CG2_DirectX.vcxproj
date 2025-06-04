@@ -138,7 +138,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="InsideScene\SceneManager.cpp" />
     <ClCompile Include="engine\bace\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
-    <ClCompile Include="ModelList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\ModelList.h" />
@@ -174,7 +173,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="InsideScene\SceneManager.h" />
     <ClInclude Include="engine\bace\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
-    <ClInclude Include="ModelList.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
