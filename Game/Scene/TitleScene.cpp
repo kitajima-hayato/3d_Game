@@ -34,7 +34,9 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	particleEmitter->SetParticleName("Particle");
 
 	object3D = make_unique<Object3D>();
-	//object3D->Initialize()
+	object3D->Initialize();
+	object3D->SetModel("resources/cube.obj");
+
 
 
 
