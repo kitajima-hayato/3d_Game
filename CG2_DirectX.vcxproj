@@ -105,6 +105,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Particle\EffectEmitter.cpp" />
+    <ClCompile Include="Game\Particle\EffectManager.cpp" />
     <ClCompile Include="InsideScene\AbstractSceneFactory.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="InsideScene\BaseScene.cpp" />
@@ -135,8 +137,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="InsideScene\SceneManager.cpp" />
     <ClCompile Include="engine\bace\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
+    <ClCompile Include="ModelList.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Particle\EffectEmitter.h" />
+    <ClInclude Include="Game\Particle\EffectManager.h" />
     <ClInclude Include="InsideScene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="InsideScene\BaseScene.h" />
@@ -167,6 +172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="InsideScene\SceneManager.h" />
     <ClInclude Include="engine\bace\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
+    <ClInclude Include="ModelList.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

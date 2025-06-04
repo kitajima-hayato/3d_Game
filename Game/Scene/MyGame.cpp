@@ -13,7 +13,7 @@ void MyGame::Initialize()
 void MyGame::Update()
 {
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
-	imGui->Begin();
+	imGui->Begin(); 
 #endif 
 	Framework::Update();
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
@@ -30,8 +30,7 @@ void MyGame::Draw()
 	srvManager->PreDraw();
 	
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-	object3DCommon->DrawSettingCommon();
-
+	Object3DCommon::GetInstance()->DrawSettingCommon();
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();

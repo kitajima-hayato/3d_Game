@@ -16,25 +16,17 @@ struct RingVertex {
 };
 
 // 3Dオブジェクト
-// 3Dオブジェクト共通部前方宣言
-class Object3DCommon;
 class Object3D
 {
 
 public:	// メンバ関数
 	// 初期化
-	void Initialize(Object3DCommon* obj3dCommon);
+	void Initialize();
 	// 更新
 	void Update();
 	// 描画
 	void Draw();
-#pragma region リングエフェクト関連関数群
-	// リングの頂点作成
-	void CreateRingMesh(uint32_t divide, float outerRadius, float innnerRadius);
 
-	// サンプラーステートの設定
-	static const D3D12_STATIC_SAMPLER_DESC staticSampler[];
-#pragma endregion
 public:	// Getter/Setter
 	void SetCamera(Camera* camera) { this->camera = camera; }
 
@@ -57,8 +49,6 @@ private: // メンバ関数
 private:// メンバ変数
 	// カメラ
 	Camera* camera = nullptr;
-	// 3Dオブジェクト共通部
-	Object3DCommon* object3DCommon = nullptr;
 	// モデルデータ
 	Model* model = nullptr;
 	// バッファリソース / 座標変換行列リソース

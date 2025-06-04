@@ -6,6 +6,9 @@
 #include "InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/EffectManager.h"
+#include "Game/Particle/EffectEmitter.h"
+
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -46,13 +49,18 @@ private:
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;
 
+	// effect
+	std::unique_ptr<EffectEmitter>effectEmitter;
+	std::unique_ptr<EffectEmitter>cylinder;
 
 private: // ゲーム要素
-	// TitleScene.h
 	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
 	Vector3 emitterRotate = { 0.0f, 0.0f, 0.0f };
 	Vector3 emitterTranslate = { 0.0f, 0.0f, 10.0f };
 
+	Transform effectTransform;
 
+	
+	Transform cylinderTransform;
 };
 
