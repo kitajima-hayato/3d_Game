@@ -34,7 +34,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	particleEmitter->SetParticleName("Particle");
 
-	ModelManager::GetInstance()->LoadModel("plane.obj");
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
 	object3D->SetModel("plane.obj");

@@ -63,6 +63,7 @@ public:
 private:
 	// リークチェッカー
 	D3DResourceLeakChecker leakCheck;
+
 	
 
 	
