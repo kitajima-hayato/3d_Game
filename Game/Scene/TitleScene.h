@@ -9,7 +9,6 @@
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
 
-
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif

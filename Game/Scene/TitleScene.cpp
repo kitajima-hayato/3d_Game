@@ -2,6 +2,7 @@
 #include "TitleScene.h"
 #include "Input.h"
 #include "Object3D.h"
+#include "engine/3d/ModelManager.h"
 TitleScene::TitleScene()
 {
 
@@ -33,14 +34,16 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	particleEmitter->SetParticleName("Particle");
 
+	ModelManager::GetInstance()->LoadModel("plane.obj");
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
-	object3D->SetModel("resources/cube.obj");
+	object3D->SetModel("plane.obj");
+	object3D->SetTranslate(Vector3(0.0f, 0.0f, 30.0f));
+	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
 
-
-
-
+	
+#pragma region 演出
 	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
 	effectEmitter = make_unique<EffectEmitter>();
 
@@ -64,12 +67,14 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	};
 	cylinder->SetTransform(cylinderTransform);
 	cylinder->SetEffectName("Cylinder");
+#pragma endregion
 
 }
 
 void TitleScene::Update()
 {
 	sprite_->Update();
+	object3D->Update();
 
 	particleEmitter->SetTransform({
 	emitterScale,
@@ -99,19 +104,21 @@ void TitleScene::Draw()
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
 	//sprite_->Draw();
-
+	object3D->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
 
-	EffectManager::GetInstance()->DrawRing();
-	EffectManager::GetInstance()->DrawCylinder();
+	//EffectManager::GetInstance()->DrawRing();
+	//EffectManager::GetInstance()->DrawCylinder();
 
 	//EffectManager::GetInstance()->DrawCylinder();
 }
 
 void TitleScene::Finalize()
 {
+
+
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
 	ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
