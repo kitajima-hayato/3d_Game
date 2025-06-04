@@ -28,7 +28,7 @@
 #endif
 #include "GamePlayScene.h"
 #include "TitleScene.h"
-
+#include "Game/Application/ModelList.h"
 // ゲーム全体 : フレームワーククラス継承
 class MyGame :public Framework
 {
@@ -45,6 +45,8 @@ public:	// メンバ関数
 
 private:	// メンバ変数
 	
+	// 読み込むモデルのリスト
 
+	std::unique_ptr<ModelList> modelList;
 };
 

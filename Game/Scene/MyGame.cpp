@@ -8,6 +8,9 @@ void MyGame::Initialize()
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 	// シーンmanagerに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
+
+	modelList = make_unique<ModelList>();
+	modelList->LoadAllModel();
 }
 
 void MyGame::Update()

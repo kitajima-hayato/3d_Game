@@ -47,7 +47,6 @@ void Framework::Initialize()
 	// エフェクト
 	EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 
-#pragma endregion
 }
 
 void Framework::Update()
