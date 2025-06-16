@@ -40,8 +40,9 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetTranslate(Vector3(0.0f, 0.0f, 30.0f));
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
-
-	
+	levelData = std::make_unique<LevelLoader>();
+	levelData->Load("stage2");
+	levelData->CreateObject();
 #pragma region 演出
 	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
 	effectEmitter = make_unique<EffectEmitter>();
@@ -72,8 +73,8 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	sprite_->Update();
-	object3D->Update();
+	//sprite_->Update();
+	//object3D->Update();
 
 	particleEmitter->SetTransform({
 	emitterScale,
@@ -88,7 +89,7 @@ void TitleScene::Update()
 	effectEmitter->EmitCylinder();
 	cylinder->EmitRing();
 
-
+	levelData->Update();
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -103,7 +104,7 @@ void TitleScene::Draw()
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
 	//sprite_->Draw();
-	object3D->Draw();
+	//object3D->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
@@ -112,6 +113,8 @@ void TitleScene::Draw()
 	//EffectManager::GetInstance()->DrawCylinder();
 
 	//EffectManager::GetInstance()->DrawCylinder();
+
+	levelData->Draw();
 }
 
 void TitleScene::Finalize()

@@ -43,6 +43,30 @@ void Object3D::Draw() {
 
 }
 
+void Object3D::Create(Model* model)
+{
+	assert(model); // モデルがnullptrでないことを確認
+
+	this->model = model;
+
+	// カメラを取得（すでに初期化されているなら不要かもしれません）
+	this->camera = Object3DCommon::GetInstance()->GetDefaultCamera();
+
+	// 変換行列バッファを生成
+	CreateTransformationMatrixData();
+
+	// 光源バッファを生成
+	CreateDirectionalLightResource();
+
+	// 初期Transform
+	transform = {
+		{ 1.0f, 1.0f, 1.0f },   // scale
+		{ 0.0f, 0.0f, 0.0f },   // rotate
+		{ 0.0f, 0.0f, 0.0f }    // translate
+	};
+}
+
+
 
 void Object3D::SetModel(const std::string& filePath)
 {
