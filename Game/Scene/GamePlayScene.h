@@ -25,5 +25,7 @@ private:
 	// サウンドデータ
 	SoundData soundData;
 	IXAudio2* xaudio2_;
+
+
 };
 
