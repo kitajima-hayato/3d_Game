@@ -6,26 +6,26 @@ class Block
 
 public:
 	/// <summary>
-	/// ‰Šú‰»ˆ—
+	/// åˆæœŸåŒ–å‡¦ç†
 	/// </summary>
 	void Initialize(BlockType blockType,Vector3 position);
 
 	/// <summary>
-	/// XVˆ—
+	/// æ›´æ–°å‡¦ç†
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// •`‰æˆ—
+	/// æç”»å‡¦ç†
 	/// </summary>
 	void Draw();
 
 private:
-	/// ƒuƒƒbƒNƒ‚ƒfƒ‹
+	/// ãƒ–ãƒ­ãƒƒã‚¯ãƒ¢ãƒ‡ãƒ«
 	std::unique_ptr<Object3D> blockModel;
-	/// ƒuƒƒbƒN‚ÌˆÊ’u
+	/// ãƒ–ãƒ­ãƒƒã‚¯ã®ä½ç½®
 	Transform transform;
-	/// •\¦‚·‚éƒuƒƒbƒN‚Ìí—Ş
+	/// è¡¨ç¤ºã™ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã®ç¨®é¡
 	BlockType blockType;
 };
 

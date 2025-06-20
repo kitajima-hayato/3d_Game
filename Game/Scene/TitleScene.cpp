@@ -37,11 +37,13 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
 	object3D->SetModel("plane.obj");
-	object3D->SetTranslate(Vector3(0.0f, 0.0f, 30.0f));
+	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
+	speed = object3D->GetTranslate();
 
 
-	
+
+
 #pragma region 演出
 	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
 	effectEmitter = make_unique<EffectEmitter>();
@@ -82,6 +84,18 @@ void TitleScene::Update()
 		});
 	DrawImgui();
 
+
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		// 
+		isStart = !isStart;
+	}
+
+	if (isStart) {
+		// object3dをひっだりから右に
+		speed.x += 0.07f;
+		object3D->SetTranslate(speed);
+
+	}
 
 	//particleEmitter->Update();
 
@@ -164,7 +178,7 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("Rotate", &effectTransform.rotate.x, 0.1f);
 	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f);
 	effectEmitter->SetTransform(effectTransform);
-	
+
 	ImGui::Text("asdf");
 	ImGui::DragFloat3("CylinderScale", &cylinderTransform.scale.x, 0.1f);
 	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);

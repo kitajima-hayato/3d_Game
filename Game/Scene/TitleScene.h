@@ -47,6 +47,9 @@ private:
 
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;
+	// 背景
+	std::unique_ptr<Object3D> backgroundObject;
+
 
 	// effect
 	std::unique_ptr<EffectEmitter>effectEmitter;
@@ -61,5 +64,10 @@ private: // ゲーム要素
 
 	
 	Transform cylinderTransform;
+
+	Vector3 speed = { 0.0f,0.0f,0.0f };
+
+
+	bool isStart = false;
 };
 

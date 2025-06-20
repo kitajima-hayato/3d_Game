@@ -1,8 +1,7 @@
 #include "Block.h"
 #include "engine/3d/ModelManager.h"
 
-void Block::Initialize(BlockType blockType, Vector3 position)
-{
+void Block::Initialize(BlockType blockType, Vector3 position){
 	/// モデルの初期化
 	blockModel = std::make_unique<Object3D>();
 	blockModel->Initialize();

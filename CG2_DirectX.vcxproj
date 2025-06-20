@@ -145,9 +145,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Application\BlockType.h" />
     <ClInclude Include="Game\Application\CsvLoader.h" />
     <ClInclude Include="Game\Application\Block.h" />
-    <ClInclude Include="Game\Application\BlockType.h" />
     <ClInclude Include="Game\Application\ModelList.h" />
     <ClInclude Include="Game\Particle\EffectEmitter.h" />
     <ClInclude Include="Game\Particle\EffectManager.h" />
