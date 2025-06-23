@@ -18,7 +18,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 	// マルチスレッドでの読み込み
-	std::thread th1(&TitleScene::LoadAudio, this);
+	std::thread th1(&TitleScene::LoadAudio, this); 
 	std::thread th2(&TitleScene::LoadSprite, this);
 
 	th1.join();
