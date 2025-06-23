@@ -8,13 +8,17 @@ void Model::Initialize(ModelCommon* modelCommon, const string& directorypath, co
 	// ModelCommonのポインタを引数からメンバ変数に記録
 	this->modelCommon = modelCommon;
 	// モデル読み込み
-	//LoadMaterialTempLateFile("resources", "plane.obj");
 	modelData = LoadObjFile(directorypath, filename);
 	// 頂点データの初期化
 	CreateVertexResourceData();
 	// マテリアルの初期化
 	CreateMaterialResource();
 	// テクスチャ読み込み
+	//テクスチャが指定されていない場合は、デフォルトのテクスチャを使用する
+	if(modelData.material.textureFilePath.empty()) {
+		// デフォルトのテクスチャを使用する
+		modelData.material.textureFilePath = "Resources/texture/default.png";
+	}
 	// .objの参照しているテクスチャファイル読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
 	// 読み込んだテクスチャのインデックスを取得

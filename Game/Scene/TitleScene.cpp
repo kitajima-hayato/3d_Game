@@ -36,13 +36,15 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
-	object3D->SetModel("plane.obj");
-	object3D->SetTranslate(Vector3(0.0f, 0.0f, 30.0f));
+	object3D->SetModel("cubeR.obj");
+	object3D->SetTranslate(Vector3(0.0f, 0.0f, 10.0f));
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
 	levelData = std::make_unique<LevelLoader>();
-	levelData->Load("stage2");
+	levelData->Load("stage4");
 	levelData->CreateObject();
+
+
 #pragma region 演出
 	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
 	effectEmitter = make_unique<EffectEmitter>();
@@ -74,7 +76,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 void TitleScene::Update()
 {
 	//sprite_->Update();
-	//object3D->Update();
+	object3D->Update();
 
 	particleEmitter->SetTransform({
 	emitterScale,
@@ -105,6 +107,7 @@ void TitleScene::Draw()
 
 	//sprite_->Draw();
 	//object3D->Draw();
+	levelData->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
@@ -114,7 +117,7 @@ void TitleScene::Draw()
 
 	//EffectManager::GetInstance()->DrawCylinder();
 
-	levelData->Draw();
+	
 }
 
 void TitleScene::Finalize()

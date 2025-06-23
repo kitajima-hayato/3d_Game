@@ -4,6 +4,7 @@ void ModelList::LoadAllModel()
 {
 	/// LoadModelList
 	ModelManager::GetInstance()->LoadModel("cubeR.obj");
+	ModelManager::GetInstance()->LoadModel("Cube.obj");
 
 
 	/// TitleScene

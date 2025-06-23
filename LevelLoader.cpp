@@ -1,10 +1,12 @@
 #include "LevelLoader.h"
 #include "ImguiManager.h"
+#include "ModelManager.h"
 void LevelLoader::Load(const std::string& fileName)
 {
 	const std::string kDefaultBaseDirectory = "resources/levels/stage/";
 	const std::string kExtension = ".json";
 	const std::string fullPath = kDefaultBaseDirectory + fileName + kExtension;
+	const std::string objPath = ".obj";
 
 	/// ファイルストリーム
 	std::ifstream file;
@@ -21,7 +23,7 @@ void LevelLoader::Load(const std::string& fileName)
 	nlohmann::json deserialized;
 	/// パース(解凍)
 	file >> deserialized;
-	
+
 	/// 正しいレベルデータファイルか確認
 	assert(deserialized.is_object());
 	assert(deserialized.contains("name"));
@@ -51,10 +53,9 @@ void LevelLoader::Load(const std::string& fileName)
 			/// 追加した要素の参照を得る
 			LevelLoader::ObjectData& objectData = levelData->objects.back();
 
-			if (object.contains("file_name")) {
-				objectData.fileName = object["file_name"];
-			} else if (object.contains("name")) {
-				objectData.fileName = object["name"]; 
+			if (object.contains("name")) {
+				objectData.fileName = object["name"];
+				objectData.fileName += ".obj"; // ファイル名に拡張子を追加
 			}
 
 
@@ -73,7 +74,7 @@ void LevelLoader::Load(const std::string& fileName)
 			objectData.transform.scale.y = (float)transform["scaling"][2];
 			objectData.transform.scale.z = (float)transform["scaling"][1];
 
-
+			
 		}
 
 
@@ -88,21 +89,11 @@ void LevelLoader::CreateObject()
 {
 	// オブジェクトの生成、配置
 	for (auto& objectData : levelData->objects) {
-		// ファイル名から登録済みのモデルを検索
-		auto it = models.find(objectData.fileName);
-		if (it == models.end()) {
-			// モデルが見つからなければスキップ
-			continue;
-		}
-
-		Model* model = it->second;
-
 		// モデルを指定して3Dオブジェクトを生成
 		std::unique_ptr<Object3D> newObject = std::make_unique<Object3D>();
 		newObject->Initialize();
-		newObject->SetModel(model);
+		newObject->SetModel(objectData.fileName);
 		newObject->SetTransform(objectData.transform);
-
 		// 登録
 		objects.push_back(std::move(newObject));
 	}
@@ -112,11 +103,33 @@ void LevelLoader::CreateObject()
 
 void LevelLoader::Update()
 {
-	/// オブジェクトの更新
 	for (auto& object : objects) {
-		object->Update();
+		if (object) {
+			// ImGuiで座標変更UIを表示
+			ImGui::Begin("Object Transform");
+
+			Vector3 pos = object->GetTranslate();
+			if (ImGui::DragFloat3("Position", &pos.x, 0.1f)) {
+				object->SetTranslate(pos);
+			}
+
+			Vector3 rot = object->GetRotate();
+			if (ImGui::DragFloat3("Rotation", &rot.x, 0.1f)) {
+				object->SetRotate(rot);
+			}
+
+			Vector3 scale = object->GetScale();
+			if (ImGui::DragFloat3("Scale", &scale.x, 0.1f)) {
+				object->SetScale(scale);
+			}
+
+			ImGui::End();
+
+			object->Update();
+		}
 	}
 }
+
 
 void LevelLoader::Draw()
 {
