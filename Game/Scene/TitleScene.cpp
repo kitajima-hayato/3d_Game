@@ -18,7 +18,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 	// マルチスレッドでの読み込み
-	std::thread th1(&TitleScene::LoadAudio, this);
+	std::thread th1(&TitleScene::LoadAudio, this); 
 	std::thread th2(&TitleScene::LoadSprite, this);
 
 	th1.join();
@@ -36,12 +36,15 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
-	object3D->SetModel("plane.obj");
-	object3D->SetTranslate(Vector3(0.0f, 0.0f, 30.0f));
+	object3D->SetModel("cubeR.obj");
+	object3D->SetTranslate(Vector3(0.0f, 0.0f, 10.0f));
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
+	levelData = std::make_unique<LevelLoader>();
+	levelData->Load("stage4");
+	levelData->CreateObject();
 
-	
+
 #pragma region 演出
 	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
 	effectEmitter = make_unique<EffectEmitter>();
@@ -72,7 +75,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	sprite_->Update();
+	//sprite_->Update();
 	object3D->Update();
 
 	particleEmitter->SetTransform({
@@ -88,7 +91,7 @@ void TitleScene::Update()
 	effectEmitter->EmitCylinder();
 	cylinder->EmitRing();
 
-
+	levelData->Update();
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -103,7 +106,8 @@ void TitleScene::Draw()
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
 	//sprite_->Draw();
-	object3D->Draw();
+	//object3D->Draw();
+	levelData->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
@@ -112,6 +116,8 @@ void TitleScene::Draw()
 	//EffectManager::GetInstance()->DrawCylinder();
 
 	//EffectManager::GetInstance()->DrawCylinder();
+
+	
 }
 
 void TitleScene::Finalize()

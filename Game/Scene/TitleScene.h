@@ -8,7 +8,7 @@
 #include "Game/Particle/ParticleEmitter.h"
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
-
+#include "LevelLoader.h"
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif
@@ -61,5 +61,8 @@ private: // ゲーム要素
 
 	
 	Transform cylinderTransform;
+
+	/// levelloader
+	std::unique_ptr<LevelLoader>levelData;
 };
 

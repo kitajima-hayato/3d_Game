@@ -26,6 +26,12 @@ public:	// メンバ関数
 	void Update();
 	// 描画
 	void Draw();
+	
+
+/// <summary>
+///  レベルローダーモデル生成
+/// </summary>
+	void Create(Model* model);
 
 public:	// Getter/Setter
 	void SetCamera(Camera* camera) { this->camera = camera; }
@@ -35,10 +41,12 @@ public:	// Getter/Setter
 	void SetScale(const Vector3& scale) { transform.scale = scale; }
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
+	void SetTransform(const Transform& transform) { this->transform = transform; }
 
 	const Vector3 GetScale()const { return transform.scale; }
 	const Vector3 GetRotate()const { return transform.rotate; }
 	const Vector3 GetTranslate()const { return transform.translate; }
+	const Transform& GetTransform()const { return transform; }
 private: // メンバ関数
 	// 座標変換行列リソースの作成
 	void CreateTransformationMatrixData();
