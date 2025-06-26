@@ -2,6 +2,9 @@
 #include "Audio.h"
 #include "SpriteCommon.h"
 #include "InsideScene/BaseScene.h"
+#include "engine/math/MyMath.h"
+class Map;
+class Camera;
 class GamePlayScene :public BaseScene
 {
 public:
@@ -17,9 +20,10 @@ public:
 	void Finalize()override;
 
 private:
-	// ゲームオブジェクト
-	// 3Dオブジェクト
-	// シーン遷移
+	
+
+	// 
+	std::unique_ptr<Map> map;
 
 	// オーディオ
 	// サウンドデータ

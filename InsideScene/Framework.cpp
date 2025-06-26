@@ -1,5 +1,4 @@
 #include "Framework.h"
-
 void Framework::Initialize()
 {
 	//WindowsAPIの初期化
@@ -63,6 +62,8 @@ void Framework::Update()
 	SceneManager::GetInstance()->Update(dxCommon.get());
 	Input::GetInstance()->Update();
 
+	camera->Update();
+
 	ParticleManager::GetInstance()->Update();
 	EffectManager::GetInstance()->Update();
 
@@ -71,6 +72,16 @@ void Framework::Update()
 	{
 		isEndRequst = true;
 	}
+#ifdef _DEBUG
+
+	ImGui::Begin("Camera Settings");
+	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+	ImGui::End();
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+#endif 
 
 }
 

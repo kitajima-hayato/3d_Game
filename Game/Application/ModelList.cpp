@@ -7,5 +7,5 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("plane.obj");
 
 	/// GamePlayScene
-
+	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
 }

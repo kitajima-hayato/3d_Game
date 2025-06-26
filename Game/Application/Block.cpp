@@ -7,7 +7,7 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 	blockModel->Initialize();
 	switch (blockType) {
 	case BlockType::Air:
-		blockModel->SetModel("nullBlock.obj");
+	
 		break;
 	case BlockType::NormalBlock:
 		blockModel->SetModel("nullBlock.obj");

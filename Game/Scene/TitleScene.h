@@ -12,6 +12,7 @@
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif
+class Camera;
 class Object3D;
 class TitleScene :public BaseScene
 {
@@ -69,5 +70,9 @@ private: // ゲーム要素
 
 
 	bool isStart = false;
+
+	/// カメラのSRT
+	std::unique_ptr<Camera> camera;
+	Transform cameraTransform;
 };
 

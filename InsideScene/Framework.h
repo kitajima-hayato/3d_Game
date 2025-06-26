@@ -64,7 +64,7 @@ private:
 	// リークチェッカー
 	D3DResourceLeakChecker leakCheck;
 
-	
+	Transform cameraTransform;
 
 	
 };

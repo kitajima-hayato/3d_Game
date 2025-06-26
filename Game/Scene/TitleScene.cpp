@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Object3D.h"
 #include "engine/3d/ModelManager.h"
+#include "Game/Camera/camera.h"
 TitleScene::TitleScene()
 {
 
@@ -24,6 +25,12 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	th1.join();
 	th2.join();
 
+	// カメラの初期化
+	camera = make_unique<Camera>();
+	cameraTransform.translate = camera->GetTranslate();
+	cameraTransform.rotate = camera->GetRotate();
+	cameraTransform.scale = camera->GetScale();
+
 
 	// パーティクルグループを作成
 	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/uvChecker.png");
@@ -40,8 +47,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 	speed = object3D->GetTranslate();
-
-
 
 
 #pragma region 演出
@@ -74,6 +79,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
+
 	sprite_->Update();
 	object3D->Update();
 
@@ -122,7 +128,7 @@ void TitleScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
 
-	//EffectManager::GetInstance()->DrawRing();
+	EffectManager::GetInstance()->DrawRing();
 	//EffectManager::GetInstance()->DrawCylinder();
 
 	//EffectManager::GetInstance()->DrawCylinder();
@@ -171,7 +177,7 @@ void TitleScene::DrawImgui() {
 
 	//ImGui::End();
 
-	ImGui::Begin("effect");
+	/*ImGui::Begin("effect");
 
 	ImGui::Text("Transform");
 	ImGui::DragFloat3("Scale", &effectTransform.scale.x, 0.1f);
@@ -184,5 +190,5 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);
 	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
 	cylinder->SetTransform(cylinderTransform);
-	ImGui::End();
+	ImGui::End();*/
 }
