@@ -10,7 +10,7 @@ EffectEmitter::~EffectEmitter()
 
 void EffectEmitter::Update()
 {
-	EmitCylinder();
+	// EmitCylinder();
 	//EmitRing();
 }
 
