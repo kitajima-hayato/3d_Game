@@ -4,7 +4,7 @@ enum class BlockType
 {
 	Air = 0,
 	NormalBlock = 1,
-
+	testBlock = 2,
 	// 範囲検索の最終値
 	/// 検索を行う際にCountを指定することで範囲検索を可能にできる
 	Count,	

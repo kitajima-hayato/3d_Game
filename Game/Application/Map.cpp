@@ -48,7 +48,7 @@ void Map::CreateBlocksMap()
 		for (auto width = 0; width < mapWidth; ++width) {
 			/// ブロックの位置を計算
 			Transform blockTransform;
-			blockTransform.translate = { static_cast<float>(width), static_cast<float>(height), 30.0f };
+			blockTransform.translate = { static_cast<float>(width), static_cast<float>(-height), 30.0f };
 			blockTransform.rotate = { 0.0f,0.0f,0.0f };
 			blockTransform.scale = blockSize;
 			/// ブロックの種類を取得

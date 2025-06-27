@@ -8,4 +8,5 @@ void ModelList::LoadAllModel()
 
 	/// GamePlayScene
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
+	ModelManager::GetInstance()->LoadModel("memori.obj");
 }

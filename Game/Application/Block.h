@@ -59,5 +59,6 @@ private:
 	Transform transform;
 	/// 表示するブロックの種類
 	BlockType blockType;
+
 };
 
