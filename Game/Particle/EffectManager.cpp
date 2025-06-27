@@ -84,6 +84,8 @@ void EffectManager::CreateEffectGroup(const std::string& name, const std::string
 	effectGroup.materialData.textureFilePath = textureFilrPath;
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(effectGroup.materialData.textureFilePath);
+	// マテリアルデータにテクスチャのインデックスを設定
+	//effectGroup.materialData.textureIndex = TextureManager::GetInstance()->GetSrvIndex(effectGroup.materialData.textureFilePath);
 	// インスタンシング用のリソースを作成
 	effectGroup.instancingResource = dxCommon->CreateBufferResource(sizeof(ParticleForGPU) * kMaxEffectCount);
 	effectGroup.srvIndex = srvManager->Allocate();
@@ -352,7 +354,7 @@ void EffectManager::DrawRing()
 		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
 
 		// テクスチャSRV index = 0(仮)
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(effectGroup.materialData.textureIndex);
 		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
 		// 頂点データの描画
 		dxCommon->GetCommandList()->DrawInstanced(ringVertexCount, 1, 0, 0);
@@ -377,7 +379,7 @@ void EffectManager::DrawCylinder()
 		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
 		
 		// テクスチャSRV index = 0(仮)
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(effectGroup.materialData.textureIndex);
 		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
 		// 頂点データの描画
 		dxCommon->GetCommandList()->DrawInstanced(cylinderVertexCount, 1, 0, 0);

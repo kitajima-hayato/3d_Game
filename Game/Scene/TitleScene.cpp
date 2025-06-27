@@ -37,7 +37,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
-	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,50.0f }});
+	particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,20.0f }});
 
 	particleEmitter->SetParticleName("Particle");
 
@@ -129,9 +129,8 @@ void TitleScene::Draw()
 	// エフェクトの描画
 
 	EffectManager::GetInstance()->DrawRing();
-	//EffectManager::GetInstance()->DrawCylinder();
+	EffectManager::GetInstance()->DrawCylinder();
 
-	//EffectManager::GetInstance()->DrawCylinder();
 }
 
 void TitleScene::Finalize()
