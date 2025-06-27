@@ -33,13 +33,17 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/uvChecker.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
+	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
-	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,50.0f }});
-
+	particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
 	particleEmitter->SetParticleName("Particle");
+
+	particleEmitter2 = make_unique<ParticleEmitter>();
+	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
+	particleEmitter2->SetParticleName("neo");
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
@@ -50,7 +54,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 #pragma region 演出
-	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
 	effectEmitter = make_unique<EffectEmitter>();
 
 	effectTransform = effectEmitter->GetTransform();
@@ -62,7 +66,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	effectEmitter->SetTransform(effectTransform);
 	effectEmitter->SetEffectName("Ring");
 
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/monsterball.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine_flipped.png");
 	cylinder = make_unique<EffectEmitter>();
 	cylinderTransform = cylinder->GetTransform();
 
@@ -94,6 +98,8 @@ void TitleScene::Update()
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		// 
 		isStart = !isStart;
+		effectEmitter->EmitCylinder();
+		cylinder->EmitRing();
 	}
 
 	if (isStart) {
@@ -103,10 +109,10 @@ void TitleScene::Update()
 
 	}
 
-	//particleEmitter->Update();
+	particleEmitter->Update();
+	particleEmitter2->Update();
 
-	effectEmitter->EmitCylinder();
-	cylinder->EmitRing();
+	
 
 
 
@@ -126,12 +132,13 @@ void TitleScene::Draw()
 	object3D->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
+	//particleEmitter->Emit();
+	//particleEmitter2->Emit();
 	// エフェクトの描画
 
 	EffectManager::GetInstance()->DrawRing();
-	//EffectManager::GetInstance()->DrawCylinder();
+	EffectManager::GetInstance()->DrawCylinder();
 
-	//EffectManager::GetInstance()->DrawCylinder();
 }
 
 void TitleScene::Finalize()

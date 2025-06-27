@@ -45,6 +45,7 @@ private:
 
 	// パーティクルエミッター
 	std::unique_ptr<ParticleEmitter> particleEmitter;
+	std::unique_ptr<ParticleEmitter> particleEmitter2;
 
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;

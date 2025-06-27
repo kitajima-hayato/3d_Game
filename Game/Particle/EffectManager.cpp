@@ -55,11 +55,6 @@ void EffectManager::Update()
 	uvOffset.y = std::fmod(uvOffset.y, 5.0f);
 	materialData->uvTransform = MakeTranslateMatrix({ uvOffset.x, uvOffset.y, 0.0f });
 
-
-	// 各種エフェクトを共通関数で更新
-	UpdateEffectList(ringEffects, kDeltaTime);
-	UpdateEffectList(cylinderEffects, kDeltaTime);
-
 	// 更新した行列をGPUに送る
 	UpdateEffectInstanceData();
 }
@@ -84,6 +79,8 @@ void EffectManager::CreateEffectGroup(const std::string& name, const std::string
 	effectGroup.materialData.textureFilePath = textureFilrPath;
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(effectGroup.materialData.textureFilePath);
+	// マテリアルデータにテクスチャのインデックスを設定
+	effectGroup.materialData.textureIndex = TextureManager::GetInstance()->GetSrvIndex(effectGroup.materialData.textureFilePath);
 	// インスタンシング用のリソースを作成
 	effectGroup.instancingResource = dxCommon->CreateBufferResource(sizeof(ParticleForGPU) * kMaxEffectCount);
 	effectGroup.srvIndex = srvManager->Allocate();
@@ -124,8 +121,12 @@ void EffectManager::EmitCylinder(const std::string& name, const Transform& trans
 	// 指定されたエフェクトグループにエフェクトを追加
 	EffectGroup& group = it->second;
 	for (uint32_t i = 0; i < count; ++i) {
-		EffectInstance  newEffect;
-		CreateCylinder(transform);
+		EffectInstance effect;
+		effect.transform = transform;
+		effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		effect.lifeTime = 1.0f;
+		effect.currentTime = 0.0f;
+		group.cylinderEffects.push_back(effect);
 	}
 }
 
@@ -138,37 +139,17 @@ void EffectManager::EmitRing(const std::string& name, const Transform& transform
 	// 指定されたエフェクトグループにエフェクトを追加
 	EffectGroup& group = it->second;
 	for (uint32_t i = 0; i < count; ++i) {
-		EffectInstance  newEffect;
-		CreateRing(transform);
+		EffectInstance effect;
+		effect.transform = transform;
+		effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		effect.lifeTime = 1.0f;
+		effect.currentTime = 0.0f;
+		group.ringEffects.push_back(effect);
 	}
 }
 
 
-void EffectManager::CreateRing(const Transform& transform)
-{
-	EffectInstance effect;
-	effect.transform.scale = transform.scale;
-	effect.transform.rotate = transform.rotate;
-	effect.transform.translate = transform.translate;
-	effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	effect.lifeTime = 1.0f;
-	effect.currentTime = 0.0f;
 
-	ringEffects.push_back(effect);
-}
-
-void EffectManager::CreateCylinder(const Transform& transform)
-{
-	EffectInstance effect;
-	effect.transform.scale = transform.scale;
-	effect.transform.rotate = transform.rotate;
-	effect.transform.translate = transform.translate;
-	effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	effect.lifeTime = 1.0f;
-	effect.currentTime = 0.0f;
-
-	cylinderEffects.push_back(effect);
-}
 
 void EffectManager::CreateRingVertex()
 {
@@ -335,12 +316,12 @@ void EffectManager::CreateCylinderVertex()
 }
 
 void EffectManager::DrawRing()
-{	
+{
 	// コマンド : ルートシグネチャを設定
 	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 	// コマンド : パイプラインステートオブジェクトを設定
 	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
-	// コマンド : プリミティブトロポジ(描画形状)を設定
+	// コマンド : プリミティブトポロジ(描画形状)を設定
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : Ring用のVertexBufferViewを設定
 	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
@@ -348,16 +329,23 @@ void EffectManager::DrawRing()
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	for (auto& [name, effectGroup] : effectGroups) {
+		// Skip: リングエフェクトが1つもない場合
+		if (effectGroup.ringEffects.empty()) {
+			continue;
+		}
+
 		// インスタンシングデータの更新
 		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
 
-		// テクスチャSRV index = 0(仮)
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+		// テクスチャSRV
+		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(effectGroup.materialData.textureIndex);
 		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
-		// 頂点データの描画
+
+		// 頂点データの描画（正しいインスタンス数を指定）
 		dxCommon->GetCommandList()->DrawInstanced(ringVertexCount, 1, 0, 0);
 	}
 }
+
 
 void EffectManager::DrawCylinder()
 {
@@ -373,11 +361,14 @@ void EffectManager::DrawCylinder()
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	for (auto& [name, effectGroup] : effectGroups) {
+		if (effectGroup.cylinderEffects.empty()) {
+			continue;
+		}
 		// インスタンシングデータの更新
 		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
 		
 		// テクスチャSRV index = 0(仮)
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
+		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(effectGroup.materialData.textureIndex);
 		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
 		// 頂点データの描画
 		dxCommon->GetCommandList()->DrawInstanced(cylinderVertexCount, 1, 0, 0);
@@ -604,7 +595,7 @@ void EffectManager::UpdateEffectInstanceData()
 	for (auto& [name, group] : effectGroups) {
 		group.kNumInstance = 0;
 
-		for (const auto& effect : cylinderEffects) {
+		for (const auto& effect : group.cylinderEffects) {
 			if (group.kNumInstance >= kMaxEffectCount) break;
 
 			Matrix4x4 world = MakeAffineMatrix(effect.transform.scale, effect.transform.rotate, effect.transform.translate);
@@ -616,7 +607,7 @@ void EffectManager::UpdateEffectInstanceData()
 
 			++group.kNumInstance;
 		}
-		for (const auto& effect : ringEffects) {
+		for (const auto& effect : group.ringEffects) {
 			if (group.kNumInstance >= kMaxEffectCount) break;
 
 			Matrix4x4 world = MakeAffineMatrix(effect.transform.scale, effect.transform.rotate, effect.transform.translate);
