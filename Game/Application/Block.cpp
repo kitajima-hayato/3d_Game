@@ -14,7 +14,7 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 		blockModel->SetModel("nullBlock.obj");
 		break;
 	case BlockType::testBlock:
-		blockModel->SetModel("memori.obj");
+		blockModel->SetModel("XYZLabel.obj");
 		break;
 	default:
 		blockModel->SetModel("nullBlock.obj");
