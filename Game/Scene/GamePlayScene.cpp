@@ -2,6 +2,7 @@
 #include "Game/Application/Map.h"
 #include "engine/bace/ImGuiManager.h"
 #include "Game/Camera/camera.h"
+#include "Game/Application/Player.h"
 GamePlayScene::GamePlayScene()
 {
 }
@@ -26,13 +27,19 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	map->Initialize("TestStage.csv");
 
 
+	/// プレイヤーの初期化
+	player = std::make_unique<Player>();
+	player->Initialize();
+
 }
 
 
 void GamePlayScene::Update()
 {
-
+	/// マップの更新
 	map->Update();
+	/// プレイヤーの更新
+	player->Update();
 }
 
 void GamePlayScene::Draw()
@@ -40,8 +47,10 @@ void GamePlayScene::Draw()
 	///Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
-	// マップ
+	/// マップの描画
 	map->Draw();
+	/// プレイヤーの描画
+	player->Draw();
 }
 
 void GamePlayScene::Finalize()

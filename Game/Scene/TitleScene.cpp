@@ -25,13 +25,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	th1.join();
 	th2.join();
 
-	// カメラの初期化
-	camera = make_unique<Camera>();
-	cameraTransform.translate = camera->GetTranslate();
-	cameraTransform.rotate = camera->GetRotate();
-	cameraTransform.scale = camera->GetScale();
-
-
+	
 	// パーティクルグループを作成
 	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
@@ -66,7 +60,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	effectEmitter->SetTransform(effectTransform);
 	effectEmitter->SetEffectName("Ring");
 
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine_flipped.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine.png");
 	cylinder = make_unique<EffectEmitter>();
 	cylinderTransform = cylinder->GetTransform();
 
@@ -169,7 +163,7 @@ void TitleScene::LoadSprite()
 {
 
 	sprite_ = make_unique<Sprite>();
-	sprite_->Initialize("resources/gradationLine_flipped.png");
+	sprite_->Initialize("resources/gradationLine.png");
 	sprite_->SetPosition({ 0.0f,0.0f });
 	sprite_->SetRotation(0.0f);
 }

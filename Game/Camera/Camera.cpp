@@ -20,9 +20,6 @@ void Camera::Initialize()
 
 void Camera::Update()
 {
-
-
-
 	// トランスフォームから変換行列を計算
 	worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 	// ワールドマトリックスの逆行列

@@ -143,6 +143,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Application\Map.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
     <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
+    <ClCompile Include="Game\Application\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\BlockType.h" />
@@ -184,6 +185,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Application\Map.h" />
     <ClInclude Include="Game\Application\StageType.h" />
     <ClInclude Include="Game\Scene\StageCelectScene.h" />
+    <ClInclude Include="Game\Application\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -21,5 +21,5 @@ void EffectEmitter::EmitCylinder()
 
 void EffectEmitter::EmitRing()
 {
-	EffectManager::GetInstance()->EmitRing(effectName, emitter.transform, 1);
+	EffectManager::GetInstance()->EmitRing(effectName, emitter.transform, 2);
 }

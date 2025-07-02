@@ -566,7 +566,8 @@ void EffectManager::InitializeMaterial()
 	// マテリアルデータに書き込み
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// マテリアルデータの初期化
-	materialData->color = Vector4(0.3f, 1.0f, 0.7f, 1.0f);
+	//materialData->color = Vector4(0.3f, 1.0f, 0.7f, 1.0f);
+	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialData->enableLighting = true;
 	materialData->uvTransform = MakeIdentity4x4();
 }

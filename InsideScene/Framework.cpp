@@ -30,7 +30,6 @@ void Framework::Initialize()
 	// 3Dオブジェクト共通部の初期化
 	Object3DCommon::GetInstance()->Initialize(dxCommon.get());
 
-
 	// モデル共通部の初期化
 	modelCommon = make_unique<ModelCommon>();
 	modelCommon->Initialize(dxCommon.get());
@@ -46,6 +45,9 @@ void Framework::Initialize()
 	// エフェクト
 	EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 
+	/// マップに合わせる
+	cameraTransform.translate = { 7.5f,-4.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);
 }
 
 void Framework::Update()
@@ -72,6 +74,8 @@ void Framework::Update()
 	{
 		isEndRequst = true;
 	}
+	
+	
 #ifdef _DEBUG
 
 	ImGui::Begin("Camera Settings");
@@ -79,6 +83,7 @@ void Framework::Update()
 	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
 	ImGui::End();
 	camera->SetTranslate(cameraTransform.translate);
+
 	camera->SetRotate(cameraTransform.rotate);
 
 #endif 

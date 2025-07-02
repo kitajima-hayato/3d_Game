@@ -34,6 +34,7 @@ void Map::CreateBlocksMap()
 	mapData = csvLoader.LoadMapInt(this->csvFilePath);
 	/// 読み込んだデータをもとにブロックを生成する
 	/// マップの大きさを取得
+	const Vector3 initPos = { 0.0f,0.0f,0.0f };
 	const Vector3 blockSize = { 1.0f,1.0f,1.0f };
 	const size_t mapHeight = mapData.size();
 	const size_t mapWidth = mapData[0].size();
@@ -48,7 +49,7 @@ void Map::CreateBlocksMap()
 		for (auto width = 0; width < mapWidth; ++width) {
 			/// ブロックの位置を計算
 			Transform blockTransform;
-			blockTransform.translate = { static_cast<float>(width), static_cast<float>(-height), 30.0f };
+			blockTransform.translate = { static_cast<float>(width), static_cast<float>(-height), 20.0f };
 			blockTransform.rotate = { 0.0f,0.0f,0.0f };
 			blockTransform.scale = blockSize;
 			/// ブロックの種類を取得

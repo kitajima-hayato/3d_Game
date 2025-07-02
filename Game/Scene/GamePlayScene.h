@@ -3,8 +3,10 @@
 #include "SpriteCommon.h"
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
+#include "Game/Camera/camera.h"
 class Map;
 class Camera;
+class Player;
 class GamePlayScene :public BaseScene
 {
 public:
@@ -19,6 +21,7 @@ public:
 	// 終了処理
 	void Finalize()override;
 
+
 private:
 	
 
@@ -29,6 +32,9 @@ private:
 	// サウンドデータ
 	SoundData soundData;
 	IXAudio2* xaudio2_;
+
+	// Player
+	std::unique_ptr<Player> player;
 
 
 };

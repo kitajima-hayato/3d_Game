@@ -9,4 +9,6 @@ void ModelList::LoadAllModel()
 	/// GamePlayScene
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
+
+	ModelManager::GetInstance()->LoadModel("Player.obj");
 }
