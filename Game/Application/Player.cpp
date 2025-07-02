@@ -22,7 +22,7 @@ void Player::Initialize()
 	/// 一時的
 	EffectManager::GetInstance()->CreateEffectGroup("ib", "resources/gradationLine.png");
 	qux = std::make_unique<EffectEmitter>();
-	
+
 	emitterTransform = qux->GetTransform();
 	emitterTransform = {
 		{1.0f,1.0f,1.0f},
@@ -33,7 +33,7 @@ void Player::Initialize()
 	qux->SetEffectName("ib");
 
 	EffectManager::GetInstance()->CreateEffectGroup("id", "resources/gradationLine.png");
-	
+
 	quux = std::make_unique<EffectEmitter>();
 	quuxTransform = quux->GetTransform();
 	quuxTransform = {
@@ -43,7 +43,7 @@ void Player::Initialize()
 	};
 	quux->SetTransform(quuxTransform);
 
-	
+
 	quux->SetEffectName("id");
 
 
@@ -72,10 +72,13 @@ void Player::Draw()
 
 	// 描画処理
 	playerModel->Draw();
-	if (dashInputRight == 2) {
-	EffectManager::GetInstance()->DrawRing();
-	//EffectManager::GetInstance()->DrawCylinder();
-		
+	if (dashInputRight == 2 || dashInputLeft == 2) {
+		/// @ ダッシュ演出
+		qux->EmitRing();
+		quux->EmitCylinder();
+		EffectManager::GetInstance()->DrawRing();
+		//EffectManager::GetInstance()->DrawCylinder();
+
 	}
 }
 
@@ -113,9 +116,7 @@ void Player::MoveRight()
 	}
 	/// ダッシュ入力が２回行われダッシュ状態になった場合
 	if (dashInputRight == 2) {
-		/// @ ダッシュ演出
-		qux->EmitRing();
-		quux->EmitCylinder();
+
 		/// ダッシュ速度を加算
 		transform.translate.x += moveSpeed.x + dashSpeed.x;
 		if (Input::GetInstance()->RereseKey(DIK_D)) {
@@ -190,5 +191,5 @@ void Player::Finalize()
 	EffectManager::GetInstance()->DeleteEffectGroup("ib");
 	qux.reset();
 	EffectManager::GetInstance()->DeleteEffectGroup("id");
-	quux.reset();	
+	quux.reset();
 }
