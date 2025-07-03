@@ -74,7 +74,7 @@ void LevelLoader::Load(const std::string& fileName)
 			objectData.transform.scale.y = (float)transform["scaling"][2];
 			objectData.transform.scale.z = (float)transform["scaling"][1];
 
-			
+
 		}
 
 
@@ -105,6 +105,7 @@ void LevelLoader::Update()
 {
 	for (auto& object : objects) {
 		if (object) {
+#ifdef _DEBUG
 			// ImGuiで座標変更UIを表示
 			ImGui::Begin("Object Transform");
 
@@ -124,7 +125,7 @@ void LevelLoader::Update()
 			}
 
 			ImGui::End();
-
+#endif
 			object->Update();
 		}
 	}

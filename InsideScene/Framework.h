@@ -57,6 +57,7 @@ protected:// Initialize関連
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
 	std::unique_ptr<Camera> camera;
+
 public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
@@ -64,7 +65,7 @@ private:
 	// リークチェッカー
 	D3DResourceLeakChecker leakCheck;
 
-	
+	Transform cameraTransform;
 
 	
 };

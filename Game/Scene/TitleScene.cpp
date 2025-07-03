@@ -83,7 +83,9 @@ void TitleScene::Update()
 	emitterRotate,
 	emitterTranslate
 		});
+#ifdef _DEBUG
 	DrawImgui();
+#endif
 
 
 	//particleEmitter->Update();
@@ -154,6 +156,10 @@ void TitleScene::LoadSprite()
 }
 
 void TitleScene::DrawImgui() {
+#ifdef _DEBUG
+
+
+
 	//ImGui::Begin("Particle");
 
 	//ImGui::Text("Transform");
@@ -176,5 +182,6 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);
 	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
 	cylinder->SetTransform(cylinderTransform);
-	ImGui::End();
+	ImGui::End(); 
+#endif // _DEBUG
 }
