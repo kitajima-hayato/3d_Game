@@ -47,6 +47,12 @@ void Framework::Initialize()
 	// エフェクト
 	EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 
+	//スカイボックス
+	skyBox = make_unique<SkyBox>();
+	skyBox->Initialize(dxCommon.get(), srvManager.get());
+	// スカイボックスのテクスチャ読み込み
+	
+
 }
 
 void Framework::Update()
@@ -83,6 +89,15 @@ void Framework::Update()
 	{
 		isEndRequst = true;
 	}
+
+}
+
+
+void Framework::Draw()
+{
+	
+	// スカイボックスの描画
+	skyBox->Draw();
 
 }
 

@@ -16,7 +16,7 @@
 #include "SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/EffectManager.h"
-
+#include "engine/3d/SkyBox/SkyBox.h"
 #include "AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
@@ -64,8 +64,11 @@ public:
 private:
 	// リークチェッカー
 	D3DResourceLeakChecker leakCheck;
-
+	/// カメラの座標
 	Transform cameraTransform;
+
+	/// スカイボックス
+	std::unique_ptr<SkyBox> skyBox = nullptr;
 
 	
 };
