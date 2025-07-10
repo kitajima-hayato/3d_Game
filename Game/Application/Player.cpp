@@ -3,6 +3,40 @@
 #include "engine/bace/ImGuiManager.h"
 #include "SpriteCommon.h"
 #include "Game/Particle/EffectManager.h"
+#include "Map.h"
+
+AABB Player::GetAABB() const
+{
+	return {
+		transform.translate - transform.scale/2,
+		transform.translate + transform.scale/2
+	};
+}
+
+void Player::OnCollision(Collider* other) 
+{
+	switch (other->GetType())
+	{
+
+	case Collider::Type::Enemy:
+	{
+		// 敵との衝突処理
+		break;
+	}
+	default:
+		break;
+	}
+}
+
+AABB Player::CalcAABBAtPosition(const Vector3& pos)
+{
+	return  {
+		pos - transform.scale / 2,
+		pos + transform.scale / 2
+	};
+}
+
+
 
 void Player::Initialize()
 {
@@ -45,6 +79,8 @@ void Player::Initialize()
 
 
 	quux->SetEffectName("id");
+
+	aabb = CalcAABBAtPosition(transform.translate);
 
 
 }
@@ -101,7 +137,7 @@ void Player::MoveRight()
 
 	// プレイヤーの移動処理
 	if (Input::GetInstance()->PushKey(DIK_D)) {
-		transform.translate.x += moveSpeed.x;
+		transform.translate.x += velocity.x;
 	}
 	/// ダッシュ入力が行われた場合
 	if (dashInputRight == 1)
@@ -118,7 +154,7 @@ void Player::MoveRight()
 	if (dashInputRight == 2) {
 
 		/// ダッシュ速度を加算
-		transform.translate.x += moveSpeed.x + dashSpeed.x;
+		transform.translate.x += velocity.x + dashSpeed.x;
 		if (Input::GetInstance()->RereseKey(DIK_D)) {
 			/// ダッシュ入力が解除されたらダッシュ入力をリセット
 			dashInputRight = 0;
@@ -136,7 +172,7 @@ void Player::MoveLeft()
 	}
 	// プレイヤーの左への移動処理
 	if (Input::GetInstance()->PushKey(DIK_A)) {
-		transform.translate.x -= moveSpeed.x;
+		transform.translate.x -= velocity.x;
 	}
 
 	/// ダッシュ入力が行われた場合
@@ -152,7 +188,7 @@ void Player::MoveLeft()
 	}
 	/// ダッシュ入力が２回行われダッシュ状態になった場合
 	if (dashInputLeft == 2) {
-		transform.translate.x -= moveSpeed.x + dashSpeed.x;
+		transform.translate.x -= velocity.x + dashSpeed.x;
 		if (Input::GetInstance()->RereseKey(DIK_A)) {
 			/// ダッシュ入力が解除されたらダッシュ入力をリセット
 			dashInputLeft = 0;
@@ -182,6 +218,27 @@ void Player::DrawImgui()
 	ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
 	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.1f);
 	ImGui::End();
+}
+
+void Player::CheckBlockCollision(const Map& map)
+{
+	Vector3 nextPos = transform.translate + velocity * deltaTime;
+
+	AABB nextAABB = CalcAABBAtPosition(nextPos);
+
+	std::vector<Block*> nearbyBlocks = map.GetNearbyBlocks(nextAABB);
+
+	for (const Block* block : nearbyBlocks)
+	{
+		if (nextAABB.Intersects(block->GetAABB()))
+		{
+			// 衝突したので反応:停止
+			velocity = Vector3(0, 0, 0);
+			break;
+		}
+	}
+
+	transform.rotate += velocity * deltaTime;
 }
 
 

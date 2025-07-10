@@ -23,9 +23,7 @@ public:
 
 
 private:
-	
-
-	// 
+	// マップ
 	std::unique_ptr<Map> map;
 
 	// オーディオ

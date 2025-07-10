@@ -3,9 +3,16 @@
 #include "engine/3d/Object3D.h"
 #include <string>
 #include "Game/Particle/EffectEmitter.h"
-class Player
+#include "Game/Collision/Collider.h"
+class Map;
+class Player : public Collider
 {
+public: // 判定
+	Type GetType() const override { return Type::Player; }
+	AABB GetAABB() const override;
+	void OnCollision(Collider* other)override;
 
+	AABB CalcAABBAtPosition(const Vector3& pos);
 public: // メソッド
 	/// <summary>
 	/// 初期化処理
@@ -51,6 +58,11 @@ public: // メソッド
 	/// </summary>
 	void DrawImgui();
 
+	/// <summary>
+	/// ブロックとの衝突判定
+	/// </summary>
+	void CheckBlockCollision(const Map&map);
+
 public: // Setter / getter
 	/// <summary>
 	/// プレイヤーのSRTを設定
@@ -66,14 +78,14 @@ public: // Setter / getter
 	/// <summary>
 	/// プレイヤーの移動速度を設定
 	/// </summary>
-	void SetMoveSpeed(const Vector3& speed) { moveSpeed = speed; }
+	void SetMoveSpeed(const Vector3& speed) { velocity = speed; }
 
 private:
 	/// プレイヤーのSRT
 	Transform transform;
 
 	/// プレイヤーの移動速度
-	Vector3 moveSpeed = { 0.1f, 0.1f, 0.0f };
+	Vector3 velocity = { 0.1f, 0.1f, 0.0f };
 	/// プレイヤーのダッシュ速度
 	Vector3 dashSpeed = { 0.01f, 0.2f, 0.0f };
 	/// プレイヤーの落下速度
@@ -104,6 +116,13 @@ private:
 
 	std::unique_ptr<EffectEmitter>quux;
 	Transform quuxTransform;
-	
+
+	/// 判定用のAABB
+	AABB aabb;
+
+	/// 60 FPSを想定したデルタタイム
+	float deltaTime = 0.016f; 
+
+
 };
 

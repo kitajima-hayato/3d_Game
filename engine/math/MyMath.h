@@ -144,14 +144,10 @@ struct SpriteData {
 	float rotate;
 	Vector4 color;
 };
-struct AABB {
-	Vector3 min;//最小点
-	Vector3 max;//最大点
-};
-struct AccelerationField {
-	Vector3 acceleration;
-	AABB area;
-};
+//struct AccelerationField {
+//	Vector3 acceleration;
+//	AABB area;
+//};
 
 #pragma region パーティクル構造体
 // パーティクル構造体

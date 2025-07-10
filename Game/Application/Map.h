@@ -1,6 +1,6 @@
 #pragma once
 #include "Block.h"
-
+#include "Game/Collision/Collider.h"
 class CsvLoader;
 class Map
 {
@@ -25,6 +25,10 @@ public:
 	/// </summary>
 	void CreateBlocksMap();
 
+/// <summary>
+/// 
+/// </summary>
+	std::vector<Block*>GetNearbyBlocks(const AABB& range) const;
 public:	// Setter / Getter
 	/// <summary>
 	/// csvファイルのパスを設定する

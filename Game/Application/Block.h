@@ -1,9 +1,26 @@
 #pragma once
 #include "engine/3d/Object3D.h"
 #include "BlockType.h"
-class Block
+#include "Game/Collision/Collider.h"
+#include <memory>
+class Block : public Collider
 {
+public: // 判定
+	///
+	///
+	/// 
+	void OnCollision(Collider* other) override;
 
+	/// <summary>
+	/// AABBを取得
+	/// </summary>
+	/// <returns>AABB</returns>
+	AABB GetAABB() const override { return { transform.translate - transform.scale, transform.translate + transform.scale }; }
+
+	/// <summary>
+	/// コライダーの種類を取得
+	/// 
+	Type GetType() const override { return Type::Player; }
 public:
 	/// <summary>
 	/// 初期化処理
@@ -59,6 +76,8 @@ private:
 	Transform transform;
 	/// 表示するブロックの種類
 	BlockType blockType;
+	/// ブロックのコライダー
+	AABB aabb;
 
 };
 

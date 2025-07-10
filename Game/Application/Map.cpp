@@ -72,3 +72,29 @@ void Map::CreateBlocksMap()
 		}
 	}
 }
+
+std::vector<Block*> Map::GetNearbyBlocks(const AABB& range) const
+{
+	std::vector<Block*> result;
+
+	// 範囲チェック（整数座標を仮定）
+	int minX = static_cast<int>(range.min.x);
+	int maxX = static_cast<int>(range.max.x);
+	int minY = static_cast<int>(range.min.y);
+	int maxY = static_cast<int>(range.max.y);
+
+	for (int y = minY; y <= maxY; ++y) {
+		if (y < 0 || y >= static_cast<int>(blocks.size())) continue;
+
+		for (int x = minX; x <= maxX; ++x) {
+			if (x < 0 || x >= static_cast<int>(blocks[y].size())) continue;
+
+			Block* block = blocks[y][x].get();
+			if (block && block->GetBlockType() != BlockType::Air) {
+				result.push_back(block);
+			}
+		}
+	}
+
+	return result;
+}

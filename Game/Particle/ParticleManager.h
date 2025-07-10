@@ -65,9 +65,7 @@ public:
 	void UpdateMatrix();
 	//  パーティクル更新 / 更新処理内部
 	void UpdateParticle();
-	// 当たり判定 / 更新処理内部 / パーティクル更新
-	bool IsCollision(const AABB& aabb, const Vector3& point);
-
+	
 	// 描画処理
 	void Draw();
 
@@ -177,8 +175,7 @@ private:
 
 	// パーティクルのリスト
 	std::list<Particle>particles;
-	// 加速度フィールド
-	AccelerationField accelerationField;
+	
 	// Δtを定義６０fos固定
 	const float kDeltaTime = 1.0f / 60.0f;
 

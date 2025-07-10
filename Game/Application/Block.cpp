@@ -1,6 +1,12 @@
 #include "Block.h"
 #include "engine/3d/ModelManager.h"
 
+void Block::OnCollision(Collider* other)
+{
+	
+}
+
+
 void Block::Initialize(BlockType blockType, Vector3 position){
 	/// モデルの初期化
 	this->blockType = blockType;
@@ -8,7 +14,6 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 	blockModel->Initialize();
 	switch (this->blockType) {
 	case BlockType::Air:
-	
 		break;
 	case BlockType::NormalBlock:
 		blockModel->SetModel("nullBlock.obj");
@@ -22,6 +27,10 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 	}
 	blockModel->SetTranslate(position);
 
+	aabb = {
+		position - Vector3(0.5f, 0.5f, 0.5f),
+		position + Vector3(0.5f, 0.5f, 0.5f)
+	};
 }
 
 

@@ -105,6 +105,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="Game\Collision\Collider.cpp" />
     <ClCompile Include="Game\Application\CsvLoader.cpp" />
     <ClCompile Include="Game\Application\Block.cpp" />
     <ClCompile Include="Game\Application\ModelList.cpp" />
@@ -146,6 +148,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Application\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Game\Collision\Collider.h" />
     <ClInclude Include="Game\Application\BlockType.h" />
     <ClInclude Include="Game\Application\CsvLoader.h" />
     <ClInclude Include="Game\Application\Block.h" />
