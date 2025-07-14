@@ -37,7 +37,7 @@ public: // Getter, Setter
 	/// <summary>
 	/// レンダーテクスチャのリソースを取得
 	/// </summary>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const { return srvManager_->GetGPUDescriptorHandle(srvIndex); }
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const;
 private: // メンバ変数
 	/// DirectXCommonポインタ
 	DirectXCommon* dxCommon_ = nullptr;

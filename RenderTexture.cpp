@@ -23,10 +23,10 @@ void RenderTexture::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 
 	D3D12_CLEAR_VALUE clear{};
 	clear.Format = desc.Format;
-	clear.Color[0] = clearColor.x;
-	clear.Color[1] = clearColor.y;
-	clear.Color[2] = clearColor.z;
-	clear.Color[3] = clearColor.w;
+	clear.Color[0] = clearColor_.x;
+	clear.Color[1] = clearColor_.y;
+	clear.Color[2] = clearColor_.z;
+	clear.Color[3] = clearColor_.w;
 
 	HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
 		&heapProp,
@@ -99,4 +99,6 @@ void RenderTexture::EndRender()
 	}
 }
 
-
+D3D12_GPU_DESCRIPTOR_HANDLE RenderTexture::GetGPUHandle() const {
+	return srvManager_->GetGPUDescriptorHandle(srvIndex);
+}
