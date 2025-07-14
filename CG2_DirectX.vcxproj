@@ -105,6 +105,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Application\ModelList.cpp" />
     <ClCompile Include="Game\Particle\EffectEmitter.cpp" />
     <ClCompile Include="Game\Particle\EffectManager.cpp" />
     <ClCompile Include="InsideScene\AbstractSceneFactory.cpp" />
@@ -140,6 +141,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Application\ModelList.h" />
     <ClInclude Include="Game\Particle\EffectEmitter.h" />
     <ClInclude Include="Game\Particle\EffectManager.h" />
     <ClInclude Include="InsideScene\AbstractSceneFactory.h" />

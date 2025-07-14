@@ -127,6 +127,7 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="RenderTexture.cpp">
+    <ClCompile Include="Game\Application\ModelList.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -228,6 +229,7 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="RenderTexture.h">
+    <ClInclude Include="Game\Application\ModelList.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
