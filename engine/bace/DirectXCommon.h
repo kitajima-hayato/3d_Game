@@ -15,7 +15,7 @@
 class DirectXCommon
 {
 public:
-	
+
 
 	/// <summary>
 	// コンストラクタ
@@ -74,30 +74,30 @@ public:		// Getter,Setter
 	/// <summary>
 	/// DxcUtils取得関数
 	/// </summary>
-	Microsoft::WRL::ComPtr <IDxcUtils> 
+	Microsoft::WRL::ComPtr <IDxcUtils>
 		GetDxcUtils()const { return dxcUtils; }
 
 	/// <summary>
 	/// DxcCompiler取得関数
 	/// </summary>
-	Microsoft::WRL::ComPtr<IDxcCompiler3> 
+	Microsoft::WRL::ComPtr<IDxcCompiler3>
 		GetDxcCompiler()const { return dxcCompiler; }
 
 	/// <summary>
 	/// インクルードハンドラ取得関数
 	/// </summary>
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler> 
+	Microsoft::WRL::ComPtr<IDxcIncludeHandler>
 		GetIncludeHandler()const { return includeHandler; }
 
 	/// <summary>
 	/// srvDescriptorHeap取得関数
 	/// </summary>
-	/*Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> 
+	/*Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>
 		GetSrvDescriptorHeap()const { return srvDescriptorHeap; }*/
 
-	/// <summary>
-	/// 指定番号のCPUディスクリプタハンドルを取得する
-	/// </summary>
+		/// <summary>
+		/// 指定番号のCPUディスクリプタハンドルを取得する
+		/// </summary>
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	/// <summary>
 	/// 指定番号のGPUディスクリプタハンドルを取得する
@@ -126,6 +126,16 @@ public:		// Getter,Setter
 	/// バックバッファの数を取得
 	/// </summary>
 	size_t GetBackBufferCount() const { return backBufferIndex; }
+
+	/// <summary>
+	/// RTVのディスクリプタサイズを取得
+	/// </summary>
+	uint32_t GetDescriptorSizeRTV() const { return descriptorSizeRTV; }
+
+	/// <summary>
+	/// バックバッファのインデックスを取得
+	/// </summary>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const {return dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();}
 
 private:	// 内部処理専用関数
 	/// <summary>
@@ -157,7 +167,7 @@ private:	// 内部処理専用関数
 	/// レンダーターゲットビューの初期化
 	/// </summary>
 	void InitRenderTargetView();
-	
+
 	/// <summary>
 	/// 深度ステンシルビューの初期化
 	/// </summary>
@@ -193,12 +203,12 @@ private:	// 内部処理専用関数
 	/// </summary>
 	static std::wstring ConvertString(const std::string& str);
 	static std::string ConvertString(const std::wstring& str);
-	
+
 	/// <summary>
 	/// FPS固定初期化
 	/// </summary>
 	void InitializeFixFPS();
-	
+
 	/// <summary>
 	/// FPS固定更新
 	/// </summary>
@@ -262,6 +272,6 @@ private:	// メンバ変数
 	// 記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
 
-	
+
 };
 
