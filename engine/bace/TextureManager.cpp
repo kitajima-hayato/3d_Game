@@ -164,6 +164,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 		srvDesc.TextureCube.MostDetailedMip = 0;
 		srvDesc.TextureCube.MipLevels = UINT_MAX;
 		srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
 	} else {
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 		srvDesc.Texture2D.MipLevels = UINT(textureData.metadata.mipLevels);

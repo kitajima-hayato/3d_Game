@@ -2,12 +2,15 @@
 #include <Logger.h>
 #include "MakeMatrix.h"
 #include "TextureManager.h"
+#include "Object3DCommon.h"
+
 void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 {
 	this->dxCommon = dxCommon;
 	this->srvManager = srvManager;
-
-	TextureManager::GetInstance()->LoadTexture("resources/skybox.dds");	
+	this->camera = Object3DCommon::GetInstance()->GetDefaultCamera();
+	TextureManager::GetInstance()->LoadTexture("resources/rostock_laage_airport_4k.dds");
+	modelData.material.textureFilePath = "resources/rostock_laage_airport_4k.dds";
 	/// パイプラインの生成
 	CreatePipeline();
 	/// ルートシグネチャの生成
@@ -18,12 +21,28 @@ void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 	CreateVertexData();
 	/// マテリアルの初期化
 	InitializeMaterial();
+	/// 
+	CreateTransformationMatrix();
 }
 
 void SkyBox::Update()
 {
-
+	Matrix4x4 worldMatrix = MakeAffineMatrix(
+		{ 1.0f, 1.0f, 1.0f },  // スケール
+		{ 0.0f, 0.0f, 0.0f },  // 回転
+		camera->GetTranslate() // カメラ位置に配置
+	);
+	Matrix4x4 worldViewProjection;
+	if (camera) {
+		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+		worldViewProjection = Multiply(worldMatrix, viewProjectionMatrix);
+	} else {
+		worldViewProjection = worldMatrix;
+	}
+	wvpData->WVP = worldViewProjection;
+	wvpData->World = worldMatrix;
 }
+
 
 void SkyBox::Draw()
 {
@@ -37,11 +56,17 @@ void SkyBox::Draw()
 	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	/// コマンド : マテリアルの定数バッファを設定
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	///
+	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+	
+	D3D12_GPU_DESCRIPTOR_HANDLE textureHandle =
+		TextureManager::GetInstance()->GetSrvHandleGPU(modelData.material.textureFilePath);
 	/// コマンド : スカイボックスのテクスチャビューを設定
-	D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(0);
-	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
+	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2,textureHandle);
 	/// コマンド : 描画
-	dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.indices.size()), 1, 0, 0);
+	//dxCommon->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
+	
 }
 
 void SkyBox::CreatePipeline()
@@ -55,7 +80,7 @@ void SkyBox::CreatePipeline()
 
 void SkyBox::CreateRootSignature() {
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
+	//D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
 	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
 	descriptorRange[0].NumDescriptors = 1; // 数は1つ
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
@@ -70,16 +95,11 @@ void SkyBox::CreateRootSignature() {
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[0].Descriptor.ShaderRegister = 0;
 
-	// 1. パーティクルのRootSignatureの作成
-	descriptorRangeInstancing[0].BaseShaderRegister = 0;
-	descriptorRangeInstancing[0].NumDescriptors = 1;
-	descriptorRangeInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRangeInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-	// 1.TransformMatrix
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	// 1. TransformMatrix
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeInstancing;
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeInstancing);
+	rootParameters[1].Descriptor.ShaderRegister = 1;
+
 	// 2.Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -184,7 +204,7 @@ void SkyBox::SetGraphicsPipeline()
 	// 書き込むRTVの情報
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	// 利用するトポロジ（形状）のタイプ。三角形
+	// 利用するトポロジ（形状）のタイプ.三角形
 	graphicsPipelineStateDesc.PrimitiveTopologyType =
 		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	// どのように画面に色を打ち込むのか設定（気にしなくて良い）
@@ -226,65 +246,60 @@ void SkyBox::InitializeMaterial()
 
 void SkyBox::CreateVertexData()
 {
-	// 右面 / 描画index [0,1,2] [2,1,3]
-	modelData.vertices.push_back({
-		.position = {1.0f, 1.0f, 1.0f, 1.0f},   .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({
-		.position = {1.0f, 1.0f, -1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, -1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	// インデックス（各面：2三角形＝6つのインデックス）
+	indices = {
+		// 右面 (+X)
+		0, 1, 2,  2, 1, 3,
+		// 左面 (-X)
+		4, 5, 6,  6, 5, 7,
+		// 前面 (+Z)
+		8, 9, 10, 10, 9,11,
+		// 後面 (-Z)
+		12,13,14, 14,13,15,
+		// 上面 (+Y)
+		16,17,18, 18,17,19,
+		// 下面 (-Y)
+		20,21,22, 22,21,23
+	};
 
-	// 左面 / 描画index[4, 5, 6][6, 5, 7]
-	modelData.vertices.push_back({
-		.position = {-1.0f, 1.0f, -1.0f, 1.0f},   .texcoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, -1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, -1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, -1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {0.0f, 0.0f, -1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, -1.0f} });
+	modelData.indices = indices;
 
-	// 前面 / 描画index[8, 9, 10][10, 9, 11]
-	modelData.vertices.push_back({
-		.position = {-1.0f, 1.0f, 1.0f, 1.0f},   .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 1.0f, 0.0f} });
-	modelData.vertices.push_back({
-		.position = {1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {0.0f, 1.0f, 0.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 0.0f}, .normal = {0.0f, 1.0f, 0.0f} });
-	modelData.vertices.push_back({
-		.position = {1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, 1.0f, 0.0f} });
 
-	// 後面 / 描画index[12, 13, 14][14, 13, 15]
-	modelData.vertices.push_back({
-		.position = {1.0f, 1.0f, -1.0f, 1.0f},   .texcoord = {1.0f, 0.0f}, .normal = {0.0f, -1.0f, 0.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, 1.0f, -1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {0.0f, -1.0f, 0.0f} });
-	modelData.vertices.push_back({
-		.position = {1.0f, -1.0f, -1.0f, 1.0f},  .texcoord = {0.0f, 0.0f}, .normal = {0.0f, -1.0f, 0.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, -1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, -1.0f, 0.0f} });
+	// 右面 (+X) / 描画index [0,1,2] [2,1,3]
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, -1.0f, 1.0f}, .texcoord = {1.0f, 0.0f}, .normal = {1, 0, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {1, 0, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, -1.0f, 1.0f}, .texcoord = {0.0f, 0.0f}, .normal = {1, 0, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {1, 0, 0} });
 
-	// 上面 / 描画index[16, 17, 18][18, 17, 19]
-	modelData.vertices.push_back({
-		.position = {1.0f, 1.0f, -1.0f, 1.0f},   .texcoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, -1.0f} });
-	modelData.vertices.push_back({
-		.position = {1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, -1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, 1.0f, -1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, -1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {0.0f, 0.0f, -1.0f} });
+	// 左面 (-X) / 描画index [4,5,6] [6,5,7]
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {-1, 0, 0} });
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, -1.0f, 1.0f}, .texcoord = {1.0f, 1.0f}, .normal = {-1, 0, 0} });
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 1.0f, 1.0f}, .texcoord = {0.0f, 0.0f}, .normal = {-1, 0, 0} });
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, -1.0f, 1.0f},.texcoord = {0.0f, 1.0f}, .normal = {-1, 0, 0} });
 
-	// 下面 / 描画index[20, 21, 22][22, 21, 23]
-	modelData.vertices.push_back({
-		.position = {1.0f, -1.0f, 1.0f, 1.0f},   .texcoord = {0.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({
-		.position = {1.0f, -1.0f, -1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0.0f, 0.0f, 1.0f} });
-	modelData.vertices.push_back({
-		.position = {-1.0f, -1.0f, -1.0f, 1.0f},  .texcoord = {1.0f, 1.0f}, .normal = {0.0f, 0.0f, 1.0f} });
+	// 前面 (+Z) / 描画index [8,9,10] [10,9,11]
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0, 0, 1} });
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 1.0f, 1.0f},   .texcoord = {1.0f, 1.0f}, .normal = {0, 0, 1} });
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 1.0f, 1.0f}, .texcoord = {0.0f, 0.0f}, .normal = {0, 0, 1} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0, 0, 1} });
+
+	// 後面 (-Z) / 描画index [12,13,14] [14,13,15]
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, -1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0, 0, -1} });
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, -1.0f, 1.0f}, .texcoord = {1.0f, 1.0f}, .normal = {0, 0, -1} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, -1.0f, 1.0f}, .texcoord = {0.0f, 0.0f}, .normal = {0, 0, -1} });
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, -1.0f, 1.0f},.texcoord = {0.0f, 1.0f}, .normal = {0, 0, -1} });
+
+	// 上面 (+Y) / 描画index [16,17,18] [18,17,19]
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, -1.0f, 1.0f}, .texcoord = {0.0f, 0.0f}, .normal = {0, 1, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, -1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0, 1, 0} });
+	modelData.vertices.push_back({ .position = {-1.0f, 1.0f, 1.0f, 1.0f},  .texcoord = {1.0f, 0.0f}, .normal = {0, 1, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, 1.0f, 1.0f, 1.0f},   .texcoord = {1.0f, 1.0f}, .normal = {0, 1, 0} });
+
+	// 下面 (-Y) / 描画index [20,21,22] [22,21,23]
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, 1.0f, 1.0f}, .texcoord = {0.0f, 0.0f}, .normal = {0, -1, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, 1.0f, 1.0f},  .texcoord = {0.0f, 1.0f}, .normal = {0, -1, 0} });
+	modelData.vertices.push_back({ .position = {-1.0f, -1.0f, -1.0f, 1.0f},.texcoord = {1.0f, 0.0f}, .normal = {0, -1, 0} });
+	modelData.vertices.push_back({ .position = {1.0f, -1.0f, -1.0f, 1.0f}, .texcoord = {1.0f, 1.0f}, .normal = {0, -1, 0} });
 
 	CreateVertexBufferView();
 }
@@ -318,4 +333,16 @@ void SkyBox::SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode)
 		assert(false);
 		break;
 	}
+}
+
+void SkyBox::CreateTransformationMatrix()
+{
+	// 変換行列リソースを作成
+	wvpResource =Object3DCommon::GetInstance()->GetDxCommon()->
+		CreateBufferResource(sizeof(TransformationMatrix));
+	// 変換行列リソース
+	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
+	// 変換行列データの初期化
+	wvpData->WVP = MakeIdentity4x4();
+	wvpData->World = MakeIdentity4x4();
 }

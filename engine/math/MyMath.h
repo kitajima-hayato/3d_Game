@@ -117,6 +117,7 @@ struct VertexData {
 struct ModelData {
 	std::vector<VertexData>vertices;
 	MaterialData material;
+	std::vector<uint32_t> indices;
 };
 struct Material {
 	Vector4 color;

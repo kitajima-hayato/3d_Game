@@ -1,5 +1,6 @@
 #include "SkyBox.hlsli"
 
+
 VertexShaderOutput main(VertexShaderInput input)
 {
     VertexShaderOutput output;

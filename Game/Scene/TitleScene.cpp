@@ -109,7 +109,7 @@ void TitleScene::Draw()
 
 	//sprite_->Draw();
 	//object3D->Draw();
-	levelData->Draw();
+	//levelData->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
@@ -148,7 +148,6 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite()
 {
-
 	sprite_ = make_unique<Sprite>();
 	sprite_->Initialize("resources/gradationLine_flipped.png");
 	sprite_->SetPosition({ 0.0f,0.0f });
@@ -157,8 +156,6 @@ void TitleScene::LoadSprite()
 
 void TitleScene::DrawImgui() {
 #ifdef _DEBUG
-
-
 
 	//ImGui::Begin("Particle");
 

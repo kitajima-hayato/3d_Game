@@ -2,6 +2,7 @@
 #include "engine/math/MyMath.h"
 #include "engine/bace/DirectXCommon.h"
 #include "engine/bace/SrvManager.h"
+#include "Game/Camera/camera.h"
 class SkyBox
 {
 private:
@@ -38,6 +39,11 @@ private:
 	/// ブレンドモードの設定
 	/// </summary>
 	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
+
+	/// <summary>
+	/// 行列データ生成
+	/// </summary>
+	void CreateTransformationMatrix();
 public:
 	/// <summary>
 	/// 初期化処理
@@ -107,6 +113,17 @@ private:
 	/// マテリアルデータ
 	Material* materialData = nullptr;
 
+	// CreateTransformationMatrix
+	// バッファリソース / 座標変換行列リソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResource;
+	// バッファリソース内のデータを指すポインタ
+	TransformationMatrix* wvpData = nullptr;
+
+	/// 頂点データのインデックス 
+	std::vector<uint32_t> indices;
+
+/// カメラ引数
+	Camera* camera = nullptr;
 public:
 
 	/// <summary>

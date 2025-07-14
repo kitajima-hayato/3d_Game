@@ -410,11 +410,7 @@ void ParticleManager::Draw()
 	// コマンド : プリミティブトロポジ(描画形状)を設定
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : VertexBufferViewを設定
-	//if (name == "Ring") {
-	//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
-	//} else {
-		dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-	//}
+	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// 全てのパーティクルグループについて処理
 	for (auto& [name, particleGroup] : particleGroups)

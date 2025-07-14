@@ -67,9 +67,7 @@ private:
 	/// カメラの座標
 	Transform cameraTransform;
 
-	/// スカイボックス
-	std::unique_ptr<SkyBox> skyBox = nullptr;
-
+	
 	
 };
 
