@@ -27,21 +27,27 @@ void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 
 void SkyBox::Update()
 {
-	Matrix4x4 worldMatrix = MakeAffineMatrix(
-		{ 1.0f, 1.0f, 1.0f },  // スケール
-		{ 0.0f, 0.0f, 0.0f },  // 回転
-		camera->GetTranslate() // カメラ位置に配置
-	);
-	Matrix4x4 worldViewProjection;
-	if (camera) {
-		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
-		worldViewProjection = Multiply(worldMatrix, viewProjectionMatrix);
-	} else {
-		worldViewProjection = worldMatrix;
-	}
+	// カメラのビュー行列とプロジェクション行列を取得
+	const Matrix4x4& viewMatrix = camera->GetViewMatrix();
+	const Matrix4x4& projectionMatrix = camera->GetProjectionMatrix();
+
+	// 回転はそのまま、位置だけを無視したビュー行列を作成
+	Matrix4x4 viewNoTranslation = viewMatrix;
+	viewNoTranslation.m[3][0] = 0.0f;
+	viewNoTranslation.m[3][1] = 0.0f;
+	viewNoTranslation.m[3][2] = 0.0f;
+
+	// スカイボックス用のワールド行列（スケールのみ、位置も回転もなし）
+	Matrix4x4 worldMatrix = MakeScaleMatrix({ 1.0f, 1.0f, 1.0f });
+
+	// WVP行列を構築（視点固定）
+	Matrix4x4 viewProj = Multiply(viewNoTranslation, projectionMatrix);
+	Matrix4x4 worldViewProjection = Multiply(worldMatrix, viewProj);
+
 	wvpData->WVP = worldViewProjection;
 	wvpData->World = worldMatrix;
 }
+
 
 
 void SkyBox::Draw()
@@ -54,6 +60,8 @@ void SkyBox::Draw()
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	/// コマンド : VertexBufferViewを設定
 	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	/// コマンド : インデックスバッファビューを設定
+	dxCommon->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 	/// コマンド : マテリアルの定数バッファを設定
 	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	///
@@ -64,8 +72,8 @@ void SkyBox::Draw()
 	/// コマンド : スカイボックスのテクスチャビューを設定
 	dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2,textureHandle);
 	/// コマンド : 描画
-	dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.indices.size()), 1, 0, 0);
-	//dxCommon->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
+	//dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.indices.size()), 1, 0, 0);
+	dxCommon->GetCommandList()->DrawIndexedInstanced(UINT(modelData.indices.size()), 1, 0, 0, 0);
 	
 }
 
@@ -248,18 +256,13 @@ void SkyBox::CreateVertexData()
 {
 	// インデックス（各面：2三角形＝6つのインデックス）
 	indices = {
-		// 右面 (+X)
-		0, 1, 2,  2, 1, 3,
-		// 左面 (-X)
-		4, 5, 6,  6, 5, 7,
-		// 前面 (+Z)
-		8, 9, 10, 10, 9,11,
-		// 後面 (-Z)
-		12,13,14, 14,13,15,
-		// 上面 (+Y)
-		16,17,18, 18,17,19,
-		// 下面 (-Y)
-		20,21,22, 22,21,23
+		// 各面ごとに2枚の三角形 (6インデックス)
+		0, 1, 2,  2, 1, 3,   // 右面
+		4, 5, 6,  6, 5, 7,   // 左面
+		8, 9, 10, 10, 9,11,  // 前面
+		12,13,14, 14,13,15,  // 後面
+		16,17,18, 18,17,19,  // 上面
+		20,21,22, 22,21,23   // 下面
 	};
 
 	modelData.indices = indices;
@@ -302,6 +305,7 @@ void SkyBox::CreateVertexData()
 	modelData.vertices.push_back({ .position = {1.0f, -1.0f, -1.0f, 1.0f}, .texcoord = {1.0f, 1.0f}, .normal = {0, -1, 0} });
 
 	CreateVertexBufferView();
+	CreateIndexBufferView();
 }
 
 
@@ -345,4 +349,20 @@ void SkyBox::CreateTransformationMatrix()
 	// 変換行列データの初期化
 	wvpData->WVP = MakeIdentity4x4();
 	wvpData->World = MakeIdentity4x4();
+}
+
+void SkyBox::CreateIndexBufferView() {
+
+	// インデックスリソース作成
+	indexResource = dxCommon->CreateBufferResource(sizeof(uint32_t) * modelData.indices.size());
+
+	// IndexBufferView 設定
+	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
+	indexBufferView.SizeInBytes = UINT(sizeof(uint32_t) * modelData.indices.size());
+	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+
+	// マップしてデータ書き込み
+	uint32_t* indexData = nullptr;
+	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
+	memcpy(indexData, modelData.indices.data(), sizeof(uint32_t) * modelData.indices.size());
 }

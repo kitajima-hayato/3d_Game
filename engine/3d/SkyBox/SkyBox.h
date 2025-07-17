@@ -44,6 +44,11 @@ private:
 	/// 行列データ生成
 	/// </summary>
 	void CreateTransformationMatrix();
+
+/// <summary>
+/// インデックスデータの生成
+/// </summary>
+	void CreateIndexBufferView();
 public:
 	/// <summary>
 	/// 初期化処理
@@ -121,6 +126,8 @@ private:
 
 	/// 頂点データのインデックス 
 	std::vector<uint32_t> indices;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 
 /// カメラ引数
 	Camera* camera = nullptr;

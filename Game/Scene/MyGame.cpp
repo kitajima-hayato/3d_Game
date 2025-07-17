@@ -23,6 +23,7 @@ void MyGame::Update()
 	imGui->Begin(); 
 #endif 
 	Framework::Update();
+	skyBox->Update();
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
 	// ImGuiの処理
 	ImGui::Text("Hello, world %d", 123);
