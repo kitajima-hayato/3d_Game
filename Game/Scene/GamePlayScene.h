@@ -7,6 +7,7 @@
 class Map;
 class Camera;
 class Player;
+class Object3D;
 class GamePlayScene :public BaseScene
 {
 public:
@@ -34,6 +35,14 @@ private:
 	// Player
 	std::unique_ptr<Player> player;
 
-
+	std::unique_ptr<Object3D>enemy;
+	Transform enemyTransform = {
+		// Scale
+		{1.0f, 1.0f, 1.0f},
+		// Rotate
+		{0.0f, 0.0f, 0.0f},
+		// Translate
+		{10.0f, -7.0f, 20.0f}
+	};
 };
 

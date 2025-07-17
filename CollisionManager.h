@@ -23,6 +23,7 @@ private:
 	/// ２つのコライダーの衝突判定
 	/// </summary>
 	bool IsColliding(Collider* a, Collider* b);
+
 	/// <summary>
 	/// 衝突が発生した２つのコライダーに通知を行う
 	/// </summary>

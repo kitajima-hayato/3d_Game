@@ -11,4 +11,5 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
 
 	ModelManager::GetInstance()->LoadModel("Player.obj");
+	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
 }

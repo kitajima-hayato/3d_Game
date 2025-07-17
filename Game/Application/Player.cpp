@@ -107,7 +107,11 @@ void Player::Draw()
 {
 
 	// 描画処理
-	playerModel->Draw();
+	/// スペースキーを押したら
+	if (!Input::GetInstance()->PushKey(DIK_SPACE)) {
+		playerModel->Draw();
+	}
+	
 	if (dashInputRight == 2 || dashInputLeft == 2) {
 		/// @ ダッシュ演出
 		qux->EmitRing();
@@ -135,7 +139,7 @@ void Player::MoveRight()
 		dashInputRight++;
 	}
 
-	// プレイヤーの移動処理
+	/// プレイヤーの移動処理
 	if (Input::GetInstance()->PushKey(DIK_D)) {
 		transform.translate.x += velocity.x;
 	}
@@ -170,7 +174,7 @@ void Player::MoveLeft()
 	if (Input::GetInstance()->TriggerKey(DIK_A)) {
 		dashInputLeft++;
 	}
-	// プレイヤーの左への移動処理
+	/// プレイヤーの左への移動処理
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		transform.translate.x -= velocity.x;
 	}

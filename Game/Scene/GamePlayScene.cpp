@@ -26,6 +26,11 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	map = std::make_unique<Map>();
 	map->Initialize("TestStage.csv");
 
+	enemy = std::make_unique<Object3D>();
+	enemy->Initialize();
+	enemy->SetModel("Tentativeenemy.obj");
+	enemy->SetTransform(enemyTransform);
+
 
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
@@ -40,6 +45,11 @@ void GamePlayScene::Update()
 	map->Update();
 	/// プレイヤーの更新
 	player->Update();
+	/// 敵を左に
+	enemyTransform.translate.x -= 0.01f;
+	enemy->SetTransform(enemyTransform);
+
+	enemy->Update();
 }
 
 void GamePlayScene::Draw()
@@ -51,6 +61,9 @@ void GamePlayScene::Draw()
 	map->Draw();
 	/// プレイヤーの描画
 	player->Draw();
+
+	/// 敵の描画
+	enemy->Draw();
 }
 
 void GamePlayScene::Finalize()
