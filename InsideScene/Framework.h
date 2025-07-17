@@ -16,7 +16,7 @@
 #include "SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/EffectManager.h"
-
+#include "engine/3d/SkyBox/SkyBox.h"
 #include "AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
@@ -57,15 +57,17 @@ protected:// Initialize関連
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
 	std::unique_ptr<Camera> camera;
+
 public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 private:
 	// リークチェッカー
 	D3DResourceLeakChecker leakCheck;
+	/// カメラの座標
+	Transform cameraTransform;
 
 	
-
 	
 };
 

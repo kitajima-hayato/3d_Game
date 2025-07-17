@@ -183,9 +183,3 @@ void Sprite::AdjustTextureSizee()
 	size = textureSize;
 }
 
-//void Sprite::DrawSetting()
-//{
-//	spriteCommon->GetDxCommon()->LoadTexture("resources/uvChecker.png");
-//	spriteCommon->DrawSettingCommon();
-//	//spriteCommon->GetDxCommon()->CreateTextureResource();
-//}

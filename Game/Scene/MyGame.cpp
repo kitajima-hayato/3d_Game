@@ -11,6 +11,10 @@ void MyGame::Initialize()
 
 	modelList = make_unique<ModelList>();
 	modelList->LoadAllModel();
+
+	//スカイボックス
+	skyBox = make_unique<SkyBox>();
+	skyBox->Initialize(dxCommon.get(), srvManager.get());
 }
 
 void MyGame::Update()
@@ -19,6 +23,7 @@ void MyGame::Update()
 	imGui->Begin(); 
 #endif 
 	Framework::Update();
+	skyBox->Update();
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
 	// ImGuiの処理
 	ImGui::Text("Hello, world %d", 123);
@@ -28,6 +33,8 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
+	Framework::Draw();
+
 	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
 	dxCommon->PreDraw();
 	srvManager->PreDraw();
@@ -37,12 +44,17 @@ void MyGame::Draw()
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();
+	
 	// 3Dオブジェクトの描画
+	// スカイボックスの描画
+	skyBox->Draw();
 #ifdef _DEBUG
 	// ImGuiの描画
 	imGui->Draw();
 #endif
+	
 	dxCommon->PostDraw();
+
 }
 
 void MyGame::Finalize()

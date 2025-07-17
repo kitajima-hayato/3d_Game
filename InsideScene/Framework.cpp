@@ -47,6 +47,8 @@ void Framework::Initialize()
 	// エフェクト
 	EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 
+	
+
 }
 
 void Framework::Update()
@@ -62,15 +64,35 @@ void Framework::Update()
 
 	SceneManager::GetInstance()->Update(dxCommon.get());
 	Input::GetInstance()->Update();
-
+	camera->Update();
 	ParticleManager::GetInstance()->Update();
 	EffectManager::GetInstance()->Update();
+
+#ifdef _DEBUG
+
+	ImGui::Begin("Camera Settings");
+	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.01f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.01f);
+	ImGui::End();
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+#endif 
+
 
 	// ESCキーで終了
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
 	{
 		isEndRequst = true;
 	}
+
+}
+
+
+void Framework::Draw()
+{
+	
+
 
 }
 

@@ -8,7 +8,7 @@
 #include "Game/Particle/ParticleEmitter.h"
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
-#include "LevelLoader.h"
+#include "Game/Loader/LevelLoader.h"
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif

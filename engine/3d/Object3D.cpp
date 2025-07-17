@@ -34,8 +34,10 @@ void Object3D::Update()
 
 void Object3D::Draw() {
 
-	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
-	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->
+		SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
+	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->
+		SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 
 	// 通常のモデル描画
@@ -81,8 +83,9 @@ void Object3D::SetModel(const std::string& filePath)
 void Object3D::CreateTransformationMatrixData()
 {
 	// 変換行列リソースを作成
-	wvpResource = Object3DCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
-	// 変換行列リソ
+	wvpResource = Object3DCommon::GetInstance()->GetDxCommon()->
+		CreateBufferResource(sizeof(TransformationMatrix));
+	// 変換行列リソース
 	wvpResource->Map(0, nullptr, reinterpret_cast<void**>(&wvpData));
 	// 変換行列データの初期化
 	wvpData->WVP = MakeIdentity4x4();
@@ -93,7 +96,8 @@ void Object3D::CreateTransformationMatrixData()
 void Object3D::CreateDirectionalLightResource()
 {
 	// 平行光源リソースを作成
-	directionalLightResource = Object3DCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightResource = Object3DCommon::GetInstance()->GetDxCommon()->
+		CreateBufferResource(sizeof(DirectionalLight));
 	// 平行光源リソースにデータを書き込むためのアドレスを取得してdirectionalLightDataに割り当てる
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
 	// 平行光源データの初期化 / デフォルト値
