@@ -41,7 +41,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
 	levelData = std::make_unique<LevelLoader>();
-	levelData->Load("stage4");
+	levelData->Load("test6");
 	levelData->CreateObject();
 
 
@@ -109,7 +109,7 @@ void TitleScene::Draw()
 
 	//sprite_->Draw();
 	//object3D->Draw();
-	//levelData->Draw();
+	levelData->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画

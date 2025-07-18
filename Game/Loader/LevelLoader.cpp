@@ -53,10 +53,14 @@ void LevelLoader::Load(const std::string& fileName)
 			/// 追加した要素の参照を得る
 			LevelLoader::ObjectData& objectData = levelData->objects.back();
 
-			if (object.contains("name")) {
-				objectData.fileName = object["name"];
-				objectData.fileName += ".obj"; // ファイル名に拡張子を追加
+			if (object.contains("file_name")) {
+				objectData.fileName = object["file_name"];
 			}
+			else if (object.contains("name")) {
+				objectData.fileName = object["name"];
+			}
+			/// ファイル名に拡張子を追加
+			objectData.fileName += objPath;
 
 
 			/// トランスフォームのパラメータ読み込み
