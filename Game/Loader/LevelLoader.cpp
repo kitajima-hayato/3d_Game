@@ -48,11 +48,17 @@ void LevelLoader::Load(const std::string& fileName)
 
 		// MESH
 		if (type.compare("MESH") == 0) {
+			
+			/// 種別を設定
+			if (object.contains("disabled_flag") && object["disabled_flag"].get<bool>()) {
+				continue;
+			}
+			
 			/// 要素追加
 			levelData->objects.emplace_back(LevelLoader::ObjectData{});
 			/// 追加した要素の参照を得る
 			LevelLoader::ObjectData& objectData = levelData->objects.back();
-
+			
 			if (object.contains("file_name")) {
 				objectData.fileName = object["file_name"];
 			}
