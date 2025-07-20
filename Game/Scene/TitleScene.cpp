@@ -41,7 +41,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
 	levelData = std::make_unique<LevelLoader>();
-	levelData->Load("test6");
+	levelData->Load("cross");
 	levelData->CreateObject();
 
 

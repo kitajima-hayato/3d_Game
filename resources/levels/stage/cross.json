@@ -8,7 +8,7 @@
             "transform": {
                 "translation": [
                     -2.0,
-                    0.0,
+                     30.0,
                     0.0
                 ],
                 "rotation": [
@@ -74,7 +74,7 @@
             "transform": {
                 "translation": [
                     0.0,
-                    0.0,
+                    30.0,
                     -4.0
                 ],
                 "rotation": [
@@ -96,7 +96,7 @@
             "transform": {
                 "translation": [
                     2.0,
-                    0.0,
+                    30.0,
                     0.0
                 ],
                 "rotation": [
@@ -118,7 +118,7 @@
             "transform": {
                 "translation": [
                     0.0,
-                    0.0,
+                    30.0,
                     2.0
                 ],
                 "rotation": [
@@ -140,7 +140,7 @@
             "transform": {
                 "translation": [
                     0.0,
-                    0.0,
+                    30.0,
                     0.0
                 ],
                 "rotation": [
@@ -162,7 +162,7 @@
             "transform": {
                 "translation": [
                     0.0,
-                    0.0,
+                   30.0,
                     -2.0
                 ],
                 "rotation": [
