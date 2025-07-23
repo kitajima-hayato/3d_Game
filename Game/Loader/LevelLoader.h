@@ -10,14 +10,23 @@ class LevelLoader
 {  
 public:  
     struct ObjectData {  
-        std::string type;  
         Transform transform; 
         std::string fileName;
     };  
 
+    struct PlayerSpawnData {
+		Transform transform;
+		std::string fileName;
+	};
+
     struct LevelData {  
-        std::vector<ObjectData> objects;  
-    };  
+        std::vector<ObjectData> objects; 
+		std::vector<PlayerSpawnData> playerSpawn;
+    }; 
+
+    const std::vector<PlayerSpawnData>& getPlayerSpawns()const;
+    bool HasPlayerSpawn()const;
+
 
 public:  
     /// JSONファイルを読み込む  

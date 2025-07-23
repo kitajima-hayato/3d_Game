@@ -49,12 +49,12 @@ void LevelLoader::Load(const std::string& fileName)
 		// MESH
 		if (type.compare("MESH") == 0) {
 			
-			/// 種別を設定
+			/// 無効フラグがある場合はスキップ
 			if (object.contains("disabled_flag") && object["disabled_flag"].get<bool>()) {
 				continue;
 			}
 			
-			/// 要素追加
+			/// ObjectData要素追加
 			levelData->objects.emplace_back(LevelLoader::ObjectData{});
 			/// 追加した要素の参照を得る
 			LevelLoader::ObjectData& objectData = levelData->objects.back();
@@ -86,6 +86,43 @@ void LevelLoader::Load(const std::string& fileName)
 
 
 		}
+		else if (type.compare("PlayerSpawn") == 0) {
+
+			/// 無効フラグがある場合はスキップ
+			if (object.contains("disabled_flag") && object["disabled_flag"].get<bool>()) {
+				continue;
+			}
+
+			/// 新しい PlayerSpawnData を追加
+			levelData->playerSpawn.emplace_back(LevelLoader::PlayerSpawnData{});
+			LevelLoader::PlayerSpawnData& spawnData = levelData->playerSpawn.back();
+
+			/// ファイル名の読み込み
+			if (object.contains("file_name")) {
+				spawnData.fileName = object["file_name"];
+			} else if (object.contains("name")) {
+				spawnData.fileName = object["name"];
+			}
+
+			/// 必要に応じて拡張子を追加（例えば ".obj"）
+			spawnData.fileName += objPath;
+
+			// Transform
+			const auto& transform = object["transform"];
+			// Translate
+			spawnData.transform.translate.x = static_cast<float>(transform["translation"][0]);
+			spawnData.transform.translate.y = static_cast<float>(transform["translation"][2]);
+			spawnData.transform.translate.z = static_cast<float>(transform["translation"][1]);
+			// Rotate
+			spawnData.transform.rotate.x = static_cast<float>(transform["rotation"][0]);
+			spawnData.transform.rotate.y = static_cast<float>(transform["rotation"][2]);
+			spawnData.transform.rotate.z = static_cast<float>(transform["rotation"][1]);
+
+			
+		}
+
+
+
 
 
 		/// @ オブジェクト走査を再帰関数にまとめ、再帰呼び出しで枝を走査する
@@ -152,4 +189,17 @@ void LevelLoader::Draw()
 	for (auto& object : objects) {
 		object->Draw();
 	}
+}
+
+
+const std::vector<LevelLoader::PlayerSpawnData>& LevelLoader::getPlayerSpawns() const
+{
+	assert(levelData);
+	return levelData->playerSpawn;
+}
+
+bool LevelLoader::HasPlayerSpawn() const
+{
+	assert(levelData);
+	return !levelData->playerSpawn.empty();
 }
