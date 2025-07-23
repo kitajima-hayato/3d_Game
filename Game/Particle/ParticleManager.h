@@ -159,9 +159,6 @@ private:
 	Material* materialData = nullptr;
 	// パーティクルグループ / グループ名をキーにしてパーティクルグループを管理
 	std::unordered_map<std::string, ParticleGroup> particleGroups;
-	// 
-	D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
-	D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 
 	// カメラ行列
 	Matrix4x4 cameraMatrix;

@@ -72,7 +72,6 @@ void ParticleManager::CreateRootSignature()
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// 1. RootSignatureの作成
-
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 	// RootParameter作成。複数設定できるので配列。
@@ -411,11 +410,7 @@ void ParticleManager::Draw()
 	// コマンド : プリミティブトロポジ(描画形状)を設定
 	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// コマンド : VertexBufferViewを設定
-	//if (name == "Ring") {
-	//dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
-	//} else {
-		dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-	//}
+	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// 全てのパーティクルグループについて処理
 	for (auto& [name, particleGroup] : particleGroups)
