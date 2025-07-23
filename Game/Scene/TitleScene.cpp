@@ -41,8 +41,22 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
 	levelData = std::make_unique<LevelLoader>();
-	levelData->Load("ice");
+	levelData->Load("shadow");
 	levelData->CreateObject();
+
+
+
+	playerObject = std::make_unique<Object3D>();
+	playerObject->Initialize();
+	playerObject->SetModel("Player.obj");
+	if (levelData->HasPlayerSpawn()) {
+		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
+
+		playerObject->SetTranslate(playerSpawn.transform.translate);
+		playerObject->SetRotate(playerSpawn.transform.rotate);
+	}
+
+
 
 
 #pragma region 演出
@@ -94,6 +108,7 @@ void TitleScene::Update()
 	cylinder->EmitRing();
 
 	levelData->Update();
+	playerObject->Update();
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -110,6 +125,7 @@ void TitleScene::Draw()
 	//sprite_->Draw();
 	//object3D->Draw();
 	levelData->Draw();
+	playerObject->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
@@ -156,6 +172,27 @@ void TitleScene::LoadSprite()
 
 void TitleScene::DrawImgui() {
 #ifdef _DEBUG
+	if (levelData->HasPlayerSpawn()) {
+		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
+
+		// プレイヤーの位置と回転を Object3D にセット
+		playerObject->SetTranslate(playerSpawn.transform.translate);
+		playerObject->SetRotate(playerSpawn.transform.rotate);
+
+		// ImGui ウィンドウで表示
+		ImGui::Begin("PlayerSpawn Info");
+
+		const Vector3& pos = playerSpawn.transform.translate;
+		const Vector3& rot = playerSpawn.transform.rotate;
+
+		ImGui::Text("Translate: X = %.2f, Y = %.2f, Z = %.2f", pos.x, pos.y, pos.z);
+		ImGui::Text("Rotate:    X = %.2f, Y = %.2f, Z = %.2f", rot.x, rot.y, rot.z);
+
+		ImGui::End();
+	}
+
+
+
 
 	//ImGui::Begin("Particle");
 

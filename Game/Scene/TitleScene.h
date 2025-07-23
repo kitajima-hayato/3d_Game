@@ -64,5 +64,7 @@ private: // ゲーム要素
 
 	/// levelloader
 	std::unique_ptr<LevelLoader>levelData;
+
+	std::unique_ptr<Object3D> playerObject;
 };
 

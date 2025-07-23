@@ -10,6 +10,8 @@ void ModelList::LoadAllModel()
 	/// TitleScene
 	// 仮オブジェ
 	ModelManager::GetInstance()->LoadModel("plane.obj");
+	// プレイヤー
+	ModelManager::GetInstance()->LoadModel("Player.obj");
 
 	/// GamePlayScene
 
