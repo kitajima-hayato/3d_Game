@@ -158,11 +158,11 @@ void RenderTexture::CreateGraficsPipeLine() {
 
 	//　頂点シェーダーのコンパイル結果を格納するBlob
 	vertexShaderBlob = dxCommon_->CompileShader(
-		L"resources/shaders/CopyImage.VS.hlsl", L"vs_6_0");
+		L"resources/shaders/Fullscreen.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 	// ピクセルシェーダーのコンパイル結果を格納するBlob
 	pixelShaderBlob = dxCommon_->CompileShader(
-		L"resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
+		L"resources/shaders/Grayscale.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 
