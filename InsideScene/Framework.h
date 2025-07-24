@@ -20,6 +20,7 @@
 #include "AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
+#include "engine/2d/RenderTexture.h"
 class Framework
 {
 
@@ -57,6 +58,9 @@ protected:// Initialize関連
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
 	std::unique_ptr<Camera> camera;
+
+	// 
+	std::unique_ptr<RenderTexture> renderTexture = nullptr;
 
 public:
 	// シーンファクトリー

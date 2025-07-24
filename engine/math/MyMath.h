@@ -154,6 +154,11 @@ struct AccelerationField {
 	AABB area;
 };
 
+struct TextureVertex {
+    Vector4 position; 
+	Vector2 texcoord;
+};
+
 #pragma region パーティクル構造体
 // パーティクル構造体
 
