@@ -66,5 +66,8 @@ private: // ゲーム要素
 	std::unique_ptr<LevelLoader>levelData;
 
 	std::unique_ptr<Object3D> playerObject;
+
+	std::unique_ptr<Object3D> Rainbow;
+	Transform rainbowTransform;
 };
 

@@ -248,7 +248,7 @@ void SkyBox::InitializeMaterial()
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// マテリアルデータの初期化
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData->enableLighting = false;
+	materialData->enableLighting = true;
 	materialData->uvTransform = MakeIdentity4x4();
 }
 

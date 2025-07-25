@@ -91,3 +91,8 @@ D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index)
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
 }
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SrvManager::GetSRVHeap() const
+{
+	return descriptorHeap;
+}
