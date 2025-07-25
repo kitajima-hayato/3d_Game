@@ -54,7 +54,20 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 		playerObject->SetTranslate(playerSpawn.transform.translate);
 		playerObject->SetRotate(playerSpawn.transform.rotate);
+		
 	}
+
+	Rainbow = std::make_unique<Object3D>();
+	Rainbow->Initialize();
+	Rainbow->SetModel("RainbowPlane.obj");
+	rainbowTransform = Rainbow->GetTransform();
+	rainbowTransform = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{3.0f,0.0f,15.0f},
+	};
+	Rainbow->SetTransform(rainbowTransform);
+
 
 
 
@@ -110,6 +123,13 @@ void TitleScene::Update()
 	levelData->Update();
 	playerObject->Update();
 
+	//  Rainbow回転（ここを追加）
+	rainbowTransform.rotate.y += 0.02f; // 回転速度は調整可能
+	Rainbow->SetTransform(rainbowTransform);
+
+	Rainbow->Update();
+
+
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
@@ -123,9 +143,10 @@ void TitleScene::Draw()
 	SpriteCommon::GetInstance()->DrawSettingCommon();
 
 	//sprite_->Draw();
-	//object3D->Draw();
+	object3D->Draw();
 	levelData->Draw();
 	playerObject->Draw();
+	Rainbow->Draw();
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画

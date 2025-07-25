@@ -8,61 +8,78 @@ RenderTexture::RenderTexture()
 RenderTexture::~RenderTexture()
 {
 }
-void RenderTexture::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
+void RenderTexture::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, 
+	DXGI_FORMAT format, const Vector4& clearColor)
 {
-	/// 引き数　を渡す
+	/// 引き数を渡す
 	this->dxCommon_ = dxCommon;
 	this->srvManager_ = srvManager;
+	this->clearColor_ = clearColor;
+
+	const Vector4 kRenderTargetClearValue = clearColor;
+	textureResource = CreateRenderTextureResource(
+		dxCommon_->GetDevice(), WinAPI::kClientWidth, WinAPI::kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue
+	);
+
+	rtvHeap = dxCommon_->CreateDescriptorHeap(
+		D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
+	rtvHandle = dxCommon_->GetCPUDescriptorHandle(rtvHeap, dxCommon_->GetDescriptorSizeRTV(), 0);
 
 
-	D3D12_RESOURCE_DESC desc{};
-	desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	desc.Width = 1280; // テクスチャの幅
-	desc.Height = 720; // テクスチャの高さ
-	desc.DepthOrArraySize = 1; // 1枚のテクスチャ
-	desc.MipLevels = 1; // ミップマップレベル
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // テクスチャのフォーマット
-	desc.SampleDesc.Count = 1;
-	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+	dxCommon_->GetDevice()->CreateRenderTargetView(textureResource.Get(), nullptr, rtvHandle);
+
+
+	srvIndex = srvManager_->Allocate();
+	srvManager_->CreateSRVforTexture2D(srvIndex, textureResource.Get(), format, 1);
+
+	currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	CreateGraficsPipeLine();
+	CreateVertexBuffer();
+	
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device> device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor)
+{
+	
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Width = width;
+	resourceDesc.Height = height;
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = 1;
+	resourceDesc.Format = format;
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
 
 	D3D12_HEAP_PROPERTIES heapProp{};
 	heapProp.Type = D3D12_HEAP_TYPE_DEFAULT;
 
 	D3D12_CLEAR_VALUE clear{};
-	clear.Format = desc.Format;
-	clear.Color[0] = clearColor_.x;
-	clear.Color[1] = clearColor_.y;
-	clear.Color[2] = clearColor_.z;
-	clear.Color[3] = clearColor_.w;
+	clear.Format = format;
+	clear.Color[0] = clearColor.x;
+	clear.Color[1] = clearColor.y;
+	clear.Color[2] = clearColor.z;
+	clear.Color[3] = clearColor.w;
 
-	HRESULT hr = dxCommon_->GetDevice()->CreateCommittedResource(
+	
+	HRESULT hr = device->CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
-		&desc,
+		&resourceDesc,
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		&clear,
-		IID_PPV_ARGS(&texture));
+		IID_PPV_ARGS(&textureResource));
 	assert(SUCCEEDED(hr));
 
-	rtvHeap = dxCommon_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false);
-	rtvHandle = dxCommon_->GetCPUDescriptorHandle(rtvHeap.Get(), dxCommon_->GetDescriptorSizeRTV(), 0);
-
-	dxCommon_->GetDevice()->CreateRenderTargetView(texture.Get(), nullptr, rtvHandle);
-
-	srvIndex = srvManager_->Allocate();
-	srvManager_->CreateSRVforTexture2D(srvIndex, texture.Get(), desc.Format, 1);
-
-	currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
-
-	CreateVertexBuffer();
-	CreateGraficsPipeLine();
+	return textureResource;
 }
 
 void RenderTexture::BeginRender()
 {
 	if (currentState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
 		auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			texture.Get(),
+			textureResource.Get(),
 			currentState,
 			D3D12_RESOURCE_STATE_RENDER_TARGET
 		);
@@ -74,15 +91,27 @@ void RenderTexture::BeginRender()
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dxCommon_->GetDSVHandle();
 	dxCommon_->GetCommandList()->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
-	// ビューポート / シザー設定
-	D3D12_VIEWPORT viewport{ 0.0f, 0.0f, 1280.0f, 720.0f, 0.0f, 1.0f };
-	D3D12_RECT scissorRect{ 0, 0, 1280, 720 };
+	// ビューポートとシザー設定
+	D3D12_VIEWPORT viewport{};
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	viewport.Width = static_cast<float>(resourceDesc.Width);
+	viewport.Height = static_cast<float>(resourceDesc.Height);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+
+	D3D12_RECT scissorRect{};
+	scissorRect.left = 0;
+	scissorRect.top = 0;
+	scissorRect.right = static_cast<LONG>(resourceDesc.Width);
+	scissorRect.bottom = static_cast<LONG>(resourceDesc.Height);
+
 	dxCommon_->GetCommandList()->RSSetViewports(1, &viewport);
 	dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 
-	// クリアカラーでクリア
-	float clearColor[] = { clearColor_.x, clearColor_.y, clearColor_.z, clearColor_.w };
-	dxCommon_->GetCommandList()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	// クリアカラー
+	
+	dxCommon_->GetCommandList()->ClearRenderTargetView(rtvHandle, &clearColor_.w, 0, nullptr);
 }
 
 
@@ -90,7 +119,7 @@ void RenderTexture::EndRender()
 {
 	if (currentState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
 		auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-			texture.Get(),
+			textureResource.Get(),
 			currentState,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
 		);
@@ -104,11 +133,12 @@ D3D12_GPU_DESCRIPTOR_HANDLE RenderTexture::GetGPUHandle() const {
 	return srvManager_->GetGPUDescriptorHandle(srvIndex);
 }
 
+
 void RenderTexture::Draw() {
 
-	// SRVヒープを設定（ルートテーブル用）
-	ID3D12DescriptorHeap* heaps[] = { srvManager_->GetSRVHeap().Get()};
-	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, heaps);
+	//// SRVヒープを設定（ルートテーブル用）
+	//ID3D12DescriptorHeap* heaps[] = { srvManager_->GetSRVHeap().Get()};
+	//dxCommon_->GetCommandList()->SetDescriptorHeaps(1, heaps);
 
 	// PSO / RootSignature をセット
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -124,6 +154,8 @@ void RenderTexture::Draw() {
 	// 頂点バッファを使わず3頂点で全画面描画（VSでSV_VertexID使用前提）
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
+
+
 
 
 void RenderTexture::CreateGraficsPipeLine() {
@@ -143,8 +175,8 @@ void RenderTexture::CreateGraficsPipeLine() {
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 	
 
-	//inputLayoutDescs.pInputElementDescs = inputElementDescs;
-	//inputLayoutDescs.NumElements = 2;
+	inputLayoutDescs.pInputElementDescs = nullptr;
+	inputLayoutDescs.NumElements = 0;
 
 	// レンダーターゲットの書き込みマスクを設定。全ての色チャンネルに書き込みを許可
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =

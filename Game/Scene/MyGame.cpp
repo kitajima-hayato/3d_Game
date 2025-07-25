@@ -17,7 +17,8 @@ void MyGame::Initialize()
 	skyBox->Initialize(dxCommon.get(), srvManager.get());
 
 	renderTexture = std::make_unique<RenderTexture>();
-	renderTexture->Initialize(dxCommon.get(),srvManager.get());
+	renderTexture->Initialize(dxCommon.get(),srvManager.get(),WinAPI::kClientWidth,WinAPI::kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, Vector4{ 1.0f, 0.0f, 0.0f, 1.0f });
 }
 
 void MyGame::Update()
@@ -37,29 +38,33 @@ void MyGame::Update()
 
 void MyGame::Draw()
 {
+	
 	renderTexture->BeginRender();
-	Framework::Draw();
-	renderTexture->EndRender();
 	
-	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-	dxCommon->PreDraw();
 	srvManager->PreDraw();
-	
-	// レンダーテクスチャの描画
-	renderTexture->Draw();
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
 	Object3DCommon::GetInstance()->DrawSettingCommon();
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();
-	
-	
 
-
-	// 3Dオブジェクトの描画
+	
+	renderTexture->EndRender();
+	
+	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
+	dxCommon->PreDraw();
+	
+	// レンダーテクスチャの描画
+	renderTexture->Draw();
 	// スカイボックスの描画
-	skyBox->Draw();
+	//skyBox->Draw();
+	
+	Framework::Draw();
+	
+	
 
+	
+	
 #ifdef _DEBUG
 	// ImGuiの描画
 	imGui->Draw();

@@ -31,9 +31,8 @@ struct PixelInput
 float4 main(PixelInput input) : SV_TARGET
 {
     float4 color = tex.Sample(smp, input.uv);
+    float gray = dot(color.rgb, float3(0.8, 0.8, 0.8)); // 明るめテスト
+    return float4(gray, gray, gray, 1.0);
 
-    // 輝度の加重平均（NTSC係数）
-    float gray = dot(color.rgb, float3(0.299, 0.587, 0.114));
 
-    return float4(gray, gray, gray, color.a);
 }
