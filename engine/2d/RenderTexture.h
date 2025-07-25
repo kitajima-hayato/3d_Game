@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
+	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
 	/// <summary>
 	/// レンダーテクスチャの開始
@@ -37,10 +37,12 @@ public:
 	/// </summary>
 	void EndRender();
 
-/// <summary>
-/// 描画
-/// </summary>
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 private:
 	void CreateGraficsPipeLine();
 	void CreateRootSignatrue();
@@ -70,11 +72,11 @@ private: // メンバ変数
 	D3D12_RESOURCE_STATES currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	/// クリアカラー
-	Vector4 clearColor_ = { 0.0f, 0.0f, 0.0f, 1.0f };
+	Vector4 clearColor_;
 
 private:
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDescs{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2]={};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 	/// ブレンドデスク
 	D3D12_BLEND_DESC blendDesc{};
@@ -93,5 +95,10 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferResource;
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+
+	D3D12_RESOURCE_DESC resourceDesc{};
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
+	 
 };
 
