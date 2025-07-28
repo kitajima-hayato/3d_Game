@@ -107,6 +107,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="EnemyBace.cpp" />
+    <ClCompile Include="EnemyFactory.cpp" />
     <ClCompile Include="Game\Collision\Collider.cpp" />
     <ClCompile Include="Game\Application\CsvLoader.cpp" />
     <ClCompile Include="Game\Application\Block.cpp" />
@@ -152,6 +153,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   <ItemGroup>
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="EnemyBace.h" />
+    <ClInclude Include="EnemyFactory.h" />
     <ClInclude Include="Game\Collision\Collider.h" />
     <ClInclude Include="Game\Application\BlockType.h" />
     <ClInclude Include="Game\Application\CsvLoader.h" />
@@ -197,6 +199,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
+    <Text Include="ToDo.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

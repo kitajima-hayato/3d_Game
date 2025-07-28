@@ -26,6 +26,9 @@ class NormalEnemy :
 	void Action() override;
 
 
+public:
+
+
 
 };
 

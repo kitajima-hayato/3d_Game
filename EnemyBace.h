@@ -1,5 +1,7 @@
 #pragma once
 #include "engine/math/MyMath.h"
+#include "engine/3d/Object3D.h"
+#include <memory>
 
 struct Stats {
 	/// 座標
@@ -50,6 +52,9 @@ public:
 	virtual void Action() = 0;
 
 protected:
-	Stats stats; 
+	/// ステータス
+	Stats stats;
+	/// エネミーのモデル
+	std::unique_ptr<Object3D> model;
 };
 
