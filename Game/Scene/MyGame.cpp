@@ -39,8 +39,9 @@ void MyGame::Update()
 void MyGame::Draw()
 {
 	
-	renderTexture->BeginRender();
-	
+	//renderTexture->BeginRender();
+	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
+	dxCommon->PreDraw();
 	srvManager->PreDraw();
 	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
 	Object3DCommon::GetInstance()->DrawSettingCommon();
@@ -49,21 +50,16 @@ void MyGame::Draw()
 	SceneManager::GetInstance()->Draw();
 
 	
-	renderTexture->EndRender();
+	//renderTexture->EndRender();
 	
-	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-	dxCommon->PreDraw();
+	
 	
 	// レンダーテクスチャの描画
-	renderTexture->Draw();
+	//renderTexture->Draw();
 	// スカイボックスの描画
-	//skyBox->Draw();
+	skyBox->Draw();
 	
 	Framework::Draw();
-	
-	
-
-	
 	
 #ifdef _DEBUG
 	// ImGuiの描画
@@ -73,6 +69,41 @@ void MyGame::Draw()
 	dxCommon->PostDraw();
 
 }
+#pragma region グレイスケール並び
+//void MyGame::Draw()
+//{
+//
+//	renderTexture->BeginRender();
+//
+//	srvManager->PreDraw();
+//	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
+//	Object3DCommon::GetInstance()->DrawSettingCommon();
+//
+//	// シーンマネージャーの描画	
+//	SceneManager::GetInstance()->Draw();
+//
+//
+//	renderTexture->EndRender();
+//
+//	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
+//	dxCommon->PreDraw();
+//
+//	// レンダーテクスチャの描画
+//	renderTexture->Draw();
+//	// スカイボックスの描画
+//	//skyBox->Draw();
+//
+//	Framework::Draw();
+//
+//#ifdef _DEBUG
+//	// ImGuiの描画
+//	imGui->Draw();
+//#endif
+//
+//	dxCommon->PostDraw();
+//
+//}
+#pragma endregion
 
 void MyGame::Finalize()
 {
