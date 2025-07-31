@@ -60,5 +60,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 	// マテリアルデータ
 	Material* materialData = nullptr;
+
+	std::string cubeMapPath = "resources/rostock_laage_airport_4k.dds";
 };
 

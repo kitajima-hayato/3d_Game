@@ -35,6 +35,11 @@ void Model::Draw()
 	modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2,
 		TextureManager::GetInstance()->GetSrvHandleGPU(modelData.material.textureFilePath));
 
+	// 環境マップ
+	modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(4,
+		TextureManager::GetInstance()->GetSrvHandleGPU(cubeMapPath));
+
+
 	// テクスチャをセット
 	//modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRoot32BitConstant(3, modelData.material.textureIndex, 0);
 	// 描画
@@ -169,7 +174,7 @@ void Model::CreateMaterialResource()
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// マテリアルデータの初期化
 	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData->enableLighting = 0;
+	materialData->enableLighting = 3;
 	materialData->uvTransform = MakeIdentity4x4();
 
 }

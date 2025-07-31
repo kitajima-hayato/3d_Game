@@ -52,6 +52,8 @@ private: // メンバ関数
 	void CreateTransformationMatrixData();
 	// 平行光源リソースの作成
 	void CreateDirectionalLightResource();
+	// カメラリソースの作成
+	void CreateCameraResource();
 
 	
 private:// メンバ変数
@@ -77,5 +79,9 @@ private:// メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
 	D3D12_INDEX_BUFFER_VIEW ibView{};
 	uint32_t indexCount = 0;
+
+	// カメラリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource;
+	CameraForGPU* cameraForGpuData = nullptr;
 };
 
