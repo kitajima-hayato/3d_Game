@@ -159,6 +159,10 @@ struct TextureVertex {
 	Vector2 texcoord;
 };
 
+struct CameraForGPU {
+    Vector3 worldPosition;
+};
+
 #pragma region パーティクル構造体
 // パーティクル構造体
 
@@ -184,6 +188,7 @@ struct EffectInstance
     float currentTime;       // 経過時間
     bool isActive = true;    // アクティブ
 };
+
 
 enum BlendMode {
     //!< ブレンド無し

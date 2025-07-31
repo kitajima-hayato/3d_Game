@@ -13,6 +13,8 @@ void Object3D::Initialize()
 
 	CreateTransformationMatrixData();
 	CreateDirectionalLightResource();
+	// カメラバッファを生成
+	CreateCameraResource();
 
 	// Transformの初期化
 	transform = { { 1.0f, 1.0f, 1.0f },{ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f  } };
@@ -34,10 +36,15 @@ void Object3D::Update()
 
 void Object3D::Draw() {
 
+	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
+	Object3DCommon::GetInstance()->DrawSettingCommon();
+
 	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->
 		SetGraphicsRootConstantBufferView(1, wvpResource->GetGPUVirtualAddress());
 	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->
 		SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+	Object3DCommon::GetInstance()->GetDxCommon()->GetCommandList()->
+		SetGraphicsRootConstantBufferView(5, cameraResource->GetGPUVirtualAddress());
 
 
 	// 通常のモデル描画
@@ -51,7 +58,7 @@ void Object3D::Create(Model* model)
 
 	this->model = model;
 
-	// カメラを取得（すでに初期化されているなら不要かもしれません）
+	// カメラを取得
 	this->camera = Object3DCommon::GetInstance()->GetDefaultCamera();
 
 	// 変換行列バッファを生成
@@ -59,6 +66,10 @@ void Object3D::Create(Model* model)
 
 	// 光源バッファを生成
 	CreateDirectionalLightResource();
+
+	// カメラバッファを生成
+	CreateCameraResource();
+
 
 	// 初期Transform
 	transform = {
@@ -107,5 +118,18 @@ void Object3D::CreateDirectionalLightResource()
 	directionalLightData->direction = { 0.0f, -1.0f, 0.0f };
 	// 輝度
 	directionalLightData->intensity = 1.0f;
+}
+
+void Object3D::CreateCameraResource()
+{
+	// カメラリソースの作成
+	cameraResource = Object3DCommon::GetInstance()->GetDxCommon()->
+		CreateBufferResource(sizeof(CameraForGPU));
+	// カメラリソースにデータを書き込むためのアドレスを取得してcameraForGpuDataに割り当てる
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraForGpuData));
+	// カメラデータの初期化
+	cameraForGpuData->worldPosition = { 0.0f,4.0f,-10.0f };
+
+
 }
 

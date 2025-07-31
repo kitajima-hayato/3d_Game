@@ -43,8 +43,6 @@ void MyGame::Draw()
 	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
 	dxCommon->PreDraw();
 	srvManager->PreDraw();
-	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-	Object3DCommon::GetInstance()->DrawSettingCommon();
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();

@@ -40,22 +40,22 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetTranslate(Vector3(0.0f, 0.0f, 10.0f));
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 
-	levelData = std::make_unique<LevelLoader>();
+	/*levelData = std::make_unique<LevelLoader>();
 	levelData->Load("shadow");
-	levelData->CreateObject();
+	levelData->CreateObject();*/
 
 
 
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
 	playerObject->SetModel("Player.obj");
-	if (levelData->HasPlayerSpawn()) {
+	/*if (levelData->HasPlayerSpawn()) {
 		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
 
 		playerObject->SetTranslate(playerSpawn.transform.translate);
 		playerObject->SetRotate(playerSpawn.transform.rotate);
 		
-	}
+	}*/
 
 	Rainbow = std::make_unique<Object3D>();
 	Rainbow->Initialize();
@@ -64,7 +64,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	rainbowTransform = {
 		{1.0f,1.0f,1.0f},
 		{0.0f,0.0f,0.0f},
-		{3.0f,0.0f,15.0f},
+		{3.0f,0.0f,0.0f},
 	};
 	Rainbow->SetTransform(rainbowTransform);
 
@@ -120,11 +120,11 @@ void TitleScene::Update()
 	effectEmitter->EmitCylinder();
 	cylinder->EmitRing();
 
-	levelData->Update();
+	//levelData->Update();
 	playerObject->Update();
 
 	//  Rainbow回転（ここを追加）
-	rainbowTransform.rotate.y += 0.02f; // 回転速度は調整可能
+	rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
 	Rainbow->SetTransform(rainbowTransform);
 
 	Rainbow->Update();
@@ -139,14 +139,20 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	//Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-	SpriteCommon::GetInstance()->DrawSettingCommon();
-
+	
+#pragma region 3Dオブジェクトの描画準備
+	
 	//sprite_->Draw();
-	object3D->Draw();
-	levelData->Draw();
-	playerObject->Draw();
+#pragma endregion
+
+#pragma region 3Dオブジェクトの描画
+	
+	//object3D->Draw();
+	//levelData->Draw();
+	//playerObject->Draw();
 	Rainbow->Draw();
+
+
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	// エフェクトの描画
@@ -155,8 +161,7 @@ void TitleScene::Draw()
 	//EffectManager::GetInstance()->DrawCylinder();
 
 	//EffectManager::GetInstance()->DrawCylinder();
-
-	
+#pragma endregion
 }
 
 void TitleScene::Finalize()
@@ -193,24 +198,24 @@ void TitleScene::LoadSprite()
 
 void TitleScene::DrawImgui() {
 #ifdef _DEBUG
-	if (levelData->HasPlayerSpawn()) {
-		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
+	//if (levelData->HasPlayerSpawn()) {
+	//	const auto& playerSpawn = levelData->getPlayerSpawns()[0];
 
-		// プレイヤーの位置と回転を Object3D にセット
-		playerObject->SetTranslate(playerSpawn.transform.translate);
-		playerObject->SetRotate(playerSpawn.transform.rotate);
+	//	// プレイヤーの位置と回転を Object3D にセット
+	//	playerObject->SetTranslate(playerSpawn.transform.translate);
+	//	playerObject->SetRotate(playerSpawn.transform.rotate);
 
-		// ImGui ウィンドウで表示
-		ImGui::Begin("PlayerSpawn Info");
+	//	// ImGui ウィンドウで表示
+	//	ImGui::Begin("PlayerSpawn Info");
 
-		const Vector3& pos = playerSpawn.transform.translate;
-		const Vector3& rot = playerSpawn.transform.rotate;
+	//	const Vector3& pos = playerSpawn.transform.translate;
+	//	const Vector3& rot = playerSpawn.transform.rotate;
 
-		ImGui::Text("Translate: X = %.2f, Y = %.2f, Z = %.2f", pos.x, pos.y, pos.z);
-		ImGui::Text("Rotate:    X = %.2f, Y = %.2f, Z = %.2f", rot.x, rot.y, rot.z);
+	//	ImGui::Text("Translate: X = %.2f, Y = %.2f, Z = %.2f", pos.x, pos.y, pos.z);
+	//	ImGui::Text("Rotate:    X = %.2f, Y = %.2f, Z = %.2f", rot.x, rot.y, rot.z);
 
-		ImGui::End();
-	}
+	//	ImGui::End();
+	//}
 
 
 

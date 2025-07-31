@@ -2,6 +2,10 @@
 #include "MyMath.h"
 #include "MakeMatrix.h"
 #include "WinAPI.h"
+
+
+
+
 class Camera
 {
 public:	// メンバ関数
