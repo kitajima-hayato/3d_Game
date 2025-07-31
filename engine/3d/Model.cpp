@@ -8,13 +8,17 @@ void Model::Initialize(ModelCommon* modelCommon, const string& directorypath, co
 	// ModelCommonのポインタを引数からメンバ変数に記録
 	this->modelCommon = modelCommon;
 	// モデル読み込み
-	//LoadMaterialTempLateFile("resources", "plane.obj");
 	modelData = LoadObjFile(directorypath, filename);
 	// 頂点データの初期化
 	CreateVertexResourceData();
 	// マテリアルの初期化
 	CreateMaterialResource();
 	// テクスチャ読み込み
+	//テクスチャが指定されていない場合は、デフォルトのテクスチャを使用する
+	if(modelData.material.textureFilePath.empty()) {
+		// デフォルトのテクスチャを使用する
+		modelData.material.textureFilePath = "Resources/texture/default.png";
+	}
 	// .objの参照しているテクスチャファイル読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
 	// 読み込んだテクスチャのインデックスを取得
@@ -28,7 +32,13 @@ void Model::Draw()
 	// マテリアルデータをセット
 	modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// 
-	modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(modelData.material.textureFilePath));
+	modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2,
+		TextureManager::GetInstance()->GetSrvHandleGPU(modelData.material.textureFilePath));
+
+	// 環境マップ
+	modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(4,
+		TextureManager::GetInstance()->GetSrvHandleGPU(cubeMapPath));
+
 
 	// テクスチャをセット
 	//modelCommon->GetDxCommon()->GetCommandList()->SetGraphicsRoot32BitConstant(3, modelData.material.textureIndex, 0);
@@ -164,7 +174,7 @@ void Model::CreateMaterialResource()
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// マテリアルデータの初期化
 	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData->enableLighting = 0;
+	materialData->enableLighting = 3;
 	materialData->uvTransform = MakeIdentity4x4();
 
 }

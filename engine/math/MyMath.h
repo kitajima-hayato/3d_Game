@@ -117,6 +117,7 @@ struct VertexData {
 struct ModelData {
 	std::vector<VertexData>vertices;
 	MaterialData material;
+	std::vector<uint32_t> indices;
 };
 struct Material {
 	Vector4 color;
@@ -149,6 +150,15 @@ struct SpriteData {
 //	AABB area;
 //};
 
+struct TextureVertex {
+    Vector4 position; 
+	Vector2 texcoord;
+};
+
+struct CameraForGPU {
+    Vector3 worldPosition;
+};
+
 #pragma region パーティクル構造体
 // パーティクル構造体
 
@@ -174,6 +184,7 @@ struct EffectInstance
     float currentTime;       // 経過時間
     bool isActive = true;    // アクティブ
 };
+
 
 enum BlendMode {
     //!< ブレンド無し

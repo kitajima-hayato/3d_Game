@@ -27,15 +27,23 @@ void Object3DCommon::CreateRootSignatrue()
 	descriptionRootSignature.Flags =
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 #pragma region DescriptorRange
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
-	descriptorRange[0].NumDescriptors = 1;//数は１つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
-#pragma endregion
+	D3D12_DESCRIPTOR_RANGE descriptorRange = {};
+	descriptorRange.BaseShaderRegister = 0;//0から始まる
+	descriptorRange.NumDescriptors = 1;//数は１つ
+	descriptorRange.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;//SRVを使う
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
+	// 環境マップ
+	D3D12_DESCRIPTOR_RANGE descriptorRangeSkyBox = {};
+	descriptorRangeSkyBox.BaseShaderRegister = 1;
+	descriptorRangeSkyBox.NumDescriptors = 1;
+	descriptorRangeSkyBox.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+	descriptorRangeSkyBox.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
+	#pragma endregion
 
 	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	D3D12_ROOT_PARAMETER rootParamaters[4] = {};
+	D3D12_ROOT_PARAMETER rootParamaters[6] = {};
 	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
 	rootParamaters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
@@ -46,13 +54,24 @@ void Object3DCommon::CreateRootSignatrue()
 
 	rootParamaters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
 	rootParamaters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-	rootParamaters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
+	rootParamaters[2].DescriptorTable.pDescriptorRanges = &descriptorRange;//Tableの中身の配列を指定
+	rootParamaters[2].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
 
 	rootParamaters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
 	rootParamaters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
 	rootParamaters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
 
+	// 環境マップ
+	rootParamaters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParamaters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParamaters[4].DescriptorTable.pDescriptorRanges = &descriptorRangeSkyBox;//Tableの中身の配列を指定
+	rootParamaters[4].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
+
+	//カメラ
+	rootParamaters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParamaters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParamaters[5].Descriptor.ShaderRegister = 2;
+	
 	descriptionRootSignature.pParameters = rootParamaters;//ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
 #pragma endregion

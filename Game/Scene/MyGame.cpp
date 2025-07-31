@@ -11,6 +11,14 @@ void MyGame::Initialize()
 
 	modelList = make_unique<ModelList>();
 	modelList->LoadAllModel();
+
+	//スカイボックス
+	skyBox = make_unique<SkyBox>();
+	skyBox->Initialize(dxCommon.get(), srvManager.get());
+
+	renderTexture = std::make_unique<RenderTexture>();
+	renderTexture->Initialize(dxCommon.get(),srvManager.get(),WinAPI::kClientWidth,WinAPI::kClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, Vector4{ 1.0f, 0.0f, 0.0f, 1.0f });
 }
 
 void MyGame::Update()
@@ -19,29 +27,79 @@ void MyGame::Update()
 	imGui->Begin(); 
 #endif 
 	Framework::Update();
+	skyBox->Update();
 #ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
 	imGui->End();
 #endif
+
 }
 
 void MyGame::Draw()
 {
+	
+	//renderTexture->BeginRender();
 	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
 	dxCommon->PreDraw();
 	srvManager->PreDraw();
-	
-	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-	Object3DCommon::GetInstance()->DrawSettingCommon();
 
 	// シーンマネージャーの描画	
 	SceneManager::GetInstance()->Draw();
-	// 3Dオブジェクトの描画
+
+	
+	//renderTexture->EndRender();
+	
+	
+	
+	// レンダーテクスチャの描画
+	//renderTexture->Draw();
+	// スカイボックスの描画
+	skyBox->Draw();
+	
+	Framework::Draw();
+	
 #ifdef _DEBUG
 	// ImGuiの描画
 	imGui->Draw();
 #endif
+	
 	dxCommon->PostDraw();
+
 }
+#pragma region グレイスケール並び
+//void MyGame::Draw()
+//{
+//
+//	renderTexture->BeginRender();
+//
+//	srvManager->PreDraw();
+//	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
+//	Object3DCommon::GetInstance()->DrawSettingCommon();
+//
+//	// シーンマネージャーの描画	
+//	SceneManager::GetInstance()->Draw();
+//
+//
+//	renderTexture->EndRender();
+//
+//	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
+//	dxCommon->PreDraw();
+//
+//	// レンダーテクスチャの描画
+//	renderTexture->Draw();
+//	// スカイボックスの描画
+//	//skyBox->Draw();
+//
+//	Framework::Draw();
+//
+//#ifdef _DEBUG
+//	// ImGuiの描画
+//	imGui->Draw();
+//#endif
+//
+//	dxCommon->PostDraw();
+//
+//}
+#pragma endregion
 
 void MyGame::Finalize()
 {

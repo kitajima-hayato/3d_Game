@@ -11,7 +11,7 @@ void SrvManager::Initialize(DirectXCommon* dxCommon)
 
 }
 
-uint32_t SrvManager::Allocate()
+uint32_t SrvManager::Allocate  ()
 {
 	// 上限に達していないか確認
 	if (kMaxSRVCount<= useIndex) {
@@ -90,4 +90,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE SrvManager::GetGPUDescriptorHandle(uint32_t index)
 	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
 	handleGPU.ptr += (descriptorSize * index);
 	return handleGPU;
+}
+
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SrvManager::GetSRVHeap() const
+{
+	return descriptorHeap;
 }

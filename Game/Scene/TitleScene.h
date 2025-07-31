@@ -8,7 +8,7 @@
 #include "Game/Particle/ParticleEmitter.h"
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
-
+#include "Game/Loader/LevelLoader.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -73,6 +73,15 @@ private: // ゲーム要素
 
 	bool isStart = false;
 
+
+
+	/// levelloader
+	std::unique_ptr<LevelLoader>levelData;
+
+	std::unique_ptr<Object3D> playerObject;
+
+	std::unique_ptr<Object3D> Rainbow;
+	Transform rainbowTransform;
 
 };
 

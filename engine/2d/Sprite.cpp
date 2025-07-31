@@ -95,6 +95,10 @@ void Sprite::Update()
 
 void Sprite::Draw()
 {
+
+	//Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
+	SpriteCommon::GetInstance()->DrawSettingCommon();
+
 	// VertexbufferViewを設定
 	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	// IndexBufferViewを設定
@@ -183,9 +187,3 @@ void Sprite::AdjustTextureSizee()
 	size = textureSize;
 }
 
-//void Sprite::DrawSetting()
-//{
-//	spriteCommon->GetDxCommon()->LoadTexture("resources/uvChecker.png");
-//	spriteCommon->DrawSettingCommon();
-//	//spriteCommon->GetDxCommon()->CreateTextureResource();
-//}

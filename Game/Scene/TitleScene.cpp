@@ -19,7 +19,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 	// マルチスレッドでの読み込み
-	std::thread th1(&TitleScene::LoadAudio, this);
+	std::thread th1(&TitleScene::LoadAudio, this); 
 	std::thread th2(&TitleScene::LoadSprite, this);
 
 	th1.join();
@@ -41,10 +41,43 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
+
 	object3D->SetModel("plane.obj");
 	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
+
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 	speed = object3D->GetTranslate();
+
+	/*levelData = std::make_unique<LevelLoader>();
+	levelData->Load("shadow");
+	levelData->CreateObject();*/
+
+
+
+	playerObject = std::make_unique<Object3D>();
+	playerObject->Initialize();
+	playerObject->SetModel("Player.obj");
+	/*if (levelData->HasPlayerSpawn()) {
+		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
+
+		playerObject->SetTranslate(playerSpawn.transform.translate);
+		playerObject->SetRotate(playerSpawn.transform.rotate);
+		
+	}*/
+
+	Rainbow = std::make_unique<Object3D>();
+	Rainbow->Initialize();
+	Rainbow->SetModel("RainbowPlane.obj");
+	rainbowTransform = Rainbow->GetTransform();
+	rainbowTransform = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		{3.0f,0.0f,0.0f},
+	};
+	Rainbow->SetTransform(rainbowTransform);
+
+
+
 
 
 #pragma region 演出
@@ -78,7 +111,8 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 void TitleScene::Update()
 {
 
-	sprite_->Update();
+	//sprite_->Update();
+
 	object3D->Update();
 
 	particleEmitter->SetTransform({
@@ -86,7 +120,9 @@ void TitleScene::Update()
 	emitterRotate,
 	emitterTranslate
 		});
+#ifdef _DEBUG
 	DrawImgui();
+#endif
 
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
@@ -108,6 +144,14 @@ void TitleScene::Update()
 
 	 
 
+	//levelData->Update();
+	playerObject->Update();
+
+	//  Rainbow回転（ここを追加）
+	rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
+	Rainbow->SetTransform(rainbowTransform);
+
+	Rainbow->Update();
 
 
 	// ENTERキーが押されたら
@@ -119,11 +163,20 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	//Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-	SpriteCommon::GetInstance()->DrawSettingCommon();
-
+	
+#pragma region 3Dオブジェクトの描画準備
+	
 	//sprite_->Draw();
-	object3D->Draw();
+#pragma endregion
+
+#pragma region 3Dオブジェクトの描画
+	
+	//object3D->Draw();
+	//levelData->Draw();
+	//playerObject->Draw();
+	Rainbow->Draw();
+
+
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
@@ -132,6 +185,9 @@ void TitleScene::Draw()
 
 	EffectManager::GetInstance()->DrawRing();
 	EffectManager::GetInstance()->DrawCylinder();
+
+	//EffectManager::GetInstance()->DrawCylinder();
+#pragma endregion
 
 }
 
@@ -161,7 +217,6 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite()
 {
-
 	sprite_ = make_unique<Sprite>();
 	sprite_->Initialize("resources/gradationLine.png");
 	sprite_->SetPosition({ 0.0f,0.0f });
@@ -169,6 +224,29 @@ void TitleScene::LoadSprite()
 }
 
 void TitleScene::DrawImgui() {
+#ifdef _DEBUG
+	//if (levelData->HasPlayerSpawn()) {
+	//	const auto& playerSpawn = levelData->getPlayerSpawns()[0];
+
+	//	// プレイヤーの位置と回転を Object3D にセット
+	//	playerObject->SetTranslate(playerSpawn.transform.translate);
+	//	playerObject->SetRotate(playerSpawn.transform.rotate);
+
+	//	// ImGui ウィンドウで表示
+	//	ImGui::Begin("PlayerSpawn Info");
+
+	//	const Vector3& pos = playerSpawn.transform.translate;
+	//	const Vector3& rot = playerSpawn.transform.rotate;
+
+	//	ImGui::Text("Translate: X = %.2f, Y = %.2f, Z = %.2f", pos.x, pos.y, pos.z);
+	//	ImGui::Text("Rotate:    X = %.2f, Y = %.2f, Z = %.2f", rot.x, rot.y, rot.z);
+
+	//	ImGui::End();
+	//}
+
+
+
+
 	//ImGui::Begin("Particle");
 
 	//ImGui::Text("Transform");
@@ -192,4 +270,9 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
 	cylinder->SetTransform(cylinderTransform);
 	ImGui::End();*/
+
+	ImGui::End(); 
+#endif // _DEBUG
+
 }
+

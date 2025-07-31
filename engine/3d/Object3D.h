@@ -26,6 +26,12 @@ public:	// メンバ関数
 	void Update();
 	// 描画
 	void Draw();
+	
+
+/// <summary>
+///  レベルローダーモデル生成
+/// </summary>
+	void Create(Model* model);
 
 public:	// Getter/Setter
 	void SetCamera(Camera* camera) { this->camera = camera; }
@@ -40,11 +46,14 @@ public:	// Getter/Setter
 	const Vector3 GetScale()const { return transform.scale; }
 	const Vector3 GetRotate()const { return transform.rotate; }
 	const Vector3 GetTranslate()const { return transform.translate; }
+	const Transform& GetTransform()const { return transform; }
 private: // メンバ関数
 	// 座標変換行列リソースの作成
 	void CreateTransformationMatrixData();
 	// 平行光源リソースの作成
 	void CreateDirectionalLightResource();
+	// カメラリソースの作成
+	void CreateCameraResource();
 
 	
 private:// メンバ変数
@@ -70,5 +79,9 @@ private:// メンバ変数
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
 	D3D12_INDEX_BUFFER_VIEW ibView{};
 	uint32_t indexCount = 0;
+
+	// カメラリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource;
+	CameraForGPU* cameraForGpuData = nullptr;
 };
 
