@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -105,6 +105,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="EnemyBace.cpp" />
+    <ClCompile Include="Game\Collision\Collider.cpp" />
+    <ClCompile Include="Game\Application\CsvLoader.cpp" />
+    <ClCompile Include="Game\Application\Block.cpp" />
     <ClCompile Include="Game\Application\ModelList.cpp" />
     <ClCompile Include="Game\Particle\EffectEmitter.cpp" />
     <ClCompile Include="Game\Particle\EffectManager.cpp" />
@@ -139,10 +144,22 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="InsideScene\SceneManager.cpp" />
     <ClCompile Include="engine\bace\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
+    <ClCompile Include="Game\Application\Map.cpp" />
+    <ClCompile Include="Game\Application\StageType.cpp" />
+    <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
+    <ClCompile Include="Game\Application\Player.cpp" />
+    <ClCompile Include="NormalEnemy.cpp" />
+
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="EnemyBace.h" />
+    <ClInclude Include="Game\Collision\Collider.h" />
+    <ClInclude Include="Game\Application\BlockType.h" />
+    <ClInclude Include="Game\Application\CsvLoader.h" />
+    <ClInclude Include="Game\Application\Block.h" />
     <ClInclude Include="Game\Application\ModelList.h" />
     <ClInclude Include="Game\Particle\EffectEmitter.h" />
     <ClInclude Include="Game\Particle\EffectManager.h" />
@@ -176,6 +193,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="InsideScene\SceneManager.h" />
     <ClInclude Include="engine\bace\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
+    <ClInclude Include="Game\Application\Map.h" />
+    <ClInclude Include="Game\Application\StageType.h" />
+    <ClInclude Include="Game\Scene\StageCelectScene.h" />
+    <ClInclude Include="Game\Application\Player.h" />
+    <ClInclude Include="NormalEnemy.h" />
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />

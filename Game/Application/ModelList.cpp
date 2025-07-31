@@ -16,5 +16,9 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("RainbowPlane.obj");
 
 	/// GamePlayScene
+	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
+	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
 
+	ModelManager::GetInstance()->LoadModel("Player.obj");
+	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
 }

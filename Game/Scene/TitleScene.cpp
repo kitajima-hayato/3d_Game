@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Object3D.h"
 #include "engine/3d/ModelManager.h"
+#include "Game/Camera/camera.h"
 TitleScene::TitleScene()
 {
 
@@ -24,21 +25,28 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	th1.join();
 	th2.join();
 
-
+	
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/uvChecker.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
+	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
-	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,50.0f }});
-
+	particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
 	particleEmitter->SetParticleName("Particle");
+
+	particleEmitter2 = make_unique<ParticleEmitter>();
+	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
+	particleEmitter2->SetParticleName("neo");
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
-	object3D->SetModel("cubeR.obj");
-	object3D->SetTranslate(Vector3(0.0f, 0.0f, 10.0f));
+
+	object3D->SetModel("plane.obj");
+	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
+
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
+	speed = object3D->GetTranslate();
 
 	/*levelData = std::make_unique<LevelLoader>();
 	levelData->Load("shadow");
@@ -73,7 +81,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 #pragma region 演出
-	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/gradationLine_flipped.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
 	effectEmitter = make_unique<EffectEmitter>();
 
 	effectTransform = effectEmitter->GetTransform();
@@ -85,7 +93,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	effectEmitter->SetTransform(effectTransform);
 	effectEmitter->SetEffectName("Ring");
 
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/monsterball.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine.png");
 	cylinder = make_unique<EffectEmitter>();
 	cylinderTransform = cylinder->GetTransform();
 
@@ -102,7 +110,9 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
+
 	//sprite_->Update();
+
 	object3D->Update();
 
 	particleEmitter->SetTransform({
@@ -115,10 +125,24 @@ void TitleScene::Update()
 #endif
 
 
-	//particleEmitter->Update();
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		// 
+		isStart = !isStart;
+		effectEmitter->EmitCylinder();
+		cylinder->EmitRing();
+	}
 
-	effectEmitter->EmitCylinder();
-	cylinder->EmitRing();
+	if (isStart) {
+		// object3dをひっだりから右に
+		speed.x += 0.07f;
+		object3D->SetTranslate(speed);
+
+	}
+
+	particleEmitter->Update();
+	particleEmitter2->Update();
+
+	 
 
 	//levelData->Update();
 	playerObject->Update();
@@ -155,13 +179,16 @@ void TitleScene::Draw()
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
+	//particleEmitter->Emit();
+	//particleEmitter2->Emit();
 	// エフェクトの描画
 
-	//EffectManager::GetInstance()->DrawRing();
-	//EffectManager::GetInstance()->DrawCylinder();
+	EffectManager::GetInstance()->DrawRing();
+	EffectManager::GetInstance()->DrawCylinder();
 
 	//EffectManager::GetInstance()->DrawCylinder();
 #pragma endregion
+
 }
 
 void TitleScene::Finalize()
@@ -191,7 +218,7 @@ void TitleScene::LoadAudio()
 void TitleScene::LoadSprite()
 {
 	sprite_ = make_unique<Sprite>();
-	sprite_->Initialize("resources/gradationLine_flipped.png");
+	sprite_->Initialize("resources/gradationLine.png");
 	sprite_->SetPosition({ 0.0f,0.0f });
 	sprite_->SetRotation(0.0f);
 }
@@ -229,20 +256,23 @@ void TitleScene::DrawImgui() {
 
 	//ImGui::End();
 
-	ImGui::Begin("effect");
+	/*ImGui::Begin("effect");
 
 	ImGui::Text("Transform");
 	ImGui::DragFloat3("Scale", &effectTransform.scale.x, 0.1f);
 	ImGui::DragFloat3("Rotate", &effectTransform.rotate.x, 0.1f);
 	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f);
 	effectEmitter->SetTransform(effectTransform);
-	
+
 	ImGui::Text("asdf");
 	ImGui::DragFloat3("CylinderScale", &cylinderTransform.scale.x, 0.1f);
 	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);
 	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
 	cylinder->SetTransform(cylinderTransform);
+	ImGui::End();*/
+
 	ImGui::End(); 
 #endif // _DEBUG
+
 }
 

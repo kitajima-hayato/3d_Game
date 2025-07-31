@@ -61,22 +61,25 @@ public:
 
 
     // エフェクトの生成
-    void CreateRing(const Transform& transform);
-    void CreateCylinder(const Transform& transform);
-    void CreatePrimitive(const Transform& transform);
+    //void CreateRing(const Transform& transform);
+    //void CreateCylinder(const Transform& transform);
+    //void CreatePrimitive(const Transform& transform);
 
-    template <typename Container>
-    inline void UpdateEffectList(Container& effects, float deltaTime);
+  
 private:
     // エフェクト用
     struct EffectGroup {
         MaterialData materialData;
-        std::list<EffectInstance> effects;
         uint32_t srvIndex;
         Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource;
         UINT kNumInstance;
         ParticleForGPU* instancingData;
+
+		std::list <EffectInstance> ringEffects;
+		std::list <EffectInstance> cylinderEffects;
     };
+
+    
 
     DirectXCommon* dxCommon;
     SrvManager* srvManager;
@@ -93,9 +96,7 @@ private:
     uint32_t cylinderVertexCount = 0;
 
     // エフェクトのリスト
-    std::list<EffectInstance> ringEffects;
-    std::list<EffectInstance> cylinderEffects;
-
+    
     // 頂点生成
     void CreateRingVertex();
     void CreateCylinderVertex();
@@ -161,16 +162,3 @@ private:    // 内部で処理で使用している変数
 };
 
 
-template<typename Container>
-inline void EffectManager::UpdateEffectList(Container& effects, float deltaTime)
-{
-    for (auto it = effects.begin(); it != effects.end(); )
-    {
-        it->currentTime += deltaTime;
-        if (it->currentTime >= it->lifeTime) {
-            it = effects.erase(it);
-        } else {
-            ++it;
-        }
-    }
-}

@@ -1,5 +1,4 @@
 # Blender 4.4.0 MTL File: 'None'
-
 # www.blender.org
 
 newmtl マテリアル
@@ -10,4 +9,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_Kd Player.png
+map_Kd frameColor.png

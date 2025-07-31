@@ -9,9 +9,12 @@
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
+
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif
+
+class Camera;
 class Object3D;
 class TitleScene :public BaseScene
 {
@@ -44,9 +47,13 @@ private:
 
 	// パーティクルエミッター
 	std::unique_ptr<ParticleEmitter> particleEmitter;
+	std::unique_ptr<ParticleEmitter> particleEmitter2;
 
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;
+	// 背景
+	std::unique_ptr<Object3D> backgroundObject;
+
 
 	// effect
 	std::unique_ptr<EffectEmitter>effectEmitter;
@@ -59,8 +66,14 @@ private: // ゲーム要素
 
 	Transform effectTransform;
 
-	
 	Transform cylinderTransform;
+
+	Vector3 speed = { 0.0f,0.0f,0.0f };
+
+
+	bool isStart = false;
+
+
 
 	/// levelloader
 	std::unique_ptr<LevelLoader>levelData;
@@ -69,5 +82,6 @@ private: // ゲーム要素
 
 	std::unique_ptr<Object3D> Rainbow;
 	Transform rainbowTransform;
+
 };
 
