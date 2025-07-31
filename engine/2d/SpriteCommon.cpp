@@ -37,6 +37,10 @@ void SpriteCommon::CreateRootSignatrue()
 	descriptorRange[0].NumDescriptors = 1;//数は１つ
 	descriptorRange[0].BaseShaderRegister = 0;//0から始まる
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;//offsetを自動計算
+
+	
+
+
 #pragma endregion
 	
 	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
@@ -57,6 +61,8 @@ void SpriteCommon::CreateRootSignatrue()
 	rootParamaters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
 	rootParamaters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
 	rootParamaters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
+
+	
 
 	descriptionRootSignature.pParameters = rootParamaters;//ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
@@ -147,11 +153,11 @@ void SpriteCommon::CreateGraficsPipeLine()
 
 	//　頂点シェーダーのコンパイル結果を格納するBlob
 	vertexShaderBlob = dxCommon_->CompileShader(
-		L"resources/shaders/Object3D.VS.hlsl", L"vs_6_0");
+		L"resources/shaders/Sprite.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 	// ピクセルシェーダーのコンパイル結果を格納するBlob
 	pixelShaderBlob = dxCommon_->CompileShader(
-		L"resources/shaders/Object3D.PS.hlsl", L"ps_6_0");
+		L"resources/shaders/Sprite.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 
 

@@ -38,7 +38,7 @@ public:	// メンバ関数
 	// 実行
 	void Run();
 	// 終了リクエスト
-	bool IsEndRequst() { return isEndRequst;}
+	bool IsEndRequst() { return isEndRequst; }
 
 protected:
 	// 終了リクエスト
@@ -69,9 +69,13 @@ private:
 	// リークチェッカー
 	D3DResourceLeakChecker leakCheck;
 	/// カメラの座標
-	Transform cameraTransform;
+	Transform cameraTransform = {
+		{0.0f, 0.0f, -10.0f}, // translate
+		{0.0f, 0.0f, 0.0f}, // rotate
+		{ 1.0f, 1.0f,-10.0f } // scale
+	};
 
-	
-	
+
+
 };
 
