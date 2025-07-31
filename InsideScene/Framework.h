@@ -75,6 +75,6 @@ private:
 		{ 1.0f, 1.0f,-10.0f } // scale
 	};
 
-	Transform cameraTransform;
+	
 };
 
