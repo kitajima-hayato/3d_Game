@@ -186,7 +186,6 @@ void TitleScene::Draw()
 	EffectManager::GetInstance()->DrawRing();
 	EffectManager::GetInstance()->DrawCylinder();
 
-	//EffectManager::GetInstance()->DrawCylinder();
 #pragma endregion
 
 }
