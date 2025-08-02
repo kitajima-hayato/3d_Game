@@ -21,4 +21,6 @@ void ModelList::LoadAllModel()
 
 	ModelManager::GetInstance()->LoadModel("Player.obj");
 	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
+
+	ModelManager::GetInstance()->LoadModel("EnemySpawn.obj");
 }

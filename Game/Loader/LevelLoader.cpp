@@ -120,6 +120,38 @@ void LevelLoader::Load(const std::string& fileName)
 
 			
 		}
+		else if (type.compare("EnemySpawn") == 0) {
+			/// 無効フラグがある場合はスキップ
+			if (object.contains("disabled_flag") && object["disabled_flag"].get<bool>()) {
+				continue;
+			}
+			/// 新しい EnemySpawnData を追加
+			levelData->enemySpawn.emplace_back(LevelLoader::EnemySpawnData{});
+			LevelLoader::EnemySpawnData& enemyData = levelData->enemySpawn.back();
+			/// ファイル名の読み込み
+			if (object.contains("file_name")) {
+				enemyData.fileName = object["file_name"];
+			} else if (object.contains("name")) {
+				enemyData.fileName = object["name"];
+			}
+			/// 必要に応じて拡張子を追加（例えば ".obj"）
+			enemyData.fileName += objPath;
+			// Transform
+			const auto& transform = object["transform"];
+			// Translate
+			enemyData.transform.translate.x = static_cast<float>(transform["translation"][0]);
+			enemyData.transform.translate.y = static_cast<float>(transform["translation"][2]);
+			enemyData.transform.translate.z = static_cast<float>(transform["translation"][1]);
+			// Rotate
+			enemyData.transform.rotate.x = static_cast<float>(transform["rotation"][0]);
+			enemyData.transform.rotate.y = static_cast<float>(transform["rotation"][2]);
+			enemyData.transform.rotate.z = static_cast<float>(transform["rotation"][1]);
+
+			enemyData.transform.scale.x = 1.0f; // デフォルトスケール
+			enemyData.transform.scale.y = 1.0f; // デフォルトスケール
+			enemyData.transform.scale.z = 1.0f; // デフォルトスケール
+			
+		}
 
 
 
@@ -192,7 +224,7 @@ void LevelLoader::Draw()
 }
 
 
-const std::vector<LevelLoader::PlayerSpawnData>& LevelLoader::getPlayerSpawns() const
+const std::vector<LevelLoader::PlayerSpawnData>& LevelLoader::GetPlayerSpawns() const
 {
 	assert(levelData);
 	return levelData->playerSpawn;
@@ -202,4 +234,16 @@ bool LevelLoader::HasPlayerSpawn() const
 {
 	assert(levelData);
 	return !levelData->playerSpawn.empty();
+}
+
+const std::vector<LevelLoader::EnemySpawnData>& LevelLoader::GetEnemySpawns() const
+{
+	assert(levelData);
+	return levelData->enemySpawn;
+}
+
+uint32_t LevelLoader::GetEnemySpawnCount() const
+{
+	assert(levelData);
+	return static_cast<uint32_t>(levelData->enemySpawn.size());
 }

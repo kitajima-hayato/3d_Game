@@ -174,7 +174,7 @@ void Model::CreateMaterialResource()
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 	// マテリアルデータの初期化
 	materialData->color = { 1.0f, 1.0f, 1.0f, 1.0f };
-	materialData->enableLighting = 3;
+	materialData->enableLighting = 0;
 	materialData->uvTransform = MakeIdentity4x4();
 
 }

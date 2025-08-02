@@ -9,6 +9,7 @@
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
+#include "LevelEnemy.h"
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -49,8 +50,7 @@ private:
 	std::unique_ptr<ParticleEmitter> particleEmitter;
 	std::unique_ptr<ParticleEmitter> particleEmitter2;
 
-	// リングエフェクト
-	std::unique_ptr<Object3D> object3D;
+
 	// 背景
 	std::unique_ptr<Object3D> backgroundObject;
 
@@ -80,8 +80,10 @@ private: // ゲーム要素
 
 	std::unique_ptr<Object3D> playerObject;
 
-	std::unique_ptr<Object3D> Rainbow;
-	Transform rainbowTransform;
+	/// エネミー
+	std::vector<std::unique_ptr<LevelEnemy>> enemiesa;
+
+	std::vector<std::unique_ptr<Object3D>>enemies;
 
 };
 
