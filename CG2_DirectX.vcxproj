@@ -125,6 +125,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\bace\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
+    <ClCompile Include="LevelEnemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MakeMatrix.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -196,6 +197,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Application\StageType.h" />
     <ClInclude Include="Game\Scene\StageCelectScene.h" />
     <ClInclude Include="Game\Application\Player.h" />
+    <ClInclude Include="LevelEnemy.h" />
     <ClInclude Include="NormalEnemy.h" />
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />

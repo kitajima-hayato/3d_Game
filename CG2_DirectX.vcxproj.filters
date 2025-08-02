@@ -49,6 +49,7 @@
     <ClCompile Include="NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
+    <ClCompile Include="LevelEnemy.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -102,5 +103,6 @@
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />
+    <ClInclude Include="LevelEnemy.h" />
   </ItemGroup>
 </Project>

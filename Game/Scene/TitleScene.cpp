@@ -19,64 +19,67 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 	// マルチスレッドでの読み込み
-	std::thread th1(&TitleScene::LoadAudio, this); 
+	std::thread th1(&TitleScene::LoadAudio, this);
 	std::thread th2(&TitleScene::LoadSprite, this);
 
 	th1.join();
 	th2.join();
 
-	
+
 	// パーティクルグループを作成
 	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
 	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
 	// パーティクルエミッターの初期化
 	particleEmitter = make_unique<ParticleEmitter>();
-	particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
+	particleEmitter->SetTransform({ {0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f } });
 	particleEmitter->SetParticleName("Particle");
 
 	particleEmitter2 = make_unique<ParticleEmitter>();
 	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
 	particleEmitter2->SetParticleName("neo");
 
-	object3D = make_unique<Object3D>();
-	object3D->Initialize();
 
-	object3D->SetModel("plane.obj");
-	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
-
-	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
-	speed = object3D->GetTranslate();
-
-	/*levelData = std::make_unique<LevelLoader>();
-	levelData->Load("shadow");
-	levelData->CreateObject();*/
+	levelData = std::make_unique<LevelLoader>();
+	levelData->Load("4");
+	levelData->CreateObject();
 
 
 
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
 	playerObject->SetModel("Player.obj");
-	/*if (levelData->HasPlayerSpawn()) {
-		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
+
+
+	if (levelData->HasPlayerSpawn()) {
+		const auto& playerSpawn = levelData->GetPlayerSpawns()[0];
 
 		playerObject->SetTranslate(playerSpawn.transform.translate);
 		playerObject->SetRotate(playerSpawn.transform.rotate);
-		
+
+	}
+
+	/*for (auto& enemyData : levelData->GetEnemySpawns()) {
+		auto enemy = std::make_unique<LevelEnemy>();
+		Transform enemyTransform = enemyData.transform;
+		enemy->Initialize();
+		enemy->SetModelName(enemyData.fileName);
+		enemy->SetTransform(enemyTransform);
+		enemies.push_back(std::move(enemy));
+
+
+
 	}*/
+	
+	for (auto& enemy : levelData->GetEnemySpawns()) {
+		auto enemyobject = std::make_unique<Object3D>();
+		enemyobject->Initialize();
+		enemyobject->SetModel(enemy.fileName);
+		enemyobject->SetTranslate(enemy.transform.translate);
+		enemies.push_back(std::move(enemyobject));
 
-	Rainbow = std::make_unique<Object3D>();
-	Rainbow->Initialize();
-	Rainbow->SetModel("RainbowPlane.obj");
-	rainbowTransform = Rainbow->GetTransform();
-	rainbowTransform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{3.0f,0.0f,0.0f},
-	};
-	Rainbow->SetTransform(rainbowTransform);
-
-
+	}
+	
 
 
 
@@ -113,7 +116,6 @@ void TitleScene::Update()
 
 	//sprite_->Update();
 
-	object3D->Update();
 
 	particleEmitter->SetTransform({
 	emitterScale,
@@ -127,31 +129,23 @@ void TitleScene::Update()
 
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 		// 
-		isStart = !isStart;
 		effectEmitter->EmitCylinder();
 		cylinder->EmitRing();
 	}
 
-	if (isStart) {
-		// object3dをひっだりから右に
-		speed.x += 0.07f;
-		object3D->SetTranslate(speed);
-
-	}
 
 	particleEmitter->Update();
 	particleEmitter2->Update();
 
-	 
 
-	//levelData->Update();
+
+	levelData->Update();
 	playerObject->Update();
 
-	//  Rainbow回転（ここを追加）
-	rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
-	Rainbow->SetTransform(rainbowTransform);
+	for (auto& enemy : enemies) {
+		enemy->Update();
+	}
 
-	Rainbow->Update();
 
 
 	// ENTERキーが押されたら
@@ -163,28 +157,31 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	
+
 #pragma region 3Dオブジェクトの描画準備
-	
+
 	//sprite_->Draw();
 #pragma endregion
 
 #pragma region 3Dオブジェクトの描画
-	
-	//object3D->Draw();
-	//levelData->Draw();
-	//playerObject->Draw();
-	Rainbow->Draw();
 
+	
+	levelData->Draw();
+	playerObject->Draw();
+	for (auto& enemy : enemies) {
+		enemy->Draw();
+	}
+
+	
 
 	// パーティクルの描画
-	ParticleManager::GetInstance()->Draw();
+	//ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
 	//particleEmitter2->Emit();
 	// エフェクトの描画
 
-	EffectManager::GetInstance()->DrawRing();
-	EffectManager::GetInstance()->DrawCylinder();
+	//EffectManager::GetInstance()->DrawRing();
+	//EffectManager::GetInstance()->DrawCylinder();
 
 #pragma endregion
 
@@ -224,6 +221,8 @@ void TitleScene::LoadSprite()
 
 void TitleScene::DrawImgui() {
 #ifdef _DEBUG
+
+
 	//if (levelData->HasPlayerSpawn()) {
 	//	const auto& playerSpawn = levelData->getPlayerSpawns()[0];
 
@@ -269,9 +268,22 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
 	cylinder->SetTransform(cylinderTransform);
 	ImGui::End();*/
+	ImGui::Begin("Enemies Info");
 
-	ImGui::End(); 
-#endif // _DEBUG
+	for (size_t i = 0; i < enemies.size(); ++i) {
+		Transform transform = enemies[i]->GetTransform();
+
+		ImGui::PushID(static_cast<int>(i)); // 重複防止
+		ImGui::Text("Enemy %zu", i);
+		if (ImGui::DragFloat3("Position", &transform.translate.x, 0.1f)) {
+			enemies[i]->SetTransform(transform); // 変更を反映
+		}
+		ImGui::PopID();
+	}
+
+	ImGui::End();
+
+#endif  _DEBUG
 
 }
 

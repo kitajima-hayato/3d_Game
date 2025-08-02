@@ -47,7 +47,7 @@ void Framework::Initialize()
 
 
 	/// マップに合わせる
-	cameraTransform.translate = { 7.5f,-4.0f,0.0f };
+	cameraTransform.translate = { 0.5f,-0.0f,0.0f };
 	camera->SetTranslate(cameraTransform.translate);
 
 }
@@ -88,19 +88,7 @@ void Framework::Update()
 	{
 		isEndRequst = true;
 	}
-	
-	
-#ifdef _DEBUG
 
-	ImGui::Begin("Camera Settings");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	ImGui::End();
-	camera->SetTranslate(cameraTransform.translate);
-
-	camera->SetRotate(cameraTransform.rotate);
-
-#endif 
 
 }
 
