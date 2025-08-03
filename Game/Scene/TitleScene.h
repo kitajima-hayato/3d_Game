@@ -10,6 +10,7 @@
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
 
+
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif
@@ -83,5 +84,7 @@ private: // ゲーム要素
 	std::unique_ptr<Object3D> Rainbow;
 	Transform rainbowTransform;
 
+
+	
 };
 
