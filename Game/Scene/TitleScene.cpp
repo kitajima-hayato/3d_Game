@@ -271,7 +271,7 @@ void TitleScene::DrawImgui() {
 	cylinder->SetTransform(cylinderTransform);
 	ImGui::End();*/
 
-	ImGui::End(); 
+	
 #endif // _DEBUG
 
 }
