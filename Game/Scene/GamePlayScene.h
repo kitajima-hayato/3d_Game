@@ -4,6 +4,7 @@
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Camera/camera.h"
+#include "Game/Application/Enemy/EnemyFactory.h"
 class Map;
 class Camera;
 class Player;
@@ -21,6 +22,9 @@ public:
 	void Draw()override;
 	// 終了処理
 	void Finalize()override;
+
+	/// エネミーの初期化
+	void InitializeEnemy();
 
 
 private:
@@ -44,5 +48,9 @@ private:
 		// Translate
 		{10.0f, -7.0f, 20.0f}
 	};
+
+	/// エネミーファクトリー
+	std::unique_ptr<EnemyBace>normalEnemy;
+	std::unique_ptr<EnemyBace> flyingEnemy;
 };
 

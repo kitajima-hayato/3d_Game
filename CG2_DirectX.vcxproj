@@ -106,7 +106,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="EnemyBace.cpp" />
+    <ClCompile Include="Game\Application\Enemy\FlyingEnemy.cpp" />
+    <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp" />
+    <ClCompile Include="Game\Application\Enemy\EnemyFactory.cpp" />
     <ClCompile Include="Game\Collision\Collider.cpp" />
     <ClCompile Include="Game\Application\CsvLoader.cpp" />
     <ClCompile Include="Game\Application\Block.cpp" />
@@ -148,14 +150,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Application\StageType.cpp" />
     <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
     <ClCompile Include="Game\Application\Player.cpp" />
-    <ClCompile Include="NormalEnemy.cpp" />
-
+    <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="EnemyBace.h" />
+    <ClInclude Include="Game\Application\Enemy\FlyingEnemy.h" />
+    <ClInclude Include="Game\Application\Enemy\EnemyBace.h" />
+    <ClInclude Include="Game\Application\Enemy\EnemyFactory.h" />
     <ClInclude Include="Game\Collision\Collider.h" />
     <ClInclude Include="Game\Application\BlockType.h" />
     <ClInclude Include="Game\Application\CsvLoader.h" />
@@ -197,7 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Application\StageType.h" />
     <ClInclude Include="Game\Scene\StageCelectScene.h" />
     <ClInclude Include="Game\Application\Player.h" />
-    <ClInclude Include="NormalEnemy.h" />
+    <ClInclude Include="Game\Application\Enemy\NormalEnemy.h" />
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />
@@ -222,17 +225,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\shaders\Sprite.hlsli">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -36,6 +36,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	player = std::make_unique<Player>();
 	player->Initialize();
 
+	InitializeEnemy();
+
 }
 
 
@@ -50,12 +52,12 @@ void GamePlayScene::Update()
 	enemy->SetTransform(enemyTransform);
 
 	enemy->Update();
+	normalEnemy->Update();
+	flyingEnemy->Update();
 }
 
 void GamePlayScene::Draw()
 {
-	///Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-	SpriteCommon::GetInstance()->DrawSettingCommon();
 
 	/// マップの描画
 	map->Draw();
@@ -64,16 +66,34 @@ void GamePlayScene::Draw()
 
 	/// 敵の描画
 	enemy->Draw();
+	normalEnemy->Draw();
+	flyingEnemy->Draw();
 }
+
+void GamePlayScene::InitializeEnemy()
+{
+	
+	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
+	normalEnemy->Initialize();
+
+	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
+	flyingEnemy->Initialize();
+
+	
+}
+
+
 
 void GamePlayScene::Finalize()
 {
 
 	/// オーディオの終了処理
 	Audio::GetInstance()->SoundUnload(&soundData);
-	
+
 	/// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
 
 
 }
+
+
