@@ -28,9 +28,8 @@ class FlyingEnemy :
 
 
 private:
-    // 元の高さ（初期位置Y）
+    /// 元の高さ（初期位置Y）
     float baseY;         
-    // サイン波の時間用カウンタ
     float timer = 0.0f;
 
 

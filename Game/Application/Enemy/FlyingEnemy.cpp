@@ -22,6 +22,7 @@ void FlyingEnemy::Initialize()
 	};
 	baseY = stats.transform.translate.y;
 	timer = 0.0f;
+
 	/// Object3Dの初期化
 	model = std::make_unique<Object3D>();
 	model->Initialize();
@@ -54,11 +55,11 @@ void FlyingEnemy::Draw()
 
 void FlyingEnemy::Move()
 {
-	const float amplitude = 1.0f;   // 上下移動量
-	const float frequency = 0.01f;  // サイン波の進行速度（フレームに応じた調整値）
+	/// 上下移動量
+	const float amplitude = 1.0f;   
+	const float frequency = 0.01f;  
 
-	timer += frequency; // フレームごとに加算（時間ではなく"量"）
-
+	timer += frequency; 
 	float offsetY = std::sin(timer * 2.0f * 3.14159265f) * amplitude;
 
 	stats.transform.translate.y = baseY + offsetY;

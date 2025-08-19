@@ -52,5 +52,6 @@ private:
 	/// エネミーファクトリー
 	std::unique_ptr<EnemyBace>normalEnemy;
 	std::unique_ptr<EnemyBace> flyingEnemy;
+
 };
 

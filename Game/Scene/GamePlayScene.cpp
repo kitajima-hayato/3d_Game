@@ -47,11 +47,8 @@ void GamePlayScene::Update()
 	map->Update();
 	/// プレイヤーの更新
 	player->Update();
-	/// 敵を左に
-	enemyTransform.translate.x -= 0.01f;
-	enemy->SetTransform(enemyTransform);
+	
 
-	enemy->Update();
 	normalEnemy->Update();
 	flyingEnemy->Update();
 }
@@ -65,7 +62,6 @@ void GamePlayScene::Draw()
 	player->Draw();
 
 	/// 敵の描画
-	enemy->Draw();
 	normalEnemy->Draw();
 	flyingEnemy->Draw();
 }
