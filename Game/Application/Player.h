@@ -14,6 +14,7 @@ public: // 判定
 
 	AABB CalcAABBAtPosition(const Vector3& pos);
 public: // メソッド
+
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
@@ -61,14 +62,15 @@ public: // メソッド
 	/// <summary>
 	/// ブロックとの衝突判定
 	/// </summary>
-	void CheckBlockCollision(const Map&map);
+	void CheckBlockCollision(const Map& map);
 
 public: // Setter / getter
 	/// <summary>
 	/// プレイヤーのSRTを設定
 	/// </summary>
-	/// <param name="transform">変形情報</param>
+	/// <param name="transform">位置情報</param>
 	void SetTransform(const Transform& transform) { this->transform = transform; }
+
 	/// <summary>
 	/// プレイヤーのSRTを取得
 	/// </summary>
@@ -80,7 +82,23 @@ public: // Setter / getter
 	/// </summary>
 	void SetMoveSpeed(const Vector3& speed) { velocity = speed; }
 
+	/// <summary>
+	/// 判定
+	/// </summary>
+	void BeginFrameHitReset() { hitThisFrame = false; } // 毎フレーム冒頭で呼ぶ
+	bool WasHitThisFrame() const { return hitThisFrame; }
+
+	void DrawHitImgui();
+
+	/// <summary>
+	///  生存フラグの取得
+	/// </summary>
+	bool IsAlive() const { return isAlive; }
+
 private:
+	/// プレイヤーの生存フラグ
+	bool isAlive = true;
+
 	/// プレイヤーのSRT
 	Transform transform;
 
@@ -110,18 +128,20 @@ private:
 	/// ダッシュ入力時の猶予フレーム
 	const float dashInputMaxFrame = 18.0f;
 
-	/// 一時的変数
+	/*/// 一時的変数
 	std::unique_ptr<EffectEmitter>qux;
 	Transform emitterTransform;
 
 	std::unique_ptr<EffectEmitter>quux;
-	Transform quuxTransform;
+	Transform quuxTransform;*/
 
 	/// 判定用のAABB
 	AABB aabb;
 
 	/// 60 FPSを想定したデルタタイム
-	float deltaTime = 0.016f; 
+	float deltaTime = 0.016f;
+
+	bool hitThisFrame = false;
 
 
 };

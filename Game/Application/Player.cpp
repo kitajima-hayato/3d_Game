@@ -4,6 +4,7 @@
 #include "SpriteCommon.h"
 #include "Game/Particle/EffectManager.h"
 #include "Map.h"
+#include "engine/bace/Logger.h"
 
 AABB Player::GetAABB() const
 {
@@ -15,24 +16,18 @@ AABB Player::GetAABB() const
 
 void Player::OnCollision(Collider* other) 
 {
-	switch (other->GetType())
-	{
-
-	case Collider::Type::Enemy:
-	{
-		// 敵との衝突処理
-		break;
-	}
-	default:
-		break;
+	if (other->GetType() == Collider::Type::Enemy) {
+		hitThisFrame = true;     
+		isAlive = false;  // プレイヤーが敵に当たったら死亡
+		// 必要ならダメージ処理など
 	}
 }
 
 AABB Player::CalcAABBAtPosition(const Vector3& pos)
 {
 	return  {
-		pos - transform.scale / 2,
-		pos + transform.scale / 2
+		pos - transform.scale * 0.5f,
+		pos + transform.scale * 0.5f
 	};
 }
 
@@ -54,7 +49,7 @@ void Player::Initialize()
 	playerModel->SetTransform(transform);
 
 	/// 一時的
-	EffectManager::GetInstance()->CreateEffectGroup("ib", "resources/gradationLine.png");
+	/*EffectManager::GetInstance()->CreateEffectGroup("ib", "resources/gradationLine.png");
 	qux = std::make_unique<EffectEmitter>();
 
 	emitterTransform = qux->GetTransform();
@@ -78,7 +73,7 @@ void Player::Initialize()
 	quux->SetTransform(quuxTransform);
 
 
-	quux->SetEffectName("id");
+	quux->SetEffectName("id");*/
 
 	aabb = CalcAABBAtPosition(transform.translate);
 
@@ -88,8 +83,12 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	
 	// 更新処理
-
+	if(!isAlive) {
+		// プレイヤーが死亡している場合は何もしない
+		return;
+	}
 	playerModel->Update();
 	Move();
 	Jump();
@@ -105,6 +104,10 @@ void Player::Update()
 
 void Player::Draw()
 {
+	if(!isAlive) {
+		// プレイヤーが死亡している場合は何もしない
+		return;
+	}
 
 	// 描画処理
 	/// スペースキーを押したら
@@ -114,9 +117,9 @@ void Player::Draw()
 	
 	if (dashInputRight == 2 || dashInputLeft == 2) {
 		/// @ ダッシュ演出
-		qux->EmitRing();
+		/*qux->EmitRing();
 		quux->EmitCylinder();
-		EffectManager::GetInstance()->DrawRing();
+		EffectManager::GetInstance()->DrawRing();*/
 		//EffectManager::GetInstance()->DrawCylinder();
 
 	}
@@ -221,6 +224,8 @@ void Player::DrawImgui()
 	ImGui::DragFloat3("Translate", &transform.translate.x, 0.1f);
 	ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
 	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.1f);
+	ImGui::Separator();
+	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False"); 
 	ImGui::End();
 }
 
@@ -245,12 +250,20 @@ void Player::CheckBlockCollision(const Map& map)
 	transform.rotate += velocity * deltaTime;
 }
 
+void Player::DrawHitImgui()
+{
+	ImGui::Begin("Hit Info");
+	ImGui::Separator();
+	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False");
+	ImGui::End();
+}
+
 
 void Player::Finalize()
 {
-	// 終了処理
-	EffectManager::GetInstance()->DeleteEffectGroup("ib");
-	qux.reset();
-	EffectManager::GetInstance()->DeleteEffectGroup("id");
-	quux.reset();
+	//// 終了処理
+	//EffectManager::GetInstance()->DeleteEffectGroup("ib");
+	//qux.reset();
+	//EffectManager::GetInstance()->DeleteEffectGroup("id");
+	//quux.reset();
 }

@@ -7,7 +7,7 @@
   <ItemGroup>
     <!-- 統合されたClCompile。重複排除・Filter保持 -->
     <!-- masterブランチから追加された分 -->
-    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="Game\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp" />
     <ClCompile Include="Game\Collision\Collider.cpp" />
     <ClCompile Include="Game\Application\CsvLoader.cpp" />
@@ -61,7 +61,7 @@
     <Text Include="externals\imgui\LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Game\Collision\CollisionManager.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyBace.h" />
     <ClInclude Include="Game\Collision\Collider.h" />
     <ClInclude Include="Game\Application\BlockType.h" />
