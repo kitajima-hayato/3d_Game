@@ -50,8 +50,11 @@ void GamePlayScene::Update()
 	map->Update();
 
 	player->BeginFrameHitReset();
+
 	/// プレイヤーの更新
 	player->Update();
+
+	player->CheckBlockCollision(*map);
 
 
 	for (auto& enemy : enemies) {
@@ -135,6 +138,7 @@ void GamePlayScene::Finalize()
 
 void GamePlayScene::DrawImgui()
 {
+#ifdef _DEBUG
 	ImGui::Separator();
 	ImGui::Begin("Camera Settings / GamePlayeScene");
 	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
@@ -143,4 +147,7 @@ void GamePlayScene::DrawImgui()
 	camera->SetTranslate(cameraTransform.translate);
 
 	camera->SetRotate(cameraTransform.rotate);
+#endif // _DEBUG
+
+	
 }

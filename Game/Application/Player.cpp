@@ -89,6 +89,7 @@ void Player::Update()
 		// プレイヤーが死亡している場合は何もしない
 		return;
 	}
+	prevTranslate = transform.translate;
 	playerModel->Update();
 	Move();
 	Jump();
@@ -105,7 +106,7 @@ void Player::Update()
 void Player::Draw()
 {
 	if(!isAlive) {
-		// プレイヤーが死亡している場合は何もしない
+		/// プレイヤーが死亡している場合は何もしない
 		return;
 	}
 
@@ -213,6 +214,7 @@ void Player::Jump()
 
 void Player::DrawImgui()
 {
+#ifdef _DEBUG
 	// Imguiの描画処理
 	ImGui::Begin("Player Settings");
 	ImGui::Text("ExtensionFrameRight : %.f", dashExtensionFrameRight);
@@ -227,35 +229,83 @@ void Player::DrawImgui()
 	ImGui::Separator();
 	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False"); 
 	ImGui::End();
+#endif // DEBUG
 }
 
-void Player::CheckBlockCollision(const Map& map)
+void Player::CheckBlockCollision(Map& map)
 {
-	Vector3 nextPos = transform.translate + velocity * deltaTime;
+	// 実際に動いた量（Move() で更新済み）
+    Vector3 delta = {
+        transform.translate.x - prevTranslate.x,
+        transform.translate.y - prevTranslate.y,
+        transform.translate.z - prevTranslate.z
+    };
 
-	AABB nextAABB = CalcAABBAtPosition(nextPos);
+    // 衝突解決は前フレーム位置から始めて、軸ごとに積む
+    Vector3 pos = prevTranslate;
+	auto aabbAt = [&](const Vector3& p) {
+		Vector3 half = transform.scale * 0.5f;
+		half.z = 1000.0f;
+		return AABB{ p - half, p + half };
+		};
 
-	std::vector<Block*> nearbyBlocks = map.GetNearbyBlocks(nextAABB);
+    auto moveAxis = [&](int axis){
+        float step = (axis==0?delta.x : axis==1?delta.y : delta.z);
+        if(step == 0.0f) return;
 
-	for (const Block* block : nearbyBlocks)
-	{
-		if (nextAABB.Intersects(block->GetAABB()))
-		{
-			// 衝突したので反応:停止
-			velocity = Vector3(0, 0, 0);
-			break;
-		}
-	}
+        // 仮移動
+        if(axis==0) pos.x += step;
+        if(axis==1) pos.y += step;
+        if(axis==2) pos.z += step;
 
-	transform.rotate += velocity * deltaTime;
+        AABB nextAABB = aabbAt(pos);
+
+        // 近傍ブロックだけ取得
+        std::vector<Block*> nearbyBlocks = map.GetNearbyBlocks(nextAABB);
+
+        for(const Block* b : nearbyBlocks){
+            // 静的ブロックのみ
+            if (b->GetType() != Collider::Type::Static) continue;
+
+            AABB blk = b->GetAABB();
+            // 交差してなければ次へ
+            if(!(nextAABB.Intersects(blk))) continue;
+
+            // この軸だけ押し戻す（面へ吸着）
+            const Vector3 half = transform.scale * 0.5f;
+            if(axis==0){
+                pos.x = (step>0) ? (blk.min.x - half.x) : (blk.max.x + half.x);
+                delta.x = 0.0f;
+            }else if(axis==1){
+                pos.y = (step>0) ? (blk.min.y - half.y) : (blk.max.y + half.y);
+                delta.y = 0.0f;
+            }else{
+                pos.z = (step>0) ? (blk.min.z - half.z) : (blk.max.z + half.z);
+                delta.z = 0.0f;
+            }
+            nextAABB = aabbAt(pos); // 連鎖衝突に備えて更新
+        }
+    };
+
+    // X→Y→Zの順で安定
+    moveAxis(0);
+    moveAxis(1);
+    moveAxis(2);
+
+    // 確定位置を反映
+    transform.translate = pos;
+	playerModel->SetTransform(transform);
+
 }
 
 void Player::DrawHitImgui()
 {
+#ifdef _DEBUG
 	ImGui::Begin("Hit Info");
 	ImGui::Separator();
 	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False");
 	ImGui::End();
+#endif // DEBUG
 }
 
 

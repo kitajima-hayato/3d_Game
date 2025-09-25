@@ -4,6 +4,8 @@
 #include <string>
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Collision/Collider.h"
+
+
 class Map;
 class Player : public Collider
 {
@@ -62,7 +64,7 @@ public: // メソッド
 	/// <summary>
 	/// ブロックとの衝突判定
 	/// </summary>
-	void CheckBlockCollision(const Map& map);
+	void CheckBlockCollision(Map& map);
 
 public: // Setter / getter
 	/// <summary>
@@ -142,6 +144,8 @@ private:
 	float deltaTime = 0.016f;
 
 	bool hitThisFrame = false;
+
+	Vector3 prevTranslate{};
 
 
 };

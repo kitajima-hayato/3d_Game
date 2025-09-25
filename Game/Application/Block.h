@@ -16,9 +16,10 @@ public: // 判定
 	/// </summary>
 	/// <returns>AABB</returns>
 	AABB GetAABB() const override {
-		const Vector3 half = transform.scale * 0.5f;
+		const Vector3 half = transform.scale * 0.5f; // ← ここを *0.5f に
 		return { transform.translate - half, transform.translate + half };
 	}
+
 	/// <summary>
 	/// コライダーの種類を取得
 	/// </summary>

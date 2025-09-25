@@ -26,18 +26,18 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	th2.join();
 
 	
-	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
+	//// パーティクルグループを作成
+	//ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
-	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
-	// パーティクルエミッターの初期化
-	particleEmitter = make_unique<ParticleEmitter>();
-	particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
-	particleEmitter->SetParticleName("Particle");
+	//ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
+	//// パーティクルエミッターの初期化
+	//particleEmitter = make_unique<ParticleEmitter>();
+	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
+	//particleEmitter->SetParticleName("Particle");
 
-	particleEmitter2 = make_unique<ParticleEmitter>();
-	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
-	particleEmitter2->SetParticleName("neo");
+	//particleEmitter2 = make_unique<ParticleEmitter>();
+	//particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
+	//particleEmitter2->SetParticleName("neo");
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
@@ -48,33 +48,25 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 	speed = object3D->GetTranslate();
 
-	/*levelData = std::make_unique<LevelLoader>();
-	levelData->Load("shadow");
-	levelData->CreateObject();*/
-
+	
 
 
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
 	playerObject->SetModel("Player.obj");
-	/*if (levelData->HasPlayerSpawn()) {
-		const auto& playerSpawn = levelData->getPlayerSpawns()[0];
-
-		playerObject->SetTranslate(playerSpawn.transform.translate);
-		playerObject->SetRotate(playerSpawn.transform.rotate);
-		
-	}*/
-
-	Rainbow = std::make_unique<Object3D>();
-	Rainbow->Initialize();
-	Rainbow->SetModel("RainbowPlane.obj");
-	rainbowTransform = Rainbow->GetTransform();
-	rainbowTransform = {
-		{1.0f,1.0f,1.0f},
-		{0.0f,0.0f,0.0f},
-		{3.0f,0.0f,0.0f},
+	
+	
+	titleLogo = std::make_unique<Object3D>();
+	titleLogo->Initialize();
+	titleLogo->SetModel("title.obj");
+	titleLogoTransform = {
+		{ 0.5f,0.5f,0.5f },
+		{ -1.0f,1.0f,10.0f },
+		{ 0.0f,0.0f,0.0f }
 	};
-	Rainbow->SetTransform(rainbowTransform);
+
+	titleLogo->SetTransform(titleLogoTransform);
+
 
 
 
@@ -114,12 +106,13 @@ void TitleScene::Update()
 	//sprite_->Update();
 
 	object3D->Update();
+	titleLogo->Update();
 
-	particleEmitter->SetTransform({
+	/*particleEmitter->SetTransform({
 	emitterScale,
 	emitterRotate,
 	emitterTranslate
-		});
+		});*/
 #ifdef _DEBUG
 	DrawImgui();
 #endif
@@ -139,8 +132,8 @@ void TitleScene::Update()
 
 	}
 
-	particleEmitter->Update();
-	particleEmitter2->Update();
+	/*particleEmitter->Update();
+	particleEmitter2->Update();*/
 
 	 
 
@@ -148,10 +141,10 @@ void TitleScene::Update()
 	playerObject->Update();
 
 	//  Rainbow回転（ここを追加）
-	rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
-	Rainbow->SetTransform(rainbowTransform);
+	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
+	//Rainbow->SetTransform(rainbowTransform);
 
-	Rainbow->Update();
+	//Rainbow->Update();
 
 
 	// ENTERキーが押されたら
@@ -174,17 +167,18 @@ void TitleScene::Draw()
 	//object3D->Draw();
 	//levelData->Draw();
 	//playerObject->Draw();
-	Rainbow->Draw();
+	//Rainbow->Draw();
 
 
 	// パーティクルの描画
-	ParticleManager::GetInstance()->Draw();
+	//ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
 	//particleEmitter2->Emit();
 	// エフェクトの描画
 
-	EffectManager::GetInstance()->DrawRing();
-	EffectManager::GetInstance()->DrawCylinder();
+	//EffectManager::GetInstance()->DrawRing();
+	//EffectManager::GetInstance()->DrawCylinder();
+	titleLogo->Draw();
 
 	
 #pragma endregion
@@ -197,9 +191,9 @@ void TitleScene::Finalize()
 
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
-	ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
+	/*ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
 	EffectManager::GetInstance()->DeleteEffectGroup("Cylinder");
-	EffectManager::GetInstance()->DeleteEffectGroup("Ring");
+	EffectManager::GetInstance()->DeleteEffectGroup("Ring");*/
 
 	// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
@@ -225,6 +219,18 @@ void TitleScene::LoadSprite()
 
 void TitleScene::DrawImgui() {
 #ifdef _DEBUG
+
+	ImGui::Begin("titleLogo");
+
+	ImGui::Text("Transform");
+	ImGui::DragFloat3("Scalea", &titleLogoTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotatea", &titleLogoTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translatea", &titleLogoTransform.translate.x, 0.1f); 
+	titleLogo->SetTransform(titleLogoTransform);
+
+	ImGui::End();
+
+
 	//if (levelData->HasPlayerSpawn()) {
 	//	const auto& playerSpawn = levelData->getPlayerSpawns()[0];
 

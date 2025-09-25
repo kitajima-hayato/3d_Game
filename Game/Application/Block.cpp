@@ -30,13 +30,13 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 		break;
 	case BlockType::testBlock:
 		blockModel->SetModel("XYZLabel.obj");
-		blockModel->SetScale({ 0.5f,0.5f,0.5f });
+		transform.scale = { 0.5f,0.5f,0.5f };
 		break;
 	default:
 		blockModel->SetModel("nullBlock.obj");
 		break;
 	}
-	blockModel->SetTranslate(transform.translate);
+	blockModel->SetTransform(transform);
 
 	
 }

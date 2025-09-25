@@ -14,6 +14,8 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("Player.obj");
 	// レインボープレーン
 	ModelManager::GetInstance()->LoadModel("RainbowPlane.obj");
+	// タイトルロゴ
+	ModelManager::GetInstance()->LoadModel("title.obj");
 
 	/// GamePlayScene
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");

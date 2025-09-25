@@ -84,6 +84,10 @@ private: // ゲーム要素
 	std::unique_ptr<Object3D> Rainbow;
 	Transform rainbowTransform;
 
+	/// タイトルロゴ
+	std::unique_ptr<Object3D> titleLogo;
+	Transform titleLogoTransform;
+
 
 	
 };
