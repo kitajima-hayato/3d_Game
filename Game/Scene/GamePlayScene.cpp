@@ -51,10 +51,13 @@ void GamePlayScene::Update()
 
 	player->BeginFrameHitReset();
 
+	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
+	player->SetMapChipField(map.get());
+
 	/// プレイヤーの更新
 	player->Update();
 
-	player->CheckBlockCollision(*map);
+	
 
 
 	for (auto& enemy : enemies) {
@@ -62,7 +65,6 @@ void GamePlayScene::Update()
 	}
 	/// 当たりは判定
 	CheckCollision();
-	player->DrawHitImgui();
 
 	/// imgui
 	DrawImgui();

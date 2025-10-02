@@ -110,5 +110,6 @@
     <ClInclude Include="engine\2d\RenderTexture.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyFactory.h" />
     <ClInclude Include="Game\Application\Enemy\FlyingEnemy.h" />
+    <ClInclude Include="Game\Application\Constants.h" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,40 @@
 #include <string>
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Collision/Collider.h"
+#include "BlockType.h"
 
+
+struct CollisionMapInfo {
+	bool ceiling = false;	// 天井との衝突
+	bool landing = false;	// 着地
+	bool hitWall = false;	// 壁との接触
+	Vector3 move;			// 移動量
+};
+
+enum class CollisionType {
+	Top,
+	Bottom,
+	Left,
+	Right
+};
+
+enum Corner {
+	kRightBottom,	// 右下
+	kRightTop,		// 右上
+	kLeftTop,		// 左上
+	kLeftBottom,	// 左下
+	kNumCorners		// コーナーの数
+};
+
+struct PlayerParameter {
+	// Playerのパラメータ構造体
+	// 当たり判定
+	float kWidth = 1.0f;	// 幅
+	float kHeight = 1.0f;	// 高さ
+	float blank = 0.5f;		// 余白
+	float kEpsilon = 0.01f; // 微小量
+
+};
 
 class Map;
 class Player : public Collider
@@ -64,19 +97,62 @@ public: // メソッド
 	/// <summary>
 	/// ブロックとの衝突判定
 	/// </summary>
-	void CheckBlockCollision(Map& map);
+	void CheckBlockCollision();
+
+	/// <summary>
+	/// マップの衝突判定統括
+	/// </summary>
+	void MapCollision(CollisionMapInfo& mapInfo);
+
+
+	/// <summary>
+	/// マップの特定方向の衝突判定
+	/// </summary>
+	void CollisionMapInfoDirection(CollisionMapInfo& mapInfo, CollisionType dir, const std::array<Corner, 2>& CheckCorners, const Vector3& offset, std::function<bool(const CollisionMapInfo&)>moveCondition);
+
+	/// <summary>
+	/// 指定したコーナーの位置を取得
+	/// </summary>
+	Vector3 CornerPosition(const Vector3& center, Corner corner);
+
+	/// <summary>
+	/// 指定した2点の間にブロックがあるかどうかを調べる
+	/// </summary>
+	bool CheackCollisionPoints(const std::array<Vector3, 2>& posList, CollisionType type, CollisionMapInfo& mapInfo);
+
+	/// <summary>
+	/// 指定したブロックタイプが当たり判定を持つかどうか
+	/// </summary>
+	bool IsHitTargetBlockType(BlockType type);
+
+	/// <summary>
+	/// 床との衝突判定
+	/// </summary>
+	void CeilingCollisionMove(const CollisionMapInfo& mapInfo);
+
+	void LandingCollisionMove(const CollisionMapInfo& mapInfo);
+
+	void WallCollisionMove(const CollisionMapInfo& mapInfo);
+
+	/// <summary>
+	/// 指定したブロックタイプが乗れるブロックかどうか
+	/// </summary>
+	bool IsGroundTile(BlockType type);
+
+	/// <summary>
+	/// 指定したブロックタイプがゴールブロックかどうか
+	/// </summary>
+	bool IsGoalTile(BlockType type);
 
 public: // Setter / getter
 	/// <summary>
 	/// プレイヤーのSRTを設定
 	/// </summary>
-	/// <param name="transform">位置情報</param>
 	void SetTransform(const Transform& transform) { this->transform = transform; }
 
 	/// <summary>
 	/// プレイヤーのSRTを取得
 	/// </summary>
-	/// <returns>プレイヤーのSRT</returns>
 	const Transform& GetTransform() const { return transform; }
 
 	/// <summary>
@@ -97,9 +173,16 @@ public: // Setter / getter
 	/// </summary>
 	bool IsAlive() const { return isAlive; }
 
+	/// <summary>
+	/// マップチップデータをプレイヤーにも渡す
+	/// </summary>
+	void SetMapChipField(Map* mapChipField) { this->mapChipField = mapChipField; }
+
 private:
 	/// プレイヤーの生存フラグ
 	bool isAlive = true;
+
+
 
 	/// プレイヤーのSRT
 	Transform transform;
@@ -142,11 +225,19 @@ private:
 
 	/// 60 FPSを想定したデルタタイム
 	float deltaTime = 0.016f;
-
+	/// 
 	bool hitThisFrame = false;
 
 	Vector3 prevTranslate{};
 
+	/// プレイヤーのパラメータ
+	PlayerParameter playerParameter;
+	/// Map
+	Map* mapChipField = nullptr;
+	/// 接地フラグ
+	bool onGround = false;
 
+	/// ゴールフラグ
+	bool goalFlag = false;
 };
 

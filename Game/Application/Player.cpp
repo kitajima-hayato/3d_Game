@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Player.h"
 #include "Input.h"
 #include "engine/bace/ImGuiManager.h"
@@ -5,19 +6,20 @@
 #include "Game/Particle/EffectManager.h"
 #include "Map.h"
 #include "engine/bace/Logger.h"
+#include <algorithm>
 
 AABB Player::GetAABB() const
 {
 	return {
-		transform.translate - transform.scale/2,
-		transform.translate + transform.scale/2
+		transform.translate - transform.scale / 2,
+		transform.translate + transform.scale / 2
 	};
 }
 
-void Player::OnCollision(Collider* other) 
+void Player::OnCollision(Collider* other)
 {
 	if (other->GetType() == Collider::Type::Enemy) {
-		hitThisFrame = true;     
+		hitThisFrame = true;
 		isAlive = false;  // プレイヤーが敵に当たったら死亡
 		// 必要ならダメージ処理など
 	}
@@ -77,24 +79,25 @@ void Player::Initialize()
 
 	aabb = CalcAABBAtPosition(transform.translate);
 
-
+	//mapChipField 
 }
 
 
 void Player::Update()
 {
-	
+
 	// 更新処理
-	if(!isAlive) {
+	if (!isAlive) {
 		// プレイヤーが死亡している場合は何もしない
 		return;
 	}
 	prevTranslate = transform.translate;
-	playerModel->Update();
 	Move();
 	Jump();
+	CheckBlockCollision();
 	playerModel->SetTransform(transform);
-
+	
+	playerModel->Update();
 
 #ifdef _DEBUG
 	DrawImgui();
@@ -105,7 +108,7 @@ void Player::Update()
 
 void Player::Draw()
 {
-	if(!isAlive) {
+	if (!isAlive) {
 		/// プレイヤーが死亡している場合は何もしない
 		return;
 	}
@@ -115,7 +118,7 @@ void Player::Draw()
 	if (!Input::GetInstance()->PushKey(DIK_SPACE)) {
 		playerModel->Draw();
 	}
-	
+
 	if (dashInputRight == 2 || dashInputLeft == 2) {
 		/// @ ダッシュ演出
 		/*qux->EmitRing();
@@ -227,84 +230,377 @@ void Player::DrawImgui()
 	ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
 	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.1f);
 	ImGui::Separator();
-	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False"); 
+	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False");
 	ImGui::End();
 #endif // DEBUG
 }
 
-void Player::CheckBlockCollision(Map& map)
+void Player::CheckBlockCollision()
 {
-	// 実際に動いた量（Move() で更新済み）
-    Vector3 delta = {
-        transform.translate.x - prevTranslate.x,
-        transform.translate.y - prevTranslate.y,
-        transform.translate.z - prevTranslate.z
-    };
+	/*// 実際に動いた量（Move() で更新済み）
+	Vector3 delta = {
+		transform.translate.x - prevTranslate.x,
+		transform.translate.y - prevTranslate.y,
+		transform.translate.z - prevTranslate.z
+	};
 
-    // 衝突解決は前フレーム位置から始めて、軸ごとに積む
-    Vector3 pos = prevTranslate;
+	// 衝突解決は前フレーム位置から始めて、軸ごとに積む
+	Vector3 pos = prevTranslate;
 	auto aabbAt = [&](const Vector3& p) {
 		Vector3 half = transform.scale * 0.5f;
 		half.z = 1000.0f;
 		return AABB{ p - half, p + half };
 		};
 
-    auto moveAxis = [&](int axis){
-        float step = (axis==0?delta.x : axis==1?delta.y : delta.z);
-        if(step == 0.0f) return;
+	auto moveAxis = [&](int axis){
+		float step = (axis==0?delta.x : axis==1?delta.y : delta.z);
+		if(step == 0.0f) return;
 
-        // 仮移動
-        if(axis==0) pos.x += step;
-        if(axis==1) pos.y += step;
-        if(axis==2) pos.z += step;
+		// 仮移動
+		if(axis==0) pos.x += step;
+		if(axis==1) pos.y += step;
+		if(axis==2) pos.z += step;
 
-        AABB nextAABB = aabbAt(pos);
+		AABB nextAABB = aabbAt(pos);
 
-        // 近傍ブロックだけ取得
-        std::vector<Block*> nearbyBlocks = map.GetNearbyBlocks(nextAABB);
+		// 近傍ブロックだけ取得
+		std::vector<Block*> nearbyBlocks = map.GetNearbyBlocks(nextAABB);
 
-        for(const Block* b : nearbyBlocks){
-            // 静的ブロックのみ
-            if (b->GetType() != Collider::Type::Static) continue;
+		for(const Block* b : nearbyBlocks){
+			// 静的ブロックのみ
+			if (b->GetType() != Collider::Type::Static) continue;
 
-            AABB blk = b->GetAABB();
-            // 交差してなければ次へ
-            if(!(nextAABB.Intersects(blk))) continue;
+			AABB blk = b->GetAABB();
+			// 交差してなければ次へ
+			if(!(nextAABB.Intersects(blk))) continue;
 
-            // この軸だけ押し戻す（面へ吸着）
-            const Vector3 half = transform.scale * 0.5f;
-            if(axis==0){
-                pos.x = (step>0) ? (blk.min.x - half.x) : (blk.max.x + half.x);
-                delta.x = 0.0f;
-            }else if(axis==1){
-                pos.y = (step>0) ? (blk.min.y - half.y) : (blk.max.y + half.y);
-                delta.y = 0.0f;
-            }else{
-                pos.z = (step>0) ? (blk.min.z - half.z) : (blk.max.z + half.z);
-                delta.z = 0.0f;
-            }
-            nextAABB = aabbAt(pos); // 連鎖衝突に備えて更新
-        }
-    };
+			// この軸だけ押し戻す（面へ吸着）
+			const Vector3 half = transform.scale * 0.5f;
+			if(axis==0){
+				pos.x = (step>0) ? (blk.min.x - half.x) : (blk.max.x + half.x);
+				delta.x = 0.0f;
+			}else if(axis==1){
+				pos.y = (step>0) ? (blk.min.y - half.y) : (blk.max.y + half.y);
+				delta.y = 0.0f;
+			}else{
+				pos.z = (step>0) ? (blk.min.z - half.z) : (blk.max.z + half.z);
+				delta.z = 0.0f;
+			}
+			nextAABB = aabbAt(pos); // 連鎖衝突に備えて更新
+		}
+	};
 
-    // X→Y→Zの順で安定
-    moveAxis(0);
-    moveAxis(1);
-    moveAxis(2);
+	// X→Y→Zの順で安定
+	moveAxis(0);
+	moveAxis(1);
+	moveAxis(2);
 
-    // 確定位置を反映
-    transform.translate = pos;
+	// 確定位置を反映
+	transform.translate = pos;
+	playerModel->SetTransform(transform);
+	*/
+	/// 判定の初期化
+	CollisionMapInfo collisionMapInfo;
+	/// 移動量に速度をコピー
+	collisionMapInfo.move = velocity;
+	/// マップの衝突確認
+	MapCollision(collisionMapInfo);
+	/// 天井との衝突処理
+	CeilingCollisionMove(collisionMapInfo);
+	/// 床との衝突処理
+	LandingCollisionMove(collisionMapInfo);
+	/// 壁との衝突処理
+	WallCollisionMove(collisionMapInfo);
+	/// 移動量を加算
+	transform.translate += collisionMapInfo.move;
 	playerModel->SetTransform(transform);
 
+
+}
+
+void Player::MapCollision(CollisionMapInfo& mapInfo)
+{
+	// マップの衝突判定統括
+	CollisionMapInfoDirection(
+		mapInfo,
+		CollisionType::Top,
+		{ kLeftTop,kRightTop },
+		Vector3(0.0f, 0.0f, 0.0f),
+		[](const CollisionMapInfo& info) {return info.move.y > 0.0f; }
+	);
+	CollisionMapInfoDirection(
+		mapInfo,
+		CollisionType::Bottom,
+		{ kLeftBottom,kRightBottom },
+		Vector3(0.0f, 0.0f, 0.0f),
+		[](const CollisionMapInfo& info) {return info.move.y < 0.0f; }
+	);
+	CollisionMapInfoDirection(
+		mapInfo,
+		CollisionType::Left,
+		{ kLeftTop,kLeftBottom },
+		Vector3(-playerParameter.kEpsilon, 0.0f, 0.0f),
+		[](const CollisionMapInfo& info) {return info.move.x < 0.0f; }
+	);
+	CollisionMapInfoDirection(
+		mapInfo,
+		CollisionType::Right,
+		{ kRightTop,kRightBottom },
+		Vector3(playerParameter.kEpsilon, 0.0f, 0.0f),
+		[](const CollisionMapInfo& info) {return info.move.x > 0.0f; }
+	);
+
+}
+
+void Player::CollisionMapInfoDirection(CollisionMapInfo& mapInfo, CollisionType dir, const std::array<Corner, 2>& CheckCorners, const Vector3& offset, std::function<bool(const CollisionMapInfo&)> moveCondition)
+{
+	// 衝突判定の方向別処理
+
+	/// 移動量が0なら処理しない
+	if (!moveCondition(mapInfo)) {
+		return;
+	}
+	// 移動後の座標を計算
+	Vector3 position = playerModel->GetTranslate() + mapInfo.move;
+
+	// 2つのコーナーを計算
+	std::array<Vector3, 2> corners = {
+		CornerPosition(position, CheckCorners[0]) + offset,
+		CornerPosition(position, CheckCorners[1]) + offset
+	};
+
+	// 衝突判定を行う
+	if (CheackCollisionPoints(corners, static_cast<CollisionType>(dir), mapInfo)) {
+#ifdef _DEBUG
+		switch (dir)
+		{
+		case CollisionType::Top:ImGui::Text("Top Hit"); break;
+		case CollisionType::Bottom:ImGui::Text("Bottom Hit"); break;
+		case CollisionType::Left:ImGui::Text("Left Hit"); break;
+		case CollisionType::Right:ImGui::Text("Right Hit"); break;
+		default:
+			break;
+		};
+#endif // DEBUG
+	}
+
+
+
+
+}
+
+Vector3 Player::CornerPosition(const Vector3& center, Corner corner)
+{
+	Vector3 offsetTable[kNumCorners] = {
+		{+playerParameter.kWidth / 2.0f,-playerParameter.kHeight / 2.0f,0},
+		{+playerParameter.kWidth / 2.0f,+playerParameter.kHeight / 2.0f,0},
+		{-playerParameter.kWidth / 2.0f,+playerParameter.kHeight / 2.0f,0},
+		{-playerParameter.kWidth / 2.0f,-playerParameter.kHeight / 2.0f,0},
+	};
+	return center + offsetTable[static_cast<uint32_t>(corner)];
+}
+
+bool Player::CheackCollisionPoints(const std::array<Vector3, 2>& posList, CollisionType type, CollisionMapInfo& mapInfo)
+{
+	/// ブロックとの当たり判定
+	bool hit = false;
+
+	/// 特殊ブロックごとに処理を追加
+	for (const auto& pos : posList) {
+		MapIndex mapIndex = mapChipField->GetMapChipIndexSetByPosition(pos);
+		BlockType blockType = mapChipField->GetMapChipTypeByIndex(mapIndex);
+
+		/*	＠例
+		if(blockType == MapChipType::〇〇〇){
+			if(Type == CollisionType::〇〇〇){
+				hit = true;
+				// onGround = true;
+			}
+		}*/
+
+		if (IsHitTargetBlockType(blockType)) {
+			hit = true;
+		} else if (blockType == BlockType::kGoalDown || blockType == BlockType::kGoalUp) {
+			goalFlag = true;
+		}
+
+	}
+	/// 当たった場合の処理
+	if (hit) {
+		/// 移動量を0にする
+		Vector3 position = playerModel->GetTranslate();
+		MapIndex mapIndex = mapChipField->GetMapChipIndexSetByPosition(position);
+
+		Rect rect = mapChipField->GetRectByIndex(mapIndex);
+		switch (type) {
+		case CollisionType::Top:
+			mapInfo.move.y =
+				std::max(0.0f,
+					rect.bottom - position.y -
+					(playerParameter.kHeight / 2.0f + playerParameter.blank));
+
+			mapInfo.ceiling = true;
+			break;
+		case CollisionType::Bottom:
+			mapInfo.move.y = std::min(
+				0.0f,
+				rect.top - position.y + (playerParameter.kHeight / 2.0f + playerParameter.kHeight));
+			mapInfo.landing = true;
+			break;
+
+		case CollisionType::Left:
+			mapInfo.move.x = std::max(0.0f,
+				rect.right - position.x - (playerParameter.kWidth / 2.0f + playerParameter.blank));
+			mapInfo.hitWall = true;
+			break;
+		case CollisionType::Right:
+			mapInfo.move.x = std::min(0.0f,
+				rect.left - position.x + (playerParameter.kWidth / 2.0f + playerParameter.blank));
+			mapInfo.hitWall = true;
+			break;
+		default:
+			Logger::Log("未対応の衝突タイプです / ヒットはしてるけど判定部分でおかしい");
+			break;
+
+		}
+
+
+	}
+	return hit;
+}
+
+bool Player::IsHitTargetBlockType(BlockType type)
+{
+	switch (type)
+	{
+		/// 判定を持たないブロックタイプ
+	case BlockType::Air:
+		return false;
+		break;
+		/// 判定を持つブロックタイプ
+	case BlockType::NormalBlock:
+	case BlockType::testBlock:
+		return true;
+		break;
+	/// 未対応のブロックタイプ / エラー文も表示
+	default:
+		Logger::Log("未対応のブロックタイプです");
+		return false;
+		break;
+	}
+}
+// 天井との衝突判定
+void Player::CeilingCollisionMove(const CollisionMapInfo& mapInfo)
+{
+	/// 天井に当たったら上昇力を０に
+	if (mapInfo.ceiling) {
+		velocity.y = 0.0f;
+	}
+}
+// 地面との衝突判定
+void Player::LandingCollisionMove(const CollisionMapInfo& mapInfo)
+{
+	if (onGround /*&& mapInfo.landing*/) {
+		/// 高さの加速度が０以上なら空中判定
+		if (velocity.y > 0.0f) {
+			onGround = false;
+		}
+		/// 着地しているなら移動量を０に
+		else {
+			// 移動後の四つ角の計算
+			std::array<Vector3, kNumCorners> newPositions;
+			for (uint32_t i = 0; i < newPositions.size(); ++i) {
+				Vector3 position = playerModel->GetTranslate() + mapInfo.move;
+				newPositions[i] = CornerPosition(position, static_cast<Corner>(i));
+			}
+			// 四つ角のブロックタイプを取得
+			BlockType blockType{};
+			// 真下の当たり判定
+			bool hit = false;
+
+			// 左点の判定
+
+			MapIndex mapIndex;
+			mapIndex = mapChipField->GetMapChipIndexSetByPosition(newPositions[static_cast<uint32_t>(Corner::kLeftBottom)] + Vector3(0, -playerParameter.kEpsilon, 0));
+
+			/// 各ブロックを種別に判定
+			// 乗ることのできるブロック
+			if (IsGroundTile(blockType)) {
+				hit = true;
+			}
+			// ゴールブロック
+			if(IsGoalTile(blockType)){
+				goalFlag = true;
+			}
+
+			// 右点の判定
+			mapIndex = mapChipField->GetMapChipIndexSetByPosition(newPositions[static_cast<uint32_t>(Corner::kRightBottom)] + Vector3(0, -playerParameter.kEpsilon, 0));
+			blockType = mapChipField->GetMapChipTypeByIndex(mapIndex);
+			/// 各ブロックを種別に判定
+			// 乗ることのできるブロック
+			if (IsGroundTile(blockType)) {
+				hit = true;
+			}
+			// ゴールブロック
+			if (IsGoalTile(blockType)) {
+				goalFlag = true;
+			}
+
+		}
+	} else {
+		/// 着地しているなら高さの移動量を０に
+		if (mapInfo.landing) {
+			onGround = true;
+			velocity.y = 0.0f;
+		}
+	}
+}
+
+// 壁との衝突判定
+void Player::WallCollisionMove(const CollisionMapInfo& mapInfo)
+{
+	if (!mapInfo.hitWall)return;
+
+	/// どちら側の壁か判定
+	if (mapInfo.move.x > 0.0f) {
+		/// 左側の壁なら
+		if (velocity.x < 0.0f) {
+			velocity.x = 0.0f;
+		}
+		/// 右側の壁なら
+		else if(mapInfo.move.x < 0.0f) {
+			if (velocity.x > 0.0f) {
+				velocity.x = 0.0f;
+			}
+		}
+	}
+	/// 壁に当たったら移動速度を減衰させる
+	velocity.x *= (1.0f - playerParameter.kEpsilon);
+}
+
+bool Player::IsGroundTile(BlockType type)
+{
+	switch (type)
+	{
+	case BlockType::NormalBlock:
+	case BlockType::testBlock:
+		return true;
+		break;
+	default:
+		return false;
+		break;
+	}
+}
+
+bool Player::IsGoalTile(BlockType type)
+{
+	return type == BlockType::kGoalUp || type == BlockType::kGoalDown;
 }
 
 void Player::DrawHitImgui()
 {
 #ifdef _DEBUG
-	ImGui::Begin("Hit Info");
-	ImGui::Separator();
-	ImGui::Text("Hit: %s", hitThisFrame ? "True" : "False");
-	ImGui::End();
+
 #endif // DEBUG
 }
 

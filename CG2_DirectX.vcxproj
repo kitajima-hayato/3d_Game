@@ -155,6 +155,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Application\Constants.h" />
     <ClInclude Include="Game\Collision\CollisionManager.h" />
     <ClInclude Include="Game\Application\Enemy\FlyingEnemy.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyBace.h" />
