@@ -48,7 +48,7 @@ void GamePlayScene::Update()
 	camera->Update();
 	/// マップの更新
 	map->Update();
-
+	 
 	player->BeginFrameHitReset();
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
