@@ -19,13 +19,13 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 	// マルチスレッドでの読み込み
-	std::thread th1(&TitleScene::LoadAudio, this); 
+	std::thread th1(&TitleScene::LoadAudio, this);
 	std::thread th2(&TitleScene::LoadSprite, this);
 
 	th1.join();
 	th2.join();
 
-	
+
 	//// パーティクルグループを作成
 	//ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
@@ -48,26 +48,144 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 	speed = object3D->GetTranslate();
 
-	
+
 
 
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
 	playerObject->SetModel("Player.obj");
-	
-	
+	playerTransform = {
+		{ 1.0f,1.0f,1.0f },
+		{ 0.0f,3.0f,0.0f },
+		{ 1.0f,-7.0f,20.0f }
+	};
+	playerObject->SetTransform(playerTransform);
+
+
 	titleLogo = std::make_unique<Object3D>();
 	titleLogo->Initialize();
 	titleLogo->SetModel("title.obj");
 	titleLogoTransform = {
-		{ 0.5f,0.5f,0.5f },
-		{ -1.0f,1.0f,10.0f },
-		{ 0.0f,0.0f,0.0f }
+		{ 1.0f,1.0f,1.0f },
+		{ 1.6f,3.2f,0.0f },
+		{ 7.4f,-3.1f,10.1f }
 	};
 
 	titleLogo->SetTransform(titleLogoTransform);
 
 
+	titleBackGround3 = std::make_unique<Object3D>();
+	titleBackGround3->Initialize();
+	titleBackGround3->SetModel("back3.obj");
+	titleBackGround3Transform = {
+		{ 1.0f,50.0f,30.0f },
+		{ 0.0f,-1.5f,0.0f },
+		{ 7.5f,-4.0f,200.0f }
+	};
+	titleBackGround3->SetTransform(titleBackGround3Transform);
+
+	// 右に繋げる
+	titleBackGround3_2 = std::make_unique<Object3D>();
+	titleBackGround3_2->Initialize();
+	titleBackGround3_2->SetModel("back3.obj");
+	titleBackGround3_2Transform = {
+		{ 1.0f,50.0f,30.0f },
+		{ 0.0f,1.7f,0.0f },
+		{ 170.0f,-4.0f,200.0f }
+	};
+
+	titleBackGround2 = std::make_unique<Object3D>();
+	titleBackGround2->Initialize();
+	titleBackGround2->SetModel("back2.obj");
+	titleBackGround2Transform = {
+		{ 1.0f,60.0f,30.0f },
+		{ 0.0f,-1.5f,0.0f },
+		{ 7.5f,-4.0f,150.0f }
+	};
+
+	titleBackGround2->SetTransform(titleBackGround2Transform);
+
+
+	titleBackGround2_2 = std::make_unique<Object3D>();
+	titleBackGround2_2->Initialize();
+	titleBackGround2_2->SetModel("back2.obj");
+	titleBackGround2_2Transform = {
+		{ 1.0f,60.0f,30.0f },
+		{ 0.0f,1.5f,0.0f },
+		{ 180.0f,-4.0f,150.0f }
+	};
+	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
+	titleBackGround2_3 = std::make_unique<Object3D>();
+	titleBackGround2_3->Initialize();
+	titleBackGround2_3->SetModel("back2.obj");
+	titleBackGround2_3Transform = {
+		{ 1.0f,60.0f,30.0f },
+		{ 0.0f,-1.5f,0.0f },
+		{ 350.0f,-4.0f,150.0f }
+	};
+	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
+
+
+	
+	titleBackGround1 = std::make_unique<Object3D>();
+	titleBackGround1->Initialize();
+	titleBackGround1->SetModel("back1.obj");
+	titleBackGround1Transform = {
+		{ 1.0f,20.0f,10.0f },
+		{ 0.0f,-1.5f,0.0f },
+		{ 7.5f,-2.0f,50.0f }
+	};
+	titleBackGround1->SetTransform(titleBackGround1Transform);
+
+	titeleBackGround1_2 = std::make_unique<Object3D>();
+	titeleBackGround1_2->Initialize();
+	titeleBackGround1_2->SetModel("back1.obj");
+	titeleBackGround1_2Transform = {
+		{ 1.0f,20.0f,10.0f },
+		{ 0.0f,1.5f,0.0f },
+		{ 65,-2.0f,50.0f }
+	};
+	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
+	titeleBackGround1_3 = std::make_unique<Object3D>();
+	titeleBackGround1_3->Initialize();
+	titeleBackGround1_3->SetModel("back1.obj");
+	titeleBackGround1_3Transform = {
+		{ 1.0f,20.0f,10.0f },
+		{ 0.0f,-1.5f,0.0f },
+		{ 120,-2.0f,50.0f }
+	};
+	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
+
+	titeleBackGround1_4 = std::make_unique<Object3D>();
+	titeleBackGround1_4->Initialize();
+	titeleBackGround1_4->SetModel("back1.obj");
+	titeleBackGround1_4Transform = {
+		{ 1.0f,20.0f,10.0f },
+		{ 0.0f,1.5f,0.0f },
+		{ 178,-2.0f,50.0f }
+	};
+	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
+
+	skyBack = std::make_unique<Object3D>();	
+	skyBack->Initialize();
+	skyBack->SetModel("BackSky.obj");
+	skyBackTransform = {
+		{ 1.0f,60.0f,300.0f },
+		{ 0.0f,-1.5f,0.0f },
+		{ 7.5f,0.0f,250.0f }
+	};
+	skyBack->SetTransform(skyBackTransform);
+
+	// 足場　土
+	soil = std::make_unique<Object3D>();
+	soil->Initialize();
+	soil->SetModel("soil.obj");
+	soilTransform = {
+		{ 7.0f,1.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
+		{ 0.0f,-8.6f,20.0f }
+	};
+	soil->SetTransform(soilTransform);
 
 
 
@@ -108,6 +226,45 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
+	skyBack->Update();
+
+	// 背景
+	// 少しづつ左に流す 更新
+	// 3
+	titleBackGround3Transform.translate.x -= 0.03f;
+	titleBackGround3_2Transform.translate.x -= 0.03f;
+	titleBackGround3->SetTransform(titleBackGround3Transform);
+	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+	
+	titleBackGround3->Update();
+	titleBackGround3_2->Update();
+	// 2
+	titleBackGround2Transform.translate.x -= 0.05f;
+	titleBackGround2_2Transform.translate.x -= 0.05f;
+	titleBackGround2_3Transform.translate.x -= 0.05f;
+	titleBackGround2->SetTransform(titleBackGround2Transform);
+	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
+	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
+	titleBackGround2->Update();
+	titleBackGround2_2->Update();
+	titleBackGround2_3->Update();
+	// 1
+	titleBackGround1Transform.translate.x -= 0.1f;
+	titeleBackGround1_2Transform.translate.x -= 0.1f;
+	titeleBackGround1_3Transform.translate.x -= 0.1f;
+	titeleBackGround1_4Transform.translate.x -= 0.1f;
+	titleBackGround1->SetTransform(titleBackGround1Transform);
+	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
+	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
+	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
+	titleBackGround1->Update();
+	titeleBackGround1_2->Update();
+	titeleBackGround1_3->Update();
+	titeleBackGround1_4->Update();
+
+
+
+
 	/*particleEmitter->SetTransform({
 	emitterScale,
 	emitterRotate,
@@ -135,10 +292,14 @@ void TitleScene::Update()
 	/*particleEmitter->Update();
 	particleEmitter2->Update();*/
 
-	 
+
 
 	//levelData->Update();
+	// プレイヤーを回転
+	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
+	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
+	soil->Update();
 
 	//  Rainbow回転（ここを追加）
 	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
@@ -156,18 +317,28 @@ void TitleScene::Update()
 
 void TitleScene::Draw()
 {
-	
+
 #pragma region 3Dオブジェクトの描画準備
-	
+
 	//sprite_->Draw();
 #pragma endregion
 
 #pragma region 3Dオブジェクトの描画
-	
+
 	//object3D->Draw();
 	//levelData->Draw();
-	//playerObject->Draw();
+	playerObject->Draw();
 	//Rainbow->Draw();
+	skyBack->Draw();
+	titleBackGround3->Draw();
+	titleBackGround3_2->Draw();
+	titleBackGround2->Draw();
+	titleBackGround2_2->Draw();
+	titleBackGround2_3->Draw();
+	titleBackGround1->Draw();
+	titeleBackGround1_2->Draw();
+	titeleBackGround1_3->Draw();
+	titeleBackGround1_4->Draw();
 
 
 	// パーティクルの描画
@@ -180,7 +351,9 @@ void TitleScene::Draw()
 	//EffectManager::GetInstance()->DrawCylinder();
 	titleLogo->Draw();
 
-	
+	soil->Draw();
+
+
 #pragma endregion
 
 }
@@ -225,8 +398,95 @@ void TitleScene::DrawImgui() {
 	ImGui::Text("Transform");
 	ImGui::DragFloat3("Scalea", &titleLogoTransform.scale.x, 0.1f);
 	ImGui::DragFloat3("Rotatea", &titleLogoTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatea", &titleLogoTransform.translate.x, 0.1f); 
+	ImGui::DragFloat3("Translatea", &titleLogoTransform.translate.x, 0.1f);
 	titleLogo->SetTransform(titleLogoTransform);
+
+	ImGui::End();
+
+	ImGui::Begin("BackGround");
+
+	ImGui::Text("Soil");
+	ImGui::DragFloat3("Scales", &soilTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotates", &soilTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translates", &soilTransform.translate.x, 0.1f);
+	soil->SetTransform(soilTransform);
+	ImGui::Separator();
+
+	ImGui::Text("Player");
+	ImGui::DragFloat3("Scalep", &playerTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotatep", &playerTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translatep", &playerTransform.translate.x, 0.1f);
+	playerObject->SetTransform(playerTransform);
+	ImGui::Separator();
+	// 背景
+	ImGui::Text("BackGround3");
+	ImGui::DragFloat3("Scaleb", &titleBackGround3Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotateb", &titleBackGround3Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translateb", &titleBackGround3Transform.translate.x, 0.1f);
+	titleBackGround3->SetTransform(titleBackGround3Transform);
+
+	ImGui::Separator();
+
+	ImGui::Text("BackGround3_2");
+	ImGui::DragFloat3("Scalec3_2", &titleBackGround3_2Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotatec3_2", &titleBackGround3_2Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translatec3_2", &titleBackGround3_2Transform.translate.x, 0.1f);
+	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+	ImGui::Separator();
+
+	ImGui::Text("BackGround2");
+	ImGui::DragFloat3("Scalec", &titleBackGround2Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotatec", &titleBackGround2Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translatec", &titleBackGround2Transform.translate.x, 0.1f);
+	titleBackGround2->SetTransform(titleBackGround2Transform);
+
+	ImGui::Separator();
+
+	ImGui::Text("BackGround2_2");
+	ImGui::DragFloat3("Scaled2_2", &titleBackGround2_2Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotated2_2", &titleBackGround2_2Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translated2_2", &titleBackGround2_2Transform.translate.x, 0.1f);
+	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
+	ImGui::Separator();
+	ImGui::Text("BackGround2_3");
+	ImGui::DragFloat3("Scaled2_3", &titleBackGround2_3Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotated2_3", &titleBackGround2_3Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translated2_3", &titleBackGround2_3Transform.translate.x, 0.1f);
+	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
+	ImGui::Separator();
+
+	ImGui::Text("BackGround1");
+	ImGui::DragFloat3("Scaled", &titleBackGround1Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotated", &titleBackGround1Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translated", &titleBackGround1Transform.translate.x, 0.1f);
+	titleBackGround1->SetTransform(titleBackGround1Transform);
+
+	ImGui::Separator();
+
+	ImGui::Text("BackGround1_2");
+	ImGui::DragFloat3("Scale1_2", &titeleBackGround1_2Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate1_2", &titeleBackGround1_2Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translate1_2", &titeleBackGround1_2Transform.translate.x, 0.1f);
+	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
+	ImGui::Separator();
+	ImGui::Text("BackGround1_3");
+	ImGui::DragFloat3("Scale1_3", &titeleBackGround1_3Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate1_3", &titeleBackGround1_3Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translate1_3", &titeleBackGround1_3Transform.translate.x, 0.1f);
+	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
+	ImGui::Separator();
+	ImGui::Text("BackGround1_4");
+	ImGui::DragFloat3("Scale1_4", &titeleBackGround1_4Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate1_4", &titeleBackGround1_4Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translate1_4", &titeleBackGround1_4Transform.translate.x, 0.1f);
+	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
+	ImGui::Separator();
+	ImGui::Text("SkyBack");
+	ImGui::DragFloat3("Scalee", &skyBackTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotatee", &skyBackTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translatee", &skyBackTransform.translate.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
+
 
 	ImGui::End();
 
@@ -277,7 +537,7 @@ void TitleScene::DrawImgui() {
 	cylinder->SetTransform(cylinderTransform);
 	ImGui::End();*/
 
-	
+
 #endif // _DEBUG
 
 }

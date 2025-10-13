@@ -36,6 +36,7 @@ struct PlayerParameter {
 	float kHeight = 1.0f;	// 高さ
 	float blank = 0.5f;		// 余白
 	float kEpsilon = 0.01f; // 微小量
+	float kAcceleration = 0.1f; // 加速度
 
 };
 
@@ -188,15 +189,12 @@ private:
 	Transform transform;
 
 	/// プレイヤーの移動速度
-	Vector3 velocity = { 0.1f, 0.1f, 0.0f };
+	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
 	/// プレイヤーのダッシュ速度
 	Vector3 dashSpeed = { 0.01f, 0.2f, 0.0f };
 	/// プレイヤーの落下速度
 	Vector3 fallSpeed = { 0.0f, -9.8f, 0.0f };
-	/// プレイヤーの移動方向
-	Vector3 moveDirection = { 0.0f, 0.0f, 0.0f };
-
-
+	
 	/// プレイヤーのモデル
 	std::unique_ptr<Object3D> playerModel;
 
@@ -228,7 +226,8 @@ private:
 	/// 
 	bool hitThisFrame = false;
 
-	Vector3 prevTranslate{};
+	/// 前フレームの座標
+	Vector3 prevTranslate = { 0.0f, 0.0f, 0.0f };
 
 	/// プレイヤーのパラメータ
 	PlayerParameter playerParameter;

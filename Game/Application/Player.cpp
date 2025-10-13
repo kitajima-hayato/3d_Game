@@ -91,7 +91,9 @@ void Player::Update()
 		// プレイヤーが死亡している場合は何もしない
 		return;
 	}
+	// 毎フレーム冒頭で呼ぶ
 	prevTranslate = transform.translate;
+	
 	Move();
 	Jump();
 	CheckBlockCollision();
@@ -102,6 +104,8 @@ void Player::Update()
 #ifdef _DEBUG
 	DrawImgui();
 #endif // DEBUG
+
+	velocity = { 0.0f, 0.0f, 0.0f };
 
 }
 
@@ -148,6 +152,8 @@ void Player::MoveRight()
 
 	/// プレイヤーの移動処理
 	if (Input::GetInstance()->PushKey(DIK_D)) {
+		velocity = { 0.0f, 0.0f, 0.0f };
+		velocity.x = playerParameter.kAcceleration;
 		transform.translate.x += velocity.x;
 	}
 	/// ダッシュ入力が行われた場合
@@ -183,7 +189,9 @@ void Player::MoveLeft()
 	}
 	/// プレイヤーの左への移動処理
 	if (Input::GetInstance()->PushKey(DIK_A)) {
-		transform.translate.x -= velocity.x;
+		velocity = { 0.0f,0.0f, 0.0f };
+		velocity.x = -playerParameter.kAcceleration;
+		transform.translate.x += velocity.x;
 	}
 
 	/// ダッシュ入力が行われた場合
@@ -199,7 +207,7 @@ void Player::MoveLeft()
 	}
 	/// ダッシュ入力が２回行われダッシュ状態になった場合
 	if (dashInputLeft == 2) {
-		transform.translate.x -= velocity.x + dashSpeed.x;
+		transform.translate.x += velocity.x - dashSpeed.x;
 		if (Input::GetInstance()->RereseKey(DIK_A)) {
 			/// ダッシュ入力が解除されたらダッシュ入力をリセット
 			dashInputLeft = 0;
@@ -219,6 +227,14 @@ void Player::DrawImgui()
 {
 #ifdef _DEBUG
 	// Imguiの描画処理
+
+	ImGui::Begin("PlayerParamater");
+	ImGui::Text("Acceleration : %.2f", playerParameter.kAcceleration);
+	ImGui::Text("velocity : %.2f", velocity.x);
+	ImGui::Separator();
+	ImGui::End();
+
+
 	ImGui::Begin("Player Settings");
 	ImGui::Text("ExtensionFrameRight : %.f", dashExtensionFrameRight);
 	ImGui::Text("DashInputRight : %d", dashInputRight);
@@ -237,72 +253,15 @@ void Player::DrawImgui()
 
 void Player::CheckBlockCollision()
 {
-	/*// 実際に動いた量（Move() で更新済み）
-	Vector3 delta = {
-		transform.translate.x - prevTranslate.x,
-		transform.translate.y - prevTranslate.y,
-		transform.translate.z - prevTranslate.z
-	};
-
-	// 衝突解決は前フレーム位置から始めて、軸ごとに積む
-	Vector3 pos = prevTranslate;
-	auto aabbAt = [&](const Vector3& p) {
-		Vector3 half = transform.scale * 0.5f;
-		half.z = 1000.0f;
-		return AABB{ p - half, p + half };
-		};
-
-	auto moveAxis = [&](int axis){
-		float step = (axis==0?delta.x : axis==1?delta.y : delta.z);
-		if(step == 0.0f) return;
-
-		// 仮移動
-		if(axis==0) pos.x += step;
-		if(axis==1) pos.y += step;
-		if(axis==2) pos.z += step;
-
-		AABB nextAABB = aabbAt(pos);
-
-		// 近傍ブロックだけ取得
-		std::vector<Block*> nearbyBlocks = map.GetNearbyBlocks(nextAABB);
-
-		for(const Block* b : nearbyBlocks){
-			// 静的ブロックのみ
-			if (b->GetType() != Collider::Type::Static) continue;
-
-			AABB blk = b->GetAABB();
-			// 交差してなければ次へ
-			if(!(nextAABB.Intersects(blk))) continue;
-
-			// この軸だけ押し戻す（面へ吸着）
-			const Vector3 half = transform.scale * 0.5f;
-			if(axis==0){
-				pos.x = (step>0) ? (blk.min.x - half.x) : (blk.max.x + half.x);
-				delta.x = 0.0f;
-			}else if(axis==1){
-				pos.y = (step>0) ? (blk.min.y - half.y) : (blk.max.y + half.y);
-				delta.y = 0.0f;
-			}else{
-				pos.z = (step>0) ? (blk.min.z - half.z) : (blk.max.z + half.z);
-				delta.z = 0.0f;
-			}
-			nextAABB = aabbAt(pos); // 連鎖衝突に備えて更新
-		}
-	};
-
-	// X→Y→Zの順で安定
-	moveAxis(0);
-	moveAxis(1);
-	moveAxis(2);
-
-	// 確定位置を反映
-	transform.translate = pos;
-	playerModel->SetTransform(transform);
-	*/
+	
 	/// 判定の初期化
 	CollisionMapInfo collisionMapInfo;
 	/// 移動量に速度をコピー
-	collisionMapInfo.move = velocity;
+	Vector3 desiredMove = transform.translate - prevTranslate;
+	/// 移動量をセット
+	transform.translate = prevTranslate;
+	/// 
+	collisionMapInfo.move = desiredMove;
 	/// マップの衝突確認
 	MapCollision(collisionMapInfo);
 	/// 天井との衝突処理
@@ -444,18 +403,20 @@ bool Player::CheackCollisionPoints(const std::array<Vector3, 2>& posList, Collis
 		case CollisionType::Bottom:
 			mapInfo.move.y = std::min(
 				0.0f,
-				rect.top - position.y + (playerParameter.kHeight / 2.0f + playerParameter.kHeight));
+				rect.top - position.y + (playerParameter.kHeight / 2.0f + playerParameter.blank));
 			mapInfo.landing = true;
 			break;
 
 		case CollisionType::Left:
-			mapInfo.move.x = std::max(0.0f,
+			mapInfo.move.x = std::max(
+				0.0f,
 				rect.right - position.x - (playerParameter.kWidth / 2.0f + playerParameter.blank));
 			mapInfo.hitWall = true;
 			break;
 		case CollisionType::Right:
-			mapInfo.move.x = std::min(0.0f,
-				rect.left - position.x + (playerParameter.kWidth / 2.0f + playerParameter.blank));
+			mapInfo.move.x = std::min(
+				0.0f,
+				rect.left + position.x + (playerParameter.kWidth / 2.0f + playerParameter.blank));
 			mapInfo.hitWall = true;
 			break;
 		default:
@@ -501,16 +462,18 @@ void Player::CeilingCollisionMove(const CollisionMapInfo& mapInfo)
 void Player::LandingCollisionMove(const CollisionMapInfo& mapInfo)
 {
 	if (onGround /*&& mapInfo.landing*/) {
+
 		/// 高さの加速度が０以上なら空中判定
 		if (velocity.y > 0.0f) {
 			onGround = false;
 		}
+
 		/// 着地しているなら移動量を０に
 		else {
 			// 移動後の四つ角の計算
 			std::array<Vector3, kNumCorners> newPositions;
 			for (uint32_t i = 0; i < newPositions.size(); ++i) {
-				Vector3 position = playerModel->GetTranslate() + mapInfo.move;
+				Vector3 position = transform.translate + mapInfo.move;
 				newPositions[i] = CornerPosition(position, static_cast<Corner>(i));
 			}
 			// 四つ角のブロックタイプを取得

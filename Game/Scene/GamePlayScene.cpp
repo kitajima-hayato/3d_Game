@@ -89,10 +89,12 @@ void GamePlayScene::InitializeEnemy()
 
 	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
 	normalEnemy->Initialize();
+	normalEnemy->SetTranslate({ 10.0f,-0.0f,20.0f });
 	enemies.push_back(std::move(normalEnemy));
 
 	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
 	flyingEnemy->Initialize();
+	flyingEnemy->SetTranslate({ 1.0f,-5.0f,20.0f });
 	enemies.push_back(std::move(flyingEnemy));
 
 
