@@ -407,13 +407,13 @@ bool Player::CheackCollisionPoints(const std::array<Vector3, 2>& posList, Collis
 			mapInfo.landing = true;
 			break;
 
-		case CollisionType::Left:
+		case CollisionType::Right:
 			mapInfo.move.x = std::max(
 				0.0f,
 				rect.right - position.x - (playerParameter.kWidth / 2.0f + playerParameter.blank));
 			mapInfo.hitWall = true;
 			break;
-		case CollisionType::Right:
+		case CollisionType::Left:
 			mapInfo.move.x = std::min(
 				0.0f,
 				rect.left + position.x + (playerParameter.kWidth / 2.0f + playerParameter.blank));

@@ -32,7 +32,7 @@ enum Corner {
 struct PlayerParameter {
 	// Playerのパラメータ構造体
 	// 当たり判定
-	float kWidth = 1.0f;	// 幅
+	float kWidth = 1.5f;	// 幅
 	float kHeight = 1.0f;	// 高さ
 	float blank = 0.5f;		// 余白
 	float kEpsilon = 0.01f; // 微小量
