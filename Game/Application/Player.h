@@ -45,7 +45,7 @@ class Player : public Collider
 {
 public: // 判定
 	Type GetType() const override { return Type::Player; }
-	AABB GetAABB() const override;
+	AABB GetAABB() const override; 
 	void OnCollision(Collider* other)override;
 
 	AABB CalcAABBAtPosition(const Vector3& pos);
