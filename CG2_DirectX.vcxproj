@@ -153,6 +153,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
+    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\Constants.h" />
@@ -205,6 +206,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />
+    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

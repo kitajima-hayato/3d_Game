@@ -153,6 +153,7 @@
     <ClCompile Include="Game\Application\StageType.cpp">
       <Filter>Game\Application\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -306,6 +307,7 @@
     <ClInclude Include="Game\Application\ModelList.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

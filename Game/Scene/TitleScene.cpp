@@ -187,6 +187,10 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	};
 	soil->SetTransform(soilTransform);
 
+	//sceneTransition = std::make_unique<SceneTransition>();
+	//sceneTransition->Initialize();
+
+
 
 
 
@@ -262,6 +266,9 @@ void TitleScene::Update()
 	titeleBackGround1_3->Update();
 	titeleBackGround1_4->Update();
 
+
+	
+	//sceneTransition->Update();
 
 
 
@@ -353,6 +360,7 @@ void TitleScene::Draw()
 
 	soil->Draw();
 
+	//sceneTransition->Draw();
 
 #pragma endregion
 

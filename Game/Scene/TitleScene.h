@@ -9,6 +9,7 @@
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
+#include "SceneTransition/SceneTransition.h"
 
 
 #ifdef _DEBUG
@@ -126,5 +127,8 @@ private: // ゲーム要素
 	// 足場　土
 	std::unique_ptr<Object3D> soil;
 	Transform soilTransform;
+
+	//std::unique_ptr<SceneTransition> sceneTransition;
+
 };
 

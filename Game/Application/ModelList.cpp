@@ -23,6 +23,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("BackSky.obj");
 	ModelManager::GetInstance()->LoadModel("soil.obj");
 	/// GamePlayScene
+	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
 

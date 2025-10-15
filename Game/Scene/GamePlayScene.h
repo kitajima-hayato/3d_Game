@@ -4,6 +4,7 @@
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
+#include "SceneTransition/SceneTransition.h"
 class Map;
 class Player;
 class Object3D;
@@ -58,5 +59,9 @@ private:
 	/// カメラ
 	std::unique_ptr<Camera> camera;
 	Transform cameraTransform;
+
+	// シーン遷移
+	//std::unique_ptr<SceneTransition> sceneTransition;
+
 };
 

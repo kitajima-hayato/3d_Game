@@ -40,12 +40,17 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	InitializeEnemy();
 
+	//sceneTransition = std::make_unique<SceneTransition>();
+	//sceneTransition->Initialize();
+
 }
 
 
 void GamePlayScene::Update()
 {
 	camera->Update();
+
+	//sceneTransition->Update();
 	/// マップの更新
 	map->Update();
 	  
@@ -73,6 +78,7 @@ void GamePlayScene::Update()
 void GamePlayScene::Draw()
 {
 
+	//sceneTransition->Draw();
 	/// マップの描画
 	map->Draw();
 	/// プレイヤーの描画
