@@ -273,7 +273,6 @@ void Player::CheckBlockCollision()
 	/// 移動量を加算
 	transform.translate += collisionMapInfo.move;
 	playerModel->SetTransform(transform);
-
 }
 
 void Player::MapCollision(CollisionMapInfo& mapInfo)
