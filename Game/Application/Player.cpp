@@ -145,6 +145,7 @@ void Player::Move()
 
 void Player::MoveRight()
 {
+	Vector3 acceleration = { 0.0f, 0.0f, 0.0f };
 	/// Dが押されたらダッシュ入力を増やす
 	if (Input::GetInstance()->TriggerKey(DIK_D)) {
 		dashInputRight++;
@@ -154,8 +155,11 @@ void Player::MoveRight()
 	if (Input::GetInstance()->PushKey(DIK_D)) {
 		velocity = { 0.0f, 0.0f, 0.0f };
 		velocity.x = playerParameter.kAcceleration;
-		transform.translate.x += velocity.x;
+		acceleration.x += velocity.x;
+
+
 	}
+	transform.translate.x += acceleration.x;
 	/// ダッシュ入力が行われた場合
 	if (dashInputRight == 1)
 	{
@@ -171,7 +175,7 @@ void Player::MoveRight()
 	if (dashInputRight == 2) {
 
 		/// ダッシュ速度を加算
-		transform.translate.x += velocity.x + dashSpeed.x;
+		transform.translate.x += acceleration.x + dashSpeed.x;
 		if (Input::GetInstance()->RereseKey(DIK_D)) {
 			/// ダッシュ入力が解除されたらダッシュ入力をリセット
 			dashInputRight = 0;
@@ -183,6 +187,7 @@ void Player::MoveRight()
 
 void Player::MoveLeft()
 {
+	Vector3 acceleration = { 0.0f, 0.0f, 0.0f };
 	/// Aが押されたらダッシュ入力を増やす
 	if (Input::GetInstance()->TriggerKey(DIK_A)) {
 		dashInputLeft++;
@@ -191,8 +196,10 @@ void Player::MoveLeft()
 	if (Input::GetInstance()->PushKey(DIK_A)) {
 		velocity = { 0.0f,0.0f, 0.0f };
 		velocity.x = -playerParameter.kAcceleration;
-		transform.translate.x += velocity.x;
+		acceleration.x += velocity.x;
 	}
+
+	transform.translate.x += acceleration.x;
 
 	/// ダッシュ入力が行われた場合
 	if (dashInputLeft == 1)
@@ -207,7 +214,7 @@ void Player::MoveLeft()
 	}
 	/// ダッシュ入力が２回行われダッシュ状態になった場合
 	if (dashInputLeft == 2) {
-		transform.translate.x += velocity.x - dashSpeed.x;
+		transform.translate.x += acceleration.x - dashSpeed.x;
 		if (Input::GetInstance()->RereseKey(DIK_A)) {
 			/// ダッシュ入力が解除されたらダッシュ入力をリセット
 			dashInputLeft = 0;
@@ -232,15 +239,13 @@ void Player::DrawImgui()
 	ImGui::Text("Acceleration : %.2f", playerParameter.kAcceleration);
 	ImGui::Text("velocity : %.2f", velocity.x);
 	ImGui::Separator();
-	ImGui::End();
 
-
-	ImGui::Begin("Player Settings");
 	ImGui::Text("ExtensionFrameRight : %.f", dashExtensionFrameRight);
 	ImGui::Text("DashInputRight : %d", dashInputRight);
 	ImGui::Separator();
 	ImGui::Text("ExtensionFrameLeft : %.f", dashExtensionFrameLeft);
 	ImGui::Text("DashInputLeft : %d", dashInputLeft);
+	ImGui::Separator();
 
 	ImGui::DragFloat3("Translate", &transform.translate.x, 0.1f);
 	ImGui::DragFloat3("Scale", &transform.scale.x, 0.1f);
@@ -319,7 +324,7 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& mapInfo, CollisionType 
 		return;
 	}
 	// 移動後の座標を計算
-	Vector3 position = playerModel->GetTranslate() + mapInfo.move;
+	Vector3 position = transform.translate + mapInfo.move;
 
 	// 2つのコーナーを計算
 	std::array<Vector3, 2> corners = {
@@ -336,6 +341,7 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& mapInfo, CollisionType 
 		case CollisionType::Bottom:ImGui::Text("Bottom Hit"); break;
 		case CollisionType::Left:ImGui::Text("Left Hit"); break;
 		case CollisionType::Right:ImGui::Text("Right Hit"); break;
+
 		default:
 			break;
 		};
@@ -386,9 +392,20 @@ bool Player::CheackCollisionPoints(const std::array<Vector3, 2>& posList, Collis
 	/// 当たった場合の処理
 	if (hit) {
 		/// 移動量を0にする
-		Vector3 position = playerModel->GetTranslate();
+		Vector3 position = transform.translate;
 		MapIndex mapIndex = mapChipField->GetMapChipIndexSetByPosition(position);
+		// どのマップチップに当たったかを調べる
+		mapIndex = mapChipField->GetMapChipIndexSetByPosition(posList[0]);
 
+#ifdef _DEBUG
+
+		ImGui::Text("MapIndex X:%d Y:%d", mapIndex.xIndex, mapIndex.yIndex);
+
+#endif // DEBUG
+
+		
+
+		// 当たったマップチップの矩形情報を取得
 		Rect rect = mapChipField->GetRectByIndex(mapIndex);
 		switch (type) {
 		case CollisionType::Top:
@@ -409,17 +426,17 @@ bool Player::CheackCollisionPoints(const std::array<Vector3, 2>& posList, Collis
 		case CollisionType::Right:
 			mapInfo.move.x = std::max(
 				0.0f,
-				rect.right - position.x - (playerParameter.kWidth / 2.0f + playerParameter.blank));
+				rect.left - position.x - (playerParameter.kWidth / 2.0f + playerParameter.blank));
 			mapInfo.hitWall = true;
 			break;
 		case CollisionType::Left:
 			mapInfo.move.x = std::min(
 				0.0f,
-				rect.left + position.x + (playerParameter.kWidth / 2.0f + playerParameter.blank));
+				rect.right - position.x + (playerParameter.kWidth / 2.0f + playerParameter.blank));
 			mapInfo.hitWall = true;
 			break;
 		default:
-			Logger::Log("未対応の衝突タイプです / ヒットはしてるけど判定部分でおかしい");
+			Logger::Log("未対応の衝突タイプです");
 			break;
 
 		}
@@ -524,17 +541,11 @@ void Player::WallCollisionMove(const CollisionMapInfo& mapInfo)
 	if (!mapInfo.hitWall)return;
 
 	/// どちら側の壁か判定
-	if (mapInfo.move.x > 0.0f) {
-		/// 左側の壁なら
-		if (velocity.x < 0.0f) {
-			velocity.x = 0.0f;
-		}
-		/// 右側の壁なら
-		else if(mapInfo.move.x < 0.0f) {
-			if (velocity.x > 0.0f) {
-				velocity.x = 0.0f;
-			}
-		}
+	if (mapInfo.move.x > 0.0f && velocity.x < 0.0f) {
+		velocity.x = 0.0f;
+	}
+	if(mapInfo.move.x < 0.0f && velocity.x > 0.0f) {
+		velocity.x = 0.0f;
 	}
 	/// 壁に当たったら移動速度を減衰させる
 	velocity.x *= (1.0f - playerParameter.kEpsilon);
