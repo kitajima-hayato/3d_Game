@@ -36,7 +36,7 @@ public:
 private:
 	// マップ
 	std::unique_ptr<Map> map;
-
+	//
 	// オーディオ
 	// サウンドデータ
 	SoundData soundData;
