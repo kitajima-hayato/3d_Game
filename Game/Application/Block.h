@@ -15,12 +15,16 @@ public: // 判定
 	/// AABBを取得
 	/// </summary>
 	/// <returns>AABB</returns>
-	AABB GetAABB() const override { return { transform.translate - transform.scale, transform.translate + transform.scale }; }
+	AABB GetAABB() const override {
+		const Vector3 half = transform.scale * 0.5f; // ← ここを *0.5f に
+		return { transform.translate - half, transform.translate + half };
+	}
 
 	/// <summary>
 	/// コライダーの種類を取得
-	/// 
-	Type GetType() const override { return Type::Player; }
+	/// </summary>
+	Type GetType() const override { return Type::Static; }
+
 public:
 	/// <summary>
 	/// 初期化処理
@@ -69,6 +73,7 @@ public:	// Setter / Getter
 	/// ブロックのSRTをセット
 	/// </summary>
 	void SetTransform(const Transform& transform) { this->transform = transform; }
+
 private:
 	/// ブロックモデル
 	std::unique_ptr<Object3D> blockModel;

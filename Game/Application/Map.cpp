@@ -98,3 +98,41 @@ std::vector<Block*> Map::GetNearbyBlocks(const AABB& range) const
 
 	return result;
 }
+
+MapIndex Map::GetMapChipIndexSetByPosition(const Vector3& position)
+{
+	/// 指定した位置にあるマップチップのインデックスを取得する
+	MapIndex index;
+	index.xIndex = static_cast<uint32_t>(position.x);
+	index.yIndex = static_cast<uint32_t>(-position.y);
+	return index;
+}
+
+BlockType Map::GetMapChipTypeByIndex(const MapIndex& index)
+{
+	if (mapData.empty() ||
+		index.yIndex >= mapData.size() ||
+		index.xIndex >= mapData[index.yIndex].size()) {
+		return BlockType::Air;
+	}
+	return static_cast<BlockType>(mapData[index.yIndex][index.xIndex]);
+}
+
+Rect Map::GetRectByIndex(const MapIndex& index)
+{
+	/// 指定したインデックスにあるマップチップの矩形情報を取得する
+	Vector3 center = GetMapChipPositionByIndex(index);
+	///  矩形情報を計算
+	Rect rect;
+	rect.left = center.x - kBlockWidth / 2.0f;
+	rect.right = center.x + kBlockWidth / 2.0f;
+	rect.top = center.y + kBlockHeight / 2.0f;
+	rect.bottom = center.y - kBlockHeight / 2.0f;
+	return rect;
+}
+
+Vector3 Map::GetMapChipPositionByIndex(const MapIndex& index)
+{
+	return Vector3(kBlockWidth * index.xIndex, kBlockHeight * (kNumBlockVirtical - 1 - index.yIndex), 0);
+
+}

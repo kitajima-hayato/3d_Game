@@ -1,8 +1,8 @@
 #include "GamePlayScene.h"
 #include "Game/Application/Map.h"
 #include "engine/bace/ImGuiManager.h"
-#include "Game/Camera/camera.h"
 #include "Game/Application/Player.h"
+#include "Game/Collision/CollisionManager.h"
 GamePlayScene::GamePlayScene()
 {
 }
@@ -21,16 +21,18 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	xaudio2_ = Audio::GetInstance()->GetXAudio2();
 	Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
 
+	camera = std::make_unique<Camera>();
+	cameraTransform.translate = { 7.5f,-4.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);
+	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
+
 
 	// マップ
 	map = std::make_unique<Map>();
 	map->Initialize("TestStage.csv");
 
-	enemy = std::make_unique<Object3D>();
-	enemy->Initialize();
-	enemy->SetModel("Tentativeenemy.obj");
-	enemy->SetTransform(enemyTransform);
-
+	
+	collision_ = std::make_unique<CollisionManager>();
 
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
@@ -38,44 +40,95 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	InitializeEnemy();
 
+	//sceneTransition = std::make_unique<SceneTransition>();
+	//sceneTransition->Initialize();
+
 }
 
 
 void GamePlayScene::Update()
 {
+	camera->Update();
+
+	//sceneTransition->Update();
 	/// マップの更新
 	map->Update();
+	  
+	player->BeginFrameHitReset();
+
+	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
+	player->SetMapChipField(map.get());
+
 	/// プレイヤーの更新
 	player->Update();
+
 	
 
-	normalEnemy->Update();
-	flyingEnemy->Update();
+
+	for (auto& enemy : enemies) {
+		enemy->Update();
+	}
+	/// 当たりは判定
+	CheckCollision();
+
+	/// imgui
+	DrawImgui();
 }
 
 void GamePlayScene::Draw()
 {
 
+	//sceneTransition->Draw();
 	/// マップの描画
 	map->Draw();
 	/// プレイヤーの描画
 	player->Draw();
 
 	/// 敵の描画
-	normalEnemy->Draw();
-	flyingEnemy->Draw();
+	for (auto& enemy : enemies) {
+		enemy->Draw();
+	}
 }
 
 void GamePlayScene::InitializeEnemy()
 {
-	
+
 	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
 	normalEnemy->Initialize();
+	normalEnemy->SetTranslate({ 10.0f,-0.0f,20.0f });
+	enemies.push_back(std::move(normalEnemy));
 
 	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
 	flyingEnemy->Initialize();
+	flyingEnemy->SetTranslate({ 1.0f,-5.0f,20.0f });
+	enemies.push_back(std::move(flyingEnemy));
 
+
+
+
+}
+
+void GamePlayScene::CheckCollision()
+{
 	
+	collision_->Clear();
+
+	/// プレイヤー
+	if (player) {
+		collision_->AddCollider(player.get());
+	}
+
+	/// エネミー全種
+	for (auto& enemy : enemies) {
+		if (!enemy)continue;
+		
+		if(enemy->IsAlive()) {
+			collision_->AddCollider(enemy.get());
+		}
+	}
+
+	collision_->CheckAllCollisions();
+
 }
 
 
@@ -93,3 +146,18 @@ void GamePlayScene::Finalize()
 }
 
 
+void GamePlayScene::DrawImgui()
+{
+#ifdef _DEBUG
+	ImGui::Separator();
+	ImGui::Begin("Camera Settings / GamePlayeScene");
+	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+	ImGui::End();
+	camera->SetTranslate(cameraTransform.translate);
+
+	camera->SetRotate(cameraTransform.rotate);
+#endif // _DEBUG
+
+	
+}

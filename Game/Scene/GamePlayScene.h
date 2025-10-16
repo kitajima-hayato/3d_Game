@@ -3,12 +3,12 @@
 #include "SpriteCommon.h"
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
-#include "Game/Camera/camera.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
+#include "SceneTransition/SceneTransition.h"
 class Map;
-class Camera;
 class Player;
 class Object3D;
+class CollisionManager;
 class GamePlayScene :public BaseScene
 {
 public:
@@ -23,14 +23,20 @@ public:
 	// 終了処理
 	void Finalize()override;
 
+	/// imgui
+	void DrawImgui();
+
 	/// エネミーの初期化
 	void InitializeEnemy();
+
+	/// 当たり判定
+	void CheckCollision();
 
 
 private:
 	// マップ
 	std::unique_ptr<Map> map;
-
+	//
 	// オーディオ
 	// サウンドデータ
 	SoundData soundData;
@@ -39,19 +45,23 @@ private:
 	// Player
 	std::unique_ptr<Player> player;
 
-	std::unique_ptr<Object3D>enemy;
-	Transform enemyTransform = {
-		// Scale
-		{1.0f, 1.0f, 1.0f},
-		// Rotate
-		{0.0f, 0.0f, 0.0f},
-		// Translate
-		{10.0f, -7.0f, 20.0f}
-	};
-
+	
 	/// エネミーファクトリー
+	std::vector<std::unique_ptr<EnemyBace>> enemies;
+
 	std::unique_ptr<EnemyBace>normalEnemy;
 	std::unique_ptr<EnemyBace> flyingEnemy;
+
+	/// コリジョンマネージャー
+	std::unique_ptr<CollisionManager> collision_;
+
+
+	/// カメラ
+	std::unique_ptr<Camera> camera;
+	Transform cameraTransform;
+
+	// シーン遷移
+	//std::unique_ptr<SceneTransition> sceneTransition;
 
 };
 
