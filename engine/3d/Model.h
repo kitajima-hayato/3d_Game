@@ -12,41 +12,72 @@
 #include "MakeMatrix.h"
 #include "MyMath.h"
 using namespace std;
+/// <summary>
+/// 3Dモデルクラス
+/// </summary>
 class Model
 {
 public: // メンバ関数
-	// 初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="modelCommon"></param>
+	/// <param name="directorypath"></param>
+	/// <param name="filename"></param>
 	void Initialize(ModelCommon* modelCommon,const string& directorypath,const string&filename);
-	// 更新
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
-	// 描画
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 
-
-
-	// objファイルの読み込み
+	/// <summary>
+	/// OBJファイルの読み込み
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="filename"></param>
+	/// <returns></returns>
 	ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-public: // Getter/Setter
-	// モデルデータの取得
+public: // Getter / Setter
+	/// <summary>
+	/// モデルデータの取得
+	/// </summary>
 	ModelData GetModelData()const { return modelData; }
-	// バッファリソースの取得
+	/// <summary>
+	/// 頂点リソースの取得
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> GetVertexResource()const { return vertexResource; }
-	// バッファリソースの使い道を補足するバッファービューの取得
+	/// <summary>
+	/// 頂点バッファビューの取得
+	/// </summary>
 	D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView()const { return vertexBufferView; }
-	// マテリアルリソースの取得
+	/// <summary>
+	/// マテリアルルソースの取得
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> GetMaterialResource()const { return materialResource; }
-	// マテリアルデータの取得
+	/// <summary>
+	/// マテリアルデータの取得
+	/// </summary>
 	Material* GetMaterialData()const { return materialData; }
 private: // メンバ関数
-	// モデルデータの読み込み
+	/// <summary>
+	/// モデルデータの読み込み
+	/// </summary>
 	MaterialData LoadMaterialTempLateFile(const std::string& directoryPath, const std::string& filename);
-	// 頂点リソースデータの作成
+	/// <summary>
+	/// 頂点リソースデータの作成
+	/// </summary>
 	void CreateVertexResourceData();
-	// マテリアルリソースの作成
+	/// <summary>
+	/// マテリアルリソースの作成
+	/// </summary>
 	void CreateMaterialResource();
 
-private:
-	// メンバ変数
+private:	// メンバ変数
+	// ModelCommon
 	ModelCommon* modelCommon = nullptr;
 	// モデルデータ
 	ModelData modelData;

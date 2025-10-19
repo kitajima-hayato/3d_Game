@@ -11,6 +11,14 @@
 #include"../externals/DirectXTex/d3dx12.h"
 
 
+/// <summary>
+/// DirectX基盤クラス
+/// </summary>
+/// <remarks>
+/// DirectX12の初期化、描画前後処理を行う
+/// シングルトンクラス
+/// </remarks>
+
 // DirectX基盤
 class DirectXCommon
 {
@@ -18,11 +26,11 @@ public:
 
 
 	/// <summary>
-	// コンストラクタ
+	/// コンストラクタ
 	/// <summary>
 	DirectXCommon();
 	/// <summary>
-	//初期化
+	///初期化
 	/// <summary>
 	void Initialize(WinAPI* winAPI);
 	/// <summary>
@@ -67,7 +75,7 @@ public:
 		bool shaderVisible);
 public:		// Getter,Setter
 	/// <summary>
-	/// getter
+	/// デバイス取得関数
 	/// </summary>
 	ID3D12Device* GetDevice() const { return device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList()const { return commandList.Get(); }
@@ -95,9 +103,9 @@ public:		// Getter,Setter
 	/*Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>
 		GetSrvDescriptorHeap()const { return srvDescriptorHeap; }*/
 
-		/// <summary>
-		/// 指定番号のCPUディスクリプタハンドルを取得する
-		/// </summary>
+	/// <summary>
+	/// 指定番号のCPUディスクリプタハンドルを取得する
+	/// </summary>
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	/// <summary>
 	/// 指定番号のGPUディスクリプタハンドルを取得する
@@ -135,7 +143,7 @@ public:		// Getter,Setter
 	/// <summary>
 	/// バックバッファのインデックスを取得
 	/// </summary>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const {return dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();}
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(); }
 
 private:	// 内部処理専用関数
 	/// <summary>

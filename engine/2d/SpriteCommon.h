@@ -1,11 +1,19 @@
 #pragma once
 #include "DirectXCommon.h"
-// スプライト共通クラス
-// シングルトンクラス
+/// <summary>
+/// スプライト共通クラス
+/// </summary>
+/// シングルトンクラス
 class SpriteCommon
 {
 public:	
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
 	static SpriteCommon* GetInstance();
+	/// <summary>
+	/// インスタンスの削除
+	/// </summary>
 	static void Deletenstance();
 
 
@@ -21,10 +29,19 @@ public:		// メンバ関数
 	/// </summary>
 	void DrawSettingCommon();
 public:		//	Getter,Setter
+	/// <summary>
+	/// DirectXCommon取得関数
+	/// </summary>
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
 
 public:	// Spriteクラスに向けたラッパー関数(wrapper function)
+	/// <summary>
+	/// スプライト頂点リソースの生成
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateSpriteVertexResource();
+	/// <summary>
+	/// スプライトインデックスリソースの生成
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateSpriteIndexResource();
 private:	// メンバ関数
 	/// <summary>
@@ -42,11 +59,26 @@ private:	// メンバ関数
 	void InitializePixelShaderOutput();
 	
 
-private:
+private:	// シングルトン用メンバ変数と関数
+	/// <summary>
+	/// インスタンス
+	/// </summary>
 	static SpriteCommon* instance;
+	/// <summary>
+	/// コンストラクタ・デストラクタ・コピー禁止
+	/// </summary>
 	SpriteCommon() = default;
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~SpriteCommon() = default;
+	/// <summary>
+	/// コピー禁止
+	/// </summary>
 	SpriteCommon(SpriteCommon&) = delete;
+	/// <summary>
+	/// コピー禁止
+	/// </summary>
 	SpriteCommon& operator=(SpriteCommon&) = delete;
 
 private:	// メンバ変数
