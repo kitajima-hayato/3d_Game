@@ -5,6 +5,14 @@
 #include "engine/bace/WinAPI.h" 
 #include "engine/bace/DirectXCommon.h"
 
+/// <summary>
+/// ImGui管理クラス
+/// </summary>
+/// <remarks>
+/// ImGuiの初期化、描画を行う
+/// シングルトンクラス
+/// </remarks>
+
 class ImGuiManager
 {
 
@@ -37,7 +45,7 @@ public:
 
 private:
 	DirectXCommon* dxCommon_ = nullptr;
-	// 
+	
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_ = nullptr;

@@ -4,51 +4,93 @@
 #include <wrl.h>
 #include "MakeMatrix.h"
 class SpriteCommon;
+/// <summary>
+/// スプライトクラス
+/// </summary>
 class Sprite
 {
 public:	// メンバ関数
-	// 初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize(std::string textureFilePath);
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 
 public:	// Getter/Setter
-	// Position
+	/// <summary>
+	/// 座標取得 / 設定
+	/// </summary>
+	/// <returns></returns>
 	const Vector2& GetPosition()const { return position; }
 	void SetPosition(const Vector2& position) { this->position = position; }
-	// Rotation
+	/// <summary>
+	/// 回転取得 / 設定
+	/// </summary>
 	float GetRotation()const { return rotation; }
 	void SetRotation(float rotation) { this->rotation = rotation; }
-	// color
+	/// <summary>
+	/// 色取得 / 設定
+	/// </summary>
 	const Vector4& GetColor()const { return materialData->color; }
 	void SetColor(const Vector4& color) { materialData->color = color; }
-	// size
+	/// <summary>
+	/// サイズ取得 / 設定
+	/// </summary>
 	const Vector2& GetSize()const { return size; }
 	void SetSize(const Vector2& size) { this->size = size; }
 
-	// AnchorPoint
+	/// <summary>
+	/// アンカーポイント取得 / 設定
+	/// </summary>
 	const Vector2& GetAnchorPoint()const { return anchorPoint; }
 	void SetAnchorPoint(const Vector2& anchorPoint) { this->anchorPoint = anchorPoint; }
 
-	// FlipX
+	/// <summary>
+	/// FlipX取得 / 設定
+	/// </summary>
 	bool GetFlipX()const { return isFlipX; }
 	void SetFlipX(bool isFlipX) { this->isFlipX = isFlipX; }
-	// FlipY
+	/// <summary>
+	/// FlipY取得 / 設定
+	/// </summary>
 	bool GetFlipY()const { return isFlipY; }
 	void SetFlipY(bool isFlipY) { this->isFlipY = isFlipY; }
-	// TextureLeftTop
+	/// <summary>
+	/// TextureLeftTop取得 / 設定
+	/// </summary>
+	/// <returns></returns>
 	const Vector2& GetTextureLeftTop()const { return textureLeftTop; }
 	void SetTextureLeftTop(const Vector2& textureLeftTop) { this->textureLeftTop = textureLeftTop; }
-	// TextureSize
+	/// <summary>
+	/// TextureSize取得 / 設定
+	/// </summary>
 	const Vector2& GetTextureSize()const { return textureSize; }
 	void SetTextureSize(const Vector2& textureSize) { this->textureSize = textureSize; }
 
 
 private:	// メンバ関数
+	/// <summary>
+	/// 頂点リソースデータの作成
+	/// </summary>
 	void CreateVertexResourceData();
+	/// <summary>
+	/// インデックスリソースデータの作成
+	/// </summary>
 	void CreateMaterialResource();
+	/// <summary>
+	/// 変換行列リソースデータの作成
+	/// </summary>
 	void CreateTransformationMatrixData();
-	// テクスチャサイズをイメージに合わせる
+	/// <summary>
+	/// テクスチャサイズ調整
+	/// </summary>
 	void AdjustTextureSizee();
 
 	//void DrawSetting();

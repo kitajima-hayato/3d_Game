@@ -3,6 +3,9 @@
 #include "engine/bace/DirectXCommon.h"
 #include "engine/bace/SrvManager.h"
 #include "Game/Camera/camera.h"
+/// <summary>
+/// スカイボックスクラス
+/// </summary>
 class SkyBox
 {
 private:
@@ -45,9 +48,9 @@ private:
 	/// </summary>
 	void CreateTransformationMatrix();
 
-/// <summary>
-/// インデックスデータの生成
-/// </summary>
+	/// <summary>
+	/// インデックスデータの生成
+	/// </summary>
 	void CreateIndexBufferView();
 public:
 	/// <summary>
@@ -129,7 +132,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 
-/// カメラ引数
+	/// カメラ引数
 	Camera* camera = nullptr;
 public:
 

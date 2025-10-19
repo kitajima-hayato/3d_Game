@@ -8,7 +8,9 @@
 
 class DirectXCommon;
 class SrvManager;
-
+/// <summary>
+/// レンダーテクスチャクラス
+/// </summary>
 class RenderTexture
 {
 public:
@@ -41,11 +43,22 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
-
+	/// <summary>
+	/// レンダーテクスチャリソースの生成
+	/// </summary>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 private:
+	/// <summary>
+	/// グラフィックスパイプラインの生成
+	/// </summary>
 	void CreateGraficsPipeLine();
+	/// <summary>
+	/// ルートシグネチャの生成
+	/// </summary>
 	void CreateRootSignatrue();
+	/// <summary>
+	/// 頂点バッファの生成
+	/// </summary>
 	void CreateVertexBuffer();
 
 public: // Getter, Setter
