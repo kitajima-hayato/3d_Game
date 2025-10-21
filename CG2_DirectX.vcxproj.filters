@@ -154,6 +154,7 @@
       <Filter>Game\Application\Map</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
+    <ClCompile Include="Game\Application\BackGround.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -308,6 +309,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
+    <ClInclude Include="Game\Application\BackGround.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

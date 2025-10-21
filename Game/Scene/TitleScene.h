@@ -10,6 +10,7 @@
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
 #include "SceneTransition/SceneTransition.h"
+#include "Game/Application/BackGround.h"
 
 
 #ifdef _DEBUG
@@ -90,43 +91,10 @@ private: // ゲーム要素
 	std::unique_ptr<Object3D> titleLogo;
 	Transform titleLogoTransform;
 
+	// バックグラウンド
+	 std::unique_ptr<BackGround> background;
 
-	std::unique_ptr<Object3D> titleBackGround3;
-	Transform titleBackGround3Transform;
-
-	std::unique_ptr<Object3D> titleBackGround3_2;
-	Transform titleBackGround3_2Transform;
-
-
-
-	std::unique_ptr<Object3D> titleBackGround2;
-	Transform titleBackGround2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround2_2;
-	Transform titleBackGround2_2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround2_3;
-	Transform titleBackGround2_3Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1;
-	Transform titleBackGround1Transform;
-
-	std::unique_ptr<Object3D> titeleBackGround1_2;
-	Transform titeleBackGround1_2Transform;
-
-	std::unique_ptr<Object3D> titeleBackGround1_3;
-	Transform titeleBackGround1_3Transform;
-
-	std::unique_ptr<Object3D> titeleBackGround1_4;
-	Transform titeleBackGround1_4Transform;
-
-
-	std::unique_ptr<Object3D> skyBack;	
-	Transform skyBackTransform;
-
-	// 足場　土
-	std::unique_ptr<Object3D> soil;
-	Transform soilTransform;
+	
 
 	//std::unique_ptr<SceneTransition> sceneTransition;
 
