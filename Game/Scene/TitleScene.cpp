@@ -207,12 +207,14 @@ void TitleScene::Draw()
 	//particleEmitter2->Emit();
 	// エフェクトの描画
 
+
 	//EffectManager::GetInstance()->DrawRing();
 	//EffectManager::GetInstance()->DrawCylinder();
 	titleLogo->Draw();
 
 
 	//sceneTransition->Draw();
+
 
 #pragma endregion
 
