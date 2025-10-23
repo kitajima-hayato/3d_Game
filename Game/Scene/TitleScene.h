@@ -17,6 +17,9 @@
 #include "ImGuiManager.h"
 #endif
 
+/// <summary>
+/// タイトルシーン
+/// </summary>
 class Camera;
 class Object3D;
 class TitleScene :public BaseScene

@@ -6,31 +6,56 @@
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
+// 前方宣言
 class Map;
 class Player;
 class Object3D;
 class CollisionManager;
+/// <summary>
+/// ゲームプレイシーン : 基底シーンクラスを継承
+/// </summary>
 class GamePlayScene :public BaseScene
 {
 public:
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	GamePlayScene();
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~GamePlayScene();
-	// 初期化
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon)override;
-	// 更新
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	void Update()override;
-	// 描画
+	/// <summary>
+	/// 描画処理
+	/// </summary>
 	void Draw()override;
-	// 終了処理
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize()override;
 
-	/// imgui
+	/// <summary>
+	/// Imgui一括管理 / 描画関数
+	/// </summary>
 	void DrawImgui();
 
+	/// <summary>
 	/// エネミーの初期化
+	/// </summary>
 	void InitializeEnemy();
 
+	/// <summary>
 	/// 当たり判定
+	/// </summary>
 	void CheckCollision();
 
 	/// <summary>

@@ -21,23 +21,42 @@
 #include "D3DResourceLeakChecker.h"
 #include "Input.h"
 #include "engine/2d/RenderTexture.h"
+/// <summary>
+/// フレームワーク基底クラス
+/// </summary>
 class Framework
 {
 
 public:
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	virtual ~Framework() = default;
 public:	// メンバ関数
-	// 初期化
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
 	virtual void Initialize();
-	// 更新
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	virtual void Update();
-	// 描画
+	/// <summary>
+	/// 描画処理
+	/// </summary>
 	virtual void Draw() = 0;
-	// 終了処理
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	virtual void Finalize();
-	// 実行
+	/// <summary>
+	/// 実行
+	/// </summary>
 	void Run();
-	// 終了リクエスト
+	/// <summary>
+	/// 終了リクエストの有無
+	/// </summary>
+	/// <returns></returns>
 	bool IsEndRequst() { return isEndRequst; }
 
 protected:

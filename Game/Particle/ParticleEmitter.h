@@ -1,20 +1,37 @@
 #pragma once
 #include "ParticleManager.h"
 using namespace std;
+/// <summary>
+/// パーティクルエミッタクラス
+/// </summary>
 class ParticleEmitter
 {
 public:
+    /// <summary>
+	/// コンストラクタ・デストラクタ
+    /// </summary>
     ParticleEmitter();
     ~ParticleEmitter();
-    // 更新
+    /// <summary>
+	/// 更新
+    /// </summary>
     void Update();
-	// パーティクルの発生
+    /// <summary>
+	/// パーティクル発生
+    /// </summary>
     void Emit();
 
-	// Getter,Setter
+	// Getter / Setter
+	/// <summary>
+	/// エミッタのTransform設定・取得
+	/// </summary>
+	/// <param name="transform"></param>
     void SetTransform(const Transform& transform) { emitter.transform = transform; }
 	Transform GetTransform()const { return emitter.transform; }
-
+	/// <summary>
+	/// 発生させるパーティクルの数設定・取得
+	/// </summary>
+	/// <param name="name"></param>
 	void SetParticleName(const string& name) { particleName = name; }
 
 private:
