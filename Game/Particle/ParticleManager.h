@@ -5,12 +5,16 @@
 #include <random>
 #include "Game/Camera/Camera.h"
 
-// パーティクルマネージャークラス
-// シングルトンクラス
+
+/// <summary>
+/// パーティクルマネージャー
+/// </summary>
+/// シングルトンクラス
+
 class ParticleManager
 {
 public:
-	
+
 	// パーティクル構造体
 	struct ParticleGroup {		// パーティクルグループ // 使用するテクスチャごとにパーティクルグループとしてまとめる
 		MaterialData materialData;			// マテリアルデータ					
@@ -21,91 +25,183 @@ public:
 		ParticleForGPU* instancingData;		// インスタンシングデータを書き込むためのポインタ
 	};
 
-	// インスタンスの取得
+	/// <summary>
+	/// インスタンス取得
+	/// </summary>
 	static ParticleManager* GetInstance();
+	/// <summary>
+	/// インスタンス削除
+	/// </summary>
 	static void DeleteInstance();
 private:
+	// シングルトンパターン
 	static ParticleManager* instance;
+	// コンストラクタ・デストラクタ・コピー禁止
 	ParticleManager() = default;
+	// デストラクタ
 	~ParticleManager() = default;
+	// コピーコンストラクタ・代入演算子を削除
 	ParticleManager(ParticleManager&) = delete;
+	// 代入演算子
 	ParticleManager& operator=(ParticleManager&) = delete;
 
 
-
-	// ランダムエンジンの初期化 / 初期化処理内部
+	// 初期化内部処理
+	/// <summary>
+	/// ランダムエンジンの初期化
+	/// </summary>
 	void InitializeRandomEngine();
-	// パイプラインの生成 / 初期化処理内部
+	/// <summary>
+	/// パイプラインの生成
+	/// </summary>
 	void CreatePipeline();
-	// ルートシグネチャの作成 / パイプライン生成内部
-	void CreateRootSignature();
-	// グラフィックスパイプラインの設定 / パイプライン生成内部
-	void SetGraphicsPipeline();
-	// ブレンドモードの設定 / パイプライン生成内部
-	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
-	// 頂点データの初期化(座標) / 初期化処理内部
+	/// <summary>
+	/// 頂点データの初期化(座標等)
+	/// </summary>
 	void InitializeVertexData();
-	// バッファービューの作成 / 初期化処理内部
+	/// <summary>
+	/// バッファービューの作成
+	/// </summary>
 	void CreateVertexBufferView();
-	// マテリアルの初期化 / 初期化処理内部
+	/// <summary>
+	/// マテリアルの初期化
+	/// </summary>
 	void InitializeMaterial();
+
+	// パイプライン生成内部
+	/// <summary>
+	/// ルートシグネチャの作成
+	/// </summary>
+	void CreateRootSignature();
+	/// <summary>
+	/// グラフィックスパイプラインの設定
+	/// </summary>
+	void SetGraphicsPipeline();
+	/// <summary>
+	/// ブレンドモードの設定
+	/// </summary>
+	/// <param name="desc"></param>
+	/// <param name="mode"></param>
+	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
+
+
+
 
 
 public:
-	// パーティクルの初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="dxCommon"></param>
+	/// <param name="srvManager"></param>
+	/// <param name="camera"></param>
 	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
-	
 
-	// パーティクルグループの作成
+
+	/// <summary>
+	///  パーティクルグループの作成
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="textureFilrPath"></param>
 	void CreateParticleGroup(const std::string& name, const std::string textureFilrPath);
 
-	// 更新処理
+
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
-	// 行列更新 / 更新処理内部
+
+	// 更新内部処理
+	/// <summary>
+	/// 行列更新
+	/// </summary>
 	void UpdateMatrix();
-	//  パーティクル更新 / 更新処理内部
+	/// <summary>
+	/// パーティクル更新
+	/// </summary>
 	void UpdateParticle();
-	
-	// 描画処理
+
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
 
-	// パーティクルグループの削除
+	/// <summary>
+	/// パーティクルグループの削除
+	/// </summary>
+	/// <param name="name"></param>
 	void DeleteParticleGroup(const std::string& name);
 
-	// パーティクルの発生
+	/// <summary>
+	/// エフェクトの発生
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	/// <param name="count"></param>
 	void Emit(const std::string& name, const Vector3& position, uint32_t count);
-	// エフェクトの発生
+	/// <summary>
+	/// エフェクトの発生(特殊エフェクト)
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	/// <param name="count"></param>
 	void EffectEmit(const std::string& name, const Vector3& position, uint32_t count);
 
-	
-	// 通常パーティクル
+
+	/// <summary>
+	/// パーティクル(通常)生成
+	/// </summary>
 	Particle MakeParticle(std::mt19937& randomEngine, const Vector3& position);
 
-	// PrimitiveParticle
+	/// <summary>
+	/// プリミティブエフェクト生成
+	/// </summary>
 	Particle MakePrimitiveEffect(std::mt19937& randomEngine, const Vector3& translate);
-	// リングエフェクト
+	/// <summary>
+	/// Ringエフェクト
+	/// </summary>
+	/// <param name="position"></param>
+	/// <returns></returns>
 	Particle MakeRingEffect(const Vector3& position);
-	// Cylinderエフェクト
+	/// <summary>
+	/// Cylinderエフェクト
+	/// </summary>
+	/// <param name="position"></param>
+	/// <returns></returns>
 	Particle MakeCylinderEffect(const Vector3& position);
 
-	// Ringの頂点生成
+	/// <summary>
+	/// Ring
+	/// </summary>
 	void CreateRingVertex();
-	// Ringエフェクトの描画処理
+	/// <summary>
+	/// RingEffectの描画
+	/// </summary>
 	void DrawRing();
 
-	// Cylinder
+	/// <summary>
+	/// Cylinder
+	/// </summary>
 	void CreateCylinderVertex();
-	// CylindeEffectの描画
+	/// <summary>
+	/// CylinderEffectの描画
+	/// </summary>
 	void DrawCylinder();
 
-	// 表示パーティクル / エフェクトの値調整 / 
+	/// <summary>
+	/// ImGui描画
+	/// </summary>
 	void DrawImgui();
 
 
 private:
+	// DirectXCommon
 	DirectXCommon* dxCommon;
+	// SRVマネージャー
 	SrvManager* srvManager;
+	// 頂点データ
 	VertexData* vertexData = nullptr;
+	// カメラ
 	Camera* camera = nullptr;
 
 	// ランダムエンジン
@@ -113,7 +209,7 @@ private:
 
 	// ルートシグネチャ
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	
+
 	// ルートパラメーター
 	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 	// サンプラー
@@ -172,7 +268,7 @@ private:
 
 	// パーティクルのリスト
 	std::list<Particle>particles;
-	
+
 	// Δtを定義６０fos固定
 	const float kDeltaTime = 1.0f / 60.0f;
 
@@ -182,7 +278,7 @@ private:
 	uint32_t ringVertexCount = 0;
 
 	// UV座標変更
-	Vector2 uvOffset = { 0.0f, 0.0f };  
+	Vector2 uvOffset = { 0.0f, 0.0f };
 	Vector2 uvScrollSpeed = { 0.1f, 0.0f };  // 水平方向に流す場合
 
 

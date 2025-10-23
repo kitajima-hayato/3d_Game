@@ -21,6 +21,7 @@ public:
 	{
 		Player,
 		Enemy,
+		Static,
 	};
 
 	virtual ~Collider() = default;

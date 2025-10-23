@@ -53,7 +53,7 @@ void MyGame::Draw()
 	// レンダーテクスチャの描画
 	//renderTexture->Draw();
 	// スカイボックスの描画
-	skyBox->Draw();
+	//skyBox->Draw();
 	
 	Framework::Draw();
 	

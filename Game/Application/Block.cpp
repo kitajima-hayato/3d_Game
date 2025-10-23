@@ -12,6 +12,16 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 	this->blockType = blockType;
 	blockModel = std::make_unique<Object3D>();
 	blockModel->Initialize();
+	transform = {
+		// Scale
+		{1.0f, 1.0f, 1.0f},
+		// Rotate
+		{0.0f, 0.0f, 0.0f},
+		// Translate
+		position
+	};
+	
+
 	switch (this->blockType) {
 	case BlockType::Air:
 		break;
@@ -20,17 +30,15 @@ void Block::Initialize(BlockType blockType, Vector3 position){
 		break;
 	case BlockType::testBlock:
 		blockModel->SetModel("XYZLabel.obj");
+		transform.scale = { 0.5f,0.5f,0.5f };
 		break;
 	default:
 		blockModel->SetModel("nullBlock.obj");
 		break;
 	}
-	blockModel->SetTranslate(position);
+	blockModel->SetTransform(transform);
 
-	aabb = {
-		position - Vector3(0.5f, 0.5f, 0.5f),
-		position + Vector3(0.5f, 0.5f, 0.5f)
-	};
+	
 }
 
 

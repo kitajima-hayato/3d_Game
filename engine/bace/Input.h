@@ -6,35 +6,68 @@
 #include <wrl.h>
 #include "WinAPI.h"
 
+/// <summary>
+/// 入力クラス
+/// </summary>
+/// <remarks>
+/// DirectInputを使用してキーボード入力を管理する
+/// </remarks>
 class Input
 {
 public:
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns></returns>
 	static Input* GetInstance();
+	/// <summary>
+	/// シングルトンインスタンスの解放
+	/// </summary>
 	static void DeleteInstance();
 private:
+	// シングルトンインスタンス
 	static Input* instance;
+	// コンストラクタ
 	Input() = default;
+	// デストラクタ
 	~Input() = default;
+	// コピーコンストラクタ・代入演算子削除
 	Input(Input&) = delete;
 	Input& operator=(Input&) = delete;
 
 public:
 
-	//初期化 
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="winAPI"></param>
 	void Initialize(WinAPI*winAPI);
-	//更新
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	void Update();
-	//特定のキーが押された瞬間を判定
-	
-	//特定のキーが話された瞬間を判定
+
+	/// <summary>
+	///特定のキーが話された瞬間を判定
+	/// </summary>
+	/// <param name="keyNumber"></param>
 	bool RereseKey(BYTE keyNumber);
-	
-	//キーが押されているか確認
+
+	/// <summary>
+	///キーが押されているか確認
+	/// </summary>
+	/// <param name="keyNumber"></param>
 	bool PushKey(BYTE keyNumber);
-	//キーのトリガー
+	/// <summary>
+	/// キーが押された瞬間を判定
+	/// </summary>
+	/// <param name="keyNumber"></param>
+	/// <returns></returns>
 	bool TriggerKey(BYTE keyNumber);
 	template <class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 private:
+
 	ComPtr<IDirectInputDevice8> keyboard;
 	ComPtr<IDirectInput8>directInput = nullptr;
 	BYTE key[256] = {};

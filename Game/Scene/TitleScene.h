@@ -9,11 +9,17 @@
 #include "Game/Particle/EffectManager.h"
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
+#include "SceneTransition/SceneTransition.h"
+#include "Game/Application/BackGround.h"
+
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
 #endif
 
+/// <summary>
+/// タイトルシーン
+/// </summary>
 class Camera;
 class Object3D;
 class TitleScene :public BaseScene
@@ -79,9 +85,21 @@ private: // ゲーム要素
 	std::unique_ptr<LevelLoader>levelData;
 
 	std::unique_ptr<Object3D> playerObject;
+	Transform playerTransform;
 
 	std::unique_ptr<Object3D> Rainbow;
 	Transform rainbowTransform;
+
+	/// タイトルロゴ
+	std::unique_ptr<Object3D> titleLogo;
+	Transform titleLogoTransform;
+
+	// バックグラウンド
+	 std::unique_ptr<BackGround> background;
+
+	
+
+	//std::unique_ptr<SceneTransition> sceneTransition;
 
 };
 

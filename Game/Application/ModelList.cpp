@@ -14,8 +14,16 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("Player.obj");
 	// レインボープレーン
 	ModelManager::GetInstance()->LoadModel("RainbowPlane.obj");
-
+	// タイトルロゴ
+	ModelManager::GetInstance()->LoadModel("title.obj");
+	// タイトル背景
+	ModelManager::GetInstance()->LoadModel("back3.obj");
+	ModelManager::GetInstance()->LoadModel("back2.obj");
+	ModelManager::GetInstance()->LoadModel("back1.obj");
+	ModelManager::GetInstance()->LoadModel("BackSky.obj");
+	ModelManager::GetInstance()->LoadModel("soil.obj");
 	/// GamePlayScene
+	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
 

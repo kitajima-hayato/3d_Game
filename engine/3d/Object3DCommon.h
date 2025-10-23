@@ -1,24 +1,41 @@
 #pragma once
 #include "DirectXCommon.h"
 #include "Game/Camera/Camera.h"
-// 3Dオブジェクト共通部
+/// <summary>
+/// 3Dオブジェクト共通部
+/// </summary>
 class Object3DCommon
 {
 public:	// メンバ関数
-	// 初期化
+	/// <summary>
+	/// 初期化
+	/// </summary>
 	void Initialize(DirectXCommon* dxCommon);
-	// 共通描画設定
+	/// <summary>
+	/// 共通描画設定
+	/// </summary>
 	void DrawSettingCommon();
 public:	// Getter/Setter
-	// DirectXCommon
+	/// <summary>
+	/// DirectXCommonの取得
+	/// </summary>
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
-	
+	/// <summary>
+	/// デフォルトカメラの設定
+	/// </summary>
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera = camera; }
+	/// <summary>
+	/// デフォルトカメラの取得
+	/// </summary>
 	Camera* GetDefaultCamera()const { return defaultCamera; }
 private:	// メンバ関数
-	// ルートシグネチャの作成
+	/// <summary>
+	/// ルートシグネチャの作成
+	/// </summary>
 	void CreateRootSignatrue();
-	// グラフィックスパイプラインの生成
+	/// <summary>
+	///　グラフィックスパイプラインの作成
+	/// </summary>
 	void CreateGraficsPipeLine();
 
 private:	// メンバ変数

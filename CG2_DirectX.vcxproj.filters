@@ -1,106 +1,387 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+
+    <FxCompile Include="resources\shaders\Object3d.VS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Object3d.PS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
     <!-- 統合されたClCompile。重複排除・Filter保持 -->
     <!-- masterブランチから追加された分 -->
-    <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="EnemyBace.cpp" />
-    <ClCompile Include="Game\Collision\Collider.cpp" />
-    <ClCompile Include="Game\Application\CsvLoader.cpp" />
-    <ClCompile Include="Game\Application\Block.cpp" />
-    <ClCompile Include="Game\Application\ModelList.cpp" />
-    <ClCompile Include="Game\Particle\EffectEmitter.cpp" />
-    <ClCompile Include="Game\Particle\EffectManager.cpp" />
-    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp" />
-    <ClCompile Include="engine\Audio\Audio.cpp" />
-    <ClCompile Include="InsideScene\BaseScene.cpp" />
-    <ClCompile Include="Game\Camera\Camera.cpp" />
-    <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="engine\bace\DirectXCommon.cpp" />
-    <ClCompile Include="engine\bace\Input.cpp" />
-    <ClCompile Include="engine\bace\Logger.cpp" />
-    <ClCompile Include="InsideScene\Framework.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
-    <ClCompile Include="engine\bace\ImGuiManager.cpp" />
-    <ClCompile Include="Game\Loader\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="engine\math\MakeMatrix.cpp" />
-    <ClCompile Include="engine\3d\Model.cpp" />
-    <ClCompile Include="engine\3d\ModelCommon.cpp" />
-    <ClCompile Include="engine\3d\ModelManager.cpp" />
-    <ClCompile Include="engine\3d\Object3D.cpp" />
-    <ClCompile Include="engine\3d\Object3DCommon.cpp" />
-    <ClCompile Include="engine\2d\Sprite.cpp" />
-    <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="engine\bace\StringUtility.cpp" />
-    <ClCompile Include="engine\bace\TextureManager.cpp" />
-    <ClCompile Include="engine\bace\WinAPI.cpp" />
-    <ClCompile Include="Game\Scene\MyGame.cpp" />
-    <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
-    <ClCompile Include="Game\Particle\ParticleManager.cpp" />
-    <ClCompile Include="InsideScene\SceneFactory.cpp" />
-    <ClCompile Include="InsideScene\SceneManager.cpp" />
-    <ClCompile Include="engine\bace\SrvManager.cpp" />
-    <ClCompile Include="Game\Scene\TitleScene.cpp" />
-    <ClCompile Include="Game\Application\Map.cpp" />
-    <ClCompile Include="Game\Application\StageType.cpp" />
-    <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
-    <ClCompile Include="Game\Application\Player.cpp" />
-    <ClCompile Include="NormalEnemy.cpp" />
-    <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
-    <ClCompile Include="engine\2d\RenderTexture.cpp" />
+    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp">
+      <Filter>InsideScene</Filter>
+    </ClCompile>
+    <ClCompile Include="InsideScene\BaseScene.cpp">
+      <Filter>InsideScene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\Audio\Audio.cpp">
+      <Filter>engine\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Block.cpp">
+      <Filter>Game\Application\Block</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Camera\Camera.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Collision\Collider.cpp">
+      <Filter>Game\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Collision\CollisionManager.cpp">
+      <Filter>Game\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\CsvLoader.cpp">
+      <Filter>Game\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\DirectXCommon.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\EffectEmitter.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\EffectManager.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\ParticleEmitter.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\ParticleManager.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Enemy\EnemyFactory.cpp">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Enemy\FlyingEnemy.cpp">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="InsideScene\Framework.cpp">
+      <Filter>InsideScene</Filter>
+    </ClCompile>
+    <ClCompile Include="InsideScene\SceneManager.cpp">
+      <Filter>InsideScene</Filter>
+    </ClCompile>
+    <ClCompile Include="InsideScene\SceneFactory.cpp">
+      <Filter>InsideScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\GamePlayScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\MyGame.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\StageCelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\TitleScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\ImGuiManager.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\Input.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\Logger.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\SrvManager.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\StringUtility.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\TextureManager.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\bace\WinAPI.cpp">
+      <Filter>engine\bace</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Loader\LevelLoader.cpp">
+      <Filter>Game\Application\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\math\MakeMatrix.cpp">
+      <Filter>engine\math</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\Object3DCommon.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\Model.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\ModelCommon.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\ModelManager.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\Object3D.cpp">
+      <Filter>engine\3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\ModelList.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Map.cpp">
+      <Filter>Game\Application\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\RenderTexture.cpp">
+      <Filter>engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\Sprite.cpp">
+      <Filter>engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\2d\SpriteCommon.cpp">
+      <Filter>engine\2d</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp">
+      <Filter>engine\3d\SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Player.cpp">
+      <Filter>Game\Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\StageType.cpp">
+      <Filter>Game\Application\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
+    <ClCompile Include="Game\Application\BackGround.cpp" />
+
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
-    <Text Include="externals\imgui\LICENSE.txt" />
+    <ClInclude Include="InsideScene\AbstractSceneFactory.h">
+      <Filter>InsideScene</Filter>
+    </ClInclude>
+    <ClInclude Include="InsideScene\BaseScene.h">
+      <Filter>InsideScene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\Audio\Audio.h">
+      <Filter>engine\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Block.h">
+      <Filter>Game\Application\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\BlockType.h">
+      <Filter>Game\Application\Block</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Camera\Camera.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Collision\Collider.h">
+      <Filter>Game\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Collision\CollisionManager.h">
+      <Filter>Game\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\CsvLoader.h">
+      <Filter>Game\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\D3DResourceLeakChecker.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\DirectXCommon.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Constants.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\EffectEmitter.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\EffectManager.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\ParticleEmitter.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\ParticleManager.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Enemy\EnemyBace.h">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Enemy\EnemyFactory.h">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Enemy\FlyingEnemy.h">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Enemy\NormalEnemy.h">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="InsideScene\Framework.h">
+      <Filter>InsideScene</Filter>
+    </ClInclude>
+    <ClInclude Include="InsideScene\SceneManager.h">
+      <Filter>InsideScene</Filter>
+    </ClInclude>
+    <ClInclude Include="InsideScene\SceneFactory.h">
+      <Filter>InsideScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\GamePlayScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\MyGame.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\StageCelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\TitleScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\ImGuiManager.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\Input.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\Logger.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\SrvManager.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\StringUtility.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\TextureManager.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\bace\WinAPI.h">
+      <Filter>engine\bace</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Loader\LevelLoader.h">
+      <Filter>Game\Application\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\MakeMatrix.h">
+      <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\math\MyMath.h">
+      <Filter>engine\math</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Model.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\ModelCommon.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\ModelManager.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Object3DCommon.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\Object3D.h">
+      <Filter>engine\3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Map.h">
+      <Filter>Game\Application\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\RenderTexture.h">
+      <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\Sprite.h">
+      <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\2d\SpriteCommon.h">
+      <Filter>engine\2d</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\3d\SkyBox\SkyBox.h">
+      <Filter>engine\3d\SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Player.h">
+      <Filter>Game\Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\StageType.h">
+      <Filter>Game\Application\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\ModelList.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
+    <ClInclude Include="Game\Application\BackGround.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="EnemyBace.h" />
-    <ClInclude Include="Game\Collision\Collider.h" />
-    <ClInclude Include="Game\Application\BlockType.h" />
-    <ClInclude Include="Game\Application\CsvLoader.h" />
-    <ClInclude Include="Game\Application\Block.h" />
-    <ClInclude Include="Game\Application\ModelList.h" />
-    <ClInclude Include="Game\Particle\EffectEmitter.h" />
-    <ClInclude Include="Game\Particle\EffectManager.h" />
-    <ClInclude Include="InsideScene\AbstractSceneFactory.h" />
-    <ClInclude Include="engine\Audio\Audio.h" />
-    <ClInclude Include="InsideScene\BaseScene.h" />
-    <ClInclude Include="Game\Camera\Camera.h" />
-    <ClInclude Include="engine\bace\D3DResourceLeakChecker.h" />
-    <ClInclude Include="engine\bace\DirectXCommon.h" />
-    <ClInclude Include="engine\bace\Input.h" />
-    <ClInclude Include="engine\bace\Logger.h" />
-    <ClInclude Include="engine\math\MakeMatrix.h" />
-    <ClInclude Include="engine\math\MyMath.h" />
-    <ClInclude Include="engine\3d\Model.h" />
-    <ClInclude Include="engine\3d\ModelCommon.h" />
-    <ClInclude Include="engine\3d\ModelManager.h" />
-    <ClInclude Include="engine\3d\Object3D.h" />
-    <ClInclude Include="engine\3d\Object3DCommon.h" />
-    <ClInclude Include="engine\2d\Sprite.h" />
-    <ClInclude Include="engine\2d\SpriteCommon.h" />
-    <ClInclude Include="engine\bace\StringUtility.h" />
-    <ClInclude Include="engine\bace\TextureManager.h" />
-    <ClInclude Include="engine\bace\WinAPI.h" />
-    <ClInclude Include="InsideScene\Framework.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene.h" />
-    <ClInclude Include="engine\bace\ImGuiManager.h" />
-    <ClInclude Include="Game\Scene\MyGame.h" />
-    <ClInclude Include="Game\Particle\ParticleEmitter.h" />
-    <ClInclude Include="Game\Particle\ParticleManager.h" />
-    <ClInclude Include="InsideScene\SceneFactory.h" />
-    <ClInclude Include="InsideScene\SceneManager.h" />
-    <ClInclude Include="engine\bace\SrvManager.h" />
-    <ClInclude Include="Game\Scene\TitleScene.h" />
-    <ClInclude Include="Game\Application\Map.h" />
-    <ClInclude Include="Game\Application\StageType.h" />
-    <ClInclude Include="Game\Scene\StageCelectScene.h" />
-    <ClInclude Include="Game\Application\Player.h" />
-    <ClInclude Include="NormalEnemy.h" />
-    <ClInclude Include="Game\Loader\LevelLoader.h" />
-    <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
-    <ClInclude Include="engine\2d\RenderTexture.h" />
+    <Filter Include="engine">
+      <UniqueIdentifier>{ee17d952-0bf6-4acb-a07a-097567b033f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\2d">
+      <UniqueIdentifier>{e6dec0f4-c1ba-4564-b7f8-43a4702b7709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\3d">
+      <UniqueIdentifier>{3d6b7474-81f6-49dd-acae-417a23b1d4ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\Audio">
+      <UniqueIdentifier>{71dd5415-3c4e-4bb0-b3f9-1bffe38d396b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\bace">
+      <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\math">
+      <UniqueIdentifier>{8c514b5d-934d-48fe-adfb-7259d210c0a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{248199f7-9718-4f0f-a4fc-d29fbcb161cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application">
+      <UniqueIdentifier>{2b6d880a-23c0-407b-bfe4-d3e390002643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Camera">
+      <UniqueIdentifier>{a511e52b-bcbb-4b6c-9164-4d31d4b5270b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Collision">
+      <UniqueIdentifier>{434365a8-cfd3-4303-9644-1d8cc1e7eefd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Loader">
+      <UniqueIdentifier>{b43b2173-3150-4925-a8f5-73e7c339636f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Particle">
+      <UniqueIdentifier>{712eb409-80f7-4d34-b7d2-020031345795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene">
+      <UniqueIdentifier>{c6eecef6-e7d8-4050-a866-f31dd4a028a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="InsideScene">
+      <UniqueIdentifier>{90e59181-f685-48db-808d-73212c0b33ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\Enemy">
+      <UniqueIdentifier>{431302d6-9528-409f-a6cc-c4076693d624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\Block">
+      <UniqueIdentifier>{9f952b4e-216f-4d0e-9d9b-e0526d0f7dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\Player">
+      <UniqueIdentifier>{a5f28842-bbb1-4ea9-9cb7-621672d64d7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\Loader">
+      <UniqueIdentifier>{956e0651-fb05-4ab0-bbd3-e6c26087402f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\3d\SkyBox">
+      <UniqueIdentifier>{6d5cf266-090d-47f2-8455-e452b0e5657b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\Map">
+      <UniqueIdentifier>{5250f676-f79a-456a-bd60-fd967b81f381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{588ada5e-8e2c-43c1-8997-4bcf269d6a66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="externals\imgui\LICENSE.txt">
+      <Filter>Game\Application</Filter>
+    </Text>
+  </ItemGroup>
+
 </Project>
