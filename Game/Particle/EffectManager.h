@@ -3,7 +3,9 @@
 #include "SrvManager.h"
 #include "MyMath.h"
 #include "Game/Camera/Camera.h"
-
+/// <summary>
+/// エフェクト管理クラス
+/// </summary>
 class EffectManager
 {
 public:
@@ -18,44 +20,83 @@ private:
     EffectManager(EffectManager&) = delete;
     EffectManager& operator=(EffectManager&) = delete;
 
-    // パイプラインの生成 / 初期化処理内部
+    /// <summary>
+	/// パイプラインの作成 / 初期化処理内部
+    /// </summary>
     void CreatePipeline();
-    // ルートシグネチャの作成 / パイプライン生成内部
+    /// <summary>
+	/// ルートシグネチャの作成 / パイプライン生成内部
+    /// </summary>
     void CreateRootSignature();
-    // グラフィックスパイプラインの設定 / パイプライン生成内部
+    /// <summary>
+	/// グラフィックスパイプラインの設定 / パイプライン生成内部
+    /// </summary>
     void SetGraphicsPipeline();
-    // ブレンドモードの設定 / パイプライン生成内部
+    /// <summary>
+	/// ブレンドモードの設定 / パイプライン生成内部
+    /// </summary>
+    /// <param name="desc"></param>
+    /// <param name="mode"></param>
     void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
 
-    // バッファービューの作成 / 初期化処理内部
+    /// <summary>
+	/// 頂点バッファビューの作成 / 初期化処理内部
+    /// </summary>
     void CreateVertexBufferView();
-    // マテリアルの初期化 / 初期化処理内部
+    /// <summary>
+	/// マテリアルの初期化 / 初期化処理内部
+    /// </summary>
     void InitializeMaterial();
 
-    // 行列更新 / 更新内部処理
+    /// <summary>
+	/// 行列の更新 / 更新処理内部
+    /// </summary>
     void UpdateMatrix();
 
-    // 更新した行列をGPUに送る
+    /// <summary>
+	/// エフェクトインスタンスデータの更新 / 更新処理内部
+    /// </summary>
     void UpdateEffectInstanceData();
 
 
 public:
-    // 初期化
+    /// <summary>
+	/// 初期化
+    /// </summary>
+    /// <param name="dxCommon"></param>
+    /// <param name="srvManager"></param>
+    /// <param name="camera"></param>
     void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
     
-    // 更新処理
+    /// <summary>
+	/// 更新
+    /// </summary>
     void Update();
     
-    // 描画処理
+    /// <summary>
+	/// 描画
+    /// </summary>
     void DrawRing();
     void DrawCylinder();
 
 
-    // エフェクトグループの作成
+    /// <summary>
+	/// エフェクトグループの作成
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="textureFilrPath"></param>
     void CreateEffectGroup(const std::string& name, const std::string textureFilrPath);
-    // エフェクトグループの削除
+    /// <summary>
+	/// エフェクトグループの削除
+    /// </summary>
+    /// <param name="name"></param>
     void DeleteEffectGroup(const std::string& name);
-    // エフェクトの発生
+    /// <summary>
+	/// シリンダーエフェクトの発生
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="transform"></param>
+    /// <param name="count"></param>
     void EmitCylinder(const std::string& name, const Transform& transform, uint32_t count);
     void EmitRing(const std::string& name, const Transform& transform, uint32_t count);
 

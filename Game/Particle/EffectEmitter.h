@@ -1,19 +1,30 @@
 #pragma once
 #include "EffectManager.h"
 #include "engine/math/Mymath.h"
+/// <summary>
+/// エフェクトエミッタクラス
+/// </summary>
 class EffectEmitter
 {
 public:
+	// コンストラクタ・デストラクタ
 	EffectEmitter();
 	~EffectEmitter();
 
-	// 更新
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
-	// 描画
+	/// <summary>
+	/// エフェクト発生
+	/// </summary>
 	void EmitCylinder();
 	void EmitRing();
 
 	// Getter / Setter
+	/// <summary>
+	/// エミッタのTransform設定・取得
+	/// </summary>
 	Transform GetTransform() { return emitter.transform; }
 	void SetTransform(const Transform& transform) { emitter.transform = transform; }
 

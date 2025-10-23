@@ -1,24 +1,42 @@
 #pragma once
 #include "DirectXCommon.h"
 
+/// <summary>
+/// シーン基底クラス
+/// </summary>
 class SceneManager;
 class BaseScene
 {
 public:
+    /// <summary>
+	/// デストラクタ
+    /// </summary>
     virtual ~BaseScene() = default;
-    // 初期化
+    /// <summary>
+	/// 初期化
+    /// </summary>
+    /// <param name="dxCommon"></param>
     virtual void Initialize(DirectXCommon* dxCommon) = 0;
-    // 更新
+    /// <summary>
+	/// 更新
+    /// </summary>
     virtual void Update() = 0;
-    // 描画
+    /// <summary>
+	/// 描画
+    /// </summary>
     virtual void Draw() = 0;
-    // 終了処理
+    /// <summary>
+	/// 終了処理
+    /// </summary>
     virtual void Finalize() = 0;
     // Setter
+	/// <summary>
+	/// シーンマネージャーのセット
+	/// </summary>
     virtual void SetSceneManager(SceneManager* sceneManager) { this->sceneManager = sceneManager; }
 
 protected:
-    // シーンマネージャー
+	// シーンマネージャー
     SceneManager* sceneManager = nullptr;
 };
 

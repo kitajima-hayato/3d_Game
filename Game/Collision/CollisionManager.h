@@ -1,6 +1,9 @@
 #pragma once
 #include "engine/math/MyMath.h"
 #include "Game/Collision/Collider.h"
+/// <summary>
+/// 衝突判定管理クラス
+/// </summary>
 class CollisionManager
 {
 public:

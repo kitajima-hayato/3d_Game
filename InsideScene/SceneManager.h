@@ -6,29 +6,56 @@
 class SceneManager
 {
 public:
-	// インスタンスの取得
+	/// <summary>
+	/// シングルトンの取得
+	/// </summary>
+	/// <returns></returns>
 	static SceneManager* GetInstance();
 	static void Deletenstance();
-	// コンストラクタ
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
 	SceneManager() = default;
-	// デストラクタ 
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
 	~SceneManager() = default;
-	// コピーコンストラクタ
+	/// <summary>
+	/// コピーコンストラクタの無効化
+	/// </summary>
+	/// <param name=""></param>
 	SceneManager(SceneManager&) = delete;
-	// 代入演算子のオーバーロード
+	/// <summary>
+	/// 代入演算子の無効化
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns></returns>
 	SceneManager& operator=(SceneManager&) = delete;
 
-	// 更新
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="dxCommon"></param>
 	void Update(DirectXCommon*dxCommon);
-	// 描画
+	/// <summary>
+	/// 描画
+	/// </summary>
 	void Draw();
-	// 終了処理
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize();
 
 public:
-	// シーンファクトリーのSetter
+	/// <summary>
+	/// シーンファクトリーのセット
+	/// </summary>
+	/// <param name="sceneFactory"></param>
 	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
-	// シーンチェンジ
+	/// <summary>
+	/// シーン変更
+	/// </summary>
+	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
 
 private:
