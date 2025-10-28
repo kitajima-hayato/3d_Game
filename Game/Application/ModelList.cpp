@@ -26,6 +26,9 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
+	ModelManager::GetInstance()->LoadModel("breakBlock.obj");
+	ModelManager::GetInstance()->LoadModel("moveBlock.obj");
+	ModelManager::GetInstance()->LoadModel("sand.obj");
 
 	ModelManager::GetInstance()->LoadModel("Player.obj");
 	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");

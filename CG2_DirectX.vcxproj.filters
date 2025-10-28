@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-
     <FxCompile Include="resources\shaders\Object3d.VS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -156,7 +155,7 @@
     </ClCompile>
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
-
+    <ClCompile Include="Game\Application\DeathEffect_ShakeAndZoom.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -312,6 +311,7 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
+    <ClInclude Include="Game\Application\DeathEffect_ShakeAndZoom.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -383,5 +383,4 @@
       <Filter>Game\Application</Filter>
     </Text>
   </ItemGroup>
-
 </Project>

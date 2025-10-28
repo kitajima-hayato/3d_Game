@@ -105,6 +105,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Application\DeathEffect_ShakeAndZoom.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
     <ClCompile Include="Game\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Application\Enemy\FlyingEnemy.cpp" />
@@ -157,6 +158,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Application\DeathEffect_ShakeAndZoom.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
     <ClInclude Include="Game\Application\Constants.h" />
     <ClInclude Include="Game\Collision\CollisionManager.h" />

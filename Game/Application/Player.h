@@ -5,7 +5,14 @@
 #include "Game/Particle/EffectEmitter.h"
 #include "Game/Collision/Collider.h"
 #include "BlockType.h"
+#include "Game/Scene/SceneTransition/SceneTransition.h"
 
+enum class LRDirection {
+	Left,
+	Right,
+	None
+};
+enum class TransitionTiming { OnDeath, AfterRespawn };
 
 struct CollisionMapInfo {
 	bool ceiling = false;	// 天井との衝突
@@ -23,9 +30,9 @@ enum class CollisionType {
 
 enum Corner {
 	kRightBottom,	// 右下
+	kLeftBottom,	// 左下
 	kRightTop,		// 右上
 	kLeftTop,		// 左上
-	kLeftBottom,	// 左下
 	kNumCorners		// コーナーの数
 };
 
@@ -37,7 +44,12 @@ struct PlayerParameter {
 	float blank = 0.01f;		// 余白
 	float kEpsilon = 0.1f; // 微小量
 	float kAcceleration = 0.1f; // 加速度
+	//減衰パラメータ
+	float kAttenuationLanding = 0.1f;//着地時の減衰率
+	float kAttenuationWall = 1.0f;//壁に当たった時の減衰率
+	float kAttenuation = 0.2f;   // 速度減衰率
 
+	float kMaxSpeed = 0.2f; // X方向の最大速度
 };
 
 class Map;
@@ -145,6 +157,11 @@ public: // メソッド
 	/// </summary>
 	bool IsGoalTile(BlockType type);
 
+	/// <summary>
+	/// プレイヤーの衝突判定移動処理
+	/// </summary>
+	void PlayerCollosionMove(const CollisionMapInfo& mapInfo);
+
 public: // Setter / getter
 	/// <summary>
 	/// プレイヤーのSRTを設定
@@ -159,7 +176,7 @@ public: // Setter / getter
 	/// <summary>
 	/// プレイヤーの移動速度を設定
 	/// </summary>
-	void SetMoveSpeed(const Vector3& speed) { velocity = speed; }
+	void SetMoveSpeed(const Vector3& speed) { velocity_ = speed; }
 
 	/// <summary>
 	/// 判定
@@ -168,6 +185,8 @@ public: // Setter / getter
 	bool WasHitThisFrame() const { return hitThisFrame; }
 
 	void DrawHitImgui();
+
+	void SetTransitionTiming(TransitionTiming t) { transitionTiming_ = t; }
 
 	/// <summary>
 	///  生存フラグの取得
@@ -179,6 +198,20 @@ public: // Setter / getter
 	/// </summary>
 	void SetMapChipField(Map* mapChipField) { this->mapChipField = mapChipField; }
 
+	/// <summary>
+	/// 死亡時の処理
+	/// </summary>
+	void Dead();
+
+	/// <summary>
+	/// 死亡中リスポーン待機
+	/// </summary>
+	void RespawnWait();
+
+	/// <summary>
+	/// リスポーン処理
+	/// </summary>
+	void Respawn();
 private:
 	/// プレイヤーの生存フラグ
 	bool isAlive = true;
@@ -189,12 +222,12 @@ private:
 	Transform transform;
 
 	/// プレイヤーの移動速度
-	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
+	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 	/// プレイヤーのダッシュ速度
-	Vector3 dashSpeed = { 0.01f, 0.2f, 0.0f };
+	Vector3 dashSpeed = { 0.0f, 0.2f, 0.0f };
 	/// プレイヤーの落下速度
 	Vector3 fallSpeed = { 0.0f, -9.8f, 0.0f };
-	
+
 	/// プレイヤーのモデル
 	std::unique_ptr<Object3D> playerModel;
 
@@ -238,5 +271,28 @@ private:
 
 	/// ゴールフラグ
 	bool goalFlag = false;
+
+	LRDirection lrDirection_ = LRDirection::None;
+
+	// リスポーンまでのクールタイム
+	uint32_t respawnCoolTime_ = 0;
+	uint32_t respawnCoolTimeMax_ = 120; // 3秒間
+	Transform respawnTransform_{
+		// Scale
+		{1.0f, 1.0f, 1.0f},
+		// Rotate
+		{0.0f, 3.0f, 0.0f},
+		// Translate
+		{1.0f, -7.0f, 20.0f}
+	};
+
+	// SceneTransition
+	std::unique_ptr<SceneTransition> sceneTransition_;
+	// 前フレームの生存フラグ
+	bool wasAlive = true;
+
+	bool requestTransitionAfterRespawn_ = false;
+
+	TransitionTiming transitionTiming_ = TransitionTiming::AfterRespawn;
 };
 

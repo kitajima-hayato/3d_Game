@@ -84,5 +84,11 @@ private:
 	/// ブロックのコライダー
 	AABB aabb;
 
+	// 移動ブロック用変数
+	float moveRange_ = 3.0f;     // 移動範囲
+	float moveSpeed_ = 0.01f;    // 基本速度
+	float moveTime_ = 0.0f;      // 時間カウンタ
+	bool moveRight_ = true;      // 現在の移動方向（true:右 / false:左）
+
 };
 
