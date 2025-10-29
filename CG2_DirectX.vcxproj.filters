@@ -155,7 +155,6 @@
     </ClCompile>
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
-    <ClCompile Include="Game\Application\DeathEffect_ShakeAndZoom.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -311,7 +310,6 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
-    <ClInclude Include="Game\Application\DeathEffect_ShakeAndZoom.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

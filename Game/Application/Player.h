@@ -7,6 +7,7 @@
 #include "BlockType.h"
 #include "Game/Scene/SceneTransition/SceneTransition.h"
 
+
 enum class LRDirection {
 	Left,
 	Right,
@@ -294,5 +295,7 @@ private:
 	bool requestTransitionAfterRespawn_ = false;
 
 	TransitionTiming transitionTiming_ = TransitionTiming::AfterRespawn;
+
+	
 };
 

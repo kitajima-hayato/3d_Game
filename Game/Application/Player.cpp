@@ -79,8 +79,6 @@ void Player::Initialize()
 
 	aabb = CalcAABBAtPosition(transform.translate);
 
-	
-
 	//mapChipField 
 }
 
@@ -88,6 +86,7 @@ void Player::Initialize()
 void Player::Update()
 {
 	if (wasAlive && !isAlive) {
+		// 死亡した瞬間の処理
 		if (transitionTiming_ == TransitionTiming::OnDeath) {
 			// 死亡した瞬間に開始
 			if (!sceneTransition_) sceneTransition_ = std::make_unique<SceneTransition>();
