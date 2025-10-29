@@ -9,7 +9,7 @@ void NormalEnemy::Initialize()
 		// Rotate
 		{0.0f, 0.0f, 0.0f},
 		// Translate
-		
+		{4.0f, -7.0f, 20.0f}
 		},
 		// 生存フラグ
 		true,

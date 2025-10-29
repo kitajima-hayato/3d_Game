@@ -10,8 +10,8 @@ struct MapIndex {
 struct Rect {
 	float left;
 	float right;
-	float top;
 	float bottom;
+	float top;
 };
 
 static inline const float kBlockWidth = 1.0f; // ブロックのサイズ
