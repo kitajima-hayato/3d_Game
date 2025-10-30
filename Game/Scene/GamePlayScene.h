@@ -136,7 +136,7 @@ private:
 	
 
 	// シーン遷移
-	//std::unique_ptr<SceneTransition> sceneTransition;
+	std::unique_ptr<SceneTransition> sceneTransition;
 
 };
 

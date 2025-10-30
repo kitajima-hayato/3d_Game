@@ -53,11 +53,12 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
 	player->Initialize();
+	player->SetTransitionTiming(TransitionTiming::OnDeath);
 
 	InitializeEnemy();
 
 	//sceneTransition = std::make_unique<SceneTransition>();
-	//sceneTransition->Initialize();
+	//sceneTransition->Initialize(10);
 
 	titleLogoObject = std::make_unique<Object3D>();
 	titleLogoObject->Initialize();
@@ -122,7 +123,7 @@ void GamePlayScene::Draw()
 
 	//sceneTransition->Draw();
 	/// マップの描画
-	//map->Draw();
+	map->Draw();
 	/// プレイヤーの描画
 	player->Draw();
 	/// タイトルロゴの描画
@@ -138,7 +139,7 @@ void GamePlayScene::InitializeEnemy()
 
 	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
 	normalEnemy->Initialize();
-	normalEnemy->SetTranslate({ 10.0f,-0.0f,20.0f });
+	normalEnemy->SetTranslate({ 4.0f,-3.0f,20.0f });
 	enemies.push_back(std::move(normalEnemy));
 
 	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");

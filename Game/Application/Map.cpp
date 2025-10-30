@@ -35,7 +35,7 @@ void Map::CreateBlocksMap()
 	/// 読み込んだデータをもとにブロックを生成する
 	/// マップの大きさを取得
 	const Vector3 initPos = { 0.0f,0.0f,0.0f };
-	const Vector3 blockSize = { 1.0f,1.0f,1.0f };
+	const Vector3 blockSize = { 0.5f,0.5f,0.5f };
 	const size_t mapHeight = mapData.size();
 	const size_t mapWidth = mapData[0].size();
 
