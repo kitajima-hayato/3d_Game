@@ -40,6 +40,8 @@ void FlyingEnemy::Update()
 		Move();
 		/// 攻撃処理
 		Action();
+		/// トランスフォームの反映
+		model->SetTransform(stats.transform);
 		/// モデルの更新
 		model->Update();
 	}

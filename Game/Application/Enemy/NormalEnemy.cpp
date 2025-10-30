@@ -9,7 +9,7 @@ void NormalEnemy::Initialize()
 		// Rotate
 		{0.0f, 0.0f, 0.0f},
 		// Translate
-		{4.0f, -7.0f, 20.0f}
+		{4.0f, -3.0f, 20.0f}
 		},
 		// 生存フラグ
 		true,
@@ -37,6 +37,8 @@ void NormalEnemy::Update()
 		Move();
 		/// 攻撃処理
 		Action();
+		/// トランスフォームの反映
+		model->SetTransform(stats.transform);
 		/// モデルの更新
 		model->Update();
 	}
