@@ -38,7 +38,7 @@ void Map::CreateBlocksMap()
 	const Vector3 blockSize = { 0.5f,0.5f,0.5f };
 	const size_t mapHeight = mapData.size();
 	const size_t mapWidth = mapData[0].size();
-
+	 
 	/// ブロック格納領域を確保
 	blocks.resize(mapHeight);
 	for (size_t y = 0; y < mapHeight; ++y) {
