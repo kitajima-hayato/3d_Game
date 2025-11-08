@@ -42,7 +42,7 @@ struct PlayerParameter {
 	// 当たり判定
 	float kWidth = 1.0f;	// 幅
 	float kHeight = 1.0f;	// 高さ
-	float blank = 0.01f;		// 余白
+	float blank = 2.0f;		// 余白
 	float kEpsilon = 0.1f; // 微小量
 	float kAcceleration = 0.1f; // 加速度
 	//減衰パラメータ

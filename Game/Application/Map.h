@@ -82,11 +82,8 @@ private:
 
 	/// CSVファイルのパス
 	std::string csvFilePath;
+
 	/// ブロックのリスト
 	std::vector<std::vector<std::unique_ptr<Block>>> blocks;
-
-
-
-
 
 };

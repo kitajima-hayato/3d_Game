@@ -485,74 +485,57 @@ Vector3 Player::CornerPosition(const Vector3& center, Corner corner)
 
 bool Player::CheackCollisionPoints(const std::array<Vector3, 2>& posList, CollisionType type, CollisionMapInfo& mapInfo)
 {
-	/// ブロックとの当たり判定
-	bool hit = false;
+    bool hit = false;
+    Rect hitRect{};
+    Vector3 hitPos{};
 
-	/// 特殊ブロックごとに処理を追加
-	for (const auto& pos : posList) {
-		MapIndex mapIndex = mapChipField->GetMapChipIndexSetByPosition(pos);
-		BlockType blockType = mapChipField->GetMapChipTypeByIndex(mapIndex);
-
-		/*	＠例
-		if(blockType == MapChipType::〇〇〇){
-			if(Type == CollisionType::〇〇〇){
-				hit = true;
-				// onGround = true;
-			}
-		}*/
-
-		if (IsHitTargetBlockType(blockType)) {
-			hit = true;
-		} else if (blockType == BlockType::kGoalDown || blockType == BlockType::kGoalUp) {
-			goalFlag = true;
-		}
-
-	}
-	/// 当たった場合の処理
-	if (hit) {
-		/// 移動量を0にする
-		Vector3 position = transform.translate;
-		MapIndex mapIndex = mapChipField->GetMapChipIndexSetByPosition(position);
-
-		// 当たったマップチップの矩形情報を取得
-		Rect rect = mapChipField->GetRectByIndex(mapIndex);
-		switch (type) {
-		case CollisionType::Top:
-			mapInfo.move.y = std::max(
-				0.0f,
-				rect.bottom - position.y -
-				(playerParameter.kHeight / 2.0f + playerParameter.kEpsilon));
-
-			mapInfo.ceiling = true;
-			break;
-		case CollisionType::Bottom:
-			mapInfo.move.y = std::min(
-				0.0f,
-				rect.top - position.y + (playerParameter.kHeight / 2.0f + playerParameter.kEpsilon));
-			mapInfo.landing = true;
-			break;
-
-		case CollisionType::Right:
-			mapInfo.move.x = std::max(
-				0.0f,
-				rect.left - position.x - (playerParameter.kWidth / 2.0f + playerParameter.kEpsilon));
-			mapInfo.hitWall = true;
-			break;
-		case CollisionType::Left:
-			mapInfo.move.x = std::min(
-				0.0f,
-				rect.right - position.x + (playerParameter.kWidth / 2.0f + playerParameter.kEpsilon));
-			mapInfo.hitWall = true;
-			break;
-		default:
-			Logger::Log("未対応の衝突タイプです");
-			break;
-
-		}
-
-
-	}
-	return hit;
+    // まず実際にコリジョンしたコーナーを探す
+    for (const auto& pos : posList) {
+        MapIndex mapIndex = mapChipField->GetMapChipIndexSetByPosition(pos);
+        BlockType blockType = mapChipField->GetMapChipTypeByIndex(mapIndex);
+        if (IsHitTargetBlockType(blockType)) {
+            hit = true;
+            hitRect = mapChipField->GetRectByIndex(mapIndex);
+            hitPos = pos; // このコーナーで分離計算する
+            break; // 最初に衝突したものでOK
+        } else if (blockType == BlockType::kGoalDown || blockType == BlockType::kGoalUp) {
+            goalFlag = true;
+        }
+    }
+    // 当たった場合の処理
+    if (hit) {
+        // 衝突判定したコーナーと、対応rectで正確に分離計算方向別
+        switch (type) {
+        case CollisionType::Top:
+            mapInfo.move.y = std::max(
+                0.0f,
+                hitRect.bottom - hitPos.y);
+            mapInfo.ceiling = true;
+            break;
+        case CollisionType::Bottom:
+            mapInfo.move.y = std::min(
+                0.0f,
+                hitRect.top - hitPos.y);
+            mapInfo.landing = true;
+            break;
+        case CollisionType::Right:
+            mapInfo.move.x = std::max(
+                0.0f,
+                hitRect.left - hitPos.x);
+            mapInfo.hitWall = true;
+            break;
+        case CollisionType::Left:
+            mapInfo.move.x = std::min(
+                0.0f,
+                hitRect.right - hitPos.x);
+            mapInfo.hitWall = true;
+            break;
+        default:
+            Logger::Log("未対応の衝突タイプです");
+            break;
+        }
+    }
+    return hit;
 }
 
 bool Player::IsHitTargetBlockType(BlockType type)
