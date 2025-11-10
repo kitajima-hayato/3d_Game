@@ -147,14 +147,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="InsideScene\SceneManager.cpp" />
     <ClCompile Include="engine\bace\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
-    <ClCompile Include="Game\Application\Map.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
     <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
-    <ClCompile Include="Game\Application\Player.cpp" />
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
+    <ClCompile Include="Game\Application\Player.cpp" />
+    <ClCompile Include="Game\Application\Map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\BackGround.h" />
@@ -200,15 +200,15 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="InsideScene\SceneManager.h" />
     <ClInclude Include="engine\bace\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
-    <ClInclude Include="Game\Application\Map.h" />
     <ClInclude Include="Game\Application\StageType.h" />
     <ClInclude Include="Game\Scene\StageCelectScene.h" />
-    <ClInclude Include="Game\Application\Player.h" />
     <ClInclude Include="Game\Application\Enemy\NormalEnemy.h" />
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
+    <ClInclude Include="Game\Application\Player.h" />
+    <ClInclude Include="Game\Application\Map.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

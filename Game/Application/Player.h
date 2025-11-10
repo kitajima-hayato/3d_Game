@@ -1,301 +1,205 @@
 #pragma once
 #include "engine/math/MyMath.h"
+#include <memory>
 #include "engine/3d/Object3D.h"
-#include <string>
-#include "Game/Particle/EffectEmitter.h"
-#include "Game/Collision/Collider.h"
-#include "BlockType.h"
-#include "Game/Scene/SceneTransition/SceneTransition.h"
+#include "Map.h"
+/// プレイヤークラス
 
-
-enum class LRDirection {
-	Left,
-	Right,
-	None
+/// <summary>
+/// 向き
+/// </summary>
+enum class Direcrion {
+	kRight,
+	kLeft
 };
-enum class TransitionTiming { OnDeath, AfterRespawn };
 
+/// <summary>
+/// 衝突情報
+/// </summary>
 struct CollisionMapInfo {
-	bool ceiling = false;	// 天井との衝突
-	bool landing = false;	// 着地
-	bool hitWall = false;	// 壁との接触
-	Vector3 move;			// 移動量
+	// 天井衝突
+	bool celling = false;
+	// 床衝突
+	bool landing = false;
+	// 壁衝突
+	bool hitWall = false;
+	// 移動量
+	Vector3 move;
 };
 
-enum class CollisionType {
-	Top,
-	Bottom,
-	Left,
-	Right
-};
-
+/// <summary>
+/// コーナー
+/// </summary>
 enum Corner {
-	kRightBottom,	// 右下
-	kLeftBottom,	// 左下
-	kRightTop,		// 右上
-	kLeftTop,		// 左上
-	kNumCorners		// コーナーの数
+	// 右下
+	kRightBottom,
+	// 左下
+	kLeftBottom,
+	// 右上
+	kRightTop,
+	// 左上
+	kLeftTop,
+	// 要素数
+	kNumCorners
 };
 
-struct PlayerParameter {
-	// Playerのパラメータ構造体
-	// 当たり判定
-	float kWidth = 1.0f;	// 幅
-	float kHeight = 1.0f;	// 高さ
-	float blank = 2.0f;		// 余白
-	float kEpsilon = 0.1f; // 微小量
-	float kAcceleration = 0.1f; // 加速度
-	//減衰パラメータ
-	float kAttenuationLanding = 0.1f;//着地時の減衰率
-	float kAttenuationWall = 1.0f;//壁に当たった時の減衰率
-	float kAttenuation = 0.2f;   // 速度減衰率
-
-	float kMaxSpeed = 0.2f; // X方向の最大速度
+/// <summary>
+/// 衝突タイプ
+/// </summary>
+enum class CollisionType {
+	kTop,
+	kBottom,
+	kLeft,
+	kRight
 };
 
-class Map;
-class Player : public Collider
+/// プレイヤーのステータス　
+struct PlayerStatus {
+	//速度パラメーター
+	// 加速度
+	float kAcceleration = 0.05f;
+	// 速度減衰率
+	float kAttenuation = 0.2f;
+	// 最大速度
+	float kMaxSpeed = 2.0f;
+
+	//ジャンプパラメータ
+	// 重力加速度
+	float kGravity = 0.05f;
+	// 最大落下速度
+	float kMaxFallSpeed = 1.0f;
+	// ジャンプ初速度
+	float kJumpPower = 0.5f;
+	// 溜め時間
+	float kMaxChargeTime = 0.2f;
+
+	//当たり判定パラメータ
+	// 幅
+	float kWidth = 0.8f;
+	// 高さ
+	float kHeight = 0.8f;
+	// 当たり判定の余裕
+	float kBlank = 2.0f;
+	// 微小値
+	float kEpsilon = 0.1f;
+
+	//減衰パラメーター
+	// 着地時の減衰率
+	float kAttenuationLanding = 0.1f;
+	// 壁に衝突したときの減衰率
+	float kAttenuationWall = 1.0f;
+
+	//振り向きパラメーター
+	// 角度の補間タイム
+	float kTurnTime = 1.0f;
+};
+
+class Player
 {
-public: // 判定
-	Type GetType() const override { return Type::Player; }
-	AABB GetAABB() const override;
-	void OnCollision(Collider* other)override;
-
-	AABB CalcAABBAtPosition(const Vector3& pos);
-public: // メソッド
+public:
 
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(Vector3 position);
+
 	/// <summary>
-	/// 更新処理
+	/// 更新
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// 描画
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// 終了処理
-	/// </summary>
-	void Finalize();
+private:
+	/// プレイヤーの挙動更新統括 / 判定 / 移動 / その他
+	void UpdateBehavior();
 
 	/// <summary>
-	/// 移動入力統括処理
+	/// 移動処理
 	/// </summary>
 	void Move();
 
 	/// <summary>
-	/// 右への移動入力処理
+	/// 右移動処理
+	/// @see Move
 	/// </summary>
 	void MoveRight();
 
 	/// <summary>
-	/// 左への移動入力処理
+	/// 左移動処理
+	/// @see Move
 	/// </summary>
 	void MoveLeft();
 
 	/// <summary>
-	/// ジャンプ入力処理
+	/// ImGui表示
 	/// </summary>
-	void Jump();
+	void ImGui();
 
 	/// <summary>
-	/// Imguiの描画関数
+	/// マップ衝突チェック
 	/// </summary>
-	void DrawImgui();
+	void MapCollision(CollisionMapInfo& collisionInfo);
 
 	/// <summary>
-	/// ブロックとの衝突判定
+	/// 衝突マップ情報取得
 	/// </summary>
-	void CheckBlockCollision();
+	/// <param name="collisionInfo"></param>
+	/// <param name="type"></param>
+	/// <param name="checkCorners"></param>
+	/// <param name="offset"></param>
+	/// <param name="mooveCondition"></param>
+	void CollisionMapInfoDirection(
+		CollisionMapInfo& collisionInfo, 
+		CollisionType type, 
+		const std::array<Corner, 2>& checkCorners, 
+		const Vector3& offset, 
+		std::function<bool(const CollisionMapInfo&)>mooveCondition);
 
 	/// <summary>
-	/// マップの衝突判定統括
-	/// </summary>
-	void MapCollision(CollisionMapInfo& mapInfo);
-
-
-	/// <summary>
-	/// マップの特定方向の衝突判定
-	/// </summary>
-	void CollisionMapInfoDirection(CollisionMapInfo& mapInfo, CollisionType dir, const std::array<Corner, 2>& CheckCorners, const Vector3& offset, std::function<bool(const CollisionMapInfo&)>moveCondition);
-
-	/// <summary>
-	/// 指定したコーナーの位置を取得
+	/// コーナー位置取得
 	/// </summary>
 	Vector3 CornerPosition(const Vector3& center, Corner corner);
 
 	/// <summary>
-	/// 指定した2点の間にブロックがあるかどうかを調べる
+	/// 当たり判定ポイントチェック
 	/// </summary>
-	bool CheackCollisionPoints(const std::array<Vector3, 2>& posList, CollisionType type, CollisionMapInfo& mapInfo);
-
-	/// <summary>
-	/// 指定したブロックタイプが当たり判定を持つかどうか
-	/// </summary>
-	bool IsHitTargetBlockType(BlockType type);
-
-	/// <summary>
-	/// 床との衝突判定
-	/// </summary>
-	void CeilingCollisionMove(const CollisionMapInfo& mapInfo);
-
-	void LandingCollisionMove(const CollisionMapInfo& mapInfo);
-
-	void WallCollisionMove(const CollisionMapInfo& mapInfo);
-
-	/// <summary>
-	/// 指定したブロックタイプが乗れるブロックかどうか
-	/// </summary>
-	bool IsGroundTile(BlockType type);
-
-	/// <summary>
-	/// 指定したブロックタイプがゴールブロックかどうか
-	/// </summary>
-	bool IsGoalTile(BlockType type);
-
-	/// <summary>
-	/// プレイヤーの衝突判定移動処理
-	/// </summary>
-	void PlayerCollosionMove(const CollisionMapInfo& mapInfo);
-
-public: // Setter / getter
-	/// <summary>
-	/// プレイヤーのSRTを設定
-	/// </summary>
-	void SetTransform(const Transform& transform) { this->transform = transform; }
-
-	/// <summary>
-	/// プレイヤーのSRTを取得
-	/// </summary>
-	const Transform& GetTransform() const { return transform; }
-
-	/// <summary>
-	/// プレイヤーの移動速度を設定
-	/// </summary>
-	void SetMoveSpeed(const Vector3& speed) { velocity_ = speed; }
-
-	/// <summary>
-	/// 判定
-	/// </summary>
-	void BeginFrameHitReset() { hitThisFrame = false; } // 毎フレーム冒頭で呼ぶ
-	bool WasHitThisFrame() const { return hitThisFrame; }
-
-	void DrawHitImgui();
-
-	void SetTransitionTiming(TransitionTiming t) { transitionTiming_ = t; }
-
-	/// <summary>
-	///  生存フラグの取得
-	/// </summary>
-	bool IsAlive() const { return isAlive; }
-
-	/// <summary>
-	/// マップチップデータをプレイヤーにも渡す
-	/// </summary>
-	void SetMapChipField(Map* mapChipField) { this->mapChipField = mapChipField; }
-
-	/// <summary>
-	/// 死亡時の処理
-	/// </summary>
-	void Dead();
-
-	/// <summary>
-	/// 死亡中リスポーン待機
-	/// </summary>
-	void RespawnWait();
-
-	/// <summary>
-	/// リスポーン処理
-	/// </summary>
-	void Respawn();
-private:
-	/// プレイヤーの生存フラグ
-	bool isAlive = true;
+	/// <param name="posList"></param>
+	/// <param name="type"></param>
+	/// <param name="collisionInfo"></param>
+	bool CheckCollisionPoints(const std::array<Vector3, 2>& posList, CollisionType type, CollisionMapInfo& collisionInfo);
 
 
+	bool IsHitBlockTable(BlockType type);
 
-	/// プレイヤーのSRT
-	Transform transform;
-
-	/// プレイヤーの移動速度
-	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
-	/// プレイヤーのダッシュ速度
-	Vector3 dashSpeed = { 0.0f, 0.2f, 0.0f };
-	/// プレイヤーの落下速度
-	Vector3 fallSpeed = { 0.0f, -9.8f, 0.0f };
-
-	/// プレイヤーのモデル
-	std::unique_ptr<Object3D> playerModel;
+	bool IsHitGoalBlockTable(BlockType type);
 
 
-	/// ダッシュ入力のカウントフレーム / 右
-	float dashExtensionFrameRight = 0.0f;
-	uint32_t dashInputRight = 0;
+public:
+	void SetDeathHeight(float deathHeight) { deathHeight_ = deathHeight; }
 
-	/// ダッシュ入力のカウントフレーム / 左
-	float dashExtensionFrameLeft = 0.0f;
-	uint32_t dashInputLeft = 0;
+private:	// メンバ変数
+	// プレイヤーステータス
+	PlayerStatus status_;
+	// 速度
+	Vector3 velocity_ = {};
 
+	// 死亡判定の高さ / 画面外に出たら死亡判定とする
+	float deathHeight_ = -10.0f;
 
-	/// ダッシュ入力時の猶予フレーム
-	const float dashInputMaxFrame = 18.0f;
+	// プレイヤーのモデル
+	std::unique_ptr<Object3D> playerModel_ = nullptr;
 
-	/*/// 一時的変数
-	std::unique_ptr<EffectEmitter>qux;
-	Transform emitterTransform;
+	// 死亡フラグ
+	bool isDead_ = false;
 
-	std::unique_ptr<EffectEmitter>quux;
-	Transform quuxTransform;*/
+	// マップ
+	Map* map_ = nullptr;
 
-	/// 判定用のAABB
-	AABB aabb;
+	bool isGoal_ = false;
 
-	/// 60 FPSを想定したデルタタイム
-	float deltaTime = 0.016f;
-	/// 
-	bool hitThisFrame = false;
-
-	/// 前フレームの座標
-	Vector3 prevTranslate = { 0.0f, 0.0f, 0.0f };
-
-	/// プレイヤーのパラメータ
-	PlayerParameter playerParameter;
-	/// Map
-	Map* mapChipField = nullptr;
-	/// 接地フラグ
-	bool onGround = false;
-
-	/// ゴールフラグ
-	bool goalFlag = false;
-
-	LRDirection lrDirection_ = LRDirection::None;
-
-	// リスポーンまでのクールタイム
-	uint32_t respawnCoolTime_ = 0;
-	uint32_t respawnCoolTimeMax_ = 120; // 3秒間
-	Transform respawnTransform_{
-		// Scale
-		{1.0f, 1.0f, 1.0f},
-		// Rotate
-		{0.0f, 3.0f, 0.0f},
-		// Translate
-		{1.0f, -7.0f, 20.0f}
-	};
-
-	// SceneTransition
-	std::unique_ptr<SceneTransition> sceneTransition_;
-	// 前フレームの生存フラグ
-	bool wasAlive = true;
-
-	bool requestTransitionAfterRespawn_ = false;
-
-	TransitionTiming transitionTiming_ = TransitionTiming::AfterRespawn;
-
-	
 };
 

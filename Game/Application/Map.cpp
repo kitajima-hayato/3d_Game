@@ -1,138 +1,73 @@
 #include "Map.h"
-#include "CsvLoader.h"
 
-void Map::Initialize(std::string csvFilePath) {
-	/// csvファイルを読み込む
-	this->csvFilePath = csvFilePath;
-	CreateBlocksMap();
-}
 
-void Map::Update() {
-	for (auto& row : blocks) {
-		for (auto& block : row) {
-			if (block) {
-				block->Update();
-			}
-		}
-	}
-}
 
-void Map::Draw() {
-	for(auto& row : blocks) {
-		for (auto& block : row) {
-			if (block) {
-				block->Draw();
-			}
-		}
-	}
-}
-
-void Map::CreateBlocksMap()
+void Map::Initialize()
 {
-	/// CSVファイルからマップデータを読み込む
-	CsvLoader csvLoader;
-	mapData = csvLoader.LoadMapInt(this->csvFilePath);
-	/// 読み込んだデータをもとにブロックを生成する
-	/// マップの大きさを取得
-	const Vector3 initPos = { 0.0f,0.0f,0.0f };
-	const Vector3 blockSize = { 0.5f,0.5f,0.5f };
-	const size_t mapHeight = mapData.size();
-	const size_t mapWidth = mapData[0].size();
+	// マップデータの初期化
+	mapChipData_.mapData.resize(kMapHeight, std::vector<BlockType>(kMapWidth, BlockType::Air));
 
-	/// ブロック格納領域を確保
-	blocks.resize(mapHeight);
-	for (size_t y = 0; y < mapHeight; ++y) {
-		blocks[y].resize(mapWidth);
-	}
-
-	for (auto height = 0; height < mapHeight; ++height) {
-		for (auto width = 0; width < mapWidth; ++width) {
-			/// ブロックの位置を計算
-			Transform blockTransform;
-			blockTransform.translate = { static_cast<float>(width), static_cast<float>(-height), 20.0f };
-			blockTransform.rotate = { 0.0f,0.0f,0.0f };
-			blockTransform.scale = blockSize;
-			/// ブロックの種類を取得
-			int intBlockType = mapData[height][width];
-			/// 不正な値は止める
-			if (intBlockType < 0 ||
-				static_cast<int>(BlockType::Count) <= intBlockType) {
-				continue;
-			}
-			/// BlockTypeに変換
-			BlockType blockType = static_cast<BlockType>(intBlockType);
-
-			std::unique_ptr<Block> block = std::make_unique<Block>();
-			block->Initialize(blockType,blockTransform.translate);
-			block->SetTransform(blockTransform);
-
-			/// ブロックを追加
-			blocks[height][width] = std::move(block);
-
-		}
-	}
 }
 
-std::vector<Block*> Map::GetNearbyBlocks(const AABB& range) const
+
+void Map::Update()
 {
-	std::vector<Block*> result;
-
-	// 範囲チェック（整数座標を仮定）
-	int minX = static_cast<int>(range.min.x);
-	int maxX = static_cast<int>(range.max.x);
-	int minY = static_cast<int>(range.min.y);
-	int maxY = static_cast<int>(range.max.y);
-
-	for (int y = minY; y <= maxY; ++y) {
-		if (y < 0 || y >= static_cast<int>(blocks.size())) continue;
-
-		for (int x = minX; x <= maxX; ++x) {
-			if (x < 0 || x >= static_cast<int>(blocks[y].size())) continue;
-
-			Block* block = blocks[y][x].get();
-			if (block && block->GetBlockType() != BlockType::Air) {
-				result.push_back(block);
-			}
-		}
-	}
-
-	return result;
+	// マップの更新処理が必要な場合はここに追加します
 }
 
-MapIndex Map::GetMapChipIndexSetByPosition(const Vector3& position)
+void Map::Draw()
 {
-	/// 指定した位置にあるマップチップのインデックスを取得する
-	MapIndex index;
-	index.xIndex = static_cast<uint32_t>(position.x);
-	index.yIndex = static_cast<uint32_t>(-position.y);
-	return index;
+	// マップの描画処理が必要な場合はここに追加します
 }
 
-BlockType Map::GetMapChipTypeByIndex(const MapIndex& index)
+void Map::Finalize()
 {
-	if (mapData.empty() ||
-		index.yIndex >= mapData.size() ||
-		index.xIndex >= mapData[index.yIndex].size()) {
+	// マップの終了処理が必要な場合はここに追加します
+}
+
+void Map::GenerareMapBlock()
+{
+}
+
+
+
+
+
+IndexSet Map::GetMapChipIndexSetByPosition(const Vector3& position)
+{
+	// 指定座標がマップチップの何番に該当するかを取得
+	IndexSet indexSet{};
+	indexSet.xIndex = static_cast<uint32_t>((position.x + kBlockWidth / 2) / kBlockWidth);
+	indexSet.yIndex = kMapHeight - 1 - static_cast<uint32_t>((position.y + kBlockHeight / 2) / kBlockHeight);
+	return indexSet;
+}
+
+BlockType Map::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex)
+{
+	// インデックスがマップ外なら空気ブロックを返す
+	if (xIndex < 0 || kBlockWidth - 1 < xIndex) {
 		return BlockType::Air;
 	}
-	return static_cast<BlockType>(mapData[index.yIndex][index.xIndex]);
+	// インデックスがマップ外なら空気ブロックを返す
+	if (yIndex < 0 || kMapHeight - 1 < yIndex) {
+		return BlockType::Air;
+	}
+	// 指定インデックスのマップチップの種類を返す
+	return mapChipData_.mapData[yIndex][xIndex];
 }
 
-Rect Map::GetRectByIndex(const MapIndex& index)
+Rect Map::GetRectByIndex(uint32_t xIndex, uint32_t yIndex)
 {
-	/// 指定したインデックスにあるマップチップの矩形情報を取得する
-	Vector3 center = GetMapChipPositionByIndex(index);
-	///  矩形情報を計算
-	Rect rect;
-	rect.left = center.x - kBlockWidth / 2.0f;
-	rect.right = center.x + kBlockWidth / 2.0f;
-	rect.top = center.y + kBlockHeight / 2.0f;
-	rect.bottom = center.y - kBlockHeight / 2.0f;
+	Vector3 center = GetMapChipPositionByIndex(xIndex, yIndex);
+	Rect rect{};
+	rect.left = center.x - (kBlockWidth / 2);
+	rect.right = center.x + (kBlockWidth / 2);
+	rect.bottom = center.y - (kBlockHeight / 2);
+	rect.top = center.y + (kBlockHeight / 2);
 	return rect;
 }
 
-Vector3 Map::GetMapChipPositionByIndex(const MapIndex& index)
+Vector3 Map::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex)
 {
-	return Vector3(kBlockWidth * index.xIndex, kBlockHeight * (kNumBlockVirtical - 1 - index.yIndex), 0);
-
+	return Vector3(kBlockWidth * xIndex, kBlockHeight * (kMapHeight - 1 - yIndex), 0.0f);
 }
