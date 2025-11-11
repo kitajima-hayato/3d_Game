@@ -86,3 +86,10 @@ void Block::Draw() {
 	if (blockType == BlockType::Air) return;
 	blockModel->Draw();
 }
+
+Block* Block::CreateBlock(BlockType blockType, Vector3 position)
+{
+	Block* newBlock = new Block();
+	newBlock->Initialize(blockType, position);
+	return newBlock;
+}

@@ -4,8 +4,9 @@
 void Player::Initialize(Vector3 position)
 {
 	playerModel_ = std::make_unique<Object3D>();
-	playerModel_->SetModel("Player.obj");
+	playerModel_->Initialize();
 	playerModel_->SetTranslate(position);
+	playerModel_->SetModel("Player.obj");
 	SetDeathHeight(-10.0f);
 
 
@@ -14,10 +15,19 @@ void Player::Initialize(Vector3 position)
 
 void Player::Update()
 {
-	ImGui();
-
 	UpdateBehavior();
+	//　仮のTransform設定
+	Transform transform = {
+		{1.0f,1.0f,1.0f},
+		{0.0f,0.0f,0.0f},
+		playerModel_->GetTranslate()
+	};
+	playerModel_->SetTransform(transform);
 	playerModel_->Update();
+
+#ifdef _DEBUG
+	ImGui();
+#endif // _DEBUG
 }
 
 

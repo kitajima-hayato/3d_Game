@@ -3,6 +3,8 @@
 #include <memory>
 #include "BlockType.h"
 #include <MyMath.h>
+#include "Game/Application/Block.h"
+#include "Game/Application/CsvLoader.h"
 /// マップクラス
 
 /// マップチップデータ構造体
@@ -36,6 +38,11 @@ public:
 	// 高さ
 	static inline const uint32_t kMapHeight = 20;	
 
+	// 可変サイズのマップの大きさ
+	uint32_t GetWidth() const { return mapChipData_.mapData.empty() ? 0u : (uint32_t)mapChipData_.mapData[0].size(); }
+
+	uint32_t GetHeight() const { return (uint32_t)mapChipData_.mapData.size(); }
+
 public:
 	/// <summary>
 	/// 初期化
@@ -61,6 +68,11 @@ public:
 	/// マップブロック生成
 	/// </summary>
 	void GenerareMapBlock();
+
+	/// <summary>
+	/// マップデータの読み込み
+	/// </summary>
+	void LoadMapData(const char* filePath);
 
 
 public:	// Setter / Getter
@@ -92,6 +104,18 @@ public:	// Setter / Getter
 	/// <returns>指定インデックス座標のブロックの中心座標</returns>
 	Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
 private:
+	// マップチップデータ
 	MapChipData mapChipData_;
+
+	// 変更検知
+	bool isMapDataChanged_ = false;
+	MapChipData previousMapData_;
+
+	// マップブロックの配列
+	std::vector<std::vector<Block*>> blockArray_;
+
+	// 可変サイズのマップの大きさ
+	uint32_t width_ = 0;
+	uint32_t height_ = 0;
 };
 
