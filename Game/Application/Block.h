@@ -41,6 +41,11 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ブロックの生成
+	/// </summary>
+	static Block* CreateBlock(BlockType blockType, Vector3 position);
+
 public:	// Setter / Getter
 	/// <summary>
 	/// ブロックのSRTを取得

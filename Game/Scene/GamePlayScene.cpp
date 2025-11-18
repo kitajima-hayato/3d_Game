@@ -24,7 +24,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	camTargetPos_ = { 7.5f,-4.0f,0.0f };
+	camTargetPos_ = { 7.5f,4.0f,-20.0f };
 	// どれだけ引くか
 	const float pullBack = 30.0f;
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
@@ -45,15 +45,16 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("TestStage.csv");
+	map->Initialize();
 
 	
 	collision_ = std::make_unique<CollisionManager>();
 
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
-	player->Initialize();
-	player->SetTransitionTiming(TransitionTiming::OnDeath);
+	player->Initialize(Vector3{2.0f,2.0f,0.0f});
+	player->SetMap(map.get());
+	//player->SetTransitionTiming(TransitionTiming::OnDeath);
 
 	InitializeEnemy();
 
@@ -95,10 +96,10 @@ void GamePlayScene::Update()
 	/// マップの更新
 	map->Update();
 	  
-	player->BeginFrameHitReset();
+	//player->BeginFrameHitReset();
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
-	player->SetMapChipField(map.get());
+	//player->SetMapChipField(map.get());
 
 	/// プレイヤーの更新
 	player->Update();
@@ -119,7 +120,7 @@ void GamePlayScene::Update()
 void GamePlayScene::Draw()
 {
 	
-	backGround->Draw();
+	//backGround->Draw();
 
 	//sceneTransition->Draw();
 	/// マップの描画
@@ -159,7 +160,7 @@ void GamePlayScene::CheckCollision()
 
 	/// プレイヤー
 	if (player) {
-		collision_->AddCollider(player.get());
+		//collision_->AddCollider(player.get());
 	}
 
 	/// エネミー全種

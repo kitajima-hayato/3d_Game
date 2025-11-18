@@ -8,6 +8,7 @@ void Block::OnCollision(Collider* other)
 
 
 void Block::Initialize(BlockType blockType, Vector3 position) {
+
 	/// モデルの初期化
 	this->blockType = blockType;
 	blockModel = std::make_unique<Object3D>();
@@ -54,31 +55,30 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 
 void Block::Update() {
 	if (blockType == BlockType::Air) return;
-	if(blockType == BlockType::moveBlock){
-		 // イージング用時間の進行
-    if (moveRight_) {
-        moveTime_ += moveSpeed_;
-        if (moveTime_ > 1.0f) {
-            moveTime_ = 1.0f;
-            moveRight_ = false; // 右端に到達したら左へ
-        }
-    } else {
-        moveTime_ -= moveSpeed_;
-        if (moveTime_ < 0.0f) {
-            moveTime_ = 0.0f;
-            moveRight_ = true; // 左端に到達したら右へ
-        }
-    }
+	if (blockType == BlockType::moveBlock) {
+		if (moveRight_) {
+			moveTime_ += moveSpeed_;
+			if (moveTime_ > 1.0f) {
+				moveTime_ = 1.0f;
+				moveRight_ = false; // 右端に到達したら左へ
+			}
+		} else {
+			moveTime_ -= moveSpeed_;
+			if (moveTime_ < 0.0f) {
+				moveTime_ = 0.0f;
+				moveRight_ = true; // 左端に到達したら右へ
+			}
+		}
 
-    // ---- イージング関数（easeInOutSine） ----
-    // 0～1 → 0～1へ滑らかに補間
-    float eased = 0.5f - 0.5f * cosf(moveTime_ * 3.14159f);
+		// ---- イージング関数（easeInOutSine） ----
+		// 0～1 → 0～1へ滑らかに補間
+		float eased = 0.5f - 0.5f * cosf(moveTime_ * 3.14159f);
 
-    // -range ～ +range の範囲で往復
-    transform.translate.x = (eased * 2.0f - 1.0f) * moveRange_;
+		// -range ～ +range の範囲で往復
+		transform.translate.x = (eased * 2.0f - 1.0f) * moveRange_;
 
-    // モデルに反映
-    blockModel->SetTransform(transform);
+		// モデルに反映
+		blockModel->SetTransform(transform);
 	}
 	blockModel->Update();
 }
@@ -86,4 +86,11 @@ void Block::Update() {
 void Block::Draw() {
 	if (blockType == BlockType::Air) return;
 	blockModel->Draw();
+}
+
+Block* Block::CreateBlock(BlockType blockType, Vector3 position)
+{
+	Block* newBlock = new Block();
+	newBlock->Initialize(blockType, position);
+	return newBlock;
 }

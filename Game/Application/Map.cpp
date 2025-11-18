@@ -1,138 +1,292 @@
 #include "Map.h"
-#include "CsvLoader.h"
+#include "engine/bace/ImGuiManager.h"
+#include <algorithm>
 
-void Map::Initialize(std::string csvFilePath) {
-	/// csvファイルを読み込む
-	this->csvFilePath = csvFilePath;
-	CreateBlocksMap();
-}
 
-void Map::Update() {
-	for (auto& row : blocks) {
-		for (auto& block : row) {
-			if (block) {
-				block->Update();
-			}
-		}
+// ブロックタイプに応じた色を取得するヘルパー関数
+ImVec4 GetBlockColorByType(BlockType blockType) {
+	switch (blockType) {
+	case BlockType::Air:         return ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+	case BlockType::NormalBlock: return ImVec4(0.4f, 0.4f, 0.8f, 1.0f);
+	case BlockType::testBlock:   return ImVec4(0.8f, 0.4f, 0.4f, 1.0f);
+	case BlockType::kGoalUp:     return ImVec4(0.4f, 0.8f, 0.4f, 1.0f);
+	case BlockType::kGoalDown:   return ImVec4(0.4f, 0.8f, 0.8f, 1.0f);
+	case BlockType::breakBlock:  return ImVec4(0.8f, 0.8f, 0.4f, 1.0f);
+	case BlockType::moveBlock:   return ImVec4(0.8f, 0.4f, 0.8f, 1.0f);
+	case BlockType::sandBlock:   return ImVec4(0.7f, 0.6f, 0.3f, 1.0f);
+	default:                     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	}
 }
 
-void Map::Draw() {
-	for(auto& row : blocks) {
-		for (auto& block : row) {
-			if (block) {
-				block->Draw();
-			}
-		}
-	}
-}
 
-void Map::CreateBlocksMap()
+void Map::Initialize()
 {
-	/// CSVファイルからマップデータを読み込む
-	CsvLoader csvLoader;
-	mapData = csvLoader.LoadMapInt(this->csvFilePath);
-	/// 読み込んだデータをもとにブロックを生成する
-	/// マップの大きさを取得
-	const Vector3 initPos = { 0.0f,0.0f,0.0f };
-	const Vector3 blockSize = { 0.5f,0.5f,0.5f };
-	const size_t mapHeight = mapData.size();
-	const size_t mapWidth = mapData[0].size();
-	 
-	/// ブロック格納領域を確保
-	blocks.resize(mapHeight);
-	for (size_t y = 0; y < mapHeight; ++y) {
-		blocks[y].resize(mapWidth);
-	}
+	// マップデータの初期化
+	mapChipData_.mapData.resize(kMapHeight, std::vector<BlockType>(kMapWidth, BlockType::Air));
 
-	for (auto height = 0; height < mapHeight; ++height) {
-		for (auto width = 0; width < mapWidth; ++width) {
-			/// ブロックの位置を計算
-			Transform blockTransform;
-			blockTransform.translate = { static_cast<float>(width), static_cast<float>(-height), 20.0f };
-			blockTransform.rotate = { 0.0f,0.0f,0.0f };
-			blockTransform.scale = blockSize;
-			/// ブロックの種類を取得
-			int intBlockType = mapData[height][width];
-			/// 不正な値は止める
-			if (intBlockType < 0 ||
-				static_cast<int>(BlockType::Count) <= intBlockType) {
+	// マップデータの読み込み
+	LoadMapData("TestStage.csv");
+
+	// マップブロックの生成
+	GenerareMapBlock();
+
+	// マップデータの変更検知
+	previousMapData_ = mapChipData_;
+}
+
+
+void Map::Update()
+{
+	// マップの更新
+	for (std::vector <Block*>& row : blockArray_) {
+		for (Block* block : row) {
+			if (!block) {
 				continue;
 			}
-			/// BlockTypeに変換
-			BlockType blockType = static_cast<BlockType>(intBlockType);
-
-			std::unique_ptr<Block> block = std::make_unique<Block>();
-			block->Initialize(blockType,blockTransform.translate);
-			block->SetTransform(blockTransform);
-
-			/// ブロックを追加
-			blocks[height][width] = std::move(block);
-
+			block->Update();
 		}
 	}
-}
+#ifdef _DEBUG
+	// ImGuiによるデバッグ情報表示
 
-std::vector<Block*> Map::GetNearbyBlocks(const AABB& range) const
-{
-	std::vector<Block*> result;
+	ImGui::Begin("Map Info");
+	ImGui::Text("Map Width: %d", GetWidth());
+	ImGui::Text("Map Height: %d", GetHeight());
+	ImGui::End();
 
-	// 範囲チェック（整数座標を仮定）
-	int minX = static_cast<int>(range.min.x);
-	int maxX = static_cast<int>(range.max.x);
-	int minY = static_cast<int>(range.min.y);
-	int maxY = static_cast<int>(range.max.y);
+	// マップデータの編集　
+	ImGui::Begin("Map Editor");
 
-	for (int y = minY; y <= maxY; ++y) {
-		if (y < 0 || y >= static_cast<int>(blocks.size())) continue;
+	// 1. ブロックタイプ選択用のコンボ
+	static int currentTypeInt = 0; // 今ペイントするブロック
+	const char* blockTypeNames[] = {
+		"Air",
+		"NormalBlock",
+		"TestBlock",
+		"GoalUp",
+		"GoalDown",
+		"BreakBlock",
+		"MoveBlock",
+		"SandBlock",
+	};
 
-		for (int x = minX; x <= maxX; ++x) {
-			if (x < 0 || x >= static_cast<int>(blocks[y].size())) continue;
+	ImGui::Text("Paint Type:");
+	ImGui::SameLine();
+	ImGui::Combo("##PaintType",
+		&currentTypeInt,
+		blockTypeNames,
+		IM_ARRAYSIZE(blockTypeNames));
 
-			Block* block = blocks[y][x].get();
-			if (block && block->GetBlockType() != BlockType::Air) {
-				result.push_back(block);
+	// 選択中のブロックの色のプレビュー
+	ImGui::SameLine();
+	ImGui::Text("BlockColor:");
+	ImGui::SameLine();
+
+	// currentTypeInt をBlockTypeにキャストして色を取得
+	BlockType currentType = static_cast<BlockType>(currentTypeInt);
+	ImVec4 previewColor = GetBlockColorByType(currentType);
+
+	// 閲覧用の小さいボタンを表示 / 応答はなし
+	ImGui::PushStyleColor(ImGuiCol_Button, previewColor);
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, previewColor);
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, previewColor);
+	ImGui::Button("##PaintPreview", ImVec2(24.0f, 24.0f));
+	ImGui::PopStyleColor(3);
+
+	// ツールチップで種類名も出す
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetTooltip("%s", blockTypeNames[currentTypeInt]);
+	}
+
+	// 2. マップ本体のグリッド表示（スクロールできるように Child にする）
+	ImGui::Separator();
+	ImGui::Text("Map Grid");
+	ImGui::BeginChild("MapGrid", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+	const float cellSize = 20.0f; // 1マスのサイズ（お好みで）
+
+	for (uint32_t y = 0; y < GetHeight(); ++y) {
+		for (uint32_t x = 0; x < GetWidth(); ++x) {
+			BlockType& blockType = mapChipData_.mapData[y][x];
+
+			// 3. 色をブロックタイプで変えると見やすい
+			ImVec4 color = GetBlockColorByType(blockType);
+
+
+			ImGui::PushID(static_cast<int>(y * GetWidth() + x)); // ID被り防止
+			ImGui::PushStyleColor(ImGuiCol_Button, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(color.x + 0.1f, color.y + 0.1f, color.z + 0.1f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(color.x * 0.8f, color.y * 0.8f, color.z * 0.8f, 1.0f));
+
+			// ラベルは非表示 ("##cell") にして、ボタンだけ並べる
+			if (ImGui::Button("##cell", ImVec2(cellSize, cellSize))) {
+				blockType = static_cast<BlockType>(currentTypeInt);
+				isMapDataChanged_ = true;
+			}
+
+			// マウスを乗せた時に情報を出す
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetTooltip("(%u, %u)\n%s", x, y, blockTypeNames[static_cast<int>(blockType)]);
+			}
+
+			ImGui::PopStyleColor(3);
+			ImGui::PopID();
+
+			// 横に並べる
+			if (x < GetWidth() - 1) {
+				ImGui::SameLine();
 			}
 		}
 	}
 
-	return result;
+	ImGui::EndChild();
+	static char saveFileName[256] = "stage01.csv"; // 初期値はお好みで
+	ImGui::InputText("Save File", saveFileName, IM_ARRAYSIZE(saveFileName));
+
+	static std::string saveMessage;
+
+	if (ImGui::Button("Save CSV")) {
+		try {
+			// mapChipData_.mapData をそのまま渡す
+			CsvLoader::SaveMapBlockType(saveFileName, mapChipData_.mapData);
+			saveMessage = std::string("Saved: ") + saveFileName;
+		}
+		catch (const std::exception& e) {
+			saveMessage = std::string("Save Failed: ") + e.what();
+		}
+	}
+
+
+	if (!saveMessage.empty()) {
+		ImGui::Text("%s", saveMessage.c_str());
+	}
+
+
+	// 4. マップデータが変更された場合、マップブロックを再生成
+	if (isMapDataChanged_) {
+		GenerareMapBlock();
+		isMapDataChanged_ = false;
+	}
+
+	ImGui::End();
+
+
+#endif // _DEBUG
+
+}
+void Map::Draw()
+{
+	// マップの描画
+	for (std::vector <Block*>& row : blockArray_) {
+		for (Block* block : row) {
+			if (!block) {
+				continue;
+			}
+			block->Draw();
+		}
+	}
 }
 
-MapIndex Map::GetMapChipIndexSetByPosition(const Vector3& position)
+void Map::Finalize()
 {
-	/// 指定した位置にあるマップチップのインデックスを取得する
-	MapIndex index;
-	index.xIndex = static_cast<uint32_t>(position.x);
-	index.yIndex = static_cast<uint32_t>(-position.y);
-	return index;
+	// マップブロックの解放
+	for (std::vector <Block*>& row : blockArray_) {
+		for (Block* block : row) {
+			if (block) {
+				delete block;
+				block = nullptr;
+			}
+		}
+	}
 }
 
-BlockType Map::GetMapChipTypeByIndex(const MapIndex& index)
+void Map::GenerareMapBlock()
 {
-	if (mapData.empty() ||
-		index.yIndex >= mapData.size() ||
-		index.xIndex >= mapData[index.yIndex].size()) {
+	const uint32_t h = GetHeight();
+	const uint32_t w = GetWidth();
+
+	// ブロック配列を実サイズで作り直す
+	blockArray_.assign(h, std::vector<Block*>(w, nullptr));
+
+	for (uint32_t y = 0; y < h; ++y) {
+		for (uint32_t x = 0; x < w; ++x) {
+			const BlockType type = mapChipData_.mapData[y][x];
+			if (type == BlockType::Air) continue;
+
+			const Vector3 pos = GetMapChipPositionByIndex(x, y);
+			blockArray_[y][x] = Block::CreateBlock(type, pos);
+		}
+	}
+}
+
+void Map::LoadMapData(const char* filePath)
+{
+	// CSVファイルからマップデータを読み込む
+	CsvLoader csvLoader;
+	mapChipData_.mapData = csvLoader.LoadMapBlockType(filePath);
+}
+
+
+
+
+
+IndexSet Map::GetMapChipIndexSetByPosition(const Vector3& position)
+{
+	IndexSet indexSet{};
+
+	// 座標からインデックスを計算
+	float x = std::floor(position.x / kBlockWidth);
+	float y = std::floor((GetHeight() - 1) - (position.y / kBlockHeight));
+
+	// 座標がマップ外の場合は最大値を返す
+	int ix = static_cast<int>(x);
+	int iy = static_cast<int>(y);
+
+	// マップ外チェック / マップ外なら範囲外を示すインデックスを返す
+	if (ix < 0 || ix >= static_cast<int>(GetWidth()) ||
+		iy < 0 || iy >= static_cast<int>(GetHeight())) {
+		indexSet.xIndex = GetWidth();
+		indexSet.yIndex = GetHeight();
+		return indexSet;
+	}
+	// インデックスをセット
+	indexSet.xIndex = static_cast<uint32_t>(ix);
+	indexSet.yIndex = static_cast<uint32_t>(iy);
+
+	// インデックスを返す
+	return indexSet;
+}
+
+BlockType Map::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex)
+{
+	// マップ外チェック
+	uint32_t w = GetWidth();
+	uint32_t h = GetHeight();
+	// マップ外ならAirを返す
+	if (xIndex >= w || yIndex >= h) {
 		return BlockType::Air;
 	}
-	return static_cast<BlockType>(mapData[index.yIndex][index.xIndex]);
+	// 指定インデックスのマップチップの種類を返す
+	return mapChipData_.mapData[yIndex][xIndex];
 }
 
-Rect Map::GetRectByIndex(const MapIndex& index)
+
+Rect Map::GetRectByIndex(uint32_t xIndex, uint32_t yIndex)
 {
-	/// 指定したインデックスにあるマップチップの矩形情報を取得する
-	Vector3 center = GetMapChipPositionByIndex(index);
-	///  矩形情報を計算
-	Rect rect;
-	rect.left = center.x - kBlockWidth / 2.0f;
-	rect.right = center.x + kBlockWidth / 2.0f;
-	rect.top = center.y + kBlockHeight / 2.0f;
-	rect.bottom = center.y - kBlockHeight / 2.0f;
+	Vector3 center = GetMapChipPositionByIndex(xIndex, yIndex);
+	Rect rect{};
+	rect.left = center.x - (kBlockWidth / 2);
+	rect.right = center.x + (kBlockWidth / 2);
+	rect.bottom = center.y - (kBlockHeight / 2);
+	rect.top = center.y + (kBlockHeight / 2);
 	return rect;
 }
 
-Vector3 Map::GetMapChipPositionByIndex(const MapIndex& index)
+Vector3 Map::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex)
 {
-	return Vector3(kBlockWidth * index.xIndex, kBlockHeight * (kNumBlockVirtical - 1 - index.yIndex), 0);
-
+	const uint32_t h = GetHeight();
+	return Vector3(kBlockWidth * xIndex,
+		kBlockHeight * (h - 1 - yIndex),
+		0.0f);
 }
+

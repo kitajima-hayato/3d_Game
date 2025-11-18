@@ -132,9 +132,6 @@
     <ClCompile Include="Game\Application\ModelList.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Application\Map.cpp">
-      <Filter>Game\Application\Map</Filter>
-    </ClCompile>
     <ClCompile Include="engine\2d\RenderTexture.cpp">
       <Filter>engine\2d</Filter>
     </ClCompile>
@@ -147,14 +144,13 @@
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp">
       <Filter>engine\3d\SkyBox</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Application\Player.cpp">
-      <Filter>Game\Application\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Application\StageType.cpp">
       <Filter>Game\Application\Map</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
+    <ClCompile Include="Game\Application\Player.cpp" />
+    <ClCompile Include="Game\Application\Map.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -284,9 +280,6 @@
     <ClInclude Include="engine\3d\Object3D.h">
       <Filter>engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\Map.h">
-      <Filter>Game\Application\Map</Filter>
-    </ClInclude>
     <ClInclude Include="engine\2d\RenderTexture.h">
       <Filter>engine\2d</Filter>
     </ClInclude>
@@ -299,9 +292,6 @@
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h">
       <Filter>engine\3d\SkyBox</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\Player.h">
-      <Filter>Game\Application\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Application\StageType.h">
       <Filter>Game\Application\Map</Filter>
     </ClInclude>
@@ -310,6 +300,8 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
+    <ClInclude Include="Game\Application\Player.h" />
+    <ClInclude Include="Game\Application\Map.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

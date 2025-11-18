@@ -1,12 +1,24 @@
 #pragma once
-#include "Block.h"
-#include "Game/Collision/Collider.h"
+#include <vector>
+#include <memory>
 #include "BlockType.h"
-struct MapIndex {
+#include <MyMath.h>
+#include "Game/Application/Block.h"
+#include "Game/Application/CsvLoader.h"
+/// マップクラス
+
+/// マップチップデータ構造体
+struct MapChipData {
+	std::vector<std::vector<BlockType>> mapData;
+};
+
+/// インデックス構造体
+struct IndexSet {
 	uint32_t xIndex;
 	uint32_t yIndex;
 };
 
+/// 矩形構造体
 struct Rect {
 	float left;
 	float right;
@@ -14,79 +26,99 @@ struct Rect {
 	float top;
 };
 
-static inline const float kBlockWidth = 1.0f; // ブロックのサイズ
-static inline const float kBlockHeight = 1.0f; // ブロックのサイズ
-static inline const uint32_t kNumBlockVirtical = 30; // ブロックの縦の数
-static inline const uint32_t kNumBlockHorizontal = 100; // ブロックの横の数
-
-class CsvLoader;
 class Map
 {
 public:
+	// １ブロックの大きさ
+	static inline const float kBlockWidth = 1.0f;
+	static inline const float kBlockHeight = 1.0f;
+	//マップの大きさ
+	// 横
+	static inline const uint32_t kMapWidth = 100;
+	// 高さ
+	static inline const uint32_t kMapHeight = 20;
+
+	// 可変サイズのマップの大きさ
+	uint32_t GetWidth()const {
+		if (mapChipData_.mapData.empty()) { return 0; }
+		return (uint32_t)mapChipData_.mapData[0].size();
+	}
+	uint32_t GetHeight()const {
+		return (uint32_t)mapChipData_.mapData.size();
+	}
+public:
 	/// <summary>
-	/// 初期化処理
+	/// 初期化
 	/// </summary>
-	void Initialize(std::string csvFilePath);
+	void Initialize();
 
 	/// <summary>
-	/// 更新処理
-	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// 描画処理
+	/// 描画
 	/// </summary>
 	void Draw();
 
 	/// <summary>
-	/// 読み込んだマップデータを基にブロックを生成し配置する
+	/// 終了処理
 	/// </summary>
-	void CreateBlocksMap();
+	void Finalize();
 
 	/// <summary>
-	/// 指定した範囲内にあるブロックを取得する
+	/// マップブロック生成
 	/// </summary>
-	std::vector<Block*>GetNearbyBlocks(const AABB& range) const;
+	void GenerareMapBlock();
+
+	/// <summary>
+	/// マップデータの読み込み
+	/// </summary>
+	void LoadMapData(const char* filePath);
 
 
 public:	// Setter / Getter
 	/// <summary>
-	/// csvファイルのパスを設定する
+	/// 座標からマップチップのインデックスを取得
 	/// </summary>
-	void SetCsvFilePath(const std::string& path) { this->csvFilePath = path; }
+	/// <param name="position">取得したいマップのインデックス座標</param>
+	IndexSet GetMapChipIndexSetByPosition(const Vector3& position);
 
 	/// <summary>
-	/// 指定した位置にあるマップチップのインデックスを取得する
+	/// インデックスからマップチップの種類を取得
 	/// </summary>
-	MapIndex GetMapChipIndexSetByPosition(const Vector3& position);
+	/// <param name="xIndex/yIndex">取得したいマップの座標インデックス</param>
+	/// <returns>指定したインデックスのマップチップの種類</returns>
+	BlockType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
+
 
 	/// <summary>
-	/// 指定したインデックスにあるマップチップの種類を取得する
+	/// インデックスから矩形情報を取得
 	/// </summary>
-	BlockType GetMapChipTypeByIndex(const MapIndex& index);
+	/// <param name="xIndex/yIndex">インデックス座標</param>
+	/// <returns>指定インデックス座標のブロックの矩形情報</returns>
+	Rect GetRectByIndex(uint32_t xIndex, uint32_t yIndex);
 
 	/// <summary>
-	/// 指定したインデックスにあるマップチップの矩形情報を取得する
+	/// インデックスからマップチップの中心座標を取得
 	/// </summary>
-	Rect GetRectByIndex(const MapIndex& index);
-
-	/// <summary>
-	/// マップチップの位置の取得
-	/// </summary>
-	Vector3 GetMapChipPositionByIndex(const MapIndex& index);
-
+	/// <param name="xIndex/yIndex">インデックス座標</param>
+	/// <returns>指定インデックス座標のブロックの中心座標</returns>
+	Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
 private:
+	// マップチップデータ
+	MapChipData mapChipData_;
 
-	/// CSVファイルを読み込む
-	std::vector<std::vector<int>> mapData;
+	// 変更検知
+	bool isMapDataChanged_ = false;
+	MapChipData previousMapData_;
 
-	/// CSVファイルのパス
-	std::string csvFilePath;
-	/// ブロックのリスト
-	std::vector<std::vector<std::unique_ptr<Block>>> blocks;
+	// マップブロックの配列
+	std::vector<std::vector<Block*>> blockArray_;
 
-
-
-
-
+	// 可変サイズのマップの大きさ
+	uint32_t width_ = 0;
+	uint32_t height_ = 0;
 };
+
