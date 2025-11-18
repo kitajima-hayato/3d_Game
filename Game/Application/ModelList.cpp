@@ -30,6 +30,12 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("moveBlock.obj");
 	ModelManager::GetInstance()->LoadModel("sand.obj");
 
+	ModelManager::GetInstance()->LoadModel("goalUp.obj");
+	ModelManager::GetInstance()->LoadModel("goalDawn.obj");
+
+	ModelManager::GetInstance()->LoadModel("whiteBack.obj");
+
+
 	ModelManager::GetInstance()->LoadModel("Player.obj");
 	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
 }

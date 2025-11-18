@@ -9,6 +9,7 @@ void Player::Initialize(Vector3 position)
 	playerModel_ = std::make_unique<Object3D>();
 	playerModel_->Initialize();
 	playerModel_->SetTranslate(position);
+	playerModel_->SetRotate({ 0.0f,3.0f,0.0f });
 	playerModel_->SetModel("Player.obj");
 	SetDeathHeight(-1.0f);
 
@@ -137,8 +138,8 @@ void Player::Jump()
 		}
 	} else {
 		// 重力適応処理
-		velocity_.y += -status_.kGravity;
-		velocity_.y = (std::max)(velocity_.y, -status_.kMaxFallSpeed);
+		/*velocity_.y += -status_.kGravity;
+		velocity_.y = (std::max)(velocity_.y, -status_.kMaxFallSpeed);*/
 	}
 
 }
@@ -153,6 +154,13 @@ void Player::ImGui()
 	ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
 	ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
 	ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
+
+	// Player の回転の編集
+	ImGui::Text("Player Rotation");
+	Vector3 rotation = playerModel_->GetRotate();
+	if (ImGui::DragFloat3("Rotation", &rotation.x, 1.0f)) {
+		playerModel_->SetRotate(rotation);
+	}
 
 
 	ImGui::End();

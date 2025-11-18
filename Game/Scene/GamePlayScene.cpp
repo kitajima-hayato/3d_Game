@@ -3,6 +3,7 @@
 #include "engine/bace/ImGuiManager.h"
 #include "Game/Application/Player.h"
 #include "Game/Collision/CollisionManager.h"
+#include <Input.h>
 GamePlayScene::GamePlayScene()
 {
 }
@@ -52,7 +53,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
-	player->Initialize(Vector3{2.0f,2.0f,0.0f});
+	player->Initialize(Vector3{2.0f,1.0f,0.0f});
 	player->SetMap(map.get());
 	//player->SetTransitionTiming(TransitionTiming::OnDeath);
 
@@ -75,11 +76,61 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	backGround = std::make_unique<BackGround>();
 	backGround->Initialize();
 
+	clearSprite = std::make_unique<Sprite>();
+	clearSprite->Initialize("resources/clear.png");
+	clearSprite->SetPosition({ 400.0f,135.0f });
+	clearSprite->SetSize({ 500.0f,300.0f });
+	clearSprite->SetColor({ 1.0f,1.0f,1.0f,0.8f });
+
+	clearSprite2 = std::make_unique<Sprite>();
+	clearSprite2->Initialize("resources/oneMore.png");
+	clearSprite2->SetPosition({ 490.0f,385.0f });
+	clearSprite2->SetSize({ 300.0f,150.0f });
+	clearSprite2->SetColor({ 1.0f,1.0f,1.0f,0.8f });
+
+	clearSprite3 = std::make_unique<Sprite>();
+	clearSprite3->Initialize("resources/R.png");
+	clearSprite3->SetPosition({ 800.0f,430.0f });
+	clearSprite3->SetSize({ 70.0f,70.0f });
+	clearSprite3->SetColor({ 1.0f,1.0f,1.0f,0.8f });
+
+	clearBack = std::make_unique<Object3D>();
+	clearBack->Initialize();
+	clearBack->SetModel("whiteBack.obj");
+	clearBack->SetScale({0.1f,2.3f,4.0f});
+	clearBack->SetTranslate({ 7.3f,4.0f,-5.2f });
+	clearBack->SetRotate({ 0.0f,1.55f,0.0f });
+
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
+
+	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
+	// パーティクルエミッターの初期化
+	clearParticle_ = make_unique<ParticleEmitter>();
+	clearParticle_->SetTransform({ {0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f } });
+	clearParticle_->SetParticleName("Particle");
+
 }
 
 
 void GamePlayScene::Update()
 {
+	if(isClear_==false) {
+		// クリア条件
+		if (player->GetPosition().x >= 6.4f) {
+			isClear_ = true;
+		}
+	} 
+
+	// ゴールしているときRが押されたらフラグを戻してプレイヤーを初期位置へ
+	if (isClear_) {
+		if (Input::GetInstance()->PushKey(DIK_R)) {
+			isClear_ = false;
+			player->SetPosition({ 2.0f,1.0f,0.0f });
+		}
+	}
+	
+	clearParticle_->Update();
+
 	titleLogoObject->Update();
 
 	backGround->Update();
@@ -104,6 +155,12 @@ void GamePlayScene::Update()
 	/// プレイヤーの更新
 	player->Update();
 
+	// スプライトの更新
+	clearSprite->Update();
+	clearSprite2->Update();
+	clearSprite3->Update();
+	clearBack->Update();
+
 	
 
 
@@ -120,7 +177,7 @@ void GamePlayScene::Update()
 void GamePlayScene::Draw()
 {
 	
-	//backGround->Draw();
+	backGround->Draw();
 
 	//sceneTransition->Draw();
 	/// マップの描画
@@ -128,11 +185,20 @@ void GamePlayScene::Draw()
 	/// プレイヤーの描画
 	player->Draw();
 	/// タイトルロゴの描画
-	titleLogoObject->Draw();
+	//titleLogoObject->Draw();
 	/// 敵の描画
 	for (auto& enemy : enemies) {
-		enemy->Draw();
+		//enemy->Draw();
 	}
+	/// クリアスプライトの描画
+	if (isClear_) {
+		clearSprite->Draw();
+		clearSprite2->Draw();
+		clearSprite3->Draw();
+		clearBack->Draw();
+	}
+	ParticleManager::GetInstance()->Draw();
+	clearParticle_->Emit();
 }
 
 void GamePlayScene::InitializeEnemy()
@@ -257,6 +323,63 @@ void GamePlayScene::DrawImgui()
 		startPhase_ = StartCamPhase::DollyIn;
 		startTimer_ = 0.0f;
 	}
+
+	//// clear関連のimgui / スプライト２枚の調整とclearBackの調整
+	//ImGui::SeparatorText("Clear Settings");
+
+	//// ClearSprite
+	//{
+	//	Vector2 pos = clearSprite->GetPosition();
+	//	if (ImGui::DragFloat2("ClearSprite Position", &pos.x, 1.0f, 0.0f, 1920.0f)) {
+	//		clearSprite->SetPosition(pos);
+	//	}
+	//	Vector2 size = clearSprite->GetSize();
+	//	if (ImGui::DragFloat2("ClearSprite Size", &size.x, 1.0f, 0.0f, 1920.0f)) {
+	//		clearSprite->SetSize(size);
+	//	}
+	//}
+
+	//// ClearSprite2
+	//{
+	//	Vector2 pos2 = clearSprite2->GetPosition();
+	//	if (ImGui::DragFloat2("ClearSprite2 Position", &pos2.x, 1.0f, 0.0f, 1920.0f)) {
+	//		clearSprite2->SetPosition(pos2);
+	//	}
+	//	Vector2 size2 = clearSprite2->GetSize();
+	//	if (ImGui::DragFloat2("ClearSprite2 Size", &size2.x, 1.0f, 0.0f, 1920.0f)) {
+	//		clearSprite2->SetSize(size2);
+	//	}
+	//}
+
+	//// ClearSprite3
+	//{
+	//	Vector2 pos3 = clearSprite3->GetPosition();
+	//	if (ImGui::DragFloat2("ClearSprite3 Position", &pos3.x, 1.0f, 0.0f, 1920.0f)) {
+	//		clearSprite3->SetPosition(pos3);
+	//	}
+	//	Vector2 size3 = clearSprite3->GetSize();
+	//	if (ImGui::DragFloat2("ClearSprite3 Size", &size3.x, 1.0f, 0.0f, 1920.0f)) {
+	//		clearSprite3->SetSize(size3);
+	//	}
+	//}
+
+	//// clearBack
+	//{
+	//	Vector3 clearBackPos = clearBack->GetTranslate();
+	//	if (ImGui::DragFloat3("ClearBack Position", &clearBackPos.x, 0.1f, -100.0f, 100.0f)) {
+	//		clearBack->SetTranslate(clearBackPos);
+	//	}
+	//	Vector3 clearBackScale = clearBack->GetScale();
+	//	if (ImGui::DragFloat3("ClearBack Scale", &clearBackScale.x, 0.1f, 0.1f, 100.0f)) {
+	//		clearBack->SetScale(clearBackScale);
+	//	}
+	//	Vector3 clearBackRotate = clearBack->GetRotate();
+	//	if (ImGui::DragFloat3("ClearBack Rotate", &clearBackRotate.x, 0.1f, -180.0f, 180.0f)) {
+	//		clearBack->SetRotate(clearBackRotate);
+	//	}
+	//	
+	//}
+
 	ImGui::End();
 
 	camera->SetTranslate(cameraTransform.translate);

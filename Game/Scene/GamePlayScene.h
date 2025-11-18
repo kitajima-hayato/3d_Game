@@ -6,6 +6,7 @@
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
+#include <Game/Particle/ParticleEmitter.h>
 // 前方宣言
 class Map;
 class Player;
@@ -137,6 +138,16 @@ private:
 
 	// シーン遷移
 	std::unique_ptr<SceneTransition> sceneTransition;
+	
+	// クリアスプライト
+	std::unique_ptr<Sprite> clearSprite;
+	std::unique_ptr<Sprite> clearSprite2;
+	std::unique_ptr<Sprite> clearSprite3;
+	// クリアフラグ
+	bool isClear_ = false;
+	std::unique_ptr<Object3D> clearBack;
+
+	std::unique_ptr<ParticleEmitter> clearParticle_;
 
 };
 

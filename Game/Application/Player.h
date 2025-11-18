@@ -217,6 +217,15 @@ public:	/// Setter / Getter
 
 	// マップのセット
 	void SetMap(Map* map) { map_ = map; }
+
+	// ゴール判定の取得
+	bool IsGoal() const { return isGoal_; }
+
+	// 位置取得
+	Vector3 GetPosition() const { return playerModel_->GetTranslate(); }
+
+	// 座標の設定
+	void SetPosition(const Vector3& position) { playerModel_->SetTranslate(position); }
 private:	// メンバ変数
 	// プレイヤーステータス
 	PlayerStatus status_;

@@ -98,7 +98,7 @@ void BackGround::Initialize()
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 1.0f,60.0f,300.0f },
+		{ 1.0f,100.0f,300.0f },
 		{ 0.0f,-1.5f,0.0f },
 		{ 7.5f,0.0f,250.0f }
 	};
@@ -162,7 +162,7 @@ void BackGround::Draw()
 {
 	skyBack->Draw();
 	titleBackGround3->Draw();
-	titleBackGround3_2->Draw();
+	//titleBackGround3_2->Draw();
 	titleBackGround2->Draw();
 	titleBackGround2_2->Draw();
 	titleBackGround2_3->Draw();
