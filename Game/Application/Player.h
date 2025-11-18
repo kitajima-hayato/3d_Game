@@ -61,7 +61,7 @@ struct PlayerStatus {
 	// 速度減衰率
 	float kAttenuation = 0.2f;
 	// 最大速度
-	float kMaxSpeed = 2.0f;
+	float kMaxSpeed = 0.1f;
 
 	//ジャンプパラメータ
 	// 重力加速度
@@ -122,17 +122,10 @@ private:
 	/// </summary>
 	void Move();
 
-	/// <summary>
-	/// 右移動処理
-	/// @see Move
-	/// </summary>
-	void MoveRight();
-
-	/// <summary>
-	/// 左移動処理
-	/// @see Move
-	/// </summary>
-	void MoveLeft();
+	/// <sumary>
+	/// ジャンプ処理
+	/// </sumary>
+	void Jump();
 
 	/// <summary>
 	/// ImGui表示
@@ -144,6 +137,31 @@ private:
 	/// </summary>
 	void MapCollision(CollisionMapInfo& collisionInfo);
 
+	/// <sumary>
+	/// 天井衝突チェック
+	///　天井に衝突したら移動量を調整
+	///　</sumary>
+	void CellingCollisionMove(CollisionMapInfo& collisionInfo);
+
+	/// <sumary>
+	/// 床衝突チェック
+	/// 床に衝突したら移動量を調整
+	/// </sumary>
+	void LandingCollisionMove(CollisionMapInfo& collisionInfo);
+
+	/// <summary>
+	/// 壁衝突チェック
+	/// </summary>
+	/// <param name="collisionInfo"></param>
+	void WallCollisionMove(CollisionMapInfo& collisionInfo);
+
+	/// <summary>
+	/// 衝突マップ情報取得
+	/// </summary>
+	/// <param name="info"></param>
+	void PlayerCollisionMove(const CollisionMapInfo& info);
+
+
 	/// <summary>
 	/// 衝突マップ情報取得
 	/// </summary>
@@ -153,10 +171,10 @@ private:
 	/// <param name="offset"></param>
 	/// <param name="mooveCondition"></param>
 	void CollisionMapInfoDirection(
-		CollisionMapInfo& collisionInfo, 
-		CollisionType type, 
-		const std::array<Corner, 2>& checkCorners, 
-		const Vector3& offset, 
+		CollisionMapInfo& collisionInfo,
+		CollisionType type,
+		const std::array<Corner, 2>& checkCorners,
+		const Vector3& offset,
 		std::function<bool(const CollisionMapInfo&)>mooveCondition);
 
 	/// <summary>
@@ -173,14 +191,32 @@ private:
 	bool CheckCollisionPoints(const std::array<Vector3, 2>& posList, CollisionType type, CollisionMapInfo& collisionInfo);
 
 
+	/// <summary>
+	/// 当たり判定ブロックテーブル
+	/// </summary>
+	/// <param name="type">指定のブロックは判定を取るか</param>
+	/// <returns>当たっているかいないか</returns>
 	bool IsHitBlockTable(BlockType type);
 
+	/// <summary>
+	/// ゴールブロック当たり判定テーブル
+	/// </summary>
+	/// <param name="type">ゴール判定のあるブロック</param>
+	/// <returns>ゴール判定のあるブロックかどうか</returns>
 	bool IsHitGoalBlockTable(BlockType type);
 
+	/// <summary>
+	/// デバッグ用プレイヤー死亡時リセット
+	/// </summary>
+	void DebugPlayerReset();
 
-public:
+
+public:	/// Setter / Getter
+	// 死亡判定の高さを設定
 	void SetDeathHeight(float deathHeight) { deathHeight_ = deathHeight; }
 
+	// マップのセット
+	void SetMap(Map* map) { map_ = map; }
 private:	// メンバ変数
 	// プレイヤーステータス
 	PlayerStatus status_;
@@ -200,6 +236,11 @@ private:	// メンバ変数
 	Map* map_ = nullptr;
 
 	bool isGoal_ = false;
+
+	// ジャンプ
+	bool onGround_ = true;
+
+
 
 };
 

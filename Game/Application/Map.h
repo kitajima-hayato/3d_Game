@@ -34,15 +34,18 @@ public:
 	static inline const float kBlockHeight = 1.0f;
 	//マップの大きさ
 	// 横
-	static inline const uint32_t kMapWidth = 100;	
+	static inline const uint32_t kMapWidth = 100;
 	// 高さ
-	static inline const uint32_t kMapHeight = 20;	
+	static inline const uint32_t kMapHeight = 20;
 
 	// 可変サイズのマップの大きさ
-	uint32_t GetWidth() const { return mapChipData_.mapData.empty() ? 0u : (uint32_t)mapChipData_.mapData[0].size(); }
-
-	uint32_t GetHeight() const { return (uint32_t)mapChipData_.mapData.size(); }
-
+	uint32_t GetWidth()const {
+		if (mapChipData_.mapData.empty()) { return 0; }
+		return (uint32_t)mapChipData_.mapData[0].size();
+	}
+	uint32_t GetHeight()const {
+		return (uint32_t)mapChipData_.mapData.size();
+	}
 public:
 	/// <summary>
 	/// 初期化
@@ -88,7 +91,7 @@ public:	// Setter / Getter
 	/// <param name="xIndex/yIndex">取得したいマップの座標インデックス</param>
 	/// <returns>指定したインデックスのマップチップの種類</returns>
 	BlockType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
-	
+
 
 	/// <summary>
 	/// インデックスから矩形情報を取得

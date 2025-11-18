@@ -8,6 +8,7 @@ void Block::OnCollision(Collider* other)
 
 
 void Block::Initialize(BlockType blockType, Vector3 position) {
+
 	/// モデルの初期化
 	this->blockType = blockType;
 	blockModel = std::make_unique<Object3D>();

@@ -7,7 +7,7 @@
 
 class CsvLoader
 {
-	public:
+public:
 	CsvLoader() = default;
 	~CsvLoader() = default;
 	/// <summary>
@@ -18,6 +18,11 @@ class CsvLoader
 	std::vector<std::vector<int>> LoadMapInt(const std::string& filePath);
 	std::vector<std::vector<BlockType>> LoadMapBlockType(const std::string& filePath);
 
+	/// <summary>
+	/// 現在のマップデータの保存
+	/// </summary>
+	static void SaveMapBlockType(const std::string& folePath,
+		const std::vector<std::vector<BlockType>>& mapData);
 private:
 	std::string frontFilePath = "resources/MapData/";
 

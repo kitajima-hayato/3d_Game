@@ -24,7 +24,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	camTargetPos_ = { 7.5f,-4.0f,0.0f };
+	camTargetPos_ = { 7.5f,4.0f,-20.0f };
 	// どれだけ引くか
 	const float pullBack = 30.0f;
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
@@ -52,7 +52,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
-	player->Initialize(Vector3{2.0f,-5.0f,-20.0f});
+	player->Initialize(Vector3{2.0f,2.0f,0.0f});
+	player->SetMap(map.get());
 	//player->SetTransitionTiming(TransitionTiming::OnDeath);
 
 	InitializeEnemy();
