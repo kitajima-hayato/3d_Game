@@ -1,6 +1,8 @@
 #include "GamePlayScene.h"
 #include "Game/Application/Map.h"
+#ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
+#endif
 #include "Game/Application/Player.h"
 #include "Game/Collision/CollisionManager.h"
 GamePlayScene::GamePlayScene()
@@ -238,7 +240,7 @@ void GamePlayScene::Finalize()
 
 void GamePlayScene::DrawImgui()
 {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
 	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
 	ImGui::SeparatorText("Start Cam Params");

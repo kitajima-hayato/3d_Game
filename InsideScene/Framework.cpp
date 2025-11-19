@@ -19,7 +19,7 @@ void Framework::Initialize()
 	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
 
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	// ImGuiの初期化
 	imGui = make_unique<ImGuiManager>();
 	imGui->Initialize(winAPI.get(), dxCommon.get());
@@ -79,7 +79,8 @@ void Framework::Update()
 	}
 	
 	
-#ifdef _DEBUG
+#ifdef USE_IMGUI
+	// ImGuiによるデバッグ情報表示
 
 	ImGui::Begin("Camera Settings");
 	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);

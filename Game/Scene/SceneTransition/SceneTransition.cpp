@@ -1,5 +1,7 @@
 #include "SceneTransition.h"
+#ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
+#endif
 #include "engine/2d/SpriteCommon.h"
 #include "Input.h"
 
@@ -176,7 +178,7 @@ void SceneTransition::Draw()
 
 void SceneTransition::Imgui()
 {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui::Begin("SceneTransition Debug");
 
 	ImGui::Text("=== 状態 ===");
