@@ -163,8 +163,8 @@ void TitleScene::Update()
 
 	//levelData->Update();
 	// プレイヤーを回転
-	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
-	playerObject->SetTransform(playerTransform);
+	// playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
+	//playerObject->SetTransform(playerTransform);
 	playerObject->Update();
 	
 
@@ -255,13 +255,14 @@ void TitleScene::LoadSprite()
 void TitleScene::DrawImgui() {
 #ifdef USE_IMGUI
 
-	ImGui::Begin("titleLogo");
+	ImGui::Begin("playerObject");
 
-	ImGui::Text("Transform");
-	ImGui::DragFloat3("Scalea", &titleLogoTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatea", &titleLogoTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatea", &titleLogoTransform.translate.x, 0.1f);
-	titleLogo->SetTransform(titleLogoTransform);
+	Transform pTransform = playerObject->GetTransform();
+	ImGui::DragFloat3("Scale", &pTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &pTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translate", &pTransform.translate.x, 0.1f);
+	
+	playerObject->SetTransform(pTransform);
 
 	ImGui::End();
 

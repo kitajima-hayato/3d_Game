@@ -261,7 +261,6 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 				isGoal_ = true;
 			}
 
-
 			// どちらの点も当たっていなかったら床に衝突していないとする
 			if (!hit) {
 				onGround_ = false;

@@ -81,7 +81,7 @@ struct PlayerStatus {
 	// 当たり判定の余裕
 	float kBlank = 2.0f;
 	// 微小値
-	float kEpsilon = 0.1f;
+	float kEpsilon = 0.05f;
 
 	//減衰パラメーター
 	// 着地時の減衰率
@@ -114,7 +114,9 @@ public:
 	void Draw();
 
 private:
+	/// <summary>
 	/// プレイヤーの挙動更新統括 / 判定 / 移動 / その他
+	/// </summary>
 	void UpdateBehavior();
 
 	/// <summary>
@@ -224,7 +226,7 @@ private:	// メンバ変数
 	Vector3 velocity_ = {};
 
 	// 死亡判定の高さ / 画面外に出たら死亡判定とする
-	float deathHeight_ = -10.0f;
+	float deathHeight_;
 
 	// プレイヤーのモデル
 	std::unique_ptr<Object3D> playerModel_ = nullptr;
@@ -234,7 +236,7 @@ private:	// メンバ変数
 
 	// マップ
 	Map* map_ = nullptr;
-
+	// ゴールフラグ
 	bool isGoal_ = false;
 
 	// ジャンプ
