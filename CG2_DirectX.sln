@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CG2_DirectX", "CG2_DirectX.vcxproj", "{EA3995FC-4F43-4035-9F99-2E0E860D9B4A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3615D1D0-F58B-48E5-99DA-7C49489F3374} = {3615D1D0-F58B-48E5-99DA-7C49489F3374}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{E8CE8A7B-7851-4389-A325-20BF9767B828}"
 	ProjectSection(SolutionItems) = preProject
