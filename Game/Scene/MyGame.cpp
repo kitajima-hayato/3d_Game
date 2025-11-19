@@ -23,12 +23,12 @@ void MyGame::Initialize()
 
 void MyGame::Update()
 {
-#ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
+#ifdef USE_IMGUI // デバッグ時のみ有効ImGuiの処理
 	imGui->Begin(); 
 #endif 
 	Framework::Update();
 	skyBox->Update();
-#ifdef _DEBUG // デバッグ時のみ有効ImGuiの処理
+#ifdef USE_IMGUI // デバッグ時のみ有効ImGuiの処理
 	imGui->End();
 #endif
 
@@ -57,7 +57,7 @@ void MyGame::Draw()
 	
 	Framework::Draw();
 	
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	// ImGuiの描画
 	imGui->Draw();
 #endif
@@ -105,7 +105,7 @@ void MyGame::Finalize()
 {
 	
 #pragma region  解放処理
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	// ImGuiの終了処理
 	imGui->Finalize();
 #endif

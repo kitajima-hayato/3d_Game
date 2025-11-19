@@ -1,5 +1,7 @@
 #include "LevelLoader.h"
+#ifdef USE_IMGUI
 #include "ImguiManager.h"
+#endif
 #include "ModelManager.h"
 void LevelLoader::Load(const std::string& fileName)
 {
@@ -152,7 +154,7 @@ void LevelLoader::Update()
 {
 	for (auto& object : objects) {
 		if (object) {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 			// ImGuiで座標変更UIを表示
 			ImGui::Begin("Object Transform");
 
