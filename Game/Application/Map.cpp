@@ -1,8 +1,10 @@
 #include "Map.h"
+#ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
+#endif
 #include <algorithm>
 
-
+#ifdef USE_IMGUI
 // ブロックタイプに応じた色を取得するヘルパー関数
 ImVec4 GetBlockColorByType(BlockType blockType) {
 	switch (blockType) {
@@ -17,7 +19,7 @@ ImVec4 GetBlockColorByType(BlockType blockType) {
 	default:                     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	}
 }
-
+#endif
 
 void Map::Initialize()
 {
@@ -46,7 +48,7 @@ void Map::Update()
 			block->Update();
 		}
 	}
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	// ImGuiによるデバッグ情報表示
 
 	ImGui::Begin("Map Info");

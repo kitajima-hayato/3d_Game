@@ -1,6 +1,8 @@
 #pragma once
+#ifdef USE_IMGUI
 #include"externals/imgui/imgui_impl_dx12.h"
 #include"externals/imgui/imgui_impl_win32.h"
+#endif
 #include"externals/DirectXTex/DirectXTex.h"
 #include"externals/DirectXTex/d3dx12.h"
 #include<vector>
@@ -23,7 +25,7 @@
 #include "ModelManager.h"
 #include "srvManager.h"
 #include "InsideScene/Framework.h"
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 #include "ImGuiManager.h"
 #endif
 #include "GamePlayScene.h"

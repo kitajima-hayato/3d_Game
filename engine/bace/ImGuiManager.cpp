@@ -2,7 +2,7 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 
-
+#ifdef USE_IMGUI
 void ImGuiManager::Initialize(WinAPI* winAPI, DirectXCommon* dxCommon)
 {
 	// 引数のnullptrチェック
@@ -76,3 +76,5 @@ void ImGuiManager::Draw()
 	// ImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
 }
+
+#endif

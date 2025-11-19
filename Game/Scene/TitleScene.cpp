@@ -137,7 +137,7 @@ void TitleScene::Update()
 	emitterRotate,
 	emitterTranslate
 		});*/
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	DrawImgui();
 #endif
 
@@ -253,7 +253,7 @@ void TitleScene::LoadSprite()
 }
 
 void TitleScene::DrawImgui() {
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("titleLogo");
 

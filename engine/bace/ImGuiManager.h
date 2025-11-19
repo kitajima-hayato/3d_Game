@@ -1,7 +1,8 @@
 #pragma once
 #include <d3d12.h>
-
+#ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
+#endif
 #include "engine/bace/WinAPI.h" 
 #include "engine/bace/DirectXCommon.h"
 
@@ -17,7 +18,7 @@ class ImGuiManager
 {
 
 public:
-	
+#ifdef USE_IMGUI
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -42,7 +43,7 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
-
+#endif
 private:
 	DirectXCommon* dxCommon_ = nullptr;
 	

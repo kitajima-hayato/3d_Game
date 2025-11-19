@@ -11,7 +11,9 @@
 #include "Object3D.h"
 #include "Object3DCommon.h"
 #include "ModelManager.h"
+#ifdef USE_IMGUI
 #include "ImGuiManager.h"
+#endif
 #include "Audio.h"
 #include "SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
@@ -68,7 +70,7 @@ protected:// Initialize関連
 	// DirectX共通部
 	std::unique_ptr<DirectXCommon> dxCommon;
 	// ImGui
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	std::unique_ptr<ImGuiManager> imGui;
 #endif
 	// SRVマネージャー

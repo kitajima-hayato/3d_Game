@@ -1,7 +1,9 @@
 #include "Player.h"
 #include <algorithm>
 #include <Input.h>
+#ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
+#endif
 #include <Logger.h>
 
 void Player::Initialize(Vector3 position)
@@ -20,9 +22,9 @@ void Player::Update()
 	// プレイヤーの挙動更新
 	UpdateBehavior();
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui();
-#endif // _DEBUG
+#endif 
 	// モデルの更新
 	playerModel_->Update();
 }
@@ -145,7 +147,7 @@ void Player::Jump()
 
 void Player::ImGui()
 {
-
+#ifdef USE_IMGUI
 	ImGui::Begin("Player Info");
 	Vector3 pos = playerModel_->GetTranslate();
 	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
@@ -156,6 +158,7 @@ void Player::ImGui()
 
 
 	ImGui::End();
+#endif
 }
 
 void Player::MapCollision(CollisionMapInfo& collisionInfo)
@@ -340,7 +343,7 @@ bool Player::CheckCollisionPoints(const std::array<Vector3, 2>& posList, Collisi
 {
 	// 当たり判定フラグ
 	bool isHit = false;
-	
+
 	for (const auto& pos : posList) {
 		// 判定を行うマップチップのインデックスを取得
 		IndexSet index = map_->GetMapChipIndexSetByPosition(pos);
