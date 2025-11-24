@@ -120,5 +120,8 @@ private:
 	// 可変サイズのマップの大きさ
 	uint32_t width_ = 0;
 	uint32_t height_ = 0;
+
+	// ブロックを少しずらす
+	float blockOffset_ = 0.5f;
 };
 

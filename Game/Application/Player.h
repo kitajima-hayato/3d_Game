@@ -219,6 +219,10 @@ public:	/// Setter / Getter
 
 	// マップのセット
 	void SetMap(Map* map) { map_ = map; }
+
+	// プレイヤーの位置情報取得
+	const Vector3 GetTranslate()const { return playerModel_->GetTranslate(); }
+
 private:	// メンバ変数
 	// プレイヤーステータス
 	PlayerStatus status_;
