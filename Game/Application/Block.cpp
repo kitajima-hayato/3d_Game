@@ -42,6 +42,12 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::sandBlock:
 		blockModel->SetModel("sand.obj");
 		break;
+	case BlockType::kGoalUp:
+		blockModel->SetModel("GoalUp.obj");
+		break;
+	case BlockType::kGoalDown:
+		blockModel->SetModel("GoalDown.obj");
+		break;
 	default:
 		blockModel->SetModel("null.obj");
 		break;

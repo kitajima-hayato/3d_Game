@@ -6,6 +6,7 @@
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
+#include "Game/Camera/CameraController.h"
 // 前方宣言
 class Map;
 class Player;
@@ -138,5 +139,10 @@ private:
 	// シーン遷移
 	std::unique_ptr<SceneTransition> sceneTransition;
 
+	// フォローカメラ
+	std::unique_ptr<CameraController> cameraController_;
+
+	// ステージ開始演出フラグ
+	bool stageStartEventFlag_ = true;
 };
 

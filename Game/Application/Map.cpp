@@ -215,7 +215,9 @@ void Map::GenerareMapBlock()
 			const BlockType type = mapChipData_.mapData[y][x];
 			if (type == BlockType::Air) continue;
 
-			const Vector3 pos = GetMapChipPositionByIndex(x, y);
+			Vector3 pos = GetMapChipPositionByIndex(x, y);
+			pos.x += blockOffset_;
+			pos.y -= blockOffset_;
 			blockArray_[y][x] = Block::CreateBlock(type, pos);
 		}
 	}

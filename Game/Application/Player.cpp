@@ -151,6 +151,7 @@ void Player::ImGui()
 	ImGui::Begin("Player Info");
 	Vector3 pos = playerModel_->GetTranslate();
 	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+	// ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", playerModel_->GetRotate().x, playerModel_->GetRotate().y, playerModel_->GetRotate().z);
 	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
 	ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
 	ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
@@ -260,7 +261,6 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			if (IsHitGoalBlockTable(blockType)) {
 				isGoal_ = true;
 			}
-
 
 			// どちらの点も当たっていなかったら床に衝突していないとする
 			if (!hit) {

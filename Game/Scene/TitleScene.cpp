@@ -56,7 +56,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	playerObject->SetModel("Player.obj");
 	playerTransform = {
 		{ 1.0f,1.0f,1.0f },
-		{ 0.0f,3.0f,0.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 1.0f,-7.0f,20.0f }
 	};
 	playerObject->SetTransform(playerTransform);
@@ -74,7 +74,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	titleLogo->SetTransform(titleLogoTransform);
 
 
-	
+
 
 	//sceneTransition = std::make_unique<SceneTransition>();
 	//sceneTransition->Initialize();
@@ -124,10 +124,10 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
-	
 
 
-	
+
+
 	//sceneTransition->Update();
 
 
@@ -166,7 +166,7 @@ void TitleScene::Update()
 	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
 	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
-	
+
 
 	//  Rainbow回転（ここを追加）
 	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
@@ -198,7 +198,7 @@ void TitleScene::Draw()
 	//levelData->Draw();
 	playerObject->Draw();
 	//Rainbow->Draw();
-	
+
 
 
 	// パーティクルの描画
@@ -255,13 +255,14 @@ void TitleScene::LoadSprite()
 void TitleScene::DrawImgui() {
 #ifdef USE_IMGUI
 
-	ImGui::Begin("titleLogo");
+	ImGui::Begin("playerObject");
 
-	ImGui::Text("Transform");
-	ImGui::DragFloat3("Scalea", &titleLogoTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatea", &titleLogoTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatea", &titleLogoTransform.translate.x, 0.1f);
-	titleLogo->SetTransform(titleLogoTransform);
+	Transform pTransform = playerObject->GetTransform();
+	ImGui::DragFloat3("Scale", &pTransform.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &pTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Translate", &pTransform.translate.x, 0.1f);
+
+	playerObject->SetTransform(pTransform);
 
 	ImGui::End();
 
