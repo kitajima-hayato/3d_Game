@@ -90,39 +90,31 @@ void Player::Move()
 			}
 			acceleration.x += status_.kAcceleration;
 
+			// 左になびくパーティクル
+			moveLeft_ = false;
+			moveRight_ = true;
+			playerModel_->SetRotate({ 0.0f,0.0f,0.0f });
 		} else if (!DIK_D_ && DIK_A_) {
 			if (velocity_.x > 0.0f) {
 				velocity_.x *= (1.0f - status_.kAttenuation);
 			}
 			acceleration.x -= status_.kAcceleration;
+
+			// 右になびくパーティクル
+			moveLeft_ = true;
+			moveRight_ = false;
+			playerModel_->SetRotate({ 0.0f,3.0f,0.0f });
 		}
 		velocity_.x += acceleration.x;
 		velocity_.x = std::clamp(velocity_.x, -status_.kMaxSpeed, status_.kMaxSpeed);
 
 	} else {
-		//// 入力が無いときは減速(0に近づける)
-		//if (velocity_.x > 0.0f) {
-		//	velocity_.x -= status_.kAttenuation;
-		//	if (velocity_.x < 0.0f) {
-		//		velocity_.x = 0.0f;
-		//	}
-		//} else if (velocity_.x < 0.0f) {
-		//	velocity_.x += status_.kAttenuation;
-		//	if (velocity_.x > 0.0f) {
-		//		velocity_.x = 0.0f;
-		//	}
-		//}
-
 		velocity_.x *= (1.0f - status_.kAttenuation);
 
+		// 停止したらパーティクルは止める
+		moveLeft_ = false;
+		moveRight_ = false;
 	}
-
-	//// 速度反映
-	//Vector3 pos = playerModel_->GetTranslate();
-	//pos.x += velocity_.x;
-	//playerModel_->SetTranslate(pos);
-
-
 }
 
 
@@ -151,7 +143,10 @@ void Player::ImGui()
 	ImGui::Begin("Player Info");
 	Vector3 pos = playerModel_->GetTranslate();
 	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-	// ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", playerModel_->GetRotate().x, playerModel_->GetRotate().y, playerModel_->GetRotate().z);
+	// 変更できるようにする
+	Vector3 rot = playerModel_->GetRotate();
+	ImGui::DragFloat3("Rotation", &rot.x, 0.1f);
+	playerModel_->SetRotate(rot);
 	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
 	ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
 	ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");

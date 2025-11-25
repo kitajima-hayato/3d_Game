@@ -39,6 +39,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラに反映
 	camera->SetTranslate(cameraTransform.translate);
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
+	ParticleManager::GetInstance()->SetCamera(camera.get());
 
 	// スタート演出の開始
 	startPhase_ = StartCamPhase::DollyIn;
@@ -80,16 +81,28 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraController_ = std::make_unique<CameraController>();
 	cameraController_->Initialize();
 
+	ParticleManager::GetInstance()->CreateParticleGroup(
+		"PlayerDust", "resources/monsterball.png");
+
+
+	playerEmitter_ = new ParticleEmitter();
+	playerEmitter_->SetParticleName("PlayerDust");
+	playerEmitter_->SetTlanslate(player->GetTranslate());
+	playerEmitter_->SetIsRight(true); 
+	playerOffset_ = { 0.0f,0.0f,0.0f };
+
+	
 }
 
 
 void GamePlayScene::Update()
 {
+	const float dt = 1.0f / 60.0f;
+
 	titleLogoObject->Update();
 
 	backGround->Update();
 
-	const float dt = 1.0f / 60.0f;
 
 	/// カメラの更新
 	if (stageStartEventFlag_) {
@@ -101,6 +114,7 @@ void GamePlayScene::Update()
 	
 
 	//sceneTransition->Update();
+
 	/// マップの更新
 	map->Update();
 	  
@@ -111,6 +125,35 @@ void GamePlayScene::Update()
 	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
 	player->Update();
+	// パーティクルエミッターの更新
+	playerEmitter_->Update();
+
+	// パーティクルエミッターの更新
+	if (player->GetMoveDirectionRight()) {
+		// 発生位置の設定
+		playerOffset_ = { -0.3f,0.0f,0.0f };
+		// プレイヤーの位置からオフセット分ずらした位置に設定
+		Vector3 particlePos = player->GetTranslate() + playerOffset_;
+		playerEmitter_->SetTlanslate(particlePos);
+		// 右向き設定
+		playerEmitter_->SetIsRight(false);
+		// パーティクル発生
+		//playerEmitter_->PlayerEmit();
+		
+	}
+	// 左移動
+	if (player->GetMoveDirectionLeft()) {
+		// 発生位置の設定
+		playerOffset_ = { 0.3f,0.0f,0.0f };
+		// プレイヤーの位置からオフセット分ずらした位置に設定
+		Vector3 particlePos = player->GetTranslate() + playerOffset_;
+		playerEmitter_->SetTlanslate(particlePos);
+		// 左向き設定
+		playerEmitter_->SetIsRight(true);
+		// パーティクル発生
+		//playerEmitter_->PlayerEmit();
+	}
+
 	if (stageStartEventFlag_ == false)
 	{
 		cameraController_->SetCameraPosition(cameraTransform.translate);
@@ -132,8 +175,11 @@ void GamePlayScene::Update()
 
 void GamePlayScene::Draw()
 {
+	backGround->Draw();
+	ParticleManager::GetInstance()->Draw();
 	
-	//backGround->Draw();
+	// パーティクル発生
+	playerEmitter_->PlayerEmit();
 
 	//sceneTransition->Draw();
 	/// マップの描画
@@ -141,10 +187,10 @@ void GamePlayScene::Draw()
 	/// プレイヤーの描画
 	player->Draw();
 	/// タイトルロゴの描画
-	titleLogoObject->Draw();
+	//titleLogoObject->Draw();
 	/// 敵の描画
 	for (auto& enemy : enemies) {
-		enemy->Draw();
+		//enemy->Draw();
 	}
 }
 
@@ -248,6 +294,8 @@ void GamePlayScene::Finalize()
 	/// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
 
+	delete playerEmitter_;
+
 
 }
 
@@ -277,6 +325,17 @@ void GamePlayScene::DrawImgui()
 
 	camera->SetTranslate(cameraTransform.translate);
 	camera->SetRotate(cameraTransform.rotate);
+
+	// パーティクルのImGui
+	ImGui::Begin("Particle Emitter / GamePlayScene");
+	Vector3 emitterTranslate = playerEmitter_->GetTranslate();
+	ImGui::DragFloat3("Particle Translate", &emitterTranslate.x, 0.1f);
+	playerEmitter_->SetTlanslate(emitterTranslate);
+	Vector3 emitterRotate = playerEmitter_->GetRotate();
+	ImGui::DragFloat3("Particle Scale", &emitterRotate.x, 0.1f);
+	playerEmitter_->SetRotate(emitterRotate);
+	ImGui::End();
+
 #endif
 	
 }

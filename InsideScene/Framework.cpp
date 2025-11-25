@@ -82,13 +82,13 @@ void Framework::Update()
 #ifdef USE_IMGUI
 	// ImGuiによるデバッグ情報表示
 
-	ImGui::Begin("Camera Settings");
+	/*ImGui::Begin("Camera Settings");
 	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
 	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
 	ImGui::End();
 	camera->SetTranslate(cameraTransform.translate);
 
-	camera->SetRotate(cameraTransform.rotate);
+	camera->SetRotate(cameraTransform.rotate);*/
 
 #endif 
 

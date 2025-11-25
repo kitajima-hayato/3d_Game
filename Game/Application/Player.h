@@ -223,6 +223,11 @@ public:	/// Setter / Getter
 	// プレイヤーの位置情報取得
 	const Vector3 GetTranslate()const { return playerModel_->GetTranslate(); }
 
+	// プレイヤー移動方向の取得
+	bool GetMoveDirectionRight()const { return moveRight_; }
+	bool GetMoveDirectionLeft()const { return moveLeft_; }
+
+
 private:	// メンバ変数
 	// プレイヤーステータス
 	PlayerStatus status_;
@@ -246,7 +251,9 @@ private:	// メンバ変数
 	// ジャンプ
 	bool onGround_ = true;
 
-
+	// 移動方向フラグ
+	bool moveRight_ = false;
+	bool moveLeft_ = false;
 
 };
 

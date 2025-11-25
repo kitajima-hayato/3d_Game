@@ -98,7 +98,7 @@ void BackGround::Initialize()
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 1.0f,60.0f,300.0f },
+		{ 1.0f,100.0f,300.0f },
 		{ 0.0f,-1.5f,0.0f },
 		{ 7.5f,0.0f,250.0f }
 	};

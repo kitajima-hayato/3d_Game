@@ -24,7 +24,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("soil.obj");
 	/// GamePlayScene
 	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
-	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
+	ModelManager::GetInstance()->LoadModel("Normal.obj");
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
 	ModelManager::GetInstance()->LoadModel("breakBlock.obj");
 	ModelManager::GetInstance()->LoadModel("moveBlock.obj");

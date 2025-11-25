@@ -147,6 +147,10 @@ public:
 	/// <param name="count"></param>
 	void EffectEmit(const std::string& name, const Vector3& position, uint32_t count);
 
+	/// <summary>
+	/// エフェクトの発生(移動エフェクト)
+	/// </summary>
+	void PlayerMoveEmit(const std::string& name, const Vector3& position, uint32_t count, bool isRight);
 
 	/// <summary>
 	/// パーティクル(通常)生成
@@ -157,6 +161,12 @@ public:
 	/// プリミティブエフェクト生成
 	/// </summary>
 	Particle MakePrimitiveEffect(std::mt19937& randomEngine, const Vector3& translate);
+	/// <summary>
+	/// Moveエフェクト生成
+	/// </summary>
+	Particle MakeMoveEffect(std::mt19937& randomEngine, const Vector3& translate,bool isRight);
+
+
 	/// <summary>
 	/// Ringエフェクト
 	/// </summary>
@@ -193,6 +203,11 @@ public:
 	/// </summary>
 	void DrawImgui();
 
+	
+	/// <summary>
+	/// カメラセット
+	/// </summary>
+	void SetCamera(Camera* camera) { this->camera = camera; }
 
 private:
 	// DirectXCommon
@@ -281,6 +296,7 @@ private:
 	Vector2 uvOffset = { 0.0f, 0.0f };
 	Vector2 uvScrollSpeed = { 0.1f, 0.0f };  // 水平方向に流す場合
 
+	uint32_t count = 0;
 
 };
 

@@ -4,6 +4,7 @@
 #include <TextureManager.h>
 #include "WinAPI.h"
 #include <numbers>
+#include <Input.h>
 ParticleManager* ParticleManager::instance = nullptr;
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -330,8 +331,15 @@ void ParticleManager::Update()
 	// 行列の更新
 	UpdateMatrix();
 	// 全てのパーティクルグループの処理
-	UpdateParticle();
-
+	count++;
+	if (Input::GetInstance()->PushKey(DIK_D) || Input::GetInstance()->PushKey(DIK_A)) {
+		count = 0;
+	}
+	
+	if (count <= 60)
+	{
+		UpdateParticle();
+	}
 }
 
 void ParticleManager::UpdateMatrix()
@@ -404,18 +412,20 @@ void ParticleManager::Draw()
 	// コマンド : VertexBufferViewを設定
 	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
-	// 全てのパーティクルグループについて処理
-	for (auto& [name, particleGroup] : particleGroups)
-	{
-		// インスタンシングデータの更新
-		srvManager->SetGraphicsDescriptorTable(1, particleGroup.srvIndex);
-		// マテリアルデータの更新
-		dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-		// シェーダリソースビューの設定
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(particleGroup.materialData.textureIndex);
-		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
-		// 描画
-		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
+	if (count < 15) {
+		// 全てのパーティクルグループについて処理
+		for (auto& [name, particleGroup] : particleGroups)
+		{
+			// インスタンシングデータの更新
+			srvManager->SetGraphicsDescriptorTable(1, particleGroup.srvIndex);
+			// マテリアルデータの更新
+			dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+			// シェーダリソースビューの設定
+			D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(particleGroup.materialData.textureIndex);
+			dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
+			// 描画
+			dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
+		}
 	}
 	//DrawRing();
 	//DrawCylinder();
@@ -477,6 +487,31 @@ void ParticleManager::EffectEmit(const std::string& name, const Vector3& positio
 	}
 }
 
+void ParticleManager::PlayerMoveEmit(const std::string& name, const Vector3& position, uint32_t count, bool isRight)
+{
+	// パーティクルグループが存在することを確認
+	assert(particleGroups.contains(name));
+
+	auto& group = particleGroups.at(name);
+
+	uint32_t currentCount = static_cast<uint32_t>(group.particles.size());
+	uint32_t const maxSize = 10;
+	uint32_t toRemove = (currentCount + count > maxSize) ? (currentCount + count - maxSize) : 0;
+	// 古いパーティクルを削除
+	if (toRemove > 0) {
+		auto eraseBegin = group.particles.begin();
+		auto eraseEnd = std::next(eraseBegin, toRemove);
+		group.particles.erase(eraseBegin, eraseEnd);
+		group.kNumInstance -= toRemove;
+	}
+
+	// 新しいパーティクルを追加
+	for (uint32_t i = 0; i < count; ++i) {
+		group.particles.push_back(MakeMoveEffect(randomEngine, position, isRight));
+	}
+	group.kNumInstance += count;
+}
+
 Particle ParticleManager::MakeParticle(std::mt19937& randomEngine, const  Vector3& position)
 {
 	Particle particle;
@@ -528,6 +563,43 @@ Particle ParticleManager::MakePrimitiveEffect(std::mt19937& randomEngine, const 
 	//return particle;
 #pragma endregion
 }
+
+Particle ParticleManager::MakeMoveEffect(std::mt19937& randomEngine, const Vector3& translate, bool isRight)
+{
+	// 速度のランダム幅
+	std::uniform_real_distribution<float> distVelocity(-5.0f, 5.0f);
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f); // ← 追加：色用乱数
+
+	float disVelocityX = isRight ? 1.5f : -1.5f;
+	float disVelocityY = 2.0f;
+
+	Particle particle;
+	Vector3 randomTranslate = { 0.0f, -0.3f, 0.0f };
+
+	Vector3 randomRotate = {
+		distVelocity(randomEngine),
+		distVelocity(randomEngine),
+		distVelocity(randomEngine)
+	};
+
+	particle.transform.scale = { 0.25f, 0.25f, 1.00f };
+	particle.transform.rotate = randomRotate;
+	particle.transform.translate = translate + randomTranslate;
+	particle.velocity = { disVelocityX, disVelocityY, 0.0f };
+
+	// ★ ランダムカラー
+	particle.color = {
+		distColor(randomEngine), // R
+		distColor(randomEngine), // G
+		distColor(randomEngine), // B
+		1.0f                     // A
+	};
+
+	particle.lifeTime = 10.3f;
+	particle.currentTime = 0.0f;
+	return particle;
+}
+
 
 
 

@@ -31,9 +31,9 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	//ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
 	//// パーティクルエミッターの初期化
-	//particleEmitter = make_unique<ParticleEmitter>();
-	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
-	//particleEmitter->SetParticleName("Particle");
+	/*particleEmitter = make_unique<ParticleEmitter>();
+	particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
+	particleEmitter->SetParticleName("Particle");*/
 
 	//particleEmitter2 = make_unique<ParticleEmitter>();
 	//particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
@@ -87,7 +87,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 #pragma region 演出
-	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/circle2.png");
 	effectEmitter = make_unique<EffectEmitter>();
 
 	effectTransform = effectEmitter->GetTransform();
@@ -99,7 +99,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	effectEmitter->SetTransform(effectTransform);
 	effectEmitter->SetEffectName("Ring");
 
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/circle2.png");
 	cylinder = make_unique<EffectEmitter>();
 	cylinderTransform = cylinder->GetTransform();
 
@@ -156,8 +156,8 @@ void TitleScene::Update()
 
 	}
 
-	/*particleEmitter->Update();
-	particleEmitter2->Update();*/
+	//particleEmitter->Update();
+	//particleEmitter2->Update();
 
 
 
@@ -194,19 +194,14 @@ void TitleScene::Draw()
 
 	background->Draw();
 
-	//object3D->Draw();
-	//levelData->Draw();
+	
 	playerObject->Draw();
-	//Rainbow->Draw();
-
-
 
 	// パーティクルの描画
 	//ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
 	//particleEmitter2->Emit();
 	// エフェクトの描画
-
 
 	//EffectManager::GetInstance()->DrawRing();
 	//EffectManager::GetInstance()->DrawCylinder();
@@ -246,10 +241,10 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite()
 {
-	sprite_ = make_unique<Sprite>();
-	sprite_->Initialize("resources/gradationLine.png");
+	/*sprite_ = make_unique<Sprite>();
+	sprite_->Initialize("resources/monsterball.png");
 	sprite_->SetPosition({ 0.0f,0.0f });
-	sprite_->SetRotation(0.0f);
+	sprite_->SetRotation(0.0f);*/
 }
 
 void TitleScene::DrawImgui() {

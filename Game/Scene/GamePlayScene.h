@@ -7,6 +7,7 @@
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
+#include <Game/Particle/ParticleEmitter.h>
 // 前方宣言
 class Map;
 class Player;
@@ -144,5 +145,11 @@ private:
 
 	// ステージ開始演出フラグ
 	bool stageStartEventFlag_ = true;
+
+	// プレイヤーからのオフセット
+	Vector3 playerOffset_ = {};
+
+	// パーティクルエミッター
+	ParticleEmitter* playerEmitter_;
 };
 
