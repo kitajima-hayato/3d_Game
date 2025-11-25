@@ -26,7 +26,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	camTargetPos_ = { 7.5f,4.0f,-20.0f };
+	camTargetPos_ = { 8.0f,3.5f,-20.0f };
 	// どれだけ引くか
 	const float pullBack = 30.0f;
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
@@ -77,6 +77,9 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	backGround = std::make_unique<BackGround>();
 	backGround->Initialize();
 
+	cameraController_ = std::make_unique<CameraController>();
+	cameraController_->Initialize();
+
 }
 
 
@@ -89,10 +92,13 @@ void GamePlayScene::Update()
 	const float dt = 1.0f / 60.0f;
 
 	/// カメラの更新
-	UpdateStartCamera(dt);
+	if (stageStartEventFlag_) {
+		UpdateStartCamera(dt);
 
-	camera->SetTranslate(cameraTransform.translate);
-	camera->Update();
+		camera->SetTranslate(cameraTransform.translate);
+		camera->Update();
+	}
+	
 
 	//sceneTransition->Update();
 	/// マップの更新
@@ -102,13 +108,18 @@ void GamePlayScene::Update()
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
 	//player->SetMapChipField(map.get());
-
+	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
 	player->Update();
-
-	
-
-
+	if (stageStartEventFlag_ == false)
+	{
+		cameraController_->SetCameraPosition(cameraTransform.translate);
+		Vector3 playerPosition = player->GetTranslate();
+		cameraController_->SetTargetPosition(playerPosition);
+		cameraController_->Update(dt);
+		camera->SetTranslate(cameraController_->GetCameraPosition());
+		camera->Update();
+	}
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
@@ -217,6 +228,9 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	} break;
 
 	case StartCamPhase::None:
+		// スタート演出終了
+		stageStartEventFlag_ = false;
+		break;
 	default:
 		// 何もしない（通常進行）
 		break;
