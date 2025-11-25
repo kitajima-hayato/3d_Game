@@ -108,7 +108,7 @@ void GamePlayScene::Update()
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
 	//player->SetMapChipField(map.get());
-	//cameraController_->SetFollowRange(3.0f, 30.0f);
+	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
 	player->Update();
 	if (stageStartEventFlag_ == false)

@@ -12,34 +12,35 @@ void CameraController::Initialize()
 
 void CameraController::Update(float deltaTime)
 {
-    // プレイヤーXを制限
-    float targetX = targetPosition_.x;
-
-    // --- 左制限 ---
-    if (targetX < leftLimit_) {
-        targetX = leftLimit_;  // 左固定
+    // 向きに応じた「目標オフセット」（理想値）
+    float targetOffsetX = 0.0f;
+    if (moveDirection > 0) {
+        // 右に進むとき：カメラを少し右へ → プレイヤーは画面左寄り
+        targetOffsetX = followOffsetX_;
+    } else if (moveDirection < 0) {
+        // 左に進むとき：カメラを少し左へ → プレイヤーは画面右寄り
+        targetOffsetX = -followOffsetX_;
     }
+    // moveDirection == 0 のときは 0（中央に戻る）
 
-    // --- 右制限 ---
-    if (targetX > rightLimit_) {
-        targetX = rightLimit_; // 右固定
-    }
+    // オフセットをなめらかに切り替え
+    float ot = offsetLerpSpeed_ * deltaTime;
+    if (ot > 1.0f) ot = 1.0f;
+    currentOffsetX_ = currentOffsetX_ + (targetOffsetX - currentOffsetX_) * ot;
 
-    // -------- dead zone を使ったフォロー部分 --------
-    Vector3 desired = cameraPosition_;
-    float dx = targetX - cameraPosition_.x;
+    // プレイヤー位置 + オフセット = 理想のカメラ中心
+    float centerX = targetPosition_.x + currentOffsetX_;
 
-    if (std::abs(dx) > deadZone_.x) {
-        if (dx > 0) {
-            desired.x = targetX - deadZone_.x;
-        } else {
-            desired.x = targetX + deadZone_.x;
-        }
-    }
+    // カメラ中心をステージ範囲でクランプ
+    if (centerX < leftLimit_)  centerX = leftLimit_;
+    if (centerX > rightLimit_) centerX = rightLimit_;
 
-    // -------- スムース追従（Lerp） --------
+    // カメラ位置をスムーズに追従
     float t = followSpeed_ * deltaTime;
     if (t > 1.0f) t = 1.0f;
+
+    Vector3 desired = cameraPosition_;
+    desired.x = centerX;
 
     cameraPosition_ = Lerp(cameraPosition_, desired, t);
 }
