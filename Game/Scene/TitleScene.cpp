@@ -87,7 +87,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 #pragma region 演出
-	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/circle2.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
 	effectEmitter = make_unique<EffectEmitter>();
 
 	effectTransform = effectEmitter->GetTransform();
@@ -99,7 +99,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	effectEmitter->SetTransform(effectTransform);
 	effectEmitter->SetEffectName("Ring");
 
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/circle2.png");
+	/*EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/circle2.png");
 	cylinder = make_unique<EffectEmitter>();
 	cylinderTransform = cylinder->GetTransform();
 
@@ -109,7 +109,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 		{0.0f,0.0f,10.0f},
 	};
 	cylinder->SetTransform(cylinderTransform);
-	cylinder->SetEffectName("Cylinder");
+	cylinder->SetEffectName("Cylinder");*/
 #pragma endregion
 
 }
@@ -146,7 +146,7 @@ void TitleScene::Update()
 		// 
 		isStart = !isStart;
 		effectEmitter->EmitCylinder();
-		cylinder->EmitRing();
+		//cylinder->EmitRing();
 	}
 
 	if (isStart) {

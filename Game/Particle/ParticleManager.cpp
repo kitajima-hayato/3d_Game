@@ -566,37 +566,41 @@ Particle ParticleManager::MakePrimitiveEffect(std::mt19937& randomEngine, const 
 
 Particle ParticleManager::MakeMoveEffect(std::mt19937& randomEngine, const Vector3& translate, bool isRight)
 {
-	// 速度のランダム幅
+	// 速度のランダム
 	std::uniform_real_distribution<float> distVelocity(-5.0f, 5.0f);
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f); // ← 追加：色用乱数
-
+	// カラーのランダム
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f); 
+	// 回転のランダム
 	float disVelocityX = isRight ? 1.5f : -1.5f;
 	float disVelocityY = 2.0f;
-
+	// プレイヤー移動エフェクトのスケール
 	Particle particle;
+	// スケール固定
 	Vector3 randomTranslate = { 0.0f, -0.3f, 0.0f };
-
+	// 回転のランダム
 	Vector3 randomRotate = {
 		distVelocity(randomEngine),
 		distVelocity(randomEngine),
 		distVelocity(randomEngine)
 	};
-
-	particle.transform.scale = { 0.25f, 0.25f, 1.00f };
+	// プレイヤー移動エフェクトのスケール
+	particle.transform.scale = playerMoveScale;
 	particle.transform.rotate = randomRotate;
 	particle.transform.translate = translate + randomTranslate;
 	particle.velocity = { disVelocityX, disVelocityY, 0.0f };
 
-	// ★ ランダムカラー
+	// ランダムカラー
 	particle.color = {
 		distColor(randomEngine), // R
 		distColor(randomEngine), // G
 		distColor(randomEngine), // B
 		1.0f                     // A
 	};
-
-	particle.lifeTime = 10.3f;
+	// 寿命固定
+	particle.lifeTime = 10.0f;
+	// 現在の時間初期化
 	particle.currentTime = 0.0f;
+	
 	return particle;
 }
 

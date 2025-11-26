@@ -298,5 +298,7 @@ private:
 
 	uint32_t count = 0;
 
+	Vector3 playerMoveScale = { 0.25f, 0.25f, 1.00f };
+
 };
 
