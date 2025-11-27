@@ -144,5 +144,7 @@ private:
 
 	// ステージ開始演出フラグ
 	bool stageStartEventFlag_ = true;
+	// 固定フレームレート用のデルタタイム
+	const float dt = 1.0f / 60.0f;
 };
 

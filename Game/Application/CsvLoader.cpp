@@ -1,6 +1,9 @@
 #include "CsvLoader.h"
 #include "Block.h"
 
+const std::string CsvLoader::frontFilePath = "resources/MapData/";
+
+
 
 std::vector<std::vector<int>> CsvLoader::LoadMapInt(const std::string& filePath)
 {
@@ -71,7 +74,7 @@ void CsvLoader::SaveMapBlockType(const std::string& filePath,
 	const std::vector<std::vector<BlockType>>& mapData)
 {
 	// frontFilePath を使っているなら読み込みと同じように
-	std::string filePathFull = "resources/MapData/" + filePath;
+	std::string filePathFull = frontFilePath + filePath;
 	std::ofstream file(filePathFull);
 
 	if (!file.is_open()) {

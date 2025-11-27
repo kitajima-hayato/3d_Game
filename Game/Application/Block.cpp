@@ -31,6 +31,7 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 		break;
 	case BlockType::testBlock:
 		blockModel->SetModel("XYZLabel.obj");
+		//元のブロックの大きさが1なので半分に縮小
 		transform.scale = { 0.5f,0.5f,0.5f };
 		break;
 	case BlockType::breakBlock:
