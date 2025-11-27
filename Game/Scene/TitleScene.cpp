@@ -87,7 +87,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 #pragma region 演出
-	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
+	EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/circle2.png");
 	effectEmitter = make_unique<EffectEmitter>();
 
 	effectTransform = effectEmitter->GetTransform();

@@ -82,7 +82,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraController_->Initialize();
 
 	ParticleManager::GetInstance()->CreateParticleGroup(
-		"PlayerDust", "resources/circle2.png");
+		"PlayerDust", "resources/monsterball.png");
 
 
 	playerEmitter_ = new ParticleEmitter();

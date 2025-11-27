@@ -27,7 +27,7 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::Air:
 		break;
 	case BlockType::NormalBlock:
-		blockModel->SetModel("Normal.obj");
+		blockModel->SetModel("nullBlock.obj");
 		break;
 	case BlockType::testBlock:
 		blockModel->SetModel("XYZLabel.obj");
