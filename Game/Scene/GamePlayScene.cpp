@@ -89,7 +89,7 @@ void GamePlayScene::Update()
 
 	backGround->Update();
 
-	const float dt = 1.0f / 60.0f;
+	
 
 	/// カメラの更新
 	if (stageStartEventFlag_) {

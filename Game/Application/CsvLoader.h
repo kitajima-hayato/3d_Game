@@ -24,7 +24,7 @@ public:
 	static void SaveMapBlockType(const std::string& folePath,
 		const std::vector<std::vector<BlockType>>& mapData);
 private:
-	std::string frontFilePath = "resources/MapData/";
+	static const std::string frontFilePath;
 
 };
 
