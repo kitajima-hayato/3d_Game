@@ -13,6 +13,13 @@ ModelManager* ModelManager::GetInstance()
 
 void ModelManager::Finalize()
 {
+	// モデルデータの解放
+	delete modelCommon;
+	modelCommon = nullptr;
+	// モデルリストの解放
+	models.clear();
+
+	// モデル共通部分の解放
 	delete instance;
 	instance = nullptr;
 }

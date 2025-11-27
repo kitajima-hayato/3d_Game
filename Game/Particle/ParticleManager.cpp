@@ -125,9 +125,12 @@ void ParticleManager::CreateRootSignature()
 		assert(false);
 	}
 	// バイナリを元に生成
-
-	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+	//  ここで停止のエラー
+	hr = dxCommon->GetDevice()->CreateRootSignature(
+		0, 
+		signatureBlob->GetBufferPointer(),
+		signatureBlob->GetBufferSize(), 
+		IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
 
 

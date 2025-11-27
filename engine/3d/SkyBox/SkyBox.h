@@ -80,7 +80,7 @@ private:
 	// CreateRootSignature
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	/// ルートパラメーター
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 	/// サンプラー
 	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 	/// 入力レイアウトの設定

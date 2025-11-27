@@ -25,6 +25,13 @@ using namespace Logger;
 DirectXCommon::DirectXCommon()
 {
 }
+DirectXCommon::~DirectXCommon()
+{
+	if (fenceEvent) {
+		CloseHandle(fenceEvent);
+		fenceEvent = nullptr;
+	}
+}
 void DirectXCommon::Initialize(WinAPI* winAPI)
 {
 	// NULL検出
@@ -179,8 +186,6 @@ void DirectXCommon::InitDevice()
 	}
 #endif  _DEBUG
 #pragma endregion
-
-
 
 }
 
@@ -480,7 +485,7 @@ void DirectXCommon::InitDepthStencilView()
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;//Format.基本的にはResourceに合わせる
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;//2dTexture
 
-	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource;
+	
 	depthStencilResource = CreateDepthBuffer(device, WinAPI::kClientWidth, WinAPI::kClientHeight);
 	//DSVの設定									 
 

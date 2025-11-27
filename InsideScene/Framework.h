@@ -87,8 +87,6 @@ public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 private:
-	// リークチェッカー
-	D3DResourceLeakChecker leakCheck;
 	/// カメラの座標
 	Transform cameraTransform = {
 		{0.0f, 0.0f, -10.0f}, // translate
@@ -96,6 +94,8 @@ private:
 		{ 1.0f, 1.0f,-10.0f } // scale
 	};
 
+	// リークチェッカー
+	//D3DResourceLeakChecker leakCheck;
 	
 };
 

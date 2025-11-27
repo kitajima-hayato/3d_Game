@@ -1,4 +1,6 @@
 #include "Framework.h"
+
+
 void Framework::Initialize()
 {
 	//WindowsAPIの初期化
@@ -105,17 +107,34 @@ void Framework::Draw()
 
 void Framework::Finalize()
 {
-	// パーティクルの終了処理 / newとは逆順で
-
-	winAPI->Finalize();
-
+	// 1. ゲーム系シングルトンを先に終了
 	SceneManager::GetInstance()->Finalize();
 	SceneManager::Deletenstance();
-	Input::GetInstance()->DeleteInstance();
+
+	Object3DCommon::DeleteInstance();
+	SpriteCommon::Deletenstance();
+
+	EffectManager::GetInstance()->DeleteInstance();
+	ParticleManager::GetInstance()->DeleteInstance();
 	TextureManager::GetInstance()->DeleteInstance();
 	ModelManager::GetInstance()->Finalize();
-	ParticleManager::GetInstance()->DeleteInstance();
-	EffectManager::GetInstance()->DeleteInstance();
+	Input::GetInstance()->DeleteInstance();
+
+	// 2. ImGui / RenderTexture / SrvManager / ModelCommon / Camera 
+#ifdef USE_IMGUI
+	imGui.reset();
+#endif
+	renderTexture.reset();
+	camera.reset();
+	modelCommon.reset();
+	srvManager.reset();
+
+	// 3. DirectXCommon を解放（
+	dxCommon.reset();
+
+	// 4. 最後に WinAPI を終了
+	winAPI->Finalize();
+	winAPI.reset();
 
 }
 
@@ -135,5 +154,9 @@ void Framework::Run()
 	}
 	// ゲームの終了処理
 	Finalize();
+#ifdef _DEBUG
+	// リークチェック
+	D3DResourceLeakChecker checker;
+#endif
 }
 

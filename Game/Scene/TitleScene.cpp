@@ -123,11 +123,6 @@ void TitleScene::Update()
 
 	object3D->Update();
 	titleLogo->Update();
-
-
-
-
-
 	//sceneTransition->Update();
 
 
@@ -150,7 +145,7 @@ void TitleScene::Update()
 	}
 
 	if (isStart) {
-		// object3dをひっだりから右に
+		// object3dをひだりから右に
 		speed.x += 0.07f;
 		object3D->SetTranslate(speed);
 

@@ -43,7 +43,7 @@ void Object3DCommon::CreateRootSignatrue()
 	#pragma endregion
 
 	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	D3D12_ROOT_PARAMETER rootParamaters[6] = {};
+	
 	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
 	rootParamaters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
