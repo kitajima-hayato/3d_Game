@@ -1,9 +1,9 @@
 #include "GamePlayScene.h"
-#include "Game/Application/Map.h"
+#include "Game/Application/Map/Map.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include "Game/Application/Player.h"
+#include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
 GamePlayScene::GamePlayScene()
 {
