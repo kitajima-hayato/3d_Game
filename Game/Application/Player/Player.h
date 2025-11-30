@@ -2,7 +2,8 @@
 #include "engine/math/MyMath.h"
 #include <memory>
 #include "engine/3d/Object3D.h"
-#include "Map.h"
+#include "Game/Application/Map/Map.h"
+#include "Game/Collision/Collider.h"
 /// プレイヤークラス
 
 /// <summary>
@@ -94,8 +95,14 @@ struct PlayerStatus {
 	float kTurnTime = 1.0f;
 };
 
-class Player
+class Player :public Collider
 {
+public:
+	// コライダーインターフェイス
+	Collider::Type GetType() const override;
+	AABB GetAABB() const override;
+	void OnCollision(Collider* other)override;
+
 public:
 
 	/// <summary>

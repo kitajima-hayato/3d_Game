@@ -21,7 +21,7 @@
     <ClCompile Include="engine\Audio\Audio.cpp">
       <Filter>engine\Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Application\Block.cpp">
+    <ClCompile Include="Game\Application\Block\Block.cpp">
       <Filter>Game\Application\Block</Filter>
     </ClCompile>
     <ClCompile Include="Game\Camera\Camera.cpp">
@@ -33,7 +33,7 @@
     <ClCompile Include="Game\Collision\CollisionManager.cpp">
       <Filter>Game\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Application\CsvLoader.cpp">
+    <ClCompile Include="Game\Application\Map\CsvLoader.cpp">
       <Filter>Game\Loader</Filter>
     </ClCompile>
     <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp">
@@ -149,8 +149,8 @@
     </ClCompile>
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
-    <ClCompile Include="Game\Application\Player.cpp" />
-    <ClCompile Include="Game\Application\Map.cpp" />
+    <ClCompile Include="Game\Application\Player\Player.cpp" />
+    <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
@@ -164,10 +164,10 @@
     <ClInclude Include="engine\Audio\Audio.h">
       <Filter>engine\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\Block.h">
+    <ClInclude Include="Game\Application\Block\Block.h">
       <Filter>Game\Application\Block</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\BlockType.h">
+    <ClInclude Include="Game\Application\Block\BlockType.h">
       <Filter>Game\Application\Block</Filter>
     </ClInclude>
     <ClInclude Include="Game\Camera\Camera.h">
@@ -179,7 +179,7 @@
     <ClInclude Include="Game\Collision\CollisionManager.h">
       <Filter>Game\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\CsvLoader.h">
+    <ClInclude Include="Game\Application\Map\CsvLoader.h">
       <Filter>Game\Loader</Filter>
     </ClInclude>
     <ClInclude Include="engine\bace\D3DResourceLeakChecker.h">
@@ -187,9 +187,6 @@
     </ClInclude>
     <ClInclude Include="engine\bace\DirectXCommon.h">
       <Filter>engine\bace</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Application\Constants.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\EffectEmitter.h">
       <Filter>Game\Particle</Filter>
@@ -301,8 +298,8 @@
     </ClInclude>
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
-    <ClInclude Include="Game\Application\Player.h" />
-    <ClInclude Include="Game\Application\Map.h" />
+    <ClInclude Include="Game\Application\Player\Player.h" />
+    <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Camera\CameraController.h" />
   </ItemGroup>
   <ItemGroup>

@@ -20,7 +20,7 @@ void FlyingEnemy::Initialize()
 		// 攻撃力
 		1
 	};
-	baseY = stats.transform.translate.y;
+	
 	timer = 0.0f;
 
 	/// Object3Dの初期化

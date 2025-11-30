@@ -6,6 +6,52 @@
 #endif
 #include <Logger.h>
 
+Collider::Type Player::GetType() const
+{
+	// 判定タイプがプレイヤーであることを返す
+	return Collider::Type::Player;
+}
+
+AABB Player::GetAABB() const
+{
+	AABB aabb{};
+
+	// プレイヤーの中心
+	Vector3 pos = playerModel_->GetTranslate();
+
+	// プレイヤーの幅と高さを取得
+	float halfWidth = status_.kWidth / 2.0f;
+	float halfHeight = status_.kHeight / 2.0f;
+
+	// 奥行は気にしない
+	float halfDepth = 0.5f;
+
+	// AABBの最小座標と最大座標を設定
+	aabb.min = { pos.x - halfWidth, pos.y - halfHeight, pos.z - halfDepth };
+	aabb.max = { pos.x + halfWidth, pos.y + halfHeight, pos.z + halfDepth };
+
+	// AABBを返す
+	return aabb;
+}
+
+void Player::OnCollision(Collider* other)
+{
+	// 衝突相手が存在しなかったら処理しない
+	if (!other)return;
+
+	switch (other->GetType())
+	{
+		// 敵に衝突したら
+	case Collider::Type::Enemy:
+		// 死亡処理
+		isDead_ = true;
+		break;
+	default:
+		// 特に何もしない
+		break;
+	}
+}
+
 void Player::Initialize(Vector3 position)
 {
 	playerModel_ = std::make_unique<Object3D>();
@@ -100,29 +146,10 @@ void Player::Move()
 		velocity_.x = std::clamp(velocity_.x, -status_.kMaxSpeed, status_.kMaxSpeed);
 
 	} else {
-		//// 入力が無いときは減速(0に近づける)
-		//if (velocity_.x > 0.0f) {
-		//	velocity_.x -= status_.kAttenuation;
-		//	if (velocity_.x < 0.0f) {
-		//		velocity_.x = 0.0f;
-		//	}
-		//} else if (velocity_.x < 0.0f) {
-		//	velocity_.x += status_.kAttenuation;
-		//	if (velocity_.x > 0.0f) {
-		//		velocity_.x = 0.0f;
-		//	}
-		//}
-
+		// 減速処理
 		velocity_.x *= (1.0f - status_.kAttenuation);
 
 	}
-
-	//// 速度反映
-	//Vector3 pos = playerModel_->GetTranslate();
-	//pos.x += velocity_.x;
-	//playerModel_->SetTranslate(pos);
-
-
 }
 
 
@@ -313,16 +340,16 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, Collisio
 		// 必要であればImGui表示する
 		switch (type) {
 		case CollisionType::kTop:
-			Logger::Log("hit celling");
+			//Logger::Log("hit celling");
 			break;
 		case CollisionType::kBottom:
-			Logger::Log("hit floor");
+			//Logger::Log("hit floor");
 			break;
 		case CollisionType::kRight:
-			Logger::Log("hit right");
+			//Logger::Log("hit right");
 			break;
 		case CollisionType::kLeft:
-			Logger::Log("hit left");
+			//Logger::Log("hit left");
 			break;
 		}
 	}
@@ -384,9 +411,7 @@ bool Player::CheckCollisionPoints(const std::array<Vector3, 2>& posList, Collisi
 			break;
 		}
 	}
-
 	return isHit;
-
 }
 
 bool Player::IsHitBlockTable(BlockType type)
@@ -419,7 +444,7 @@ void Player::DebugPlayerReset()
 {
 	// デバッグ用にリセット
 	velocity_ = {};
-	playerModel_->SetTranslate({ 1.0f,1.0f,0.0f });
+	playerModel_->SetTranslate({ 1.5f,1.5f,0.0f });
 	isDead_ = false;
 	onGround_ = true;
 }
