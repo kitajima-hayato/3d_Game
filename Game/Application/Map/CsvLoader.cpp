@@ -77,13 +77,11 @@ void CsvLoader::SaveMapBlockType(const std::string& filePath,
 	std::string filePathFull = frontFilePath + filePath;
 	std::ofstream file(filePathFull);
 
+	// ファイルが開けなかった場合のエラーチェック
 	if (!file.is_open()) {
 		throw std::runtime_error("CSVファイルを書き込み用に開けません: " + filePath);
 	}
-
-	// ※ Excel などで開く予定があるなら BOM を付けたい場合もある
-	// file << "\xEF\xBB\xBF"; // 必要ならコメントアウト外す
-
+	// mapDataを書き込む
 	const uint32_t height = static_cast<uint32_t>(mapData.size());
 	for (uint32_t y = 0; y < height; ++y) {
 		const uint32_t width = static_cast<uint32_t>(mapData[y].size());
