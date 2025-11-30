@@ -1,10 +1,10 @@
 #include "GamePlayScene.h"
 #include "Game/Application/Map/Map.h"
+#include "Game/Application/Player/Player.h"
+#include "Game/Collision/CollisionManager.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include "Game/Application/Player/Player.h"
-#include "Game/Collision/CollisionManager.h"
 GamePlayScene::GamePlayScene()
 {
 }
