@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "BlockType.h"
-#include <MyMath.h>
-#include "Game/Application/Block.h"
-#include "Game/Application/CsvLoader.h"
+#include "MyMath.h"
+#include "Game/Application/Block/Block.h"
+#include "CsvLoader.h"
+#include "Game/Application/Block/BlockType.h"
 /// マップクラス
 
 /// マップチップデータ構造体

@@ -3,7 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "BlockType.h"
+#include "Game/Application/Block/BlockType.h"
 
 class CsvLoader
 {

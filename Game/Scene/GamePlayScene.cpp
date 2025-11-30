@@ -1,9 +1,9 @@
 #include "GamePlayScene.h"
-#include "Game/Application/Map.h"
+#include "Game/Application/Map/Map.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include "Game/Application/Player.h"
+#include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
 GamePlayScene::GamePlayScene()
 {
@@ -104,10 +104,9 @@ void GamePlayScene::Update()
 	/// マップの更新
 	map->Update();
 	  
-	//player->BeginFrameHitReset();
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
-	//player->SetMapChipField(map.get());
+	
 	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
 	player->Update();
@@ -133,7 +132,7 @@ void GamePlayScene::Update()
 void GamePlayScene::Draw()
 {
 	
-	//backGround->Draw();
+	backGround->Draw();
 
 	//sceneTransition->Draw();
 	/// マップの描画
@@ -141,7 +140,7 @@ void GamePlayScene::Draw()
 	/// プレイヤーの描画
 	player->Draw();
 	/// タイトルロゴの描画
-	titleLogoObject->Draw();
+	//titleLogoObject->Draw();
 	/// 敵の描画
 	for (auto& enemy : enemies) {
 		enemy->Draw();
@@ -153,16 +152,13 @@ void GamePlayScene::InitializeEnemy()
 
 	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
 	normalEnemy->Initialize();
-	normalEnemy->SetTranslate({ 4.0f,-3.0f,20.0f });
+	normalEnemy->SetTranslate({ 3.0f,1.5f,0.0f });
 	enemies.push_back(std::move(normalEnemy));
 
 	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
 	flyingEnemy->Initialize();
-	flyingEnemy->SetTranslate({ 1.0f,-5.0f,20.0f });
+	flyingEnemy->SetTranslate({ 6.0f,8.5f,0.0f });
 	enemies.push_back(std::move(flyingEnemy));
-
-
-
 
 }
 
@@ -173,7 +169,7 @@ void GamePlayScene::CheckCollision()
 
 	/// プレイヤー
 	if (player) {
-		//collision_->AddCollider(player.get());
+		collision_->AddCollider(player.get());
 	}
 
 	/// エネミー全種
