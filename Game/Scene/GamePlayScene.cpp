@@ -237,6 +237,7 @@ void GamePlayScene::UpdateStartCamera(float dt)
 
 void GamePlayScene::Finalize()
 {
+	map->Finalize();
 
 	/// オーディオの終了処理
 	Audio::GetInstance()->SoundUnload(&soundData);

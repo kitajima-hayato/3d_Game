@@ -122,35 +122,107 @@ void Player::UpdateBehavior()
 }
 
 
+// Player.cpp
+
 void Player::Move()
 {
-	// 左右移動入力
-	bool DIK_D_ = Input::GetInstance()->PushKey(DIK_D);
-	bool DIK_A_ = Input::GetInstance()->PushKey(DIK_A);
+	auto* input = Input::GetInstance();
 
-	Vector3 acceleration = {};
-	if (DIK_D_ || DIK_A_) {
-		if (DIK_D_ && !DIK_A_) {
-			if (velocity_.x < 0.0f) {
-				velocity_.x *= (1.0f - status_.kAttenuation);
-			}
-			acceleration.x += status_.kAcceleration;
+	// ------------------------
+	// 入力状態
+	// ------------------------
+	const bool rightHold = input->PushKey(DIK_D);
+	const bool leftHold = input->PushKey(DIK_A);
 
-		} else if (!DIK_D_ && DIK_A_) {
-			if (velocity_.x > 0.0f) {
-				velocity_.x *= (1.0f - status_.kAttenuation);
-			}
-			acceleration.x -= status_.kAcceleration;
+	const bool rightTrig = input->TriggerKey(DIK_D);
+	const bool leftTrig = input->TriggerKey(DIK_A);
+
+	// ------------------------
+	// ダブルタップ用タイマー更新
+	// ------------------------
+	if (rightTapTimer_ > 0) { --rightTapTimer_; }
+	if (leftTapTimer_ > 0) { --leftTapTimer_; }
+
+	// 右ダブルタップ判定
+	if (rightTrig) {
+		// 一定時間内に2回目が来たらダッシュ開始
+		if (rightTapTimer_ > 0) {
+			isDash_ = true;
+			dashDirection_ = +1;
 		}
-		velocity_.x += acceleration.x;
-		velocity_.x = std::clamp(velocity_.x, -status_.kMaxSpeed, status_.kMaxSpeed);
+		// タイマーリセット
+		rightTapTimer_ = status_.kDashDoubleTapFrame;
+		// 反対側はリセット
+		leftTapTimer_ = 0;
+	}
+
+	// 左ダブルタップ判定
+	if (leftTrig) {
+		if (leftTapTimer_ > 0) {
+			isDash_ = true;
+			dashDirection_ = -1;
+		}
+		leftTapTimer_ = status_.kDashDoubleTapFrame;
+		rightTapTimer_ = 0;
+	}
+
+	// ------------------------
+	// ダッシュ継続／解除判定
+	// ------------------------
+	const bool movingRight = rightHold && !leftHold;
+	const bool movingLeft = leftHold && !rightHold;
+
+	// 入力が止まったらダッシュ解除
+	if (!movingRight && !movingLeft) {
+		isDash_ = false;
+		dashDirection_ = 0;
+	} else if (isDash_) {
+		// 逆方向に入力したらダッシュ解除
+		if ((dashDirection_ == +1 && movingLeft) ||
+			(dashDirection_ == -1 && movingRight)) {
+			isDash_ = false;
+			dashDirection_ = 0;
+		}
+	}
+
+	// ------------------------
+	// 実際の速度更新
+	// ------------------------
+	Vector3 acceleration{};
+
+	const bool dashActiveRight = isDash_ && (dashDirection_ == +1) && movingRight;
+	const bool dashActiveLeft = isDash_ && (dashDirection_ == -1) && movingLeft;
+	const bool dashActive = dashActiveRight || dashActiveLeft;
+
+	// ダッシュ中だけ少し速くする
+	float dashScale = dashActive ? status_.kDashSpeedScale : 1.0f;
+	float maxSpeed = status_.kMaxSpeed * dashScale;
+
+	if (movingRight) {
+		// 左に動いていた場合は少し減速
+		if (velocity_.x < 0.0f) {
+			velocity_.x *= (1.0f - status_.kAttenuation);
+		}
+		acceleration.x += status_.kAcceleration * dashScale;
+
+	} else if (movingLeft) {
+		if (velocity_.x > 0.0f) {
+			velocity_.x *= (1.0f - status_.kAttenuation);
+		}
+		acceleration.x -= status_.kAcceleration * dashScale;
 
 	} else {
-		// 減速処理
+		// 入力がないときは減速のみ（ダッシュ倍率はかけない）
 		velocity_.x *= (1.0f - status_.kAttenuation);
-
 	}
+
+	// 加速度反映
+	velocity_.x += acceleration.x;
+
+	// 最大速度をダッシュ状態に応じて変える
+	velocity_.x = std::clamp(velocity_.x, -maxSpeed, maxSpeed);
 }
+
 
 
 
@@ -449,3 +521,10 @@ void Player::DebugPlayerReset()
 	onGround_ = true;
 }
 
+
+
+
+void Player::Finalize()
+{
+
+}
