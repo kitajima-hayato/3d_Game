@@ -51,6 +51,7 @@ public:
 
 	/// Collider インターフェースの実装
 	Type GetType()const override { return Type::Enemy; }
+
 	/// AABBの取得
 	AABB GetAABB() const override {
 		const auto& t = stats.transform;

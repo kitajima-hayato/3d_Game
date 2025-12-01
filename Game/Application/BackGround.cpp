@@ -23,6 +23,7 @@ void BackGround::Initialize()
 		{ 0.0f,1.7f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
 	};
+	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
 
 	titleBackGround2 = std::make_unique<Object3D>();
 	titleBackGround2->Initialize();
@@ -100,7 +101,7 @@ void BackGround::Initialize()
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 1.0f,60.0f,300.0f },
+		{ 1.0f,100.0f,400.0f },
 		{ 0.0f,-1.5f,0.0f },
 		{ 7.5f,0.0f,250.0f }
 	};
