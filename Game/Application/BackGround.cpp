@@ -1,5 +1,7 @@
 #include "BackGround.h"
-
+#ifdef USE_IMGUI
+#include "engine/bace/ImGuiManager.h"
+#endif
 void BackGround::Initialize()
 {
 	titleBackGround3 = std::make_unique<Object3D>();
@@ -21,6 +23,7 @@ void BackGround::Initialize()
 		{ 0.0f,1.7f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
 	};
+	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
 
 	titleBackGround2 = std::make_unique<Object3D>();
 	titleBackGround2->Initialize();
@@ -98,7 +101,7 @@ void BackGround::Initialize()
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 1.0f,60.0f,300.0f },
+		{ 1.0f,100.0f,400.0f },
 		{ 0.0f,-1.5f,0.0f },
 		{ 7.5f,0.0f,250.0f }
 	};
@@ -155,6 +158,8 @@ void BackGround::Update()
 	titeleBackGround1_3->Update();
 	titeleBackGround1_4->Update();
 	soil->Update();
+
+	DrawImgui();
 }
 
 
@@ -171,4 +176,28 @@ void BackGround::Draw()
 	titeleBackGround1_3->Draw();
 	titeleBackGround1_4->Draw();
 	soil->Draw();
+}
+
+void BackGround::DrawImgui()
+{
+	// ImGuiで各背景の位置調整
+
+#ifdef USE_IMGUI
+
+	// 設定として保存
+	ImGui::Begin("BackGround Transform");
+	ImGui::DragFloat3("titleBackGround3 Translate", &titleBackGround3Transform.translate.x, 0.1f);
+	titleBackGround3->SetTransform(titleBackGround3Transform);
+	ImGui::DragFloat3("titleBackGround3_2 Translate", &titleBackGround3_2Transform.translate.x, 0.1f);
+	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+	ImGui::DragFloat3("titleBackGround2 Translate", &titleBackGround2Transform.translate.x, 0.1f);
+	titleBackGround2->SetTransform(titleBackGround2Transform);
+
+	ImGui::End();
+	
+
+
+#endif
+
+
 }

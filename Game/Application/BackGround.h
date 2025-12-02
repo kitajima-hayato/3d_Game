@@ -17,6 +17,8 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	void DrawImgui();
 private:
 	std::unique_ptr<Object3D> titleBackGround3;
 	Transform titleBackGround3Transform;

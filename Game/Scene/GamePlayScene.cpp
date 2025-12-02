@@ -1,10 +1,10 @@
 #include "GamePlayScene.h"
 #include "Game/Application/Map/Map.h"
+#include "Game/Application/Player/Player.h"
+#include "Game/Collision/CollisionManager.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include "Game/Application/Player/Player.h"
-#include "Game/Collision/CollisionManager.h"
 GamePlayScene::GamePlayScene()
 {
 }
@@ -237,6 +237,7 @@ void GamePlayScene::UpdateStartCamera(float dt)
 
 void GamePlayScene::Finalize()
 {
+	map->Finalize();
 
 	/// オーディオの終了処理
 	Audio::GetInstance()->SoundUnload(&soundData);

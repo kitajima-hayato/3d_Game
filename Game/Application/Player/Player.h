@@ -64,6 +64,12 @@ struct PlayerStatus {
 	// 最大速度
 	float kMaxSpeed = 0.1f;
 
+	//ダッシュパラメーター
+	// ダッシュ速度倍率
+	float kDashSpeedScale = 2.0f;
+	// ２回押し判定時間
+	uint32_t kDashDoubleTapFrame = 15;
+
 	//ジャンプパラメータ
 	// 重力加速度
 	float kGravity = 0.05f;
@@ -119,6 +125,12 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
+
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize();
 
 private:
 	/// <summary>
@@ -247,12 +259,22 @@ private:	// メンバ変数
 
 	// マップ
 	Map* map_ = nullptr;
+
 	// ゴールフラグ
 	bool isGoal_ = false;
 
 	// ジャンプ
 	bool onGround_ = true;
 
+	// ダッシュ
+	bool isDash_ = false;
+
+	// 向き / +1:右 -1:左 0:なし
+	int32_t dashDirection_ = 0;
+
+	// ダブルタップ判定用タイマー
+	uint32_t rightTapTimer_ = 0;
+	uint32_t leftTapTimer_ = 0;
 
 
 };

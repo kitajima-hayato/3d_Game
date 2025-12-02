@@ -13,6 +13,11 @@ ModelManager* ModelManager::GetInstance()
 
 void ModelManager::Finalize()
 {
+	models.clear();
+
+	delete modelCommon;
+	modelCommon = nullptr;
+
 	delete instance;
 	instance = nullptr;
 }
