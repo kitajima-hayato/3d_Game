@@ -207,7 +207,7 @@ void Map::GenerareMapBlock()
 	const uint32_t h = GetHeight();
 	const uint32_t w = GetWidth();
 
-	// ① 既存ブロックを全て解放
+	// 既存のブロックを解放
 	for (auto& row : blockArray_) {
 		for (Block*& block : row) {
 			if (block) {
@@ -219,17 +219,17 @@ void Map::GenerareMapBlock()
 	// ポインタを解放したので配列自体もクリア
 	blockArray_.clear();
 
-	// ② 新しいサイズで配列を作り直す
+	// 新しいサイズで配列を作り直す
 	blockArray_.assign(h, std::vector<Block*>(w, nullptr));
 
-	// ③ マップデータからブロックを生成
+	// マップデータからブロックを生成
 	for (uint32_t y = 0; y < h; ++y) {
 		for (uint32_t x = 0; x < w; ++x) {
 			const BlockType type = mapChipData_.mapData[y][x];
 			if (type == BlockType::Air) {
 				continue;
 			}
-
+			// ブロックの生成
 			Vector3 pos = GetMapChipPositionByIndex(x, y);
 			pos.x += blockOffset_;
 			pos.y -= blockOffset_;
