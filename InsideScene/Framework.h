@@ -65,6 +65,8 @@ protected:
 	// 終了リクエスト
 	bool isEndRequst = false;
 protected:// Initialize関連
+	// リークチェッカー
+	//D3DResourceLeakChecker leakCheck;
 	// ウィンドウAPI
 	std::unique_ptr<WinAPI> winAPI;
 	// DirectX共通部
@@ -87,8 +89,7 @@ public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 private:
-	// リークチェッカー
-	D3DResourceLeakChecker leakCheck;
+	
 	/// カメラの座標
 	Transform cameraTransform = {
 		{0.0f, 0.0f, -10.0f}, // translate

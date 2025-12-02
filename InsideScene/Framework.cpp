@@ -105,15 +105,18 @@ void Framework::Draw()
 
 void Framework::Finalize()
 {
-	// パーティクルの終了処理 / newとは逆順で
-
-	winAPI->Finalize();
+	
 
 	SceneManager::GetInstance()->Finalize();
 	SceneManager::Deletenstance();
-	Input::GetInstance()->DeleteInstance();
+	Audio::GetInstance()->DeleteInstance();
+	Object3DCommon::GetInstance()->DeleteInstance();
+	SpriteCommon::GetInstance()->Deletenstance();
 	TextureManager::GetInstance()->DeleteInstance();
 	ModelManager::GetInstance()->Finalize();
+	Input::GetInstance()->DeleteInstance();
+	winAPI->Finalize();
+
 	ParticleManager::GetInstance()->DeleteInstance();
 	EffectManager::GetInstance()->DeleteInstance();
 

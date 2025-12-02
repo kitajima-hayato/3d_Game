@@ -1,18 +1,25 @@
-#include "Game/Scene//MyGame.h"
 // メモリリーク検出チェック
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#include "Game/Scene//MyGame.h"
 //ウィンドウズアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	 
-	//_CrtSetBreakAlloc();
-	MyGame game;
-	game.Run();
 
-	_CrtDumpMemoryLeaks();
+#ifdef _DEBUG
+	// デバッグモードのときメモリリーク検出を有効にする
 	// メモリリーク検出
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	// リーク番号を指定してブレークを発生させる
+	//_CrtSetBreakAlloc();
+
+	D3DResourceLeakChecker leakChecker;
+#endif
+	{
+		MyGame game;
+		game.Run();
+	}
 
 	return 0;
 }

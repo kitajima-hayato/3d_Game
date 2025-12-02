@@ -90,9 +90,7 @@ void DirectXCommon::InitDevice()
 #pragma region デバッグレイヤーをオン
 	Microsoft::WRL::ComPtr < ID3D12Debug1> debugController = nullptr;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
-		//
 		debugController->EnableDebugLayer();
-		//
 		debugController->SetEnableGPUBasedValidation(TRUE);
 	}
 #pragma endregion
