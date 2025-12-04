@@ -55,6 +55,11 @@ public:
 	void InitializeEnemy();
 
 	/// <summary>
+	/// エネミーの生成
+	/// </summary>
+	void GenerateEnemy();
+
+	/// <summary>
 	/// 当たり判定
 	/// </summary>
 	void CheckCollision();
@@ -63,6 +68,9 @@ public:
 	/// スタートカメラの更新
 	/// </summary>
 	void UpdateStartCamera(float dt);
+
+
+	
 
 private:
 	// マップ
@@ -146,5 +154,8 @@ private:
 	bool stageStartEventFlag_ = true;
 	// 固定フレームレート用のデルタタイム
 	const float dt = 1.0f / 60.0f;
+
+	// エネミー配置のオフセット
+	float enemySpawnOffset_ = 0.5f;
 };
 

@@ -21,13 +21,16 @@ ImVec4 GetBlockColorByType(BlockType blockType) {
 }
 #endif
 
-void Map::Initialize()
+void Map::Initialize(const char* filePath)
 {
 	// マップデータの初期化
 	mapChipData_.mapData.resize(kMapHeight, std::vector<BlockType>(kMapWidth, BlockType::Air));
 
+	// マップ番号の保存
+	mapNumber_ = filePath;
+
 	// マップデータの読み込み
-	LoadMapData("1-1.csv");
+	LoadMapData(filePath);
 
 	// マップブロックの生成
 	GenerareMapBlock();
@@ -173,6 +176,97 @@ void Map::Update()
 	ImGui::End();
 
 
+	ImGui::Begin("Enemy Layer Editor");
+
+	// エネミータイプ一覧
+	static int currentEnemyTypeInt = 0;
+	const char* enemyTypeNames[] = {
+		"None",
+		"NormalEnemy",
+		"FlyingEnemy",
+	};
+
+	ImGui::Text("Paint Enemy Type:");
+	ImGui::SameLine();
+	ImGui::Combo("##EnemyType",
+		&currentEnemyTypeInt,
+		enemyTypeNames,
+		IM_ARRAYSIZE(enemyTypeNames));
+
+	// エネミーデータの参照
+	auto& enemyLayer = enemyLayerData_.enemyData;
+
+	// ★ 空チェック（超重要）
+	if (enemyLayer.empty() || enemyLayer[0].empty()) {
+		ImGui::Text("Enemy layer is empty or not loaded.");
+		ImGui::End();
+		return;
+	}
+
+	uint32_t enemyLayerHeight = static_cast<uint32_t>(enemyLayer.size());
+	uint32_t enemyLayerWidth = static_cast<uint32_t>(enemyLayer[0].size());
+
+	// ★ BeginChild は今のままでOK
+	ImGui::BeginChild("EnemyLayerGrid", ImVec2(0, 400), true);
+
+	for (uint32_t y = 0; y < enemyLayerHeight; ++y) {
+		for (uint32_t x = 0; x < enemyLayerWidth; ++x) {
+
+			EnemyType& cell = enemyLayer[y][x];
+			uint32_t cellInt = static_cast<uint32_t>(cell);
+
+			// ★ 各マスごとにユニークな ID を付ける
+			ImGui::PushID(static_cast<int>(y * enemyLayerWidth + x));
+
+			// 色をタイプで変更
+			ImVec4 color;
+			switch (cell) {
+			case EnemyType::NormalEnemy: color = ImVec4(0.2f, 0.8f, 0.2f, 1.0f); break;
+			case EnemyType::FlyingEnemy: color = ImVec4(0.2f, 0.4f, 1.0f, 1.0f); break;
+			default:                     color = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); break;
+			}
+
+			ImGui::PushStyleColor(ImGuiCol_Button, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+
+			// ラベルはなんでもよくなるので "##EnemyCell" にしてもOK
+			std::string label = std::to_string(cellInt);
+			// ボタンサイズは24x24に設定
+			if (ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize))) {
+				cell = static_cast<EnemyType>(currentEnemyTypeInt);
+			}
+
+			ImGui::PopStyleColor(3);
+			ImGui::PopID();  // ★ 忘れず対応
+
+			if (x < enemyLayerWidth - 1) {
+				ImGui::SameLine();
+			}
+		}
+	}
+
+	ImGui::EndChild();
+
+
+	// 保存ボタン
+	if (ImGui::Button("Save Enemy Layer Csv")) {
+
+		std::string baseName = mapNumber_;
+		size_t dotPos = baseName.rfind('.');
+		if (dotPos != std::string::npos) {
+			baseName = baseName.substr(0, dotPos);
+		}
+
+		std::string enemyFileName = baseName + "_EnemyLayer.csv";
+
+		CsvLoader::SaveMapEnemyType(enemyFileName, enemyLayerData_.enemyData);
+		ImGui::Text("EnemyLayer Saved: %s", enemyFileName.c_str());
+	}
+
+	ImGui::End();
+
+
 #endif // _DEBUG
 
 }
@@ -238,12 +332,38 @@ void Map::GenerareMapBlock()
 	}
 }
 
+void Map::GenerateEnemyLayer()
+{
+	const uint32_t h = GetHeight();
+	const uint32_t w = GetWidth();
+
+	// エネミーデータから敵を生成
+	for (uint32_t y = 0; y < h; y++) {
+		for(uint32_t x = 0; x < w; x++) {
+			const EnemyType type = enemyLayerData_.enemyData[y][x];
+			if (type == EnemyType::None) {
+				continue;
+			}
+			// 敵の生成
+			Vector3 pos = GetMapChipPositionByIndex(x, y);
+			pos.x += blockOffset_;
+			pos.y -= blockOffset_;
+		}
+	}
+}
+
 
 void Map::LoadMapData(const char* filePath)
 {
 	// CSVファイルからマップデータを読み込む
 	CsvLoader csvLoader;
 	mapChipData_.mapData = csvLoader.LoadMapBlockType(filePath);
+
+	std::string enemyLayerFilePath = filePath + std::string("_EnemyLayer");
+	// 敵レイヤーデータの読み込み
+	enemyLayerData_.enemyData = csvLoader.LoadMapEnemyType(enemyLayerFilePath);
+
+
 }
 
 

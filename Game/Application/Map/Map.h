@@ -5,11 +5,15 @@
 #include "Game/Application/Block/Block.h"
 #include "CsvLoader.h"
 #include "Game/Application/Block/BlockType.h"
+#include "Game/Application/Enemy/EnemyType.h"
 /// マップクラス
 
 /// マップチップデータ構造体
 struct MapChipData {
 	std::vector<std::vector<BlockType>> mapData;
+};
+struct EnemyLayerData {
+	std::vector<std::vector<EnemyType>> enemyData;
 };
 
 /// インデックス構造体
@@ -50,7 +54,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(const char* filePath);
 
 	/// <summary>
 	/// 更新
@@ -71,6 +75,11 @@ public:
 	/// マップブロック生成
 	/// </summary>
 	void GenerareMapBlock();
+
+	/// <summary>
+	/// エネミーレイヤー生成
+	/// </summary>
+	void GenerateEnemyLayer();
 
 	/// <summary>
 	/// マップデータの読み込み
@@ -106,9 +115,23 @@ public:	// Setter / Getter
 	/// <param name="xIndex/yIndex">インデックス座標</param>
 	/// <returns>指定インデックス座標のブロックの中心座標</returns>
 	Vector3 GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex);
+
+	/// <summary>
+	/// マップチップデータを取得
+	/// </summary>
+	const EnemyLayerData& GetEnemyLayerData() const { return enemyLayerData_; }
+
+	/// <summary>
+	/// 編集用マップチップデータを取得
+	/// </summary>
+	EnemyLayerData& GetEnemyLayerData() { return enemyLayerData_; }
+
+
 private:
 	// マップチップデータ
 	MapChipData mapChipData_;
+	// エネミーレイヤーデータ
+	EnemyLayerData enemyLayerData_;
 
 	// 変更検知
 	bool isMapDataChanged_ = false;
@@ -123,5 +146,8 @@ private:
 
 	// ブロックを少しずらす
 	float blockOffset_ = 0.5f;
+
+	// マップ番号
+	std::string mapNumber_;
 };
 

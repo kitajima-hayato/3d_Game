@@ -301,6 +301,7 @@
     <ClInclude Include="Game\Application\Player\Player.h" />
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Camera\CameraController.h" />
+    <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
