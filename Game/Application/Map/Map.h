@@ -126,6 +126,11 @@ public:	// Setter / Getter
 	/// </summary>
 	EnemyLayerData& GetEnemyLayerData() { return enemyLayerData_; }
 
+	bool ConsumeEnemyLayerDirtyFlag() {
+		bool result = enemyLayerDirty_;
+		enemyLayerDirty_ = false;
+		return result;
+	}
 
 private:
 	// マップチップデータ
@@ -149,5 +154,8 @@ private:
 
 	// マップ番号
 	std::string mapNumber_;
+
+	// エネミーレイヤー変更検知フラグ
+	bool enemyLayerDirty_ = false;
 };
 

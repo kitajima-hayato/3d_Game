@@ -26,9 +26,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	camTargetPos_ = { 8.0f,3.5f,-20.0f };
-	// どれだけ引くか
-	const float pullBack = 30.0f;
+	
+	
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
 	// 強めに引く
@@ -103,6 +102,10 @@ void GamePlayScene::Update()
 	//sceneTransition->Update();
 	/// マップの更新
 	map->Update();
+
+	if(map->ConsumeEnemyLayerDirtyFlag()){
+		GenerateEnemy();
+	}
 
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
@@ -245,8 +248,9 @@ void GamePlayScene::UpdateStartCamera(float dt)
 {
 	switch (startPhase_) {
 	case StartCamPhase::DollyIn: {
+		// 早→遅（スムーズな減速）
 		startTimer_ += dt;
-		float t = EaseOutCubic(startTimer_ / durDollyIn_); // 早→遅（スムーズな減速）
+		float t = EaseOutCubic(startTimer_ / durDollyIn_); 
 		cameraTransform.translate = Lerp(camStartPos_, camOvershootPos_, t);
 		if (startTimer_ >= durDollyIn_) {
 			startPhase_ = StartCamPhase::Settle;
@@ -255,13 +259,15 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	} break;
 
 	case StartCamPhase::Settle: {
+		// “ボン”と戻る
 		startTimer_ += dt;
-		float t = EaseOutBack(startTimer_ / durSettle_);   // “ボン”と戻る
+		float t = EaseOutBack(startTimer_ / durSettle_);   
 		cameraTransform.translate = Lerp(camOvershootPos_, camTargetPos_, t);
 		if (startTimer_ >= durSettle_) {
 			startPhase_ = StartCamPhase::Shake;
 			startTimer_ = 0.0f;
-			cameraTransform.translate = camTargetPos_; // 目標にピタッ
+			// 目標にピタッ
+			cameraTransform.translate = camTargetPos_; 
 		}
 	} break;
 
