@@ -44,13 +44,46 @@ void Player::OnCollision(Collider* other)
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
 		// 死亡処理
-		isDead_ = true;
+		isEnemyHit_ = true;
+		EnemyCollision();
 		break;
 	default:
 		// 特に何もしない
 		break;
 	}
 }
+
+void Player::EnemyCollision()
+{
+	// 点滅スタートの初期化のみ
+	isEnemyHit_ = true;
+	flashingFrameCount_ = 0;
+	isVisible_ = true;
+}
+
+void Player::FlashingUpdate()
+{
+	// エネミーにヒットしていたら点滅処理
+	if (isEnemyHit_) {
+		// フレームカウント更新
+		flashingFrameCount_++;
+		// 点滅処理
+		if (flashingFrameCount_ <= maxFlashingFlame_) {
+			if (flashingFrameCount_ % flashingIntervalFrame_ == 0) {
+				isVisible_ = !isVisible_;
+			}
+		} else {
+			// 終了処理
+			isEnemyHit_ = false;
+			isVisible_ = true;
+			flashingFrameCount_ = 0;
+		}
+		//////　点滅が当たった瞬間に出るように　出来たら数値の調整　カメラのシェイクも追加
+		//////　できるなら画面を少し赤くしても良いかも
+	}
+}
+
+
 
 void Player::Initialize(Vector3 position)
 {
@@ -67,6 +100,8 @@ void Player::Update()
 {
 	// プレイヤーの挙動更新
 	UpdateBehavior();
+	// エネミーにヒットしたら
+	FlashingUpdate();
 
 #ifdef USE_IMGUI
 	ImGui();
@@ -80,7 +115,9 @@ void Player::Update()
 void Player::Draw()
 {
 	// モデルの描画
-	playerModel_->Draw();
+	if (isVisible_) {
+		playerModel_->Draw();
+	}
 }
 
 void Player::UpdateBehavior()
@@ -244,22 +281,7 @@ void Player::Jump()
 
 }
 
-void Player::ImGui()
-{
-#ifdef USE_IMGUI
-	ImGui::Begin("Player Info");
-	Vector3 pos = playerModel_->GetTranslate();
-	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-	// ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", playerModel_->GetRotate().x, playerModel_->GetRotate().y, playerModel_->GetRotate().z);
-	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
-	ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
-	ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
-	ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
 
-
-	ImGui::End();
-#endif
-}
 
 void Player::MapCollision(CollisionMapInfo& collisionInfo)
 {
@@ -524,7 +546,100 @@ void Player::DebugPlayerReset()
 
 
 
+
 void Player::Finalize()
 {
 
+}
+
+void Player::ImGui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("Player Status");
+
+	if(ImGui::BeginTabBar("Player Status Tab"))
+	{
+		// タブ１：パラメーター設定
+		if (ImGui::BeginTabItem("Parameters"))
+		{
+			ImGui::Text("=== Player Parameters ===");
+			ImGui::SliderFloat("Acceleration", &status_.kAcceleration, 0.01f, 0.2f);
+			ImGui::SliderFloat("Attenuation", &status_.kAttenuation, 0.0f, 0.5f);
+			ImGui::SliderFloat("Max Speed", &status_.kMaxSpeed, 0.05f, 0.5f);
+			ImGui::SliderFloat("Dash Speed Scale", &status_.kDashSpeedScale, 1.0f, 5.0f);
+			ImGui::SliderFloat("Gravity", &status_.kGravity, 0.01f, 0.2f);
+			ImGui::SliderFloat("Max Fall Speed", &status_.kMaxFallSpeed, 0.1f, 2.0f);
+			ImGui::SliderFloat("Jump Power", &status_.kJumpPower, 0.1f, 1.0f);
+			ImGui::EndTabItem();
+		}
+
+		// タブ２：敵衝突・点滅関連
+		if (ImGui::BeginTabItem("Hit Enemy")) {
+			// プレイヤー用デバッグウィンドウ
+			
+
+				ImGui::Text("=== Enemy Collision / Flashing ===");
+
+				// 敵ヒットフラグ
+				ImGui::Checkbox("isEnemyHit_", &isEnemyHit_);
+
+				// 今の表示状態
+				ImGui::Checkbox("isVisible_", &isVisible_);
+
+				// フレームカウンタ
+				ImGui::Text("flashingFrameCount_: %d", flashingFrameCount_);
+
+				// 最大点滅フレーム
+				{
+					int tmp = static_cast<int>(maxFlashingFlame_);
+					ImGui::DragInt("maxFlashingFlame_", &tmp, 1, 0, 600);
+					maxFlashingFlame_ = static_cast<uint32_t>(tmp);
+				}
+
+				// 点滅間隔フレーム
+				{
+					int tmp = static_cast<int>(flashingIntervalFrame_);
+					ImGui::DragInt("flashingIntervalFrame_", &tmp, 1, 1, 120);
+					flashingIntervalFrame_ = static_cast<uint32_t>(tmp);
+				}
+
+				// 余りの確認（デバッグ用）
+				if (flashingIntervalFrame_ > 0) {
+					int mod = flashingFrameCount_ % flashingIntervalFrame_;
+					ImGui::Text("flashingFrameCount_ %% flashingIntervalFrame_ = %d", mod);
+				}
+
+				// 点滅中かどうかの判定表示
+				bool isFlashing = (flashingFrameCount_ <= maxFlashingFlame_);
+				ImGui::Text("isFlashing: %s", isFlashing ? "true" : "false");
+			
+				ImGui::EndTabItem();
+		}
+
+		
+
+		// タブ３：プレイヤー情報表示
+		if(ImGui::BeginTabItem("Player Info"))
+		{
+			ImGui::Text("=== Player Info ===");
+			Vector3 pos = playerModel_->GetTranslate();
+			ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+			ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
+			ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
+			ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
+			ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+
+		
+
+
+	}
+
+	ImGui::End();
+
+
+#endif
 }

@@ -231,6 +231,16 @@ private:
 	/// </summary>
 	void DebugPlayerReset();
 
+	/// <summary>
+	/// エネミーに当たった場合の衝突処理
+	/// </summary>
+	void EnemyCollision();
+
+	/// <summary>
+	///	点滅更新処理
+	/// </summary>
+	void FlashingUpdate();
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -241,6 +251,9 @@ public:	/// Setter / Getter
 
 	// プレイヤーの位置情報取得
 	const Vector3 GetTranslate()const { return playerModel_->GetTranslate(); }
+
+	// プレイヤーが敵にヒットしているかどうか
+	bool GetHitEnemy()const { return isEnemyHit_; }
 
 private:	// メンバ変数
 	// プレイヤーステータス
@@ -275,6 +288,20 @@ private:	// メンバ変数
 	// ダブルタップ判定用タイマー
 	uint32_t rightTapTimer_ = 0;
 	uint32_t leftTapTimer_ = 0;
+
+	// エネミーに当たったかどうか
+	bool isEnemyHit_ = false;
+	
+	// 点滅用フレームカウント
+	uint32_t flashingFrameCount_ = 0;
+	// 現状の点滅回数
+	uint32_t flashingCount_ = 0;
+	// 点滅持続フレーム数
+	 uint32_t maxFlashingFlame_ = 120;
+	// 何フレームごとに点滅するか
+	 uint32_t flashingIntervalFrame_ = 7;
+	// 可視フラグ
+	bool isVisible_ = true;
 
 
 };
