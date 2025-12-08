@@ -21,13 +21,16 @@ ImVec4 GetBlockColorByType(BlockType blockType) {
 }
 #endif
 
-void Map::Initialize()
+void Map::Initialize(const char* filePath)
 {
 	// マップデータの初期化
 	mapChipData_.mapData.resize(kMapHeight, std::vector<BlockType>(kMapWidth, BlockType::Air));
 
+	// マップ番号の保存
+	mapNumber_ = filePath;
+
 	// マップデータの読み込み
-	LoadMapData("1-1.csv");
+	LoadMapData(filePath);
 
 	// マップブロックの生成
 	GenerareMapBlock();
@@ -39,143 +42,305 @@ void Map::Initialize()
 
 void Map::Update()
 {
-	// マップの更新
-	for (std::vector <Block*>& row : blockArray_) {
-		for (Block* block : row) {
-			if (!block) {
-				continue;
-			}
-			block->Update();
-		}
-	}
+    // マップの更新
+    for (std::vector <Block*>& row : blockArray_) {
+        for (Block* block : row) {
+            if (!block) {
+                continue;
+            }
+            block->Update();
+        }
+    }
 #ifdef USE_IMGUI
-	// ImGuiによるデバッグ情報表示
+    // ▼▼▼ ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合 ▼▼▼
 
-	ImGui::Begin("Map Info");
-	ImGui::Text("Map Width: %d", GetWidth());
-	ImGui::Text("Map Height: %d", GetHeight());
-	ImGui::End();
+    ImGui::Begin("Map Tools"); // 1つの窓にまとめる
 
-	// マップデータの編集　
-	ImGui::Begin("Map Editor");
+    if (ImGui::BeginTabBar("MapTabs"))
+    {
+        // -------------------------
+        // タブ1: Map Info
+        // -------------------------
+        if (ImGui::BeginTabItem("Info"))
+        {
+            ImGui::Text("Map Width: %d", GetWidth());
+            ImGui::Text("Map Height: %d", GetHeight());
+            ImGui::EndTabItem();
+        }
 
-	// 1. ブロックタイプ選択用のコンボ
-	static int currentTypeInt = 0; // 今ペイントするブロック
-	const char* blockTypeNames[] = {
-		"Air",
-		"NormalBlock",
-		"TestBlock",
-		"GoalUp",
-		"GoalDown",
-		"BreakBlock",
-		"MoveBlock",
-		"SandBlock",
-	};
+        // -------------------------
+        // タブ2: Block Editor 
+        // -------------------------
+        // -------------------------
+// タブ2: Block Editor (元: Map Editor)
+// -------------------------
+        if (ImGui::BeginTabItem("Block Editor"))
+        {
+            // =====================================
+            // ① 一番上に「保存 / ロードまわり」のUI
+            // =====================================
+            static char mapFileName[256] = "MapData.csv"; // お好みで初期値
+            static std::string mapFileMessage;
 
-	ImGui::Text("Paint Type:");
-	ImGui::SameLine();
-	ImGui::Combo("##PaintType",
-		&currentTypeInt,
-		blockTypeNames,
-		IM_ARRAYSIZE(blockTypeNames));
+            ImGui::Text("Map CSV File:");
+            ImGui::SameLine();
+            ImGui::InputText("##MapFile", mapFileName, IM_ARRAYSIZE(mapFileName));
 
-	// 選択中のブロックの色のプレビュー
-	ImGui::SameLine();
-	ImGui::Text("BlockColor:");
-	ImGui::SameLine();
+            // --- 保存ボタン ---
+            if (ImGui::Button("Save Map CSV")) {
+                try {
+                    CsvLoader::SaveMapBlockType(mapFileName, mapChipData_.mapData);
+                    mapFileMessage = std::string("Saved: ") + mapFileName;
+                }
+                catch (const std::exception& e) {
+                    mapFileMessage = std::string("Save Failed: ") + e.what();
+                }
+            }
 
-	// currentTypeInt をBlockTypeにキャストして色を取得
-	BlockType currentType = static_cast<BlockType>(currentTypeInt);
-	ImVec4 previewColor = GetBlockColorByType(currentType);
+            ImGui::SameLine();
 
-	// 閲覧用の小さいボタンを表示 / 応答はなし
-	ImGui::PushStyleColor(ImGuiCol_Button, previewColor);
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, previewColor);
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, previewColor);
-	ImGui::Button("##PaintPreview", ImVec2(24.0f, 24.0f));
-	ImGui::PopStyleColor(3);
+            // --- ロードボタン（ここを新しく追加） ---
+            if (ImGui::Button("Load Map CSV")) {
+                try {
+                    // "1_1.csv" → "1_1" に変換して、ゲーム本編と同じ形式で読む
+                    std::string baseName = mapFileName;
+                    size_t dotPos = baseName.rfind('.');
+                    if (dotPos != std::string::npos) {
+                        baseName = baseName.substr(0, dotPos);
+                    }
 
-	// ツールチップで種類名も出す
-	if (ImGui::IsItemHovered()) {
-		ImGui::SetTooltip("%s", blockTypeNames[currentTypeInt]);
-	}
+                    // マップ＆エネミーレイヤーを再読み込み
+                    LoadMapData(baseName.c_str());
 
-	// 2. マップ本体のグリッド表示（スクロールできるように Child にする）
-	ImGui::Separator();
-	ImGui::Text("Map Grid");
-	ImGui::BeginChild("MapGrid", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar);
+                    // マップブロックも作り直す
+                    GenerareMapBlock();
 
-	const float cellSize = 20.0f; // 1マスのサイズ（お好みで）
+                    mapFileMessage = std::string("Loaded: ") + mapFileName;
+                }
+                catch (const std::exception& e) {
+                    mapFileMessage = std::string("Load Failed: ") + e.what();
+                }
+            }
 
-	for (uint32_t y = 0; y < GetHeight(); ++y) {
-		for (uint32_t x = 0; x < GetWidth(); ++x) {
-			BlockType& blockType = mapChipData_.mapData[y][x];
+            // メッセージ表示
+            if (!mapFileMessage.empty()) {
+                ImGui::SameLine();
+                ImGui::Text("%s", mapFileMessage.c_str());
+            }
 
-			// 3. 色をブロックタイプで変えると見やすい
-			ImVec4 color = GetBlockColorByType(blockType);
+            ImGui::Separator();
+
+            // =====================================
+            // ② ここから下は「編集UI」と「グリッド表示」
+            // （ここ以降は今のままでOK）
+            // =====================================
+
+            // ブロックタイプ選択用のコンボ
+            static int currentTypeInt = 0;
+            const char* blockTypeNames[] = {
+                "Air",
+                "NormalBlock",
+                "TestBlock",
+                "GoalUp",
+                "GoalDown",
+                "BreakBlock",
+                "MoveBlock",
+                "SandBlock",
+            };
+
+            ImGui::Text("Paint Type:");
+            ImGui::SameLine();
+            ImGui::Combo("##PaintType",
+                &currentTypeInt,
+                blockTypeNames,
+                IM_ARRAYSIZE(blockTypeNames));
+
+            ImGui::Separator();
+            ImGui::Text("Map Grid");
+
+            ImGui::BeginChild("MapGrid", ImVec2(0, 260), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+            const float cellSize = 20.0f;
+            uint32_t mapHeight = GetHeight();
+            uint32_t mapWidth = GetWidth();
+
+            for (uint32_t y = 0; y < mapHeight; ++y) {
+                for (uint32_t x = 0; x < mapWidth; ++x) {
+
+                    BlockType& cell = mapChipData_.mapData[y][x];
+
+                    ImGui::PushID(static_cast<int>(y * mapWidth + x));
+
+                    ImVec4 color = GetBlockColorByType(cell);
+                    ImGui::PushStyleColor(ImGuiCol_Button, color);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+
+                    std::string label = std::to_string(static_cast<int>(cell));
+
+                    // ★ ボタンは見た目用として押すだけ
+                    ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
+
+                    // ★ エネミーエディターと同じドラッグ塗り
+                    if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                        cell = static_cast<BlockType>(currentTypeInt);
+                        isMapDataChanged_ = true;
+                    }
+
+                    ImGui::PopStyleColor(3);
+                    ImGui::PopID();
+
+                    if (x < mapWidth - 1) {
+                        ImGui::SameLine();
+                    }
+                }
+            }
+
+            ImGui::EndChild();
 
 
-			ImGui::PushID(static_cast<int>(y * GetWidth() + x)); // ID被り防止
-			ImGui::PushStyleColor(ImGuiCol_Button, color);
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(color.x + 0.1f, color.y + 0.1f, color.z + 0.1f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(color.x * 0.8f, color.y * 0.8f, color.z * 0.8f, 1.0f));
+            
 
-			// ラベルは非表示 ("##cell") にして、ボタンだけ並べる
-			if (ImGui::Button("##cell", ImVec2(cellSize, cellSize))) {
-				blockType = static_cast<BlockType>(currentTypeInt);
-				isMapDataChanged_ = true;
-			}
-
-			// マウスを乗せた時に情報を出す
-			if (ImGui::IsItemHovered()) {
-				ImGui::SetTooltip("(%u, %u)\n%s", x, y, blockTypeNames[static_cast<int>(blockType)]);
-			}
-
-			ImGui::PopStyleColor(3);
-			ImGui::PopID();
-
-			// 横に並べる
-			if (x < GetWidth() - 1) {
-				ImGui::SameLine();
-			}
-		}
-	}
-
-	ImGui::EndChild();
-	static char saveFileName[256] = "stage01.csv"; // 初期値はお好みで
-	ImGui::InputText("Save File", saveFileName, IM_ARRAYSIZE(saveFileName));
-
-	static std::string saveMessage;
-
-	if (ImGui::Button("Save CSV")) {
-		try {
-			// mapChipData_.mapData をそのまま渡す
-			CsvLoader::SaveMapBlockType(saveFileName, mapChipData_.mapData);
-			saveMessage = std::string("Saved: ") + saveFileName;
-		}
-		catch (const std::exception& e) {
-			saveMessage = std::string("Save Failed: ") + e.what();
-		}
-	}
+            ImGui::EndTabItem();
+        }
 
 
-	if (!saveMessage.empty()) {
-		ImGui::Text("%s", saveMessage.c_str());
-	}
+        // -------------------------
+        // タブ3: Enemy Layer (元: Enemy Layer Editor)
+        // -------------------------
+        if (ImGui::BeginTabItem("Enemy Layer"))
+        {
+            // エネミータイプ一覧
+            static int currentEnemyTypeInt = 0;
+            const char* enemyTypeNames[] = {
+                "None",
+                "NormalEnemy",
+                "FlyingEnemy",
+            };
 
+            ImGui::Text("Paint Enemy Type:");
+            ImGui::SameLine();
+            ImGui::Combo("##EnemyType",
+                &currentEnemyTypeInt,
+                enemyTypeNames,
+                IM_ARRAYSIZE(enemyTypeNames));
 
-	// 4. マップデータが変更された場合、マップブロックを再生成
-	if (isMapDataChanged_) {
-		GenerareMapBlock();
-		isMapDataChanged_ = false;
-	}
+            // ファイル名入力＋セーブ/ロード
+            static char enemyFileName[256] = "stage01_EnemyLayer.csv";
+            ImGui::InputText("EnemyLayer File", enemyFileName, IM_ARRAYSIZE(enemyFileName));
 
-	ImGui::End();
+            static std::string enemyLayerMessage;
 
+            // セーブボタン
+            if (ImGui::Button("Save Enemy CSV")) {
+                try {
+                    CsvLoader::SaveMapEnemyType(enemyFileName, enemyLayerData_.enemyData);
+                    enemyLayerMessage = std::string("Saved: ") + enemyFileName;
+                }
+                catch (const std::exception& e) {
+                    enemyLayerMessage = std::string("Save Failed: ") + e.what();
+                }
+            }
 
-#endif // _DEBUG
+            ImGui::SameLine();
 
+            // ロードボタン
+            if (ImGui::Button("Load Enemy CSV")) {
+                try {
+                    // 拡張子 .csv を外して Load 用のベース名を作る
+                    std::string baseName = enemyFileName;
+                    size_t dotPos = baseName.rfind('.');
+                    if (dotPos != std::string::npos) {
+                        baseName = baseName.substr(0, dotPos);
+                    }
+
+                    CsvLoader loader;
+                    // LoadMapEnemyType は frontFilePath + baseName + ".csv" を読む
+                    enemyLayerData_.enemyData = loader.LoadMapEnemyType(baseName);
+
+                    // 敵レイヤーが更新されたことを記録
+                    enemyLayerDirty_ = true;
+
+                    enemyLayerMessage = std::string("Loaded: ") + enemyFileName;
+                }
+                catch (const std::exception& e) {
+                    enemyLayerMessage = std::string("Load Failed: ") + e.what();
+                }
+            }
+
+            if (!enemyLayerMessage.empty()) {
+                ImGui::Text("%s", enemyLayerMessage.c_str());
+            }
+
+            // エネミーデータの参照
+            auto& enemyLayer = enemyLayerData_.enemyData;
+
+            // グリッド描画前に空チェック
+            if (enemyLayer.empty() || enemyLayer[0].empty()) {
+                ImGui::Text("Enemy layer is empty or not loaded.");
+            } else {
+                uint32_t enemyLayerHeight = static_cast<uint32_t>(enemyLayer.size());
+                uint32_t enemyLayerWidth = static_cast<uint32_t>(enemyLayer[0].size());
+
+                const float cellSize = 20.0f;
+
+                // エネミーレイヤーグリッド表示
+                ImGui::BeginChild("EnemyLayerGrid", ImVec2(0, 260), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+                for (uint32_t y = 0; y < enemyLayerHeight; ++y) {
+                    for (uint32_t x = 0; x < enemyLayerWidth; ++x) {
+
+                        EnemyType& cell = enemyLayer[y][x];
+                        uint32_t cellInt = static_cast<uint32_t>(cell);
+
+                        ImGui::PushID(static_cast<int>(y * enemyLayerWidth + x));
+
+                        ImVec4 color;
+                        switch (cell) {
+                        case EnemyType::NormalEnemy: color = ImVec4(0.2f, 0.8f, 0.2f, 1.0f); break;
+                        case EnemyType::FlyingEnemy: color = ImVec4(0.2f, 0.4f, 1.0f, 1.0f); break;
+                        default:                     color = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); break;
+                        }
+
+                        ImGui::PushStyleColor(ImGuiCol_Button, color);
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+
+                        std::string label = std::to_string(cellInt);
+                        ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
+
+                        // ★ 左ドラッグ中にカーソルが乗っていたら塗る
+                        if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                            cell = static_cast<EnemyType>(currentEnemyTypeInt);
+                        }
+
+                        ImGui::PopStyleColor(3);
+                        ImGui::PopID();
+
+                        if (x < enemyLayerWidth - 1) {
+                            ImGui::SameLine();
+                        }
+                    }
+                }
+
+                ImGui::EndChild();
+            }
+
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
+
+    ImGui::End(); // "Map Tools"
+
+    // ▲▲▲ ImGui 統合ここまで ▲▲▲
+
+#endif // USE_IMGUI
 }
+
+
+
 void Map::Draw()
 {
 	// マップの描画
@@ -238,12 +403,38 @@ void Map::GenerareMapBlock()
 	}
 }
 
+void Map::GenerateEnemyLayer()
+{
+	const uint32_t h = GetHeight();
+	const uint32_t w = GetWidth();
+
+	// エネミーデータから敵を生成
+	for (uint32_t y = 0; y < h; y++) {
+		for(uint32_t x = 0; x < w; x++) {
+			const EnemyType type = enemyLayerData_.enemyData[y][x];
+			if (type == EnemyType::None) {
+				continue;
+			}
+			// 敵の生成
+			Vector3 pos = GetMapChipPositionByIndex(x, y);
+			pos.x += blockOffset_;
+			pos.y -= blockOffset_;
+		}
+	}
+}
+
 
 void Map::LoadMapData(const char* filePath)
 {
 	// CSVファイルからマップデータを読み込む
 	CsvLoader csvLoader;
 	mapChipData_.mapData = csvLoader.LoadMapBlockType(filePath);
+
+	std::string enemyLayerFilePath = filePath + std::string("_EnemyLayer");
+	// 敵レイヤーデータの読み込み
+	enemyLayerData_.enemyData = csvLoader.LoadMapEnemyType(enemyLayerFilePath);
+
+
 }
 
 

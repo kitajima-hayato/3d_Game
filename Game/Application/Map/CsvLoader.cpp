@@ -2,6 +2,7 @@
 #include "Game/Application/Block/Block.h"
 
 const std::string CsvLoader::frontFilePath = "resources/MapData/";
+const std::string CsvLoader::extensionCsv_ = ".csv";
 
 
 
@@ -43,7 +44,7 @@ std::vector<std::vector<BlockType>> CsvLoader::LoadMapBlockType(const std::strin
 	// 読み込んだ物を格納する変数	
 	std::vector<std::vector<BlockType>> mapData;
 	// ファイルを開く
-	std::ifstream file(frontFilePath+filePath);
+	std::ifstream file(frontFilePath + filePath + extensionCsv_);
 	// ファイルが開けなかった場合のエラーチェック
 	if (!file.is_open()) {
 		throw std::runtime_error("CSVファイルが開けません: " + filePath);
@@ -70,7 +71,40 @@ std::vector<std::vector<BlockType>> CsvLoader::LoadMapBlockType(const std::strin
 	return mapData;
 }
 
-void CsvLoader::SaveMapBlockType(const std::string& filePath,
+std::vector<std::vector<EnemyType>> CsvLoader::LoadMapEnemyType(const std::string& filePath)
+{
+	// 読み込んだ物を格納する変数	
+	std::vector<std::vector<EnemyType>> enemyData;
+	// ファイルを開く
+	std::ifstream file(frontFilePath + filePath + extensionCsv_);
+	// ファイルが開けなかった場合のエラーチェック
+	if (!file.is_open()) {
+		throw std::runtime_error("CSVファイルが開けません: " + filePath);
+	}
+	// 1行ずつ読み込む
+	std::string line;
+	// 各行をカンマで区切って処理
+	while (std::getline(file, line)) {
+		std::vector<EnemyType> row;
+		std::stringstream ss(line);
+		std::string value;
+		// カンマで区切られた各値を処理
+		while (std::getline(ss, value, ',')) {
+			// 文字列をintに変換し、それをBlockTypeへ変換
+			int intVal = std::stoi(value);
+			EnemyType type = static_cast<EnemyType>(intVal);
+			row.push_back(type);
+		}
+		// 行をenemyDataに追加
+		enemyData.push_back(row);
+	}
+
+	file.close();
+	return enemyData;
+}
+
+void CsvLoader::SaveMapBlockType(
+	const std::string& filePath,
 	const std::vector<std::vector<BlockType>>& mapData)
 {
 	// frontFilePath を使っているなら読み込みと同じように
@@ -80,10 +114,7 @@ void CsvLoader::SaveMapBlockType(const std::string& filePath,
 	if (!file.is_open()) {
 		throw std::runtime_error("CSVファイルを書き込み用に開けません: " + filePath);
 	}
-
-	// ※ Excel などで開く予定があるなら BOM を付けたい場合もある
-	// file << "\xEF\xBB\xBF"; // 必要ならコメントアウト外す
-
+	// 行ごとにループ
 	const uint32_t height = static_cast<uint32_t>(mapData.size());
 	for (uint32_t y = 0; y < height; ++y) {
 		const uint32_t width = static_cast<uint32_t>(mapData[y].size());
@@ -96,5 +127,33 @@ void CsvLoader::SaveMapBlockType(const std::string& filePath,
 		}
 		file << "\n";               // 行ごとに改行
 	}
+}
+
+void CsvLoader::SaveMapEnemyType(
+	const std::string& filePath, 
+	const std::vector<std::vector<EnemyType>>& enemyData)
+{
+
+	// frontFilePath を使っているなら読み込みと同じように
+	std::string filePathFull = frontFilePath + filePath;
+	std::ofstream file(filePathFull);
+	// ファイルが開けなかった場合のエラーチェック
+	if (!file.is_open()) {
+		throw std::runtime_error("CSVファイルを書き込み用に開けません: " + filePath);
+	}
+	// 行ごとにループ
+	const uint32_t height = static_cast<uint32_t>(enemyData.size());
+	for (uint32_t y = 0; y < height; ++y) {
+		const uint32_t width = static_cast<uint32_t>(enemyData[y].size());
+		for (uint32_t x = 0; x < width; ++x) {
+			int val = static_cast<int>(enemyData[y][x]);
+			file << val;
+			if (x < width - 1) {
+				file << ",";        // カンマ区切り
+			}
+		}
+		file << "\n";               // 行ごとに改行
+	}
+
 }
 
