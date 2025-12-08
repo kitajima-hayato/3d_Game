@@ -55,6 +55,11 @@ public:
 	void InitializeEnemy();
 
 	/// <summary>
+	/// エネミーの生成
+	/// </summary>
+	void GenerateEnemy();
+
+	/// <summary>
 	/// 当たり判定
 	/// </summary>
 	void CheckCollision();
@@ -63,6 +68,9 @@ public:
 	/// スタートカメラの更新
 	/// </summary>
 	void UpdateStartCamera(float dt);
+
+
+	
 
 private:
 	// マップ
@@ -99,9 +107,11 @@ private:
 	// 開始位置
 	Vector3 camStartPos_;
 	// 目標位置
-	Vector3 camTargetPos_;
+	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
 	// オーバーシュート位置
 	Vector3 camOvershootPos_;
+	// どれだけ引くか
+	const float pullBack = 30.0f;
 
 	// カメラのパラメーター
 	// ドリーイン時間
@@ -146,5 +156,8 @@ private:
 	bool stageStartEventFlag_ = true;
 	// 固定フレームレート用のデルタタイム
 	const float dt = 1.0f / 60.0f;
+
+	// エネミー配置のオフセット
+	float enemySpawnOffset_ = 0.5f;
 };
 

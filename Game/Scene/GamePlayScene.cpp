@@ -26,14 +26,13 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	camTargetPos_ = { 8.0f,3.5f,-20.0f };
-	// どれだけ引くか
-	const float pullBack = 30.0f;
+	
+	
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
 	// 強めに引く
 	camOvershootPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z - overShootAmt_ };
-	
+
 	// 目標位置
 	cameraTransform.translate = camStartPos_;
 	// カメラに反映
@@ -47,14 +46,14 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize();
+	map->Initialize("1-1");
 
-	
+
 	collision_ = std::make_unique<CollisionManager>();
 
 	/// プレイヤーの初期化
 	player = std::make_unique<Player>();
-	player->Initialize(Vector3{2.0f,2.0f,0.0f});
+	player->Initialize(Vector3{ 2.0f,2.0f,0.0f });
 	player->SetMap(map.get());
 	//player->SetTransitionTiming(TransitionTiming::OnDeath);
 
@@ -89,7 +88,7 @@ void GamePlayScene::Update()
 
 	backGround->Update();
 
-	
+
 
 	/// カメラの更新
 	if (stageStartEventFlag_) {
@@ -98,15 +97,19 @@ void GamePlayScene::Update()
 		camera->SetTranslate(cameraTransform.translate);
 		camera->Update();
 	}
-	
+
 
 	//sceneTransition->Update();
 	/// マップの更新
 	map->Update();
-	  
+
+	if(map->ConsumeEnemyLayerDirtyFlag()){
+		GenerateEnemy();
+	}
+
 
 	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
-	
+
 	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
 	player->Update();
@@ -131,7 +134,7 @@ void GamePlayScene::Update()
 
 void GamePlayScene::Draw()
 {
-	
+
 	backGround->Draw();
 
 	//sceneTransition->Draw();
@@ -160,11 +163,67 @@ void GamePlayScene::InitializeEnemy()
 	flyingEnemy->SetTranslate({ 6.0f,8.5f,0.0f });
 	enemies.push_back(std::move(flyingEnemy));
 
+
+
+	// csvを読み込み敵の配置情報を取得
+	GenerateEnemy();
+
+}
+
+void GamePlayScene::GenerateEnemy()
+{
+	// エネミーを一旦クリア
+	enemies.clear();
+
+	const EnemyLayerData& enemyLayerData = map->GetEnemyLayerData();
+	const auto& enemyData = enemyLayerData.enemyData;
+
+	const uint32_t mapHeight = static_cast<uint32_t>(enemyData.size());
+	for (uint32_t y = 0; y < mapHeight; y++) {
+		const uint32_t mapWidth = static_cast<uint32_t>(enemyData[y].size());
+		for (uint32_t x = 0; x < mapWidth; x++) {
+			EnemyType type = enemyData[y][x];
+			// 敵の種類がNoneならスキップ
+			if (EnemyType::None == type) {
+				continue;
+			}
+
+			// 敵の生成
+			// EnemyTypeから敵の種類を特定して生成
+			std::string enemyId;
+			switch (type) {
+			case EnemyType::NormalEnemy:
+				enemyId = "NormalEnemy";
+				break;
+			case EnemyType::FlyingEnemy:
+				enemyId = "FlyingEnemy";
+				break;
+			default:
+				// 未知のタイプ
+				continue;
+			}
+
+			// ファクトリーでエネミーを生成
+			auto enemy = EnemyFactory::CreateEnemy(enemyId);
+			// 生成失敗チェック
+			if (!enemy) continue;
+			// エネミーの初期化
+			enemy->Initialize();
+			// マップ上の位置にセット
+			Vector3 enemyPos = map->GetMapChipPositionByIndex(x, y);
+			// オフセット
+			enemyPos.x += enemySpawnOffset_;
+			enemyPos.y -= enemySpawnOffset_;
+			enemy->SetTranslate(enemyPos);
+			// エネミーリストに追加
+			enemies.push_back(std::move(enemy));
+		}
+	}
 }
 
 void GamePlayScene::CheckCollision()
 {
-	
+
 	collision_->Clear();
 
 	/// プレイヤー
@@ -175,8 +234,8 @@ void GamePlayScene::CheckCollision()
 	/// エネミー全種
 	for (auto& enemy : enemies) {
 		if (!enemy)continue;
-		
-		if(enemy->IsAlive()) {
+
+		if (enemy->IsAlive()) {
 			collision_->AddCollider(enemy.get());
 		}
 	}
@@ -189,8 +248,9 @@ void GamePlayScene::UpdateStartCamera(float dt)
 {
 	switch (startPhase_) {
 	case StartCamPhase::DollyIn: {
+		// 早→遅（スムーズな減速）
 		startTimer_ += dt;
-		float t = EaseOutCubic(startTimer_ / durDollyIn_); // 早→遅（スムーズな減速）
+		float t = EaseOutCubic(startTimer_ / durDollyIn_); 
 		cameraTransform.translate = Lerp(camStartPos_, camOvershootPos_, t);
 		if (startTimer_ >= durDollyIn_) {
 			startPhase_ = StartCamPhase::Settle;
@@ -199,13 +259,15 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	} break;
 
 	case StartCamPhase::Settle: {
+		// “ボン”と戻る
 		startTimer_ += dt;
-		float t = EaseOutBack(startTimer_ / durSettle_);   // “ボン”と戻る
+		float t = EaseOutBack(startTimer_ / durSettle_);   
 		cameraTransform.translate = Lerp(camOvershootPos_, camTargetPos_, t);
 		if (startTimer_ >= durSettle_) {
 			startPhase_ = StartCamPhase::Shake;
 			startTimer_ = 0.0f;
-			cameraTransform.translate = camTargetPos_; // 目標にピタッ
+			// 目標にピタッ
+			cameraTransform.translate = camTargetPos_; 
 		}
 	} break;
 
@@ -275,5 +337,5 @@ void GamePlayScene::DrawImgui()
 	camera->SetTranslate(cameraTransform.translate);
 	camera->SetRotate(cameraTransform.rotate);
 #endif
-	
+
 }
