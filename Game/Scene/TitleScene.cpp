@@ -112,6 +112,8 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	cylinder->SetEffectName("Cylinder");*/
 #pragma endregion
 
+
+
 }
 
 void TitleScene::Update()
@@ -124,6 +126,9 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
+	// 段々薄く
+
+	
 
 
 
@@ -150,7 +155,7 @@ void TitleScene::Update()
 	}
 
 	if (isStart) {
-		// object3dをひっだりから右に
+		// object3dをひだりから右に
 		speed.x += 0.07f;
 		object3D->SetTranslate(speed);
 
@@ -168,7 +173,7 @@ void TitleScene::Update()
 	playerObject->Update();
 
 
-	//  Rainbow回転（ここを追加）
+	// Rainbow回転（ここを追加）
 	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
 	//Rainbow->SetTransform(rainbowTransform);
 
@@ -199,7 +204,7 @@ void TitleScene::Draw()
 	playerObject->Draw();
 	//Rainbow->Draw();
 
-
+	
 
 	// パーティクルの描画
 	//ParticleManager::GetInstance()->Draw();
