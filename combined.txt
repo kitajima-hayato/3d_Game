@@ -1955,15 +1955,14 @@ void Map::Update()
         }
     }
 #ifdef USE_IMGUI
-    // ▼▼▼ ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合 ▼▼▼
+    //  ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合
 
-    ImGui::Begin("Map Tools"); // 1つの窓にまとめる
+    // 1つのタブにまとめる
+    ImGui::Begin("Map Tools"); 
 
     if (ImGui::BeginTabBar("MapTabs"))
     {
-        // -------------------------
         // タブ1: Map Info
-        // -------------------------
         if (ImGui::BeginTabItem("Info"))
         {
             ImGui::Text("Map Width: %d", GetWidth());
@@ -1971,18 +1970,12 @@ void Map::Update()
             ImGui::EndTabItem();
         }
 
-        // -------------------------
+        
         // タブ2: Block Editor 
-        // -------------------------
-        // -------------------------
-// タブ2: Block Editor (元: Map Editor)
-// -------------------------
         if (ImGui::BeginTabItem("Block Editor"))
         {
-            // =====================================
             // ① 一番上に「保存 / ロードまわり」のUI
-            // =====================================
-            static char mapFileName[256] = "MapData.csv"; // お好みで初期値
+            static char mapFileName[256] = ".csv"; 
             static std::string mapFileMessage;
 
             ImGui::Text("Map CSV File:");
@@ -2002,7 +1995,7 @@ void Map::Update()
 
             ImGui::SameLine();
 
-            // --- ロードボタン（ここを新しく追加） ---
+            // --- ロードボタン---
             if (ImGui::Button("Load Map CSV")) {
                 try {
                     // "1_1.csv" → "1_1" に変換して、ゲーム本編と同じ形式で読む
@@ -2033,10 +2026,7 @@ void Map::Update()
 
             ImGui::Separator();
 
-            // =====================================
             // ② ここから下は「編集UI」と「グリッド表示」
-            // （ここ以降は今のままでOK）
-            // =====================================
 
             // ブロックタイプ選択用のコンボ
             static int currentTypeInt = 0;
@@ -2081,10 +2071,10 @@ void Map::Update()
 
                     std::string label = std::to_string(static_cast<int>(cell));
 
-                    // ★ ボタンは見た目用として押すだけ
+                    // ボタンは見た目用として押すだけ
                     ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
 
-                    // ★ エネミーエディターと同じドラッグ塗り
+                    // エネミーエディターと同じドラッグ塗り
                     if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
                         cell = static_cast<BlockType>(currentTypeInt);
                         isMapDataChanged_ = true;
@@ -2108,9 +2098,7 @@ void Map::Update()
         }
 
 
-        // -------------------------
-        // タブ3: Enemy Layer (元: Enemy Layer Editor)
-        // -------------------------
+        // タブ3: Enemy Layer
         if (ImGui::BeginTabItem("Enemy Layer"))
         {
             // エネミータイプ一覧
@@ -2212,7 +2200,7 @@ void Map::Update()
                         std::string label = std::to_string(cellInt);
                         ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
 
-                        // ★ 左ドラッグ中にカーソルが乗っていたら塗る
+                        // 左ドラッグ中にカーソルが乗っていたら塗る
                         if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
                             cell = static_cast<EnemyType>(currentEnemyTypeInt);
                         }
@@ -2676,14 +2664,52 @@ void Player::OnCollision(Collider* other)
 	{
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
-		// 死亡処理
-		isDead_ = true;
+		//  
+		if(isEnemyHit_) {
+			// すでに当たっているなら何もしない / 無敵時間
+			break;
+		}
+		// エネミー衝突処理
+		EnemyCollision();
 		break;
 	default:
 		// 特に何もしない
 		break;
 	}
 }
+
+void Player::EnemyCollision()
+{
+	// 点滅スタートの初期化のみ
+	isEnemyHit_ = true;
+	flashingFrameCount_ = 0;
+	isVisible_ = true;
+}
+
+void Player::FlashingUpdate()
+{
+	// エネミーにヒットしていたら点滅処理 / 無敵時間
+	if (isEnemyHit_) {
+		// フレームカウント更新
+		flashingFrameCount_++;
+		// 点滅処理
+		if (flashingFrameCount_ <= maxFlashingFlame_) {
+			// 一定間隔で表示・非表示を切り替え
+			if (flashingFrameCount_ % flashingIntervalFrame_ == 1) {
+				isVisible_ = !isVisible_;
+			}
+		} else {
+			// 終了処理
+			isEnemyHit_ = false;
+			isVisible_ = true;
+			flashingFrameCount_ = 0;
+		}
+		//////　点滅が当たった瞬間に出るように　出来たら数値の調整　カメラのシェイクも追加
+		//////　できるなら画面を少し赤くしても良いかも
+	}
+}
+
+
 
 void Player::Initialize(Vector3 position)
 {
@@ -2692,7 +2718,6 @@ void Player::Initialize(Vector3 position)
 	playerModel_->SetTranslate(position);
 	playerModel_->SetModel("Player.obj");
 	SetDeathHeight(-1.0f);
-
 }
 
 
@@ -2700,6 +2725,8 @@ void Player::Update()
 {
 	// プレイヤーの挙動更新
 	UpdateBehavior();
+	// エネミーにヒットしたら
+	FlashingUpdate();
 
 #ifdef USE_IMGUI
 	ImGui();
@@ -2713,7 +2740,9 @@ void Player::Update()
 void Player::Draw()
 {
 	// モデルの描画
-	playerModel_->Draw();
+	if (isVisible_) {
+		playerModel_->Draw();
+	}
 }
 
 void Player::UpdateBehavior()
@@ -2877,22 +2906,7 @@ void Player::Jump()
 
 }
 
-void Player::ImGui()
-{
-#ifdef USE_IMGUI
-	ImGui::Begin("Player Info");
-	Vector3 pos = playerModel_->GetTranslate();
-	ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
-	// ImGui::Text("Rotation: (%.2f, %.2f, %.2f)", playerModel_->GetRotate().x, playerModel_->GetRotate().y, playerModel_->GetRotate().z);
-	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
-	ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
-	ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
-	ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
 
-
-	ImGui::End();
-#endif
-}
 
 void Player::MapCollision(CollisionMapInfo& collisionInfo)
 {
@@ -3157,9 +3171,99 @@ void Player::DebugPlayerReset()
 
 
 
+
 void Player::Finalize()
 {
 
+}
+
+void Player::ImGui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("Player Status");
+
+	if(ImGui::BeginTabBar("Player Status Tab"))
+	{
+		// タブ１：パラメーター設定
+		if (ImGui::BeginTabItem("Parameters"))
+		{
+			ImGui::Text("=== Player Parameters ===");
+			ImGui::SliderFloat("Acceleration", &status_.kAcceleration, 0.01f, 0.2f);
+			ImGui::SliderFloat("Attenuation", &status_.kAttenuation, 0.0f, 0.5f);
+			ImGui::SliderFloat("Max Speed", &status_.kMaxSpeed, 0.05f, 0.5f);
+			ImGui::SliderFloat("Dash Speed Scale", &status_.kDashSpeedScale, 1.0f, 5.0f);
+			ImGui::SliderFloat("Gravity", &status_.kGravity, 0.01f, 0.2f);
+			ImGui::SliderFloat("Max Fall Speed", &status_.kMaxFallSpeed, 0.1f, 2.0f);
+			ImGui::SliderFloat("Jump Power", &status_.kJumpPower, 0.1f, 1.0f);
+			ImGui::EndTabItem();
+		}
+
+		// タブ２：敵衝突・点滅関連
+		if (ImGui::BeginTabItem("Hit Enemy")) {
+			// プレイヤー用デバッグウィンドウ
+			
+
+				ImGui::Text("=== Enemy Collision / Flashing ===");
+
+				// 敵ヒットフラグ
+				ImGui::Checkbox("isEnemyHit_", &isEnemyHit_);
+
+				// 今の表示状態
+				ImGui::Checkbox("isVisible_", &isVisible_);
+
+				// フレームカウンタ
+				ImGui::Text("flashingFrameCount_: %d", flashingFrameCount_);
+
+				// 最大点滅フレーム
+				{
+					int tmp = static_cast<int>(maxFlashingFlame_);
+					ImGui::DragInt("maxFlashingFlame_", &tmp, 1, 0, 600);
+					maxFlashingFlame_ = static_cast<uint32_t>(tmp);
+				}
+
+				// 点滅間隔フレーム
+				{
+					int tmp = static_cast<int>(flashingIntervalFrame_);
+					ImGui::DragInt("flashingIntervalFrame_", &tmp, 1, 1, 120);
+					flashingIntervalFrame_ = static_cast<uint32_t>(tmp);
+				}
+
+				// 余りの確認（デバッグ用）
+				if (flashingIntervalFrame_ > 0) {
+					int mod = flashingFrameCount_ % flashingIntervalFrame_;
+					ImGui::Text("flashingFrameCount_ %% flashingIntervalFrame_ = %d", mod);
+				}
+
+				// 点滅中かどうかの判定表示
+				bool isFlashing = (flashingFrameCount_ <= maxFlashingFlame_);
+				ImGui::Text("isFlashing: %s", isFlashing ? "true" : "false");
+			
+				ImGui::EndTabItem();
+		}
+
+		
+
+		// タブ３：プレイヤー情報表示
+		if(ImGui::BeginTabItem("Player Info"))
+		{
+			ImGui::Text("=== Player Info ===");
+			Vector3 pos = playerModel_->GetTranslate();
+			ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+			ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
+			ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
+			ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
+			ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+
+	}
+
+	ImGui::End();
+
+
+#endif
 }
 
 ============================================================
@@ -3398,6 +3502,16 @@ private:
 	/// </summary>
 	void DebugPlayerReset();
 
+	/// <summary>
+	/// エネミーに当たった場合の衝突処理
+	/// </summary>
+	void EnemyCollision();
+
+	/// <summary>
+	///	点滅更新処理
+	/// </summary>
+	void FlashingUpdate();
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -3408,6 +3522,9 @@ public:	/// Setter / Getter
 
 	// プレイヤーの位置情報取得
 	const Vector3 GetTranslate()const { return playerModel_->GetTranslate(); }
+
+	// プレイヤーが敵にヒットしているかどうか
+	bool GetHitEnemy()const { return isEnemyHit_; }
 
 private:	// メンバ変数
 	// プレイヤーステータス
@@ -3442,6 +3559,20 @@ private:	// メンバ変数
 	// ダブルタップ判定用タイマー
 	uint32_t rightTapTimer_ = 0;
 	uint32_t leftTapTimer_ = 0;
+
+	// エネミーに当たったかどうか
+	bool isEnemyHit_ = false;
+	
+	// 点滅用フレームカウント
+	uint32_t flashingFrameCount_ = 0;
+	// 現状の点滅回数
+	uint32_t flashingCount_ = 0;
+	// 点滅持続フレーム数
+	 uint32_t maxFlashingFlame_ = 120;
+	// 何フレームごとに点滅するか
+	 uint32_t flashingIntervalFrame_ = 10;
+	// 可視フラグ
+	bool isVisible_ = true;
 
 
 };
@@ -3690,7 +3821,6 @@ public:
 	/// 更新
 	/// </summary>
 	void Update(float deltaTime);
-
 
 
 
@@ -6302,8 +6432,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	
-	
+
+
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
 	// 強めに引く
@@ -6365,21 +6495,37 @@ void GamePlayScene::Update()
 	backGround->Update();
 
 
-
-	/// カメラの更新
+	// スタート演出中はカメラを更新
 	if (stageStartEventFlag_) {
 		UpdateStartCamera(dt);
-
-		camera->SetTranslate(cameraTransform.translate);
-		camera->Update();
 	}
 
+	bool isEnemyHitNow = player->GetHitEnemy();
+
+	// プレイヤーが敵に当たったらカメラをシェイクする
+	if (player->GetHitEnemy()&& !wasEnemyHit_) {
+		enemyHitShakeActive_ = true;
+		enemyHitTimer_ = 0.0f;
+		// カメラの元の位置を保存
+		enemyHitBasePos = camera->GetTranslate();
+	
+	}
+
+	wasEnemyHit_ = isEnemyHitNow;
+
+	// カメラシェイクの更新
+	if(enemyHitShakeActive_){
+		// 
+		EnemyHitShake(dt);
+	}
 
 	//sceneTransition->Update();
+	
 	/// マップの更新
 	map->Update();
 
-	if(map->ConsumeEnemyLayerDirtyFlag()){
+	// エネミーレイヤーが変更されたらエネミーを再生成
+	if (map->ConsumeEnemyLayerDirtyFlag()) {
 		GenerateEnemy();
 	}
 
@@ -6396,11 +6542,11 @@ void GamePlayScene::Update()
 		cameraController_->SetTargetPosition(playerPosition);
 		cameraController_->Update(dt);
 		camera->SetTranslate(cameraController_->GetCameraPosition());
-		camera->Update();
 	}
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
+	camera->Update();
 	/// 当たりは判定
 	CheckCollision();
 
@@ -6526,7 +6672,7 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	case StartCamPhase::DollyIn: {
 		// 早→遅（スムーズな減速）
 		startTimer_ += dt;
-		float t = EaseOutCubic(startTimer_ / durDollyIn_); 
+		float t = EaseOutCubic(startTimer_ / durDollyIn_);
 		cameraTransform.translate = Lerp(camStartPos_, camOvershootPos_, t);
 		if (startTimer_ >= durDollyIn_) {
 			startPhase_ = StartCamPhase::Settle;
@@ -6537,13 +6683,13 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	case StartCamPhase::Settle: {
 		// “ボン”と戻る
 		startTimer_ += dt;
-		float t = EaseOutBack(startTimer_ / durSettle_);   
+		float t = EaseOutBack(startTimer_ / durSettle_);
 		cameraTransform.translate = Lerp(camOvershootPos_, camTargetPos_, t);
 		if (startTimer_ >= durSettle_) {
 			startPhase_ = StartCamPhase::Shake;
 			startTimer_ = 0.0f;
 			// 目標にピタッ
-			cameraTransform.translate = camTargetPos_; 
+			cameraTransform.translate = camTargetPos_;
 		}
 	} break;
 
@@ -6569,6 +6715,41 @@ void GamePlayScene::UpdateStartCamera(float dt)
 		// 何もしない（通常進行）
 		break;
 	}
+	camera->SetTranslate(cameraTransform.translate);
+}
+
+void GamePlayScene::EnemyHitShake(float dt)
+{
+	// スタート演出中は無効
+	if (stageStartEventFlag_) {
+		return;
+
+	}
+	enemyHitTimer_ += dt;
+	
+	// 減衰
+	float u = std::clamp(1.0f - (enemyHitTimer_ / enemyHitShakeTime_), 0.0f, 1.0f);
+
+	// ２軸(x,y)のシェイク
+	float sx = std::sin(enemyHitTimer_ * 80.0f);
+	float sy = std::sin(enemyHitTimer_ * 100.0f);
+
+	Vector3 offset = { sx * shakeAmp_ * u, sy * shakeAmp_ * u, 0.0f };
+
+	cameraTransform.translate += offset;
+
+	// シェイク終了
+	if (enemyHitTimer_ >= enemyHitShakeTime_) {
+		enemyHitTimer_ = 0.0f;
+		enemyHitShakeActive_ = false;
+
+		// 最終的には元の位置に戻す
+		camera->SetTranslate(enemyHitBasePos);
+		cameraTransform.translate = enemyHitBasePos;
+
+	}
+
+
 }
 
 
@@ -6690,6 +6871,11 @@ public:
 	/// </summary>
 	void UpdateStartCamera(float dt);
 
+	/// <summary>
+	/// エネミーヒット時のカメラシェイク
+	/// </summary>
+	void EnemyHitShake(float dt);
+
 
 	
 
@@ -6780,6 +6966,17 @@ private:
 
 	// エネミー配置のオフセット
 	float enemySpawnOffset_ = 0.5f;
+
+	// エネミーヒットのシェイク時間
+	float enemyHitShakeTime_ = 1.0f;
+	// エネミーヒット時のカメラシェイク用
+	bool enemyHitShakeActive_ = false;
+	// シェイク時間
+	float enemyHitTimer_ = 0.0f;
+	// シェイク持続時間 
+	Vector3 enemyHitBasePos{};
+	// 前フレームの敵当たり判定
+	bool wasEnemyHit_ = false;
 };
 
 
