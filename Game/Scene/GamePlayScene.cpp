@@ -26,8 +26,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = std::make_unique<Camera>();
 	// カメラの初期設定
-	
-	
+
+
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
 	// 強めに引く
@@ -89,21 +89,37 @@ void GamePlayScene::Update()
 	backGround->Update();
 
 
-
-	/// カメラの更新
+	// スタート演出中はカメラを更新
 	if (stageStartEventFlag_) {
 		UpdateStartCamera(dt);
-
-		camera->SetTranslate(cameraTransform.translate);
-		camera->Update();
 	}
 
+	bool isEnemyHitNow = player->GetHitEnemy();
+
+	// プレイヤーが敵に当たったらカメラをシェイクする
+	if (player->GetHitEnemy()&& !wasEnemyHit_) {
+		enemyHitShakeActive_ = true;
+		enemyHitTimer_ = 0.0f;
+		// カメラの元の位置を保存
+		enemyHitBasePos = camera->GetTranslate();
+	
+	}
+
+	wasEnemyHit_ = isEnemyHitNow;
+
+	// カメラシェイクの更新
+	if(enemyHitShakeActive_){
+		// 
+		EnemyHitShake(dt);
+	}
 
 	//sceneTransition->Update();
+	
 	/// マップの更新
 	map->Update();
 
-	if(map->ConsumeEnemyLayerDirtyFlag()){
+	// エネミーレイヤーが変更されたらエネミーを再生成
+	if (map->ConsumeEnemyLayerDirtyFlag()) {
 		GenerateEnemy();
 	}
 
@@ -120,11 +136,11 @@ void GamePlayScene::Update()
 		cameraController_->SetTargetPosition(playerPosition);
 		cameraController_->Update(dt);
 		camera->SetTranslate(cameraController_->GetCameraPosition());
-		camera->Update();
 	}
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
+	camera->Update();
 	/// 当たりは判定
 	CheckCollision();
 
@@ -250,7 +266,7 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	case StartCamPhase::DollyIn: {
 		// 早→遅（スムーズな減速）
 		startTimer_ += dt;
-		float t = EaseOutCubic(startTimer_ / durDollyIn_); 
+		float t = EaseOutCubic(startTimer_ / durDollyIn_);
 		cameraTransform.translate = Lerp(camStartPos_, camOvershootPos_, t);
 		if (startTimer_ >= durDollyIn_) {
 			startPhase_ = StartCamPhase::Settle;
@@ -261,13 +277,13 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	case StartCamPhase::Settle: {
 		// “ボン”と戻る
 		startTimer_ += dt;
-		float t = EaseOutBack(startTimer_ / durSettle_);   
+		float t = EaseOutBack(startTimer_ / durSettle_);
 		cameraTransform.translate = Lerp(camOvershootPos_, camTargetPos_, t);
 		if (startTimer_ >= durSettle_) {
 			startPhase_ = StartCamPhase::Shake;
 			startTimer_ = 0.0f;
 			// 目標にピタッ
-			cameraTransform.translate = camTargetPos_; 
+			cameraTransform.translate = camTargetPos_;
 		}
 	} break;
 
@@ -293,6 +309,41 @@ void GamePlayScene::UpdateStartCamera(float dt)
 		// 何もしない（通常進行）
 		break;
 	}
+	camera->SetTranslate(cameraTransform.translate);
+}
+
+void GamePlayScene::EnemyHitShake(float dt)
+{
+	// スタート演出中は無効
+	if (stageStartEventFlag_) {
+		return;
+
+	}
+	enemyHitTimer_ += dt;
+	
+	// 減衰
+	float u = std::clamp(1.0f - (enemyHitTimer_ / enemyHitShakeTime_), 0.0f, 1.0f);
+
+	// ２軸(x,y)のシェイク
+	float sx = std::sin(enemyHitTimer_ * 80.0f);
+	float sy = std::sin(enemyHitTimer_ * 100.0f);
+
+	Vector3 offset = { sx * shakeAmp_ * u, sy * shakeAmp_ * u, 0.0f };
+
+	cameraTransform.translate += offset;
+
+	// シェイク終了
+	if (enemyHitTimer_ >= enemyHitShakeTime_) {
+		enemyHitTimer_ = 0.0f;
+		enemyHitShakeActive_ = false;
+
+		// 最終的には元の位置に戻す
+		camera->SetTranslate(enemyHitBasePos);
+		cameraTransform.translate = enemyHitBasePos;
+
+	}
+
+
 }
 
 

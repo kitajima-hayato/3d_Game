@@ -52,15 +52,14 @@ void Map::Update()
         }
     }
 #ifdef USE_IMGUI
-    // ▼▼▼ ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合 ▼▼▼
+    //  ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合
 
-    ImGui::Begin("Map Tools"); // 1つの窓にまとめる
+    // 1つのタブにまとめる
+    ImGui::Begin("Map Tools"); 
 
     if (ImGui::BeginTabBar("MapTabs"))
     {
-        // -------------------------
         // タブ1: Map Info
-        // -------------------------
         if (ImGui::BeginTabItem("Info"))
         {
             ImGui::Text("Map Width: %d", GetWidth());
@@ -68,18 +67,12 @@ void Map::Update()
             ImGui::EndTabItem();
         }
 
-        // -------------------------
+        
         // タブ2: Block Editor 
-        // -------------------------
-        // -------------------------
-// タブ2: Block Editor (元: Map Editor)
-// -------------------------
         if (ImGui::BeginTabItem("Block Editor"))
         {
-            // =====================================
             // ① 一番上に「保存 / ロードまわり」のUI
-            // =====================================
-            static char mapFileName[256] = "MapData.csv"; // お好みで初期値
+            static char mapFileName[256] = ".csv"; 
             static std::string mapFileMessage;
 
             ImGui::Text("Map CSV File:");
@@ -99,7 +92,7 @@ void Map::Update()
 
             ImGui::SameLine();
 
-            // --- ロードボタン（ここを新しく追加） ---
+            // --- ロードボタン---
             if (ImGui::Button("Load Map CSV")) {
                 try {
                     // "1_1.csv" → "1_1" に変換して、ゲーム本編と同じ形式で読む
@@ -130,10 +123,7 @@ void Map::Update()
 
             ImGui::Separator();
 
-            // =====================================
             // ② ここから下は「編集UI」と「グリッド表示」
-            // （ここ以降は今のままでOK）
-            // =====================================
 
             // ブロックタイプ選択用のコンボ
             static int currentTypeInt = 0;
@@ -178,10 +168,10 @@ void Map::Update()
 
                     std::string label = std::to_string(static_cast<int>(cell));
 
-                    // ★ ボタンは見た目用として押すだけ
+                    // ボタンは見た目用として押すだけ
                     ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
 
-                    // ★ エネミーエディターと同じドラッグ塗り
+                    // エネミーエディターと同じドラッグ塗り
                     if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
                         cell = static_cast<BlockType>(currentTypeInt);
                         isMapDataChanged_ = true;
@@ -205,9 +195,7 @@ void Map::Update()
         }
 
 
-        // -------------------------
-        // タブ3: Enemy Layer (元: Enemy Layer Editor)
-        // -------------------------
+        // タブ3: Enemy Layer
         if (ImGui::BeginTabItem("Enemy Layer"))
         {
             // エネミータイプ一覧
@@ -309,7 +297,7 @@ void Map::Update()
                         std::string label = std::to_string(cellInt);
                         ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
 
-                        // ★ 左ドラッグ中にカーソルが乗っていたら塗る
+                        // 左ドラッグ中にカーソルが乗っていたら塗る
                         if (ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
                             cell = static_cast<EnemyType>(currentEnemyTypeInt);
                         }
