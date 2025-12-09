@@ -55,14 +55,15 @@ public:	// メンバ関数
 	void Finalize()override;
 
 
-private:	// メンバ変数
+private:// メンバ変数
 	
 	// 読み込むモデルのリスト
 	std::unique_ptr<ModelList> modelList;
-	/// スカイボックス
+	// スカイボックス
 	std::unique_ptr<SkyBox> skyBox = nullptr;
 
-	
+	// レンダーテクスチャ
+	bool usePostProcess_ = false;
 
 };
 
