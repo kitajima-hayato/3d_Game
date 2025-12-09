@@ -97,6 +97,8 @@ private: // ゲーム要素
 	// バックグラウンド
 	 std::unique_ptr<BackGround> background;
 
+	 std::unique_ptr<Sprite> quxSprite_;
+
 	
 
 	//std::unique_ptr<SceneTransition> sceneTransition;

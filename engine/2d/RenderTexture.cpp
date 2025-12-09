@@ -16,9 +16,10 @@ void RenderTexture::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, 
 	this->srvManager_ = srvManager;
 	this->clearColor_ = clearColor;
 
+
 	const Vector4 kRenderTargetClearValue = clearColor;
 	textureResource = CreateRenderTextureResource(
-		dxCommon_->GetDevice(), WinAPI::kClientWidth, WinAPI::kClientHeight,
+		dxCommon_->GetDevice(),width, height,
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, kRenderTargetClearValue
 	);
 
@@ -110,8 +111,13 @@ void RenderTexture::BeginRender()
 	dxCommon_->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 
 	// クリアカラー
-	
-	dxCommon_->GetCommandList()->ClearRenderTargetView(rtvHandle, &clearColor_.w, 0, nullptr);
+	float  clearColor[4] = { clearColor_.x,clearColor_.y,clearColor_.z,clearColor_.w };
+	dxCommon_->GetCommandList()->ClearRenderTargetView(
+		rtvHandle,
+		clearColor,
+		0,
+		nullptr
+	);
 }
 
 
@@ -228,7 +234,7 @@ void RenderTexture::CreateGraficsPipeLine() {
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// DepthStencilの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;
 
 	HRESULT hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(
 		&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));

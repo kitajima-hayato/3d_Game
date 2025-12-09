@@ -46,7 +46,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("1-1");
+	map->Initialize("ex1");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -79,11 +79,21 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraController_ = std::make_unique<CameraController>();
 	cameraController_->Initialize();
 
+	// 自機がダメージを受けたら画面シェイク中に出すスプライト
+	enemyHitSprite_ = std::make_unique<Sprite>();
+	enemyHitSprite_->Initialize("resources/HitDamage.png");
+	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
+	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
+	
+	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
 }
 
 
 void GamePlayScene::Update()
 {
+	
+	enemyHitSprite_->Update();
+
 	titleLogoObject->Update();
 
 	backGround->Update();
@@ -99,12 +109,18 @@ void GamePlayScene::Update()
 	// プレイヤーが敵に当たったらカメラをシェイクする
 	if (player->GetHitEnemy()&& !wasEnemyHit_) {
 		enemyHitShakeActive_ = true;
+		enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		enemyHitTimer_ = 0.0f;
 		// カメラの元の位置を保存
 		enemyHitBasePos = camera->GetTranslate();
 	
 	}
-
+	Vector4 currentColor = enemyHitSprite_->GetColor();
+	if (currentColor.w > 0.0f) {
+		// 減算スピードは 0.01f ～ 0.05f くらいで調整してください
+		float newAlpha = (std::max)(0.0f, currentColor.w - 0.02f);
+		enemyHitSprite_->SetColor({ currentColor.x, currentColor.y, currentColor.z, newAlpha });
+	}
 	wasEnemyHit_ = isEnemyHitNow;
 
 	// カメラシェイクの更新
@@ -150,19 +166,37 @@ void GamePlayScene::Update()
 
 void GamePlayScene::Draw()
 {
-
+	///////////////////
+	//  モデルの描画   //
+	///////////////////
 	backGround->Draw();
+
+	
 
 	//sceneTransition->Draw();
 	/// マップの描画
 	map->Draw();
+	
+	
 	/// プレイヤーの描画
 	player->Draw();
+
+
 	/// タイトルロゴの描画
 	//titleLogoObject->Draw();
+
+
 	/// 敵の描画
 	for (auto& enemy : enemies) {
 		enemy->Draw();
+	}
+
+
+	///////////////////
+	// スプライトの描画 //
+	///////////////////
+	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
+		enemyHitSprite_->Draw();
 	}
 }
 

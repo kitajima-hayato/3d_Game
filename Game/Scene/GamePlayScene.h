@@ -175,5 +175,8 @@ private:
 	Vector3 enemyHitBasePos{};
 	// 前フレームの敵当たり判定
 	bool wasEnemyHit_ = false;
+	// エネミーヒット時のシェイク中に出す被弾スプライト
+	std::unique_ptr<Sprite> enemyHitSprite_;
+	float alpha;
 };
 
