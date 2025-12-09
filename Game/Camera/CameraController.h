@@ -17,7 +17,6 @@ public:
 
 
 
-
 public:
 	// 位置のセット
 	void SetTargetPosition(const Vector3& targetPosition) {

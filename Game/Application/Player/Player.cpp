@@ -43,8 +43,12 @@ void Player::OnCollision(Collider* other)
 	{
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
-		// 死亡処理
-		isEnemyHit_ = true;
+		//  
+		if(isEnemyHit_) {
+			// すでに当たっているなら何もしない / 無敵時間
+			break;
+		}
+		// エネミー衝突処理
 		EnemyCollision();
 		break;
 	default:
@@ -63,13 +67,14 @@ void Player::EnemyCollision()
 
 void Player::FlashingUpdate()
 {
-	// エネミーにヒットしていたら点滅処理
+	// エネミーにヒットしていたら点滅処理 / 無敵時間
 	if (isEnemyHit_) {
 		// フレームカウント更新
 		flashingFrameCount_++;
 		// 点滅処理
 		if (flashingFrameCount_ <= maxFlashingFlame_) {
-			if (flashingFrameCount_ % flashingIntervalFrame_ == 0) {
+			// 一定間隔で表示・非表示を切り替え
+			if (flashingFrameCount_ % flashingIntervalFrame_ == 1) {
 				isVisible_ = !isVisible_;
 			}
 		} else {
@@ -92,7 +97,6 @@ void Player::Initialize(Vector3 position)
 	playerModel_->SetTranslate(position);
 	playerModel_->SetModel("Player.obj");
 	SetDeathHeight(-1.0f);
-
 }
 
 
@@ -632,9 +636,6 @@ void Player::ImGui()
 		}
 
 		ImGui::EndTabBar();
-
-		
-
 
 	}
 

@@ -69,6 +69,11 @@ public:
 	/// </summary>
 	void UpdateStartCamera(float dt);
 
+	/// <summary>
+	/// エネミーヒット時のカメラシェイク
+	/// </summary>
+	void EnemyHitShake(float dt);
+
 
 	
 
@@ -159,5 +164,16 @@ private:
 
 	// エネミー配置のオフセット
 	float enemySpawnOffset_ = 0.5f;
+
+	// エネミーヒットのシェイク時間
+	float enemyHitShakeTime_ = 1.0f;
+	// エネミーヒット時のカメラシェイク用
+	bool enemyHitShakeActive_ = false;
+	// シェイク時間
+	float enemyHitTimer_ = 0.0f;
+	// シェイク持続時間 
+	Vector3 enemyHitBasePos{};
+	// 前フレームの敵当たり判定
+	bool wasEnemyHit_ = false;
 };
 

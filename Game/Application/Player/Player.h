@@ -299,7 +299,7 @@ private:	// メンバ変数
 	// 点滅持続フレーム数
 	 uint32_t maxFlashingFlame_ = 120;
 	// 何フレームごとに点滅するか
-	 uint32_t flashingIntervalFrame_ = 7;
+	 uint32_t flashingIntervalFrame_ = 10;
 	// 可視フラグ
 	bool isVisible_ = true;
 
