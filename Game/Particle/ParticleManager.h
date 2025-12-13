@@ -19,10 +19,12 @@ public:
 	struct ParticleGroup {		// パーティクルグループ // 使用するテクスチャごとにパーティクルグループとしてまとめる
 		MaterialData materialData;			// マテリアルデータ					
 		std::list<Particle> particles;		// パーティクルのリスト		
-		uint32_t srvIndex;					// インスタンシングデータ用のSRVインデックス	
+		uint32_t instancingSrvIndex;					// インスタンシングデータ用のSRVインデックス	
 		Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource;	// インスタンシングデータ用のリソース
 		UINT kNumInstance;					// インスタンス数
 		ParticleForGPU* instancingData;		// インスタンシングデータを書き込むためのポインタ
+		uint32_t textureSrvIndex;               // テクスチャインデックス
+		
 	};
 
 	/// <summary>
@@ -207,8 +209,6 @@ private:
 	// ランダムエンジン
 	std::mt19937 randomEngine;
 
-	// ルートシグネチャ
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 
 	// ルートパラメーター
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};

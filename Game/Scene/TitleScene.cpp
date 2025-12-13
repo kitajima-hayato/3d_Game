@@ -18,26 +18,19 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	// スプライトの初期化
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
-	// マルチスレッドでの読み込み
-	std::thread th1(&TitleScene::LoadAudio, this);
-	std::thread th2(&TitleScene::LoadSprite, this);
-
-	th1.join();
-	th2.join();
-
 
 	//// パーティクルグループを作成
-	//ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
 
-	//ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/uvChecker.png");
-	//// パーティクルエミッターの初期化
-	//particleEmitter = make_unique<ParticleEmitter>();
-	//particleEmitter->SetTransform({{0.0f,0.0f,0.0f}, { 0.0f,0.0f,0.0f }, { -5.0f,0.0f,20.0f }});
-	//particleEmitter->SetParticleName("Particle");
+	// マルチスレッドでの読み込み
+	LoadAudio();
+	LoadSprite();
 
-	//particleEmitter2 = make_unique<ParticleEmitter>();
-	//particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
-	//particleEmitter2->SetParticleName("neo");
+
+	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/back1.png");
+	particleEmitter2 = make_unique<ParticleEmitter>();
+	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
+	particleEmitter2->SetParticleName("neo");
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
@@ -83,7 +76,12 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	background->Initialize();
 
 
+	
 
+	
+	// パーティクルエミッターの初期化
+	particleEmitter = make_unique<ParticleEmitter>();
+	particleEmitter->SetParticleName("Particle");
 
 
 #pragma region 演出
@@ -112,6 +110,8 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	cylinder->SetEffectName("Cylinder");*/
 #pragma endregion
 
+
+
 }
 
 void TitleScene::Update()
@@ -124,6 +124,9 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
+	// 段々薄く
+
+	
 
 
 
@@ -150,14 +153,17 @@ void TitleScene::Update()
 	}
 
 	if (isStart) {
-		// object3dをひっだりから右に
+		// object3dをひだりから右に
 		speed.x += 0.07f;
 		object3D->SetTranslate(speed);
 
 	}
-
-	/*particleEmitter->Update();
-	particleEmitter2->Update();*/
+	// エミッタの位置を更新（プレイヤーに追従させるなど）
+	Transform transform;
+	transform.translate = { 1.0f, -5.0f, 15.0f };
+	particleEmitter->SetTransform(transform);
+	particleEmitter->Update();
+	particleEmitter2->Update();
 
 
 
@@ -168,7 +174,7 @@ void TitleScene::Update()
 	playerObject->Update();
 
 
-	//  Rainbow回転（ここを追加）
+	// Rainbow回転（ここを追加）
 	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
 	//Rainbow->SetTransform(rainbowTransform);
 
@@ -199,12 +205,13 @@ void TitleScene::Draw()
 	playerObject->Draw();
 	//Rainbow->Draw();
 
-
+	
 
 	// パーティクルの描画
 	//ParticleManager::GetInstance()->Draw();
+	ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
-	//particleEmitter2->Emit();
+	particleEmitter2->Emit();
 	// エフェクトの描画
 
 
@@ -244,7 +251,7 @@ void TitleScene::LoadAudio()
 
 }
 
-void TitleScene::LoadSprite()
+void TitleScene::LoadSprite() 
 {
 	sprite_ = make_unique<Sprite>();
 	sprite_->Initialize("resources/gradationLine.png");

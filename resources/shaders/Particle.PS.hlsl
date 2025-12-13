@@ -18,7 +18,7 @@ cbuffer MaterialBuffer : register(b0)
     Material gMaterial;
 };
 
-Texture2D<float4> gTexture : register(t0); // SRVのregisterはt
+Texture2D<float4> gTexture : register(t1); // SRVのregisterはt
 SamplerState gSampler : register(s0); // Samplerのregisterはs
 
 

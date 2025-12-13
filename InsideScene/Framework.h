@@ -82,7 +82,7 @@ protected:// Initialize関連
 	// カメラ
 	std::unique_ptr<Camera> camera;
 
-	// 
+	// レンダーテクスチャ
 	std::unique_ptr<RenderTexture> renderTexture = nullptr;
 
 public:

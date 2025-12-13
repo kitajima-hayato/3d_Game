@@ -144,7 +144,19 @@ void SpriteCommon::CreateGraficsPipeLine()
 	// レンダーターゲットの書き込みマスクを設定。全ての色チャンネルに書き込みを許可
 	blendDesc.RenderTarget[0].RenderTargetWriteMask =
 		D3D12_COLOR_WRITE_ENABLE_ALL;
+	// ブレンドを有効化
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	// 加算合成
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	// 減算合成
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	// ブレンドオペレーションは加算
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 
+	// α値自体の合成設定
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 
 	// カリングモードを設定
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
