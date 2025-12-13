@@ -9,7 +9,7 @@ void FlyingEnemy::Initialize()
 		// Rotate
 		{0.0f, 0.0f, 0.0f},
 		// Translate
-		{5.0f, -3.0f, 20.0f},
+		//{5.0f, -3.0f, 0.0f},
 		},
 		// 生存フラグ
 		true,
@@ -22,6 +22,7 @@ void FlyingEnemy::Initialize()
 	};
 	
 	timer = 0.0f;
+	
 
 	/// Object3Dの初期化
 	model = std::make_unique<Object3D>();
@@ -30,6 +31,8 @@ void FlyingEnemy::Initialize()
 	model->SetModel("Tentativeenemy.obj");
 	/// トランスフォームの設定
 	model->SetTransform(stats.transform);
+
+	baseY = stats.transform.translate.y;
 }
 
 
@@ -58,7 +61,7 @@ void FlyingEnemy::Draw()
 void FlyingEnemy::Move()
 {
 	/// 上下移動量
-	const float amplitude = 1.0f;   
+	const float amplitude = 3.0f;   
 	const float frequency = 0.01f;  
 
 	timer += frequency; 

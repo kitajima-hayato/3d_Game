@@ -64,6 +64,11 @@ public:	// Getter,Setter
 	/// </summary>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSrvHandleGPU(const std::string& filePath);
 
+	Microsoft::WRL::ComPtr<ID3D12Resource> GetTextureResource(const std::string& filePath);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGpuDescriptorHandle(const std::string& filePath);
+	
+
 private: // メンバ関数/構造体
 
 

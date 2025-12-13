@@ -44,13 +44,13 @@ uint32_t TextureManager::GetSrvIndex(const std::string& filePath)
 		// なかったらエラーメッセージ
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
-	if (it != textureDatas.end()) {
-		// 読み込み済みなら要素番号を返す
-		uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), it));
-		return textureIndex;
-	}
-	assert(0);
-	return 0;
+	//if (it != textureDatas.end()) {
+	//	// 読み込み済みなら要素番号を返す
+	//	uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), it));
+	//	return textureIndex;
+	//}
+	//assert(0);
+	return it->second.srvIndex;
 }
 
 //D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
@@ -73,6 +73,31 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
 	// テクスチャデータを検索
 	auto it = textureDatas.find(filePath);
 
+	// テクスチャが見つからない場合は例外を投げる
+	if (it == textureDatas.end()) {
+		throw std::runtime_error("Texture not found for filePath: " + filePath);
+	}
+	// 見つかったテクスチャデータのGPUハンドルを返す
+	return it->second.srvHandleGPU;
+}
+
+Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::GetTextureResource(const std::string& filePath)
+{
+	// テクスチャデータを検索
+	auto it = textureDatas.find(filePath);
+	// テクスチャが見つからない場合は例外を投げる
+	if (it == textureDatas.end()) {
+		throw std::runtime_error("Texture not found for filePath: " + filePath);
+	}
+	// 見つかったテクスチャデータのリソースを返す
+	return it->second.resource;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGpuDescriptorHandle(const std::string& filePath) 
+{
+
+	// テクスチャデータを検索
+	auto it = textureDatas.find(filePath);
 	// テクスチャが見つからない場合は例外を投げる
 	if (it == textureDatas.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);

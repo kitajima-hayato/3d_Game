@@ -43,7 +43,7 @@ void Framework::Initialize()
 	// パーティクル
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 	// エフェクト
-	EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
+	//EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 
 
 	/// マップに合わせる
@@ -69,7 +69,7 @@ void Framework::Update()
 
 
 	ParticleManager::GetInstance()->Update();
-	EffectManager::GetInstance()->Update();
+	//EffectManager::GetInstance()->Update();
 
 
 	// ESCキーで終了
@@ -118,7 +118,7 @@ void Framework::Finalize()
 	winAPI->Finalize();
 
 	ParticleManager::GetInstance()->DeleteInstance();
-	EffectManager::GetInstance()->DeleteInstance();
+	//EffectManager::GetInstance()->DeleteInstance();
 
 }
 

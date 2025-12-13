@@ -65,43 +65,36 @@ void ParticleManager::CreatePipeline()
 void ParticleManager::CreateRootSignature()
 {
 	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	
-	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
-	descriptorRange[0].NumDescriptors = 1; // 数は1つ
+	descriptorRange[0].BaseShaderRegister = 0; // t0
+	descriptorRange[0].NumDescriptors = 1; 
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-	// 1. パーティクルのRootSignatureの作成
-	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
-	descriptorRangeInstancing[0].BaseShaderRegister = 0;
-	descriptorRangeInstancing[0].NumDescriptors = 1;
-	descriptorRangeInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRangeInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+	D3D12_DESCRIPTOR_RANGE descriptorRangeTexture[1] = {};
+	descriptorRangeTexture[0].BaseShaderRegister = 1; // t1始まる
+	descriptorRangeTexture[0].NumDescriptors = 1; 
+	descriptorRangeTexture[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
+	descriptorRangeTexture[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 
 
-	// 1. RootSignatureの作成
-	descriptionRootSignature.Flags =
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	
 	// RootParameter作成。複数設定できるので配列。
 	// 0.Material
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[0].Descriptor.ShaderRegister = 0;
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
 	// 1.TransformMatrix
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRange;
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeInstancing;
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeInstancing);
 	// 2.Texture
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRangeTexture;
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeTexture);
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-
-	descriptionRootSignature.pParameters = rootParameters;
-	descriptionRootSignature.NumParameters = _countof(rootParameters);
 
 	// Samplerの設定
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
@@ -112,6 +105,14 @@ void ParticleManager::CreateRootSignature()
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
 	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+
+	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
+	descriptionRootSignature.Flags =
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	descriptionRootSignature.pParameters = rootParameters;
+	descriptionRootSignature.NumParameters = _countof(rootParameters);
+
 	descriptionRootSignature.pStaticSamplers = staticSamplers;
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
 
@@ -280,8 +281,10 @@ void ParticleManager::InitializeMaterial()
 {
 	// リソース生成
 	materialResource = dxCommon->CreateBufferResource(sizeof(Material));
+
 	// マテリアルデータに書き込み
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+
 	// マテリアルデータの初期化
 	materialData->color = Vector4(0.3f, 1.0f, 0.7f, 1.0f);
 	materialData->enableLighting = true;
@@ -307,16 +310,24 @@ void ParticleManager::CreateParticleGroup(const std::string& name, const std::st
 	particleGroup.materialData.textureFilePath = textureFilePath;
 	// テクスチャの読み込み
 	TextureManager::GetInstance()->LoadTexture(particleGroup.materialData.textureFilePath);
-	// マテリアルデータにテクスチャのSRVインデックスを設定
-	particleGroup.materialData.textureIndex = TextureManager::GetInstance()->GetSrvIndex(particleGroup.materialData.textureFilePath);
-	// インスタンシング用のリソースを作成
+
+	particleGroup.textureSrvIndex = TextureManager::GetInstance()->GetSrvIndex(particleGroup.materialData.textureFilePath);
+
+	
 	particleGroup.instancingResource = dxCommon->CreateBufferResource(sizeof(ParticleForGPU) * kMaxParticle);
-	particleGroup.srvIndex = srvManager->Allocate();
+
+	// インスタンシング用のリソースを作成
+	particleGroup.instancingSrvIndex = srvManager->Allocate();
 	// 書き込むためのアドレスを取得
 	particleGroup.instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&particleGroup.instancingData));
 
+	
 
-	srvManager->CreateSRVforStructuredBuffer(particleGroup.srvIndex, particleGroup.instancingResource.Get(), kMaxParticle, sizeof(ParticleForGPU));
+	srvManager->CreateSRVforStructuredBuffer(
+		particleGroup.instancingSrvIndex, 
+		particleGroup.instancingResource.Get(), 
+		kMaxParticle, 
+		sizeof(ParticleForGPU));
 
 	// インスタンス数を初期化
 	particleGroup.kNumInstance = 0;
@@ -400,8 +411,7 @@ void ParticleManager::UpdateParticle()
 
 void ParticleManager::Draw()
 {
-	// コマンド : ルートシグネチャを設定
-	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	
 	// コマンド : パイプラインステートオブジェクトを設定
 	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
 	// コマンド : プリミティブトロポジ(描画形状)を設定
@@ -409,21 +419,34 @@ void ParticleManager::Draw()
 	// コマンド : VertexBufferViewを設定
 	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
+	// コマンド : ルートシグネチャを設定
+	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	// マテリアルデータの更新
+	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
 	// 全てのパーティクルグループについて処理
 	for (auto& [name, particleGroup] : particleGroups)
-	{
+	{ 
+		if(particleGroup.kNumInstance == 0)
+		{
+			continue;
+		}
+
+		// 行列データの更新
+		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(
+			1,
+			srvManager->GetGPUDescriptorHandle(particleGroup.instancingSrvIndex));
+
 		// インスタンシングデータの更新
-		srvManager->SetGraphicsDescriptorTable(1, particleGroup.srvIndex);
-		// マテリアルデータの更新
-		dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+		//srvManager->SetGraphicsDescriptorTable(1, particleGroup.instancingSrvIndex);
+
 		// シェーダリソースビューの設定
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(particleGroup.materialData.textureIndex);
-		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
+		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, 
+			srvManager->GetGPUDescriptorHandle(particleGroup.textureSrvIndex));
+		
 		// 描画
 		dxCommon->GetCommandList()->DrawInstanced(6, particleGroup.kNumInstance, 0, 0);
 	}
-	//DrawRing();
-	//DrawCylinder();
 }
 
 void ParticleManager::DeleteParticleGroup(const std::string& name)
