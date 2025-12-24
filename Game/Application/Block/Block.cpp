@@ -61,7 +61,8 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 
 
 void Block::Update() {
-	if (blockType == BlockType::Air) return;
+	if (blockType == BlockType::Air || !isAlive_) return;
+	// 移動ブロックの処理
 	if (blockType == BlockType::moveBlock) {
 		if (moveRight_) {
 			moveTime_ += moveSpeed_;
@@ -91,13 +92,17 @@ void Block::Update() {
 }
 
 void Block::Draw() {
-	if (blockType == BlockType::Air) return;
+	// ブロックの描画 / 描画対象が無い場合と壊れている場合は描画しない
+	if (blockType == BlockType::Air || !isAlive_) return;
 	blockModel->Draw();
 }
 
 Block* Block::CreateBlock(BlockType blockType, Vector3 position)
 {
+	// ブロックの生成
 	Block* newBlock = new Block();
+	// 初期化
 	newBlock->Initialize(blockType, position);
+	// 生成したブロックを返す
 	return newBlock;
 }

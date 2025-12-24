@@ -4,7 +4,7 @@
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include <Logger.h>
+
 
 Collider::Type Player::GetType() const
 {
@@ -44,7 +44,7 @@ void Player::OnCollision(Collider* other)
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
 		//  
-		if(isEnemyHit_) {
+		if (isEnemyHit_) {
 			// すでに当たっているなら何もしない / 無敵時間
 			break;
 		}
@@ -83,8 +83,6 @@ void Player::FlashingUpdate()
 			isVisible_ = true;
 			flashingFrameCount_ = 0;
 		}
-		//////　点滅が当たった瞬間に出るように　出来たら数値の調整　カメラのシェイクも追加
-		//////　できるなら画面を少し赤くしても良いかも
 	}
 }
 
@@ -265,9 +263,6 @@ void Player::Move()
 }
 
 
-
-
-
 void Player::Jump()
 {
 	// 地面にいる場合
@@ -332,6 +327,27 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 	if (collisionInfo.celling) {
 		// 天井に衝突したら移動量を調整
 		velocity_.y = 0.0f;
+		
+		// プレイヤーの頭に当たったブロックを調べる
+		Vector3 position = playerModel_->GetTranslate();
+
+		// 頭の2点の位置を計算
+		std::array<Vector3, 2> topCorners = {
+			CornerPosition(position,kLeftTop),
+			CornerPosition(position,kRightTop)
+		};
+		// 各コーナーの新しい位置で当たったブロックを調べる
+		for (const auto& cornerPosition : topCorners) {
+			IndexSet indexSet = map_->GetMapChipIndexSetByPosition(cornerPosition);
+			BlockType blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex-1);
+
+			// Break Blockだった場合破壊する 
+			if(IsHitBlockBreakableTable(blockType)) {
+				// ブロック破壊
+				map_->BreakBlock(indexSet.xIndex, indexSet.yIndex-1);
+			}
+		}
+		
 	}
 }
 
@@ -372,6 +388,7 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			if (IsHitGoalBlockTable(blockType)) {
 				isGoal_ = true;
 			}
+			
 
 			// 右点の判定
 			// 自機の右下がマップチップの何番目にあるのか
@@ -438,7 +455,7 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, Collisio
 		// 必要であればImGui表示する
 		switch (type) {
 		case CollisionType::kTop:
-			//Logger::Log("hit celling");
+			
 			break;
 		case CollisionType::kBottom:
 			//Logger::Log("hit floor");
@@ -520,6 +537,7 @@ bool Player::IsHitBlockTable(BlockType type)
 	case BlockType::testBlock:
 	case BlockType::kGoalUp:
 	case BlockType::kGoalDown:
+	case BlockType::breakBlock:
 		return true;
 
 	default:
@@ -538,6 +556,16 @@ bool Player::IsHitGoalBlockTable(BlockType type)
 	}
 }
 
+bool Player::IsHitBlockBreakableTable(BlockType type)
+{
+	switch (type) {
+	case BlockType::breakBlock:
+		return true;
+	default:
+		return false;
+	}
+}
+
 void Player::DebugPlayerReset()
 {
 	// デバッグ用にリセット
@@ -546,9 +574,6 @@ void Player::DebugPlayerReset()
 	isDead_ = false;
 	onGround_ = true;
 }
-
-
-
 
 
 void Player::Finalize()
@@ -561,7 +586,7 @@ void Player::ImGui()
 #ifdef USE_IMGUI
 	ImGui::Begin("Player Status");
 
-	if(ImGui::BeginTabBar("Player Status Tab"))
+	if (ImGui::BeginTabBar("Player Status Tab"))
 	{
 		// タブ１：パラメーター設定
 		if (ImGui::BeginTabItem("Parameters"))
@@ -580,50 +605,50 @@ void Player::ImGui()
 		// タブ２：敵衝突・点滅関連
 		if (ImGui::BeginTabItem("Hit Enemy")) {
 			// プレイヤー用デバッグウィンドウ
-			
 
-				ImGui::Text("=== Enemy Collision / Flashing ===");
 
-				// 敵ヒットフラグ
-				ImGui::Checkbox("isEnemyHit_", &isEnemyHit_);
+			ImGui::Text("=== Enemy Collision / Flashing ===");
 
-				// 今の表示状態
-				ImGui::Checkbox("isVisible_", &isVisible_);
+			// 敵ヒットフラグ
+			ImGui::Checkbox("isEnemyHit_", &isEnemyHit_);
 
-				// フレームカウンタ
-				ImGui::Text("flashingFrameCount_: %d", flashingFrameCount_);
+			// 今の表示状態
+			ImGui::Checkbox("isVisible_", &isVisible_);
 
-				// 最大点滅フレーム
-				{
-					int tmp = static_cast<int>(maxFlashingFlame_);
-					ImGui::DragInt("maxFlashingFlame_", &tmp, 1, 0, 600);
-					maxFlashingFlame_ = static_cast<uint32_t>(tmp);
-				}
+			// フレームカウンタ
+			ImGui::Text("flashingFrameCount_: %d", flashingFrameCount_);
 
-				// 点滅間隔フレーム
-				{
-					int tmp = static_cast<int>(flashingIntervalFrame_);
-					ImGui::DragInt("flashingIntervalFrame_", &tmp, 1, 1, 120);
-					flashingIntervalFrame_ = static_cast<uint32_t>(tmp);
-				}
+			// 最大点滅フレーム
+			{
+				int tmp = static_cast<int>(maxFlashingFlame_);
+				ImGui::DragInt("maxFlashingFlame_", &tmp, 1, 0, 600);
+				maxFlashingFlame_ = static_cast<uint32_t>(tmp);
+			}
 
-				// 余りの確認（デバッグ用）
-				if (flashingIntervalFrame_ > 0) {
-					int mod = flashingFrameCount_ % flashingIntervalFrame_;
-					ImGui::Text("flashingFrameCount_ %% flashingIntervalFrame_ = %d", mod);
-				}
+			// 点滅間隔フレーム
+			{
+				int tmp = static_cast<int>(flashingIntervalFrame_);
+				ImGui::DragInt("flashingIntervalFrame_", &tmp, 1, 1, 120);
+				flashingIntervalFrame_ = static_cast<uint32_t>(tmp);
+			}
 
-				// 点滅中かどうかの判定表示
-				bool isFlashing = (flashingFrameCount_ <= maxFlashingFlame_);
-				ImGui::Text("isFlashing: %s", isFlashing ? "true" : "false");
-			
-				ImGui::EndTabItem();
+			// 余りの確認（デバッグ用）
+			if (flashingIntervalFrame_ > 0) {
+				int mod = flashingFrameCount_ % flashingIntervalFrame_;
+				ImGui::Text("flashingFrameCount_ %% flashingIntervalFrame_ = %d", mod);
+			}
+
+			// 点滅中かどうかの判定表示
+			bool isFlashing = (flashingFrameCount_ <= maxFlashingFlame_);
+			ImGui::Text("isFlashing: %s", isFlashing ? "true" : "false");
+
+			ImGui::EndTabItem();
 		}
 
-		
+
 
 		// タブ３：プレイヤー情報表示
-		if(ImGui::BeginTabItem("Player Info"))
+		if (ImGui::BeginTabItem("Player Info"))
 		{
 			ImGui::Text("=== Player Info ===");
 			Vector3 pos = playerModel_->GetTranslate();

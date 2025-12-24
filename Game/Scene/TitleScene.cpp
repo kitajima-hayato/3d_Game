@@ -145,12 +145,7 @@ void TitleScene::Update()
 #endif
 
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		// 
-		isStart = !isStart;
-		effectEmitter->EmitCylinder();
-		cylinder->EmitRing();
-	}
+	
 
 	if (isStart) {
 		// object3dをひだりから右に

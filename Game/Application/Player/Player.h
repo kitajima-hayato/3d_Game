@@ -227,6 +227,13 @@ private:
 	bool IsHitGoalBlockTable(BlockType type);
 
 	/// <summary>
+	/// 壊せるブロック当たり判定テーブル
+	/// </summary>
+	/// <param name="type"></param>
+	/// <returns></returns>
+	bool IsHitBlockBreakableTable(BlockType type);
+
+	/// <summary>
 	/// デバッグ用プレイヤー死亡時リセット
 	/// </summary>
 	void DebugPlayerReset();
