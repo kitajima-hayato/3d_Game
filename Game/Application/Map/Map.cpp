@@ -92,7 +92,7 @@ void Map::Update()
 
             ImGui::SameLine();
 
-            // --- ロードボタン---
+            // --- ロードボタン ---
             if (ImGui::Button("Load Map CSV")) {
                 try {
                     // "1_1.csv" → "1_1" に変換して、ゲーム本編と同じ形式で読む
@@ -316,6 +316,35 @@ void Map::Update()
 
             ImGui::EndTabItem();
         }
+		// タブ4: Map Preview
+        if (ImGui::BeginTabItem("Map Preview"))
+        {
+            ImGui::Text("Map Preview (Read-Only)");
+            ImGui::BeginChild("MapPreview", ImVec2(0, 400), true, ImGuiWindowFlags_HorizontalScrollbar);
+            const float cellSize = 20.0f;
+            uint32_t mapHeight = GetHeight();
+            uint32_t mapWidth = GetWidth();
+            for (uint32_t y = 0; y < mapHeight; ++y) {
+                for (uint32_t x = 0; x < mapWidth; ++x) {
+                    BlockType cell = mapChipData_.mapData[y][x];
+                    ImGui::PushID(static_cast<int>(y * mapWidth + x));
+                    ImVec4 color = GetBlockColorByType(cell);
+                    ImGui::PushStyleColor(ImGuiCol_Button, color);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+                    std::string label = std::to_string(static_cast<int>(cell));
+                    // プレビュー用ボタン（押せない）
+                    ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
+                    ImGui::PopStyleColor(3);
+                    ImGui::PopID();
+                    if (x < mapWidth - 1) {
+                        ImGui::SameLine();
+                    }
+                }
+            }
+            ImGui::EndChild();
+            ImGui::EndTabItem();
+		}
 
         ImGui::EndTabBar();
     }
@@ -325,6 +354,16 @@ void Map::Update()
     // ▲▲▲ ImGui 統合ここまで ▲▲▲
 
 #endif // USE_IMGUI
+    // 末尾に追加：死んだブロックだけ回収
+    for (auto& row : blockArray_) {
+        for (Block*& block : row) {
+            if (block && !block->GetAliveBlock()) {
+                delete block;
+                block = nullptr;
+            }
+        }
+    }
+
 }
 
 
@@ -487,5 +526,34 @@ Vector3 Map::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex)
 	return Vector3(kBlockWidth * xIndex,
 		kBlockHeight * (h - 1 - yIndex),
 		0.0f);
+}
+
+void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
+{
+	// マップ外チェック
+    if (yIndex >= mapChipData_.mapData.size() ||
+        xIndex >= mapChipData_.mapData[yIndex].size()) {
+        return;
+    }
+	// 破壊可能ブロックかチェック
+    if (mapChipData_.mapData[yIndex][xIndex] != BlockType::breakBlock) {
+        return;
+    }
+
+    // 該当データの書き換え / Airに変更
+    mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
+    isMapDataChanged_ = true;
+
+    // 実体（描画/更新）をその場で消す（Map全再生成しない）
+    if (yIndex < blockArray_.size() && xIndex < blockArray_[yIndex].size()) {
+        if (blockArray_[yIndex][xIndex]) {
+            // 生存フラグ方式（演出を挟むなら Kill のみにしてもOK）
+            blockArray_[yIndex][xIndex]->SetBroken();
+
+            // 即消し
+            delete blockArray_[yIndex][xIndex];
+            blockArray_[yIndex][xIndex] = nullptr;
+        }
+    }
 }
 

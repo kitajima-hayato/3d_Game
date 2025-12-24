@@ -1,5 +1,16 @@
 #include "MyGame.h"
 #include "InsideScene/SceneFactory.h"
+#include <dxgiformat.h>
+#include <memory>
+#include <RenderTexture.h>
+#include <ModelManager.h>
+#include <SkyBox/SkyBox.h>
+#include <TextureManager.h>
+#include <WinAPI.h>
+#include <MyMath.h>
+#include <Game/Application/ModelList.h>
+#include <InsideScene/Framework.h>
+#include <InsideScene/SceneManager.h>
 void MyGame::Initialize()
 {
 	Framework::Initialize();

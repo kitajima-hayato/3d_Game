@@ -46,7 +46,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("ex1");
+	map->Initialize("test");
 
 
 	collision_ = std::make_unique<CollisionManager>();

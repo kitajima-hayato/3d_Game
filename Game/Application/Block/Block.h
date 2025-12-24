@@ -79,7 +79,19 @@ public:	// Setter / Getter
 	/// </summary>
 	void SetTransform(const Transform& transform) { this->transform = transform; }
 
+	/// <summary>
+	/// ブロックが壊れているかどうか
+	/// </summary>
+	bool GetAliveBlock() const { return isAlive_; }
+
+	/// <summary>
+	/// ブロックを壊す
+	/// </summary>
+	void SetBroken() { isAlive_ = false; }
+
+
 private:
+
 	/// ブロックモデル
 	std::unique_ptr<Object3D> blockModel;
 	/// ブロックの位置
@@ -94,6 +106,9 @@ private:
 	float moveSpeed_ = 0.01f;    // 基本速度
 	float moveTime_ = 0.0f;      // 時間カウンタ
 	bool moveRight_ = true;      // 現在の移動方向（true:右 / false:左）
+
+	// ブロックが壊れているかどうか
+	bool isAlive_ = true;    
 
 };
 
