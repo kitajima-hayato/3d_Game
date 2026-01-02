@@ -80,7 +80,7 @@ protected:// Initialize関連
 	// モデル共通部
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
-	std::unique_ptr<Camera> camera;
+	std::shared_ptr<Camera> camera;
 
 	// レンダーテクスチャ
 	std::unique_ptr<RenderTexture> renderTexture = nullptr;

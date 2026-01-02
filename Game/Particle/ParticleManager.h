@@ -195,6 +195,12 @@ public:
 	/// </summary>
 	void DrawImgui();
 
+	/// <summary>
+	/// カメラのポインタをセットする
+	/// </summary>
+	/// <param name="cameraPtr_"></param>
+	void SetCamera(Camera* cameraPtr_) { camera = cameraPtr_; }
+
 
 private:
 	// DirectXCommon

@@ -469,7 +469,7 @@ void ParticleManager::DeleteParticleGroup(const std::string& name)
 }
 
 
-
+// ParticleはEmitterを生成しないと描画されないのでこのメソッドだけを呼び出しても描画されない
 void ParticleManager::Emit(const std::string& name, const Vector3& position, uint32_t count)
 {
 	// 登録済みのパーティクルグループ名かチェック

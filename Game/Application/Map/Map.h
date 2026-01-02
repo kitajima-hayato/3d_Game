@@ -4,6 +4,7 @@
 #include "Game/Application/Block/Block.h"
 #include "Game/Application/Block/BlockType.h"
 #include "Game/Application/Enemy/EnemyType.h"
+#include "Game/Particle/ParticleEmitter.h"
 #include <cstdint>
 #include <string>
 #include "Game/Application/Map/CsvLoader.h"
@@ -181,5 +182,9 @@ private:
 
 	// エネミーレイヤー変更検知フラグ
 	bool enemyLayerDirty_ = false;
+
+
+	// 破壊可能ブロックのパーティクルエフェクト用
+	std::unique_ptr<ParticleEmitter> breakParticleEmitter_;
 
 };

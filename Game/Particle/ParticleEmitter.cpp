@@ -39,3 +39,9 @@ void ParticleEmitter::Emit()
     ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
     //ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
 }
+
+void ParticleEmitter::BreakEmit()
+{
+	ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+}
+

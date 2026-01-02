@@ -7,6 +7,7 @@
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
+#include "Game/Particle/ParticleEmitter.h"
 // 前方宣言
 class Map;
 class Player;
@@ -59,7 +60,7 @@ public:
 	/// </summary>
 	void GenerateEnemy();
 
-	/// <summary>
+	/// <summary>\
 	/// 当たり判定
 	/// </summary>
 	void CheckCollision();
@@ -75,7 +76,7 @@ public:
 	void EnemyHitShake(float dt);
 
 
-	
+
 
 private:
 	// マップ
@@ -149,7 +150,7 @@ private:
 
 	/// バックグラウンド
 	std::unique_ptr<BackGround> backGround;
-	
+
 
 	// シーン遷移
 	std::unique_ptr<SceneTransition> sceneTransition;
@@ -178,5 +179,7 @@ private:
 	// エネミーヒット時のシェイク中に出す被弾スプライト
 	std::unique_ptr<Sprite> enemyHitSprite_;
 	float alpha;
+
+	std::unique_ptr<ParticleEmitter>testParticle_;
 };
 

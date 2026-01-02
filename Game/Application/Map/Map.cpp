@@ -2,7 +2,7 @@
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include <algorithm>
+#include "Game/Particle/ParticleManager.h"
 
 #ifdef USE_IMGUI
 // ブロックタイプに応じた色を取得するヘルパー関数
@@ -37,11 +37,19 @@ void Map::Initialize(const char* filePath)
 
 	// マップデータの変更検知
 	previousMapData_ = mapChipData_;
+
+	ParticleManager::GetInstance()->CreateParticleGroup(
+        "BreakParticle", "resources/sky.png");
+	breakParticleEmitter_ = std::make_unique<ParticleEmitter>();
+	breakParticleEmitter_->SetParticleName("BreakParticle");
+	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
+    
 }
 
 
 void Map::Update()
 {
+    breakParticleEmitter_->Update();
     // マップの更新
     for (std::vector <Block*>& row : blockArray_) {
         for (Block* block : row) {
@@ -51,6 +59,7 @@ void Map::Update()
             block->Update();
         }
     }
+	
 #ifdef USE_IMGUI
     //  ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合
 
@@ -379,6 +388,8 @@ void Map::Draw()
 			block->Draw();
 		}
 	}
+	ParticleManager::GetInstance()->Draw();
+	
 }
 
 void Map::Finalize()
@@ -541,7 +552,7 @@ void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
     }
 
     // 該当データの書き換え / Airに変更
-    mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
+    
     isMapDataChanged_ = true;
 
     // 実体（描画/更新）をその場で消す（Map全再生成しない）
@@ -550,9 +561,13 @@ void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
             // 生存フラグ方式（演出を挟むなら Kill のみにしてもOK）
             blockArray_[yIndex][xIndex]->SetBroken();
 
-            // 即消し
-            delete blockArray_[yIndex][xIndex];
-            blockArray_[yIndex][xIndex] = nullptr;
+			Vector3 breakPos = GetMapChipPositionByIndex(xIndex, yIndex);
+            // 破壊時にパーティクルの発生
+           
+			breakParticleEmitter_->SetTranslate(breakPos);
+
+			// 該当のBreakBlockをAirに変更
+            mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
         }
     }
 }
