@@ -19,13 +19,15 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 
-	//// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
-
+	
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
 
+	// パーティクルグループを作成
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
+	particleEmitter = make_unique<ParticleEmitter>();
+	particleEmitter->SetParticleName("Particle");
 
 	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/back1.png");
 	particleEmitter2 = make_unique<ParticleEmitter>();
@@ -79,9 +81,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	
 
 	
-	// パーティクルエミッターの初期化
-	particleEmitter = make_unique<ParticleEmitter>();
-	particleEmitter->SetParticleName("Particle");
+	
 
 
 #pragma region 演出
@@ -116,7 +116,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-
+	ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
 
 	background->Update();
@@ -125,11 +125,6 @@ void TitleScene::Update()
 	titleLogo->Update();
 
 	// 段々薄く
-
-	
-
-
-
 
 	//sceneTransition->Update();
 
@@ -145,12 +140,7 @@ void TitleScene::Update()
 #endif
 
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		// 
-		isStart = !isStart;
-		effectEmitter->EmitCylinder();
-		cylinder->EmitRing();
-	}
+	
 
 	if (isStart) {
 		// object3dをひだりから右に
@@ -208,10 +198,9 @@ void TitleScene::Draw()
 	
 
 	// パーティクルの描画
-	//ParticleManager::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
-	particleEmitter2->Emit();
+	//particleEmitter2->Emit();
 	// エフェクトの描画
 
 

@@ -35,7 +35,7 @@ void Framework::Initialize()
 	modelCommon->Initialize(dxCommon.get());
 
 	// カメラ
-	camera = make_unique<Camera>();
+	camera = make_shared<Camera>();
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
@@ -62,13 +62,15 @@ void Framework::Update()
 		return;
 	}
 #pragma endregion
-	camera->Update();
-	SceneManager::GetInstance()->Update(dxCommon.get());
 	Input::GetInstance()->Update();
+	camera->Update();
+	
+	SceneManager::GetInstance()->Update(dxCommon.get());
+	
 	
 
 
-	ParticleManager::GetInstance()->Update();
+	
 	//EffectManager::GetInstance()->Update();
 
 

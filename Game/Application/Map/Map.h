@@ -1,11 +1,13 @@
 #pragma once
 #include <vector>
-#include <memory>
 #include "MyMath.h"
 #include "Game/Application/Block/Block.h"
-#include "CsvLoader.h"
 #include "Game/Application/Block/BlockType.h"
 #include "Game/Application/Enemy/EnemyType.h"
+#include "Game/Particle/ParticleEmitter.h"
+#include <cstdint>
+#include <string>
+#include "Game/Application/Map/CsvLoader.h"
 /// マップクラス
 
 /// マップチップデータ構造体
@@ -126,11 +128,34 @@ public:	// Setter / Getter
 	/// </summary>
 	EnemyLayerData& GetEnemyLayerData() { return enemyLayerData_; }
 
+	/// <summary>
+	/// エネミーレイヤー変更検知フラグを消費
+	/// </summary>
+	/// <returns></returns>
 	bool ConsumeEnemyLayerDirtyFlag() {
 		bool result = enemyLayerDirty_;
 		enemyLayerDirty_ = false;
 		return result;
 	}
+
+	/// <summary>
+	/// インデックスからマップチップの種類を設定
+	/// </summary>
+	/// <param name="xIndex/yIndex">設定したいマップの座標インデックス</param>
+	/// <param name="type">設定するマップチップの種類</param>
+	void SetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex, BlockType type) {
+		if (yIndex < mapChipData_.mapData.size() && xIndex < mapChipData_.mapData[yIndex].size()) {
+			mapChipData_.mapData[yIndex][xIndex] = type;
+			isMapDataChanged_ = true;
+		}
+	}
+
+	/// <summary>
+	/// 破壊可能ブロックを壊す
+	/// </summary>
+	/// <param name="xIndex">当たった壊せるブロックの横Indexの番号</param>
+	/// <param name="yIndex">当たった壊せるブロックの縦Indexの番号</param>
+	void BreakBlock(uint32_t xIndex, uint32_t yIndex);
 
 private:
 	// マップチップデータ
@@ -157,5 +182,9 @@ private:
 
 	// エネミーレイヤー変更検知フラグ
 	bool enemyLayerDirty_ = false;
-};
 
+
+	// 破壊可能ブロックのパーティクルエフェクト用
+	std::unique_ptr<ParticleEmitter> breakParticleEmitter_;
+
+};

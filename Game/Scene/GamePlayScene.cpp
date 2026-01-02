@@ -2,6 +2,7 @@
 #include "Game/Application/Map/Map.h"
 #include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
+#include "Game/Particle/ParticleManager.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
@@ -46,7 +47,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("ex1");
+	map->Initialize("test");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -86,12 +87,19 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
 	
 	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+	/*ParticleManager::GetInstance()->CreateParticleGroup("test", "resources/HitDamage.png");
+	testParticle_ = std::make_unique<ParticleEmitter>();
+	testParticle_->SetParticleName("test");
+	testParticle_->SetTranslate({ 5.0f,-5.0f,0.0f });
+	testParticle_->SetScale({ 0.3f,0.3f,0.3f });*/
+	
 }
 
 
 void GamePlayScene::Update()
 {
-	
+	ParticleManager::GetInstance()->Update();
 	enemyHitSprite_->Update();
 
 	titleLogoObject->Update();
@@ -157,6 +165,8 @@ void GamePlayScene::Update()
 		enemy->Update();
 	}
 	camera->Update();
+	ParticleManager::GetInstance()->SetCamera(camera.get());
+		
 	/// 当たりは判定
 	CheckCollision();
 
@@ -169,6 +179,7 @@ void GamePlayScene::Draw()
 	///////////////////
 	//  モデルの描画   //
 	///////////////////
+	
 	backGround->Draw();
 
 	
@@ -185,12 +196,15 @@ void GamePlayScene::Draw()
 	/// タイトルロゴの描画
 	//titleLogoObject->Draw();
 
+	ParticleManager::GetInstance()->Draw();
+	//testParticle_->Emit();
 
 	/// 敵の描画
 	for (auto& enemy : enemies) {
 		enemy->Draw();
 	}
 
+	ParticleManager::GetInstance()->Draw();
 
 	///////////////////
 	// スプライトの描画 //
