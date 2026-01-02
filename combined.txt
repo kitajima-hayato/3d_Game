@@ -1091,7 +1091,8 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 
 
 void Block::Update() {
-	if (blockType == BlockType::Air) return;
+	if (blockType == BlockType::Air || !isAlive_) return;
+	// 移動ブロックの処理
 	if (blockType == BlockType::moveBlock) {
 		if (moveRight_) {
 			moveTime_ += moveSpeed_;
@@ -1121,14 +1122,18 @@ void Block::Update() {
 }
 
 void Block::Draw() {
-	if (blockType == BlockType::Air) return;
+	// ブロックの描画 / 描画対象が無い場合と壊れている場合は描画しない
+	if (blockType == BlockType::Air || !isAlive_) return;
 	blockModel->Draw();
 }
 
 Block* Block::CreateBlock(BlockType blockType, Vector3 position)
 {
+	// ブロックの生成
 	Block* newBlock = new Block();
+	// 初期化
 	newBlock->Initialize(blockType, position);
+	// 生成したブロックを返す
 	return newBlock;
 }
 
@@ -1217,7 +1222,19 @@ public:	// Setter / Getter
 	/// </summary>
 	void SetTransform(const Transform& transform) { this->transform = transform; }
 
+	/// <summary>
+	/// ブロックが壊れているかどうか
+	/// </summary>
+	bool GetAliveBlock() const { return isAlive_; }
+
+	/// <summary>
+	/// ブロックを壊す
+	/// </summary>
+	void SetBroken() { isAlive_ = false; }
+
+
 private:
+
 	/// ブロックモデル
 	std::unique_ptr<Object3D> blockModel;
 	/// ブロックの位置
@@ -1232,6 +1249,9 @@ private:
 	float moveSpeed_ = 0.01f;    // 基本速度
 	float moveTime_ = 0.0f;      // 時間カウンタ
 	bool moveRight_ = true;      // 現在の移動方向（true:右 / false:左）
+
+	// ブロックが壊れているかどうか
+	bool isAlive_ = true;    
 
 };
 
@@ -1908,7 +1928,7 @@ File Path: Game/Application/Map/Map.cpp
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include <algorithm>
+#include "Game/Particle/ParticleManager.h"
 
 #ifdef USE_IMGUI
 // ブロックタイプに応じた色を取得するヘルパー関数
@@ -1943,11 +1963,19 @@ void Map::Initialize(const char* filePath)
 
 	// マップデータの変更検知
 	previousMapData_ = mapChipData_;
+
+	ParticleManager::GetInstance()->CreateParticleGroup(
+        "BreakParticle", "resources/sky.png");
+	breakParticleEmitter_ = std::make_unique<ParticleEmitter>();
+	breakParticleEmitter_->SetParticleName("BreakParticle");
+	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
+    
 }
 
 
 void Map::Update()
 {
+    breakParticleEmitter_->Update();
     // マップの更新
     for (std::vector <Block*>& row : blockArray_) {
         for (Block* block : row) {
@@ -1957,6 +1985,7 @@ void Map::Update()
             block->Update();
         }
     }
+	
 #ifdef USE_IMGUI
     //  ここから ImGui 部分を「1つのタブ付きウィンドウ」に統合
 
@@ -1998,7 +2027,7 @@ void Map::Update()
 
             ImGui::SameLine();
 
-            // --- ロードボタン---
+            // --- ロードボタン ---
             if (ImGui::Button("Load Map CSV")) {
                 try {
                     // "1_1.csv" → "1_1" に変換して、ゲーム本編と同じ形式で読む
@@ -2222,6 +2251,35 @@ void Map::Update()
 
             ImGui::EndTabItem();
         }
+		// タブ4: Map Preview
+        if (ImGui::BeginTabItem("Map Preview"))
+        {
+            ImGui::Text("Map Preview (Read-Only)");
+            ImGui::BeginChild("MapPreview", ImVec2(0, 400), true, ImGuiWindowFlags_HorizontalScrollbar);
+            const float cellSize = 20.0f;
+            uint32_t mapHeight = GetHeight();
+            uint32_t mapWidth = GetWidth();
+            for (uint32_t y = 0; y < mapHeight; ++y) {
+                for (uint32_t x = 0; x < mapWidth; ++x) {
+                    BlockType cell = mapChipData_.mapData[y][x];
+                    ImGui::PushID(static_cast<int>(y * mapWidth + x));
+                    ImVec4 color = GetBlockColorByType(cell);
+                    ImGui::PushStyleColor(ImGuiCol_Button, color);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, color);
+                    ImGui::PushStyleColor(ImGuiCol_ButtonActive, color);
+                    std::string label = std::to_string(static_cast<int>(cell));
+                    // プレビュー用ボタン（押せない）
+                    ImGui::Button(label.c_str(), ImVec2(cellSize, cellSize));
+                    ImGui::PopStyleColor(3);
+                    ImGui::PopID();
+                    if (x < mapWidth - 1) {
+                        ImGui::SameLine();
+                    }
+                }
+            }
+            ImGui::EndChild();
+            ImGui::EndTabItem();
+		}
 
         ImGui::EndTabBar();
     }
@@ -2231,6 +2289,16 @@ void Map::Update()
     // ▲▲▲ ImGui 統合ここまで ▲▲▲
 
 #endif // USE_IMGUI
+    // 末尾に追加：死んだブロックだけ回収
+    for (auto& row : blockArray_) {
+        for (Block*& block : row) {
+            if (block && !block->GetAliveBlock()) {
+                delete block;
+                block = nullptr;
+            }
+        }
+    }
+
 }
 
 
@@ -2246,6 +2314,8 @@ void Map::Draw()
 			block->Draw();
 		}
 	}
+	ParticleManager::GetInstance()->Draw();
+	
 }
 
 void Map::Finalize()
@@ -2395,6 +2465,39 @@ Vector3 Map::GetMapChipPositionByIndex(uint32_t xIndex, uint32_t yIndex)
 		0.0f);
 }
 
+void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
+{
+	// マップ外チェック
+    if (yIndex >= mapChipData_.mapData.size() ||
+        xIndex >= mapChipData_.mapData[yIndex].size()) {
+        return;
+    }
+	// 破壊可能ブロックかチェック
+    if (mapChipData_.mapData[yIndex][xIndex] != BlockType::breakBlock) {
+        return;
+    }
+
+    // 該当データの書き換え / Airに変更
+    
+    isMapDataChanged_ = true;
+
+    // 実体（描画/更新）をその場で消す（Map全再生成しない）
+    if (yIndex < blockArray_.size() && xIndex < blockArray_[yIndex].size()) {
+        if (blockArray_[yIndex][xIndex]) {
+            // 生存フラグ方式（演出を挟むなら Kill のみにしてもOK）
+            blockArray_[yIndex][xIndex]->SetBroken();
+
+			Vector3 breakPos = GetMapChipPositionByIndex(xIndex, yIndex);
+            // 破壊時にパーティクルの発生
+           
+			breakParticleEmitter_->SetTranslate(breakPos);
+
+			// 該当のBreakBlockをAirに変更
+            mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
+        }
+    }
+}
+
 
 
 ============================================================
@@ -2402,12 +2505,14 @@ File Path: Game/Application/Map/Map.h
 ============================================================
 #pragma once
 #include <vector>
-#include <memory>
 #include "MyMath.h"
 #include "Game/Application/Block/Block.h"
-#include "CsvLoader.h"
 #include "Game/Application/Block/BlockType.h"
 #include "Game/Application/Enemy/EnemyType.h"
+#include "Game/Particle/ParticleEmitter.h"
+#include <cstdint>
+#include <string>
+#include "Game/Application/Map/CsvLoader.h"
 /// マップクラス
 
 /// マップチップデータ構造体
@@ -2528,11 +2633,34 @@ public:	// Setter / Getter
 	/// </summary>
 	EnemyLayerData& GetEnemyLayerData() { return enemyLayerData_; }
 
+	/// <summary>
+	/// エネミーレイヤー変更検知フラグを消費
+	/// </summary>
+	/// <returns></returns>
 	bool ConsumeEnemyLayerDirtyFlag() {
 		bool result = enemyLayerDirty_;
 		enemyLayerDirty_ = false;
 		return result;
 	}
+
+	/// <summary>
+	/// インデックスからマップチップの種類を設定
+	/// </summary>
+	/// <param name="xIndex/yIndex">設定したいマップの座標インデックス</param>
+	/// <param name="type">設定するマップチップの種類</param>
+	void SetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex, BlockType type) {
+		if (yIndex < mapChipData_.mapData.size() && xIndex < mapChipData_.mapData[yIndex].size()) {
+			mapChipData_.mapData[yIndex][xIndex] = type;
+			isMapDataChanged_ = true;
+		}
+	}
+
+	/// <summary>
+	/// 破壊可能ブロックを壊す
+	/// </summary>
+	/// <param name="xIndex">当たった壊せるブロックの横Indexの番号</param>
+	/// <param name="yIndex">当たった壊せるブロックの縦Indexの番号</param>
+	void BreakBlock(uint32_t xIndex, uint32_t yIndex);
 
 private:
 	// マップチップデータ
@@ -2559,8 +2687,12 @@ private:
 
 	// エネミーレイヤー変更検知フラグ
 	bool enemyLayerDirty_ = false;
-};
 
+
+	// 破壊可能ブロックのパーティクルエフェクト用
+	std::unique_ptr<ParticleEmitter> breakParticleEmitter_;
+
+};
 
 
 ============================================================
@@ -2628,7 +2760,7 @@ File Path: Game/Application/Player/Player.cpp
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
-#include <Logger.h>
+
 
 Collider::Type Player::GetType() const
 {
@@ -2668,7 +2800,7 @@ void Player::OnCollision(Collider* other)
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
 		//  
-		if(isEnemyHit_) {
+		if (isEnemyHit_) {
 			// すでに当たっているなら何もしない / 無敵時間
 			break;
 		}
@@ -2707,8 +2839,6 @@ void Player::FlashingUpdate()
 			isVisible_ = true;
 			flashingFrameCount_ = 0;
 		}
-		//////　点滅が当たった瞬間に出るように　出来たら数値の調整　カメラのシェイクも追加
-		//////　できるなら画面を少し赤くしても良いかも
 	}
 }
 
@@ -2889,9 +3019,6 @@ void Player::Move()
 }
 
 
-
-
-
 void Player::Jump()
 {
 	// 地面にいる場合
@@ -2956,6 +3083,27 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 	if (collisionInfo.celling) {
 		// 天井に衝突したら移動量を調整
 		velocity_.y = 0.0f;
+		
+		// プレイヤーの頭に当たったブロックを調べる
+		Vector3 position = playerModel_->GetTranslate();
+
+		// 頭の2点の位置を計算
+		std::array<Vector3, 2> topCorners = {
+			CornerPosition(position,kLeftTop),
+			CornerPosition(position,kRightTop)
+		};
+		// 各コーナーの新しい位置で当たったブロックを調べる
+		for (const auto& cornerPosition : topCorners) {
+			IndexSet indexSet = map_->GetMapChipIndexSetByPosition(cornerPosition);
+			BlockType blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex-1);
+
+			// Break Blockだった場合破壊する 
+			if(IsHitBlockBreakableTable(blockType)) {
+				// ブロック破壊
+				map_->BreakBlock(indexSet.xIndex, indexSet.yIndex-1);
+			}
+		}
+		
 	}
 }
 
@@ -2996,6 +3144,7 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			if (IsHitGoalBlockTable(blockType)) {
 				isGoal_ = true;
 			}
+			
 
 			// 右点の判定
 			// 自機の右下がマップチップの何番目にあるのか
@@ -3062,7 +3211,7 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, Collisio
 		// 必要であればImGui表示する
 		switch (type) {
 		case CollisionType::kTop:
-			//Logger::Log("hit celling");
+			
 			break;
 		case CollisionType::kBottom:
 			//Logger::Log("hit floor");
@@ -3144,6 +3293,7 @@ bool Player::IsHitBlockTable(BlockType type)
 	case BlockType::testBlock:
 	case BlockType::kGoalUp:
 	case BlockType::kGoalDown:
+	case BlockType::breakBlock:
 		return true;
 
 	default:
@@ -3162,6 +3312,16 @@ bool Player::IsHitGoalBlockTable(BlockType type)
 	}
 }
 
+bool Player::IsHitBlockBreakableTable(BlockType type)
+{
+	switch (type) {
+	case BlockType::breakBlock:
+		return true;
+	default:
+		return false;
+	}
+}
+
 void Player::DebugPlayerReset()
 {
 	// デバッグ用にリセット
@@ -3170,9 +3330,6 @@ void Player::DebugPlayerReset()
 	isDead_ = false;
 	onGround_ = true;
 }
-
-
-
 
 
 void Player::Finalize()
@@ -3185,7 +3342,7 @@ void Player::ImGui()
 #ifdef USE_IMGUI
 	ImGui::Begin("Player Status");
 
-	if(ImGui::BeginTabBar("Player Status Tab"))
+	if (ImGui::BeginTabBar("Player Status Tab"))
 	{
 		// タブ１：パラメーター設定
 		if (ImGui::BeginTabItem("Parameters"))
@@ -3204,50 +3361,50 @@ void Player::ImGui()
 		// タブ２：敵衝突・点滅関連
 		if (ImGui::BeginTabItem("Hit Enemy")) {
 			// プレイヤー用デバッグウィンドウ
-			
 
-				ImGui::Text("=== Enemy Collision / Flashing ===");
 
-				// 敵ヒットフラグ
-				ImGui::Checkbox("isEnemyHit_", &isEnemyHit_);
+			ImGui::Text("=== Enemy Collision / Flashing ===");
 
-				// 今の表示状態
-				ImGui::Checkbox("isVisible_", &isVisible_);
+			// 敵ヒットフラグ
+			ImGui::Checkbox("isEnemyHit_", &isEnemyHit_);
 
-				// フレームカウンタ
-				ImGui::Text("flashingFrameCount_: %d", flashingFrameCount_);
+			// 今の表示状態
+			ImGui::Checkbox("isVisible_", &isVisible_);
 
-				// 最大点滅フレーム
-				{
-					int tmp = static_cast<int>(maxFlashingFlame_);
-					ImGui::DragInt("maxFlashingFlame_", &tmp, 1, 0, 600);
-					maxFlashingFlame_ = static_cast<uint32_t>(tmp);
-				}
+			// フレームカウンタ
+			ImGui::Text("flashingFrameCount_: %d", flashingFrameCount_);
 
-				// 点滅間隔フレーム
-				{
-					int tmp = static_cast<int>(flashingIntervalFrame_);
-					ImGui::DragInt("flashingIntervalFrame_", &tmp, 1, 1, 120);
-					flashingIntervalFrame_ = static_cast<uint32_t>(tmp);
-				}
+			// 最大点滅フレーム
+			{
+				int tmp = static_cast<int>(maxFlashingFlame_);
+				ImGui::DragInt("maxFlashingFlame_", &tmp, 1, 0, 600);
+				maxFlashingFlame_ = static_cast<uint32_t>(tmp);
+			}
 
-				// 余りの確認（デバッグ用）
-				if (flashingIntervalFrame_ > 0) {
-					int mod = flashingFrameCount_ % flashingIntervalFrame_;
-					ImGui::Text("flashingFrameCount_ %% flashingIntervalFrame_ = %d", mod);
-				}
+			// 点滅間隔フレーム
+			{
+				int tmp = static_cast<int>(flashingIntervalFrame_);
+				ImGui::DragInt("flashingIntervalFrame_", &tmp, 1, 1, 120);
+				flashingIntervalFrame_ = static_cast<uint32_t>(tmp);
+			}
 
-				// 点滅中かどうかの判定表示
-				bool isFlashing = (flashingFrameCount_ <= maxFlashingFlame_);
-				ImGui::Text("isFlashing: %s", isFlashing ? "true" : "false");
-			
-				ImGui::EndTabItem();
+			// 余りの確認（デバッグ用）
+			if (flashingIntervalFrame_ > 0) {
+				int mod = flashingFrameCount_ % flashingIntervalFrame_;
+				ImGui::Text("flashingFrameCount_ %% flashingIntervalFrame_ = %d", mod);
+			}
+
+			// 点滅中かどうかの判定表示
+			bool isFlashing = (flashingFrameCount_ <= maxFlashingFlame_);
+			ImGui::Text("isFlashing: %s", isFlashing ? "true" : "false");
+
+			ImGui::EndTabItem();
 		}
 
-		
+
 
 		// タブ３：プレイヤー情報表示
-		if(ImGui::BeginTabItem("Player Info"))
+		if (ImGui::BeginTabItem("Player Info"))
 		{
 			ImGui::Text("=== Player Info ===");
 			Vector3 pos = playerModel_->GetTranslate();
@@ -3499,6 +3656,13 @@ private:
 	/// <param name="type">ゴール判定のあるブロック</param>
 	/// <returns>ゴール判定のあるブロックかどうか</returns>
 	bool IsHitGoalBlockTable(BlockType type);
+
+	/// <summary>
+	/// 壊せるブロック当たり判定テーブル
+	/// </summary>
+	/// <param name="type"></param>
+	/// <returns></returns>
+	bool IsHitBlockBreakableTable(BlockType type);
 
 	/// <summary>
 	/// デバッグ用プレイヤー死亡時リセット
@@ -5263,6 +5427,12 @@ void ParticleEmitter::Emit()
     //ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
 }
 
+void ParticleEmitter::BreakEmit()
+{
+	ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+}
+
+
 
 ============================================================
 File Path: Game/Particle/ParticleEmitter.h
@@ -5290,6 +5460,11 @@ public:
     /// </summary>
     void Emit();
 
+	/// <summary>
+	/// 破壊可能ブロックのパーティクル発生
+	/// </summary>
+	void BreakEmit();
+
 	// Getter / Setter
 	/// <summary>
 	/// エミッタのTransform設定・取得
@@ -5297,6 +5472,28 @@ public:
 	/// <param name="transform"></param>
     void SetTransform(const Transform& transform) { emitter.transform = transform; }
 	Transform GetTransform()const { return emitter.transform; }
+
+	/// <summary>
+	/// Particleの発生位置設定・取得
+	/// </summary>
+	/// <param name="translate"></param>
+	void SetTranslate(const Vector3& translate) { emitter.transform.translate = translate; }
+	Vector3 GetTranslate()const { return emitter.transform.translate; }
+
+	/// <summary>
+	/// Particleの回転設定・取得
+	/// </summary>
+	/// <param name="rotate"></param>
+	void SetRotate(const Vector3& rotate) { emitter.transform.rotate = rotate; }
+	Vector3 GetRotate()const { return emitter.transform.rotate; }
+
+	/// <summary>
+	/// Particleのスケール設定・取得
+	/// </summary>
+	/// <param name="scale"></param>
+	void SetScale(const Vector3& scale) { emitter.transform.scale = scale; }
+	Vector3 GetScale()const { return emitter.transform.scale; }
+
 	/// <summary>
 	/// 発生させるパーティクルの数設定・取得
 	/// </summary>
@@ -5808,7 +6005,7 @@ void ParticleManager::DeleteParticleGroup(const std::string& name)
 }
 
 
-
+// ParticleはEmitterを生成しないと描画されないのでこのメソッドだけを呼び出しても描画されない
 void ParticleManager::Emit(const std::string& name, const Vector3& position, uint32_t count)
 {
 	// 登録済みのパーティクルグループ名かチェック
@@ -6336,6 +6533,12 @@ public:
 	/// </summary>
 	void DrawImgui();
 
+	/// <summary>
+	/// カメラのポインタをセットする
+	/// </summary>
+	/// <param name="cameraPtr_"></param>
+	void SetCamera(Camera* cameraPtr_) { camera = cameraPtr_; }
+
 
 private:
 	// DirectXCommon
@@ -6434,6 +6637,7 @@ File Path: Game/Scene/GamePlayScene.cpp
 #include "Game/Application/Map/Map.h"
 #include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
+#include "Game/Particle/ParticleManager.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
@@ -6478,7 +6682,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("ex1");
+	map->Initialize("test");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -6518,12 +6722,19 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
 	
 	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+	/*ParticleManager::GetInstance()->CreateParticleGroup("test", "resources/HitDamage.png");
+	testParticle_ = std::make_unique<ParticleEmitter>();
+	testParticle_->SetParticleName("test");
+	testParticle_->SetTranslate({ 5.0f,-5.0f,0.0f });
+	testParticle_->SetScale({ 0.3f,0.3f,0.3f });*/
+	
 }
 
 
 void GamePlayScene::Update()
 {
-	
+	ParticleManager::GetInstance()->Update();
 	enemyHitSprite_->Update();
 
 	titleLogoObject->Update();
@@ -6589,6 +6800,8 @@ void GamePlayScene::Update()
 		enemy->Update();
 	}
 	camera->Update();
+	ParticleManager::GetInstance()->SetCamera(camera.get());
+		
 	/// 当たりは判定
 	CheckCollision();
 
@@ -6601,6 +6814,7 @@ void GamePlayScene::Draw()
 	///////////////////
 	//  モデルの描画   //
 	///////////////////
+	
 	backGround->Draw();
 
 	
@@ -6617,12 +6831,15 @@ void GamePlayScene::Draw()
 	/// タイトルロゴの描画
 	//titleLogoObject->Draw();
 
+	ParticleManager::GetInstance()->Draw();
+	//testParticle_->Emit();
 
 	/// 敵の描画
 	for (auto& enemy : enemies) {
 		enemy->Draw();
 	}
 
+	ParticleManager::GetInstance()->Draw();
 
 	///////////////////
 	// スプライトの描画 //
@@ -6869,6 +7086,7 @@ File Path: Game/Scene/GamePlayScene.h
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
+#include "Game/Particle/ParticleEmitter.h"
 // 前方宣言
 class Map;
 class Player;
@@ -6921,7 +7139,7 @@ public:
 	/// </summary>
 	void GenerateEnemy();
 
-	/// <summary>
+	/// <summary>\
 	/// 当たり判定
 	/// </summary>
 	void CheckCollision();
@@ -6937,7 +7155,7 @@ public:
 	void EnemyHitShake(float dt);
 
 
-	
+
 
 private:
 	// マップ
@@ -7011,7 +7229,7 @@ private:
 
 	/// バックグラウンド
 	std::unique_ptr<BackGround> backGround;
-	
+
 
 	// シーン遷移
 	std::unique_ptr<SceneTransition> sceneTransition;
@@ -7040,6 +7258,8 @@ private:
 	// エネミーヒット時のシェイク中に出す被弾スプライト
 	std::unique_ptr<Sprite> enemyHitSprite_;
 	float alpha;
+
+	std::unique_ptr<ParticleEmitter>testParticle_;
 };
 
 
@@ -7049,6 +7269,17 @@ File Path: Game/Scene/MyGame.cpp
 ============================================================
 #include "MyGame.h"
 #include "InsideScene/SceneFactory.h"
+#include <dxgiformat.h>
+#include <memory>
+#include <RenderTexture.h>
+#include <ModelManager.h>
+#include <SkyBox/SkyBox.h>
+#include <TextureManager.h>
+#include <WinAPI.h>
+#include <MyMath.h>
+#include <Game/Application/ModelList.h>
+#include <InsideScene/Framework.h>
+#include <InsideScene/SceneManager.h>
 void MyGame::Initialize()
 {
 	Framework::Initialize();
@@ -7199,37 +7430,8 @@ void MyGame::Finalize()
 File Path: Game/Scene/MyGame.h
 ============================================================
 #pragma once
-#ifdef USE_IMGUI
-#include"externals/imgui/imgui_impl_dx12.h"
-#include"externals/imgui/imgui_impl_win32.h"
-#endif
-#include"externals/DirectXTex/DirectXTex.h"
 #include"externals/DirectXTex/d3dx12.h"
-#include<vector>
-#include<fstream>
-#include<sstream>
-#include<wrl.h>
-#include "numbers"
-#include "Input.h"
-#include "WinAPI.h"
-#include "DirectXCommon.h"
-#include "Logger.h"
-#include "D3DResourceLeakChecker.h"
-#include "Sprite.h"
-#include "SpriteCommon.h"
-#include "TextureManager.h"
-#include "Object3D.h"
-#include "Object3DCommon.h"
-#include "Model.h"
-#include "ModelCommon.h"
-#include "ModelManager.h"
-#include "srvManager.h"
 #include "InsideScene/Framework.h"
-#ifdef USE_IMGUI
-#include "ImGuiManager.h"
-#endif
-#include "GamePlayScene.h"
-#include "TitleScene.h"
 #include "Game/Application/ModelList.h"
 #include "engine/3d/SkyBox/SkyBox.h"
 
@@ -7688,13 +7890,15 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 
-	//// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
-
+	
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
 
+	// パーティクルグループを作成
+	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
+	particleEmitter = make_unique<ParticleEmitter>();
+	particleEmitter->SetParticleName("Particle");
 
 	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/back1.png");
 	particleEmitter2 = make_unique<ParticleEmitter>();
@@ -7748,9 +7952,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	
 
 	
-	// パーティクルエミッターの初期化
-	particleEmitter = make_unique<ParticleEmitter>();
-	particleEmitter->SetParticleName("Particle");
+	
 
 
 #pragma region 演出
@@ -7785,7 +7987,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-
+	ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
 
 	background->Update();
@@ -7794,11 +7996,6 @@ void TitleScene::Update()
 	titleLogo->Update();
 
 	// 段々薄く
-
-	
-
-
-
 
 	//sceneTransition->Update();
 
@@ -7814,12 +8011,7 @@ void TitleScene::Update()
 #endif
 
 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		// 
-		isStart = !isStart;
-		effectEmitter->EmitCylinder();
-		cylinder->EmitRing();
-	}
+	
 
 	if (isStart) {
 		// object3dをひだりから右に
@@ -7877,10 +8069,9 @@ void TitleScene::Draw()
 	
 
 	// パーティクルの描画
-	//ParticleManager::GetInstance()->Draw();
 	ParticleManager::GetInstance()->Draw();
 	//particleEmitter->Emit();
-	particleEmitter2->Emit();
+	//particleEmitter2->Emit();
 	// エフェクトの描画
 
 
@@ -8318,7 +8509,7 @@ void Framework::Initialize()
 	modelCommon->Initialize(dxCommon.get());
 
 	// カメラ
-	camera = make_unique<Camera>();
+	camera = make_shared<Camera>();
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
@@ -8345,13 +8536,15 @@ void Framework::Update()
 		return;
 	}
 #pragma endregion
-	camera->Update();
-	SceneManager::GetInstance()->Update(dxCommon.get());
 	Input::GetInstance()->Update();
+	camera->Update();
+	
+	SceneManager::GetInstance()->Update(dxCommon.get());
+	
 	
 
 
-	ParticleManager::GetInstance()->Update();
+	
 	//EffectManager::GetInstance()->Update();
 
 
@@ -8510,7 +8703,7 @@ protected:// Initialize関連
 	// モデル共通部
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
-	std::unique_ptr<Camera> camera;
+	std::shared_ptr<Camera> camera;
 
 	// レンダーテクスチャ
 	std::unique_ptr<RenderTexture> renderTexture = nullptr;
