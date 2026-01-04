@@ -80,7 +80,8 @@ protected:// Initialize関連
 	// モデル共通部
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
-	std::shared_ptr<Camera> camera;
+	std::unique_ptr<Camera> camera;
+
 
 	// レンダーテクスチャ
 	std::unique_ptr<RenderTexture> renderTexture = nullptr;
@@ -88,6 +89,8 @@ protected:// Initialize関連
 public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+	// 全シーンがアクセス可能なカメラ
+	static Camera* GetMainCamera() { return mainCamamera_; }
 private:
 	
 	/// カメラの座標
@@ -97,6 +100,7 @@ private:
 		{ 1.0f, 1.0f,-10.0f } // scale
 	};
 
+	static inline Camera* mainCamamera_ = nullptr;
 	
 };
 

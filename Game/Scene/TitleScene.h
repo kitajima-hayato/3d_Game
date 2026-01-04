@@ -99,7 +99,8 @@ private: // ゲーム要素
 
 	 std::unique_ptr<Sprite> quxSprite_;
 
-	
+	 /// カメラ
+	 Camera* camera = nullptr;
 
 	//std::unique_ptr<SceneTransition> sceneTransition;
 
