@@ -102,7 +102,7 @@ private:
 
 
 	/// カメラ
-	std::unique_ptr<Camera> camera;
+	Camera* camera = nullptr;
 	Transform cameraTransform;
 
 	/// スタート演出
