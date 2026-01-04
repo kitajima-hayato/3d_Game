@@ -6638,6 +6638,7 @@ File Path: Game/Scene/GamePlayScene.cpp
 #include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
 #include "Game/Particle/ParticleManager.h"
+#include "InsideScene/Framework.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
@@ -6660,7 +6661,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
 
 	// カメラクラスの生成
-	camera = std::make_unique<Camera>();
+	camera = Framework::GetMainCamera();
 	// カメラの初期設定
 
 
@@ -6673,7 +6674,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraTransform.translate = camStartPos_;
 	// カメラに反映
 	camera->SetTranslate(cameraTransform.translate);
-	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// スタート演出の開始
 	startPhase_ = StartCamPhase::DollyIn;
@@ -6734,7 +6734,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 void GamePlayScene::Update()
 {
-	ParticleManager::GetInstance()->Update();
+	//ParticleManager::GetInstance()->Update();
+	camera->Update();
 	enemyHitSprite_->Update();
 
 	titleLogoObject->Update();
@@ -6799,9 +6800,7 @@ void GamePlayScene::Update()
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
-	camera->Update();
-	ParticleManager::GetInstance()->SetCamera(camera.get());
-		
+	
 	/// 当たりは判定
 	CheckCollision();
 
@@ -6831,7 +6830,6 @@ void GamePlayScene::Draw()
 	/// タイトルロゴの描画
 	//titleLogoObject->Draw();
 
-	ParticleManager::GetInstance()->Draw();
 	//testParticle_->Emit();
 
 	/// 敵の描画
@@ -7181,7 +7179,7 @@ private:
 
 
 	/// カメラ
-	std::unique_ptr<Camera> camera;
+	Camera* camera = nullptr;
 	Transform cameraTransform;
 
 	/// スタート演出
@@ -7875,6 +7873,9 @@ File Path: Game/Scene/TitleScene.cpp
 #include "Object3D.h"
 #include "engine/3d/ModelManager.h"
 #include "Game/Camera/camera.h"
+#include "Game/Particle/ParticleManager.h"
+#include "Game/Particle/ParticleEmitter.h"
+#include "InsideScene/Framework.h"
 TitleScene::TitleScene()
 {
 
@@ -7890,7 +7891,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 
-	
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
@@ -7949,46 +7949,17 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	background->Initialize();
 
 
-	
-
-	
-	
-
-
-#pragma region 演出
-	/*EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
-	effectEmitter = make_unique<EffectEmitter>();
-
-	effectTransform = effectEmitter->GetTransform();
-	effectTransform = {
-		{0.5f,0.5f,0.5f},
-		{0.0f,0.0f,0.0f},
-		{-1.0f,0.0f,10.0f},
-	};
-	effectEmitter->SetTransform(effectTransform);
-	effectEmitter->SetEffectName("Ring");
-
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine.png");
-	cylinder = make_unique<EffectEmitter>();
-	cylinderTransform = cylinder->GetTransform();
-
-	cylinderTransform = {
-		{0.5f,0.5f,0.5f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,10.0f},
-	};
-	cylinder->SetTransform(cylinderTransform);
-	cylinder->SetEffectName("Cylinder");*/
-#pragma endregion
-
-
+	camera = Framework::GetMainCamera();
+	camera->SetTranslate({7.5f,-4.0f,0.0f});
+	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 
 }
 
 void TitleScene::Update()
 {
-	ParticleManager::GetInstance()->Update();
+	//ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
+	camera->Update();
 
 	background->Update();
 
@@ -8378,7 +8349,8 @@ private: // ゲーム要素
 
 	 std::unique_ptr<Sprite> quxSprite_;
 
-	
+	 /// カメラ
+	 Camera* camera = nullptr;
 
 	//std::unique_ptr<SceneTransition> sceneTransition;
 
@@ -8509,20 +8481,23 @@ void Framework::Initialize()
 	modelCommon->Initialize(dxCommon.get());
 
 	// カメラ
-	camera = make_shared<Camera>();
+	camera = make_unique<Camera>();
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
+
+	// 全シーンがアクセス可能なカメラに設定
+	mainCamamera_ = camera.get();
+
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// パーティクル
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
-	// エフェクト
-	//EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
-
+	
+	
 
 	/// マップに合わせる
-	cameraTransform.translate = { 7.5f,-4.0f,0.0f };
-	camera->SetTranslate(cameraTransform.translate);
+	/*cameraTransform.translate = { 7.5f,-4.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);*/
 
 }
 
@@ -8536,17 +8511,32 @@ void Framework::Update()
 		return;
 	}
 #pragma endregion
+
 	Input::GetInstance()->Update();
+	// カメラの更新
 	camera->Update();
-	
+#ifdef USE_IMGUI
+	// カメラの配置回転情報の変更・表示UI
+	ImGui::Begin("Camera Settings");
+	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+	ImGui::End();
+
+	// カメラに反映させる
+	/*static bool useDebugCamera = false;
+	ImGui::Checkbox("Use Debug Camera", &useDebugCamera);
+	if (useDebugCamera) {*/
+	/*camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);*/
+	//}
+#endif 
+
 	SceneManager::GetInstance()->Update(dxCommon.get());
 	
-	
-
 
 	
-	//EffectManager::GetInstance()->Update();
-
+	// パーティクルの更新
+	ParticleManager::GetInstance()->Update();
 
 	// ESCキーで終了
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
@@ -8554,20 +8544,6 @@ void Framework::Update()
 		isEndRequst = true;
 	}
 	
-	
-#ifdef USE_IMGUI
-	// ImGuiによるデバッグ情報表示
-
-	ImGui::Begin("Camera Settings");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	ImGui::End();
-	camera->SetTranslate(cameraTransform.translate);
-
-	camera->SetRotate(cameraTransform.rotate);
-
-#endif 
-
 }
 
 
@@ -8592,9 +8568,8 @@ void Framework::Finalize()
 	ModelManager::GetInstance()->Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
-
+	mainCamamera_ = nullptr;
 	ParticleManager::GetInstance()->DeleteInstance();
-	//EffectManager::GetInstance()->DeleteInstance();
 
 }
 
@@ -8703,7 +8678,8 @@ protected:// Initialize関連
 	// モデル共通部
 	std::unique_ptr<ModelCommon> modelCommon;
 	// カメラ
-	std::shared_ptr<Camera> camera;
+	std::unique_ptr<Camera> camera;
+
 
 	// レンダーテクスチャ
 	std::unique_ptr<RenderTexture> renderTexture = nullptr;
@@ -8711,6 +8687,8 @@ protected:// Initialize関連
 public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+	// 全シーンがアクセス可能なカメラ
+	static Camera* GetMainCamera() { return mainCamamera_; }
 private:
 	
 	/// カメラの座標
@@ -8720,6 +8698,7 @@ private:
 		{ 1.0f, 1.0f,-10.0f } // scale
 	};
 
+	static inline Camera* mainCamamera_ = nullptr;
 	
 };
 
