@@ -4,6 +4,9 @@
 #include "Object3D.h"
 #include "engine/3d/ModelManager.h"
 #include "Game/Camera/camera.h"
+#include "Game/Particle/ParticleManager.h"
+#include "Game/Particle/ParticleEmitter.h"
+#include "InsideScene/Framework.h"
 TitleScene::TitleScene()
 {
 
@@ -19,7 +22,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 
-	
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
@@ -78,46 +80,17 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	background->Initialize();
 
 
-	
-
-	
-	
-
-
-#pragma region 演出
-	/*EffectManager::GetInstance()->CreateEffectGroup("Ring", "resources/monsterball.png");
-	effectEmitter = make_unique<EffectEmitter>();
-
-	effectTransform = effectEmitter->GetTransform();
-	effectTransform = {
-		{0.5f,0.5f,0.5f},
-		{0.0f,0.0f,0.0f},
-		{-1.0f,0.0f,10.0f},
-	};
-	effectEmitter->SetTransform(effectTransform);
-	effectEmitter->SetEffectName("Ring");
-
-	EffectManager::GetInstance()->CreateEffectGroup("Cylinder", "resources/gradationLine.png");
-	cylinder = make_unique<EffectEmitter>();
-	cylinderTransform = cylinder->GetTransform();
-
-	cylinderTransform = {
-		{0.5f,0.5f,0.5f},
-		{0.0f,0.0f,0.0f},
-		{0.0f,0.0f,10.0f},
-	};
-	cylinder->SetTransform(cylinderTransform);
-	cylinder->SetEffectName("Cylinder");*/
-#pragma endregion
-
-
+	camera = Framework::GetMainCamera();
+	camera->SetTranslate({7.5f,-4.0f,0.0f});
+	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 
 }
 
 void TitleScene::Update()
 {
-	ParticleManager::GetInstance()->Update();
+	//ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
+	camera->Update();
 
 	background->Update();
 

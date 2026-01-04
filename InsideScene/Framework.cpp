@@ -35,20 +35,23 @@ void Framework::Initialize()
 	modelCommon->Initialize(dxCommon.get());
 
 	// カメラ
-	camera = make_shared<Camera>();
+	camera = make_unique<Camera>();
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
+
+	// 全シーンがアクセス可能なカメラに設定
+	mainCamamera_ = camera.get();
+
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// パーティクル
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
-	// エフェクト
-	//EffectManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
-
+	
+	
 
 	/// マップに合わせる
-	cameraTransform.translate = { 7.5f,-4.0f,0.0f };
-	camera->SetTranslate(cameraTransform.translate);
+	/*cameraTransform.translate = { 7.5f,-4.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);*/
 
 }
 
@@ -62,17 +65,32 @@ void Framework::Update()
 		return;
 	}
 #pragma endregion
+
 	Input::GetInstance()->Update();
+	// カメラの更新
 	camera->Update();
-	
+#ifdef USE_IMGUI
+	// カメラの配置回転情報の変更・表示UI
+	ImGui::Begin("Camera Settings");
+	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+	ImGui::End();
+
+	// カメラに反映させる
+	/*static bool useDebugCamera = false;
+	ImGui::Checkbox("Use Debug Camera", &useDebugCamera);
+	if (useDebugCamera) {*/
+	/*camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);*/
+	//}
+#endif 
+
 	SceneManager::GetInstance()->Update(dxCommon.get());
 	
-	
-
 
 	
-	//EffectManager::GetInstance()->Update();
-
+	// パーティクルの更新
+	ParticleManager::GetInstance()->Update();
 
 	// ESCキーで終了
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
@@ -80,20 +98,6 @@ void Framework::Update()
 		isEndRequst = true;
 	}
 	
-	
-#ifdef USE_IMGUI
-	// ImGuiによるデバッグ情報表示
-
-	ImGui::Begin("Camera Settings");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	ImGui::End();
-	camera->SetTranslate(cameraTransform.translate);
-
-	camera->SetRotate(cameraTransform.rotate);
-
-#endif 
-
 }
 
 
@@ -118,9 +122,8 @@ void Framework::Finalize()
 	ModelManager::GetInstance()->Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
-
+	mainCamamera_ = nullptr;
 	ParticleManager::GetInstance()->DeleteInstance();
-	//EffectManager::GetInstance()->DeleteInstance();
 
 }
 

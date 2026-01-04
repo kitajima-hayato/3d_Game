@@ -3,6 +3,7 @@
 #include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
 #include "Game/Particle/ParticleManager.h"
+#include "InsideScene/Framework.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
@@ -25,7 +26,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
 
 	// カメラクラスの生成
-	camera = std::make_unique<Camera>();
+	camera = Framework::GetMainCamera();
 	// カメラの初期設定
 
 
@@ -38,7 +39,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraTransform.translate = camStartPos_;
 	// カメラに反映
 	camera->SetTranslate(cameraTransform.translate);
-	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// スタート演出の開始
 	startPhase_ = StartCamPhase::DollyIn;
@@ -99,7 +99,8 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 void GamePlayScene::Update()
 {
-	ParticleManager::GetInstance()->Update();
+	//ParticleManager::GetInstance()->Update();
+	camera->Update();
 	enemyHitSprite_->Update();
 
 	titleLogoObject->Update();
@@ -164,9 +165,7 @@ void GamePlayScene::Update()
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
-	camera->Update();
-	ParticleManager::GetInstance()->SetCamera(camera.get());
-		
+	
 	/// 当たりは判定
 	CheckCollision();
 
@@ -196,7 +195,6 @@ void GamePlayScene::Draw()
 	/// タイトルロゴの描画
 	//titleLogoObject->Draw();
 
-	ParticleManager::GetInstance()->Draw();
 	//testParticle_->Emit();
 
 	/// 敵の描画
