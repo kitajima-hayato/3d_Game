@@ -47,7 +47,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 
-
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
 	playerObject->SetModel("Player.obj");
@@ -79,7 +78,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	background = std::make_unique<BackGround>();
 	background->Initialize();
 
-
+	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
 	camera->SetTranslate({7.5f,-4.0f,0.0f});
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
