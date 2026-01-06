@@ -64,6 +64,8 @@
 └──     └── └── SceneTransition.h
 └──     ├── StageCelectScene.cpp
 └──     ├── StageCelectScene.h
+└──     ├── StageClearScene.cpp
+└──     ├── StageClearScene.h
 └──     ├── TitleScene.cpp
 └──     └── TitleScene.h
 ├── InsideScene/
@@ -293,6 +295,7 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\Player\Player.cpp" />
     <ClCompile Include="Game\Application\Map\Map.cpp" />
+    <ClCompile Include="Game\Scene\StageClearScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -348,6 +351,7 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\Player\Player.h" />
     <ClInclude Include="Game\Application\Map\Map.h" />
+    <ClInclude Include="Game\Scene\StageClearScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -529,6 +533,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Application\Player\Player.cpp" />
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
+    <ClCompile Include="Game\Scene\StageClearScene.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -679,6 +684,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Camera\CameraController.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
+    <ClInclude Include="Game\Scene\StageClearScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -3266,19 +3272,19 @@ bool Player::CheckCollisionPoints(const std::array<Vector3, 2>& posList, Collisi
 		{
 		case CollisionType::kTop:
 			collisionInfo.celling = true;
-			collisionInfo.move.y = (std::max)(0.0f, rect.bottom - position.y - (status_.kHeight / 2.0f + status_.kBlank));
+			collisionInfo.move.y = (std::max)(0.0f, rect.bottom - position.y - (status_.kHeight / 2.0f + status_.kEpsilon));
 			break;
 		case CollisionType::kBottom:
 			collisionInfo.landing = true;
-			collisionInfo.move.y = (std::min)(0.0f, rect.top - position.y + (status_.kHeight / 2.0f + status_.kBlank));
+			collisionInfo.move.y = (std::min)(0.0f, rect.top - position.y + (status_.kHeight / 2.0f + status_.kEpsilon));
 			break;
 		case CollisionType::kRight:
 			collisionInfo.hitWall = true;
-			collisionInfo.move.x = (std::max)(0.0f, rect.left - position.x - (status_.kWidth / 2.0f + status_.kBlank));
+			collisionInfo.move.x = (std::max)(0.0f, rect.left - position.x - (status_.kWidth / 2.0f + status_.kEpsilon));
 			break;
 		case CollisionType::kLeft:
 			collisionInfo.hitWall = true;
-			collisionInfo.move.x = (std::min)(0.0f, rect.right - position.x + (status_.kWidth / 2.0f + status_.kBlank));
+			collisionInfo.move.x = (std::min)(0.0f, rect.right - position.x + (status_.kWidth / 2.0f + status_.kEpsilon));
 			break;
 		}
 	}
@@ -3291,8 +3297,8 @@ bool Player::IsHitBlockTable(BlockType type)
 	{
 	case BlockType::NormalBlock:
 	case BlockType::testBlock:
-	case BlockType::kGoalUp:
-	case BlockType::kGoalDown:
+	//case BlockType::kGoalUp:
+	//case BlockType::kGoalDown:
 	case BlockType::breakBlock:
 		return true;
 
@@ -3517,7 +3523,7 @@ struct PlayerStatus {
 	// 高さ
 	float kHeight = 0.8f;
 	// 当たり判定の余裕
-	float kBlank = 2.0f;
+	float kBlank = 0.0f;
 	// 微小値
 	float kEpsilon = 0.05f;
 
@@ -3692,6 +3698,9 @@ public:	/// Setter / Getter
 
 	// プレイヤーが敵にヒットしているかどうか
 	bool GetHitEnemy()const { return isEnemyHit_; }
+	
+	// ゴールしているかどうか
+	bool GetIsGoal()const { return isGoal_; }
 
 private:	// メンバ変数
 	// プレイヤーステータス
@@ -6795,7 +6804,8 @@ void GamePlayScene::Update()
 		Vector3 playerPosition = player->GetTranslate();
 		cameraController_->SetTargetPosition(playerPosition);
 		cameraController_->Update(dt);
-		camera->SetTranslate(cameraController_->GetCameraPosition());
+		cameraTransform.translate = cameraController_->GetCameraPosition();
+		camera->SetTranslate(cameraTransform.translate);
 	}
 	for (auto& enemy : enemies) {
 		enemy->Update();
@@ -7865,6 +7875,89 @@ private:
 
 
 ============================================================
+File Path: Game/Scene/StageClearScene.cpp
+============================================================
+#include "StageClearScene.h"
+#include "Game/Camera/Camera.h"
+#include "InsideScene/Framework.h"
+
+void StageClearScene::Initialize(DirectXCommon* dxCommon)
+{
+	// カメラの取得と設定
+	camera = Framework::GetMainCamera();
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
+	camera->SetRotate({ 0.0f,0.0f,0.0f });
+
+
+}
+
+void StageClearScene::Update()
+{
+
+}
+
+void StageClearScene::Draw()
+{
+
+}
+
+void StageClearScene::Finalize()
+{
+
+}
+
+void StageClearScene::DrawImgui()
+{
+
+}
+
+
+============================================================
+File Path: Game/Scene/StageClearScene.h
+============================================================
+#pragma once
+#include "InsideScene/BaseScene.h"
+
+class Object3D;
+class Camera;
+class StageClearScene :
+    public BaseScene
+{
+public:
+	StageClearScene();
+	~StageClearScene();
+
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	void Initialize(DirectXCommon* dxCommon)override;
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update()override;
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw()override;
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize()override;
+
+	// Imgui一括管理 / 描画関数
+	void DrawImgui();
+
+private:
+	/// カメラ
+	Camera* camera = nullptr;
+};
+
+
+
+============================================================
 File Path: Game/Scene/TitleScene.cpp
 ============================================================
 #include <thread>
@@ -7916,7 +8009,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 
-
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
 	playerObject->SetModel("Player.obj");
@@ -7948,7 +8040,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	background = std::make_unique<BackGround>();
 	background->Initialize();
 
-
+	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
 	camera->SetTranslate({7.5f,-4.0f,0.0f});
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
