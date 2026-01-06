@@ -86,7 +86,7 @@ struct PlayerStatus {
 	// 高さ
 	float kHeight = 0.8f;
 	// 当たり判定の余裕
-	float kBlank = 2.0f;
+	float kBlank = 0.0f;
 	// 微小値
 	float kEpsilon = 0.05f;
 
@@ -261,6 +261,9 @@ public:	/// Setter / Getter
 
 	// プレイヤーが敵にヒットしているかどうか
 	bool GetHitEnemy()const { return isEnemyHit_; }
+	
+	// ゴールしているかどうか
+	bool GetIsGoal()const { return isGoal_; }
 
 private:	// メンバ変数
 	// プレイヤーステータス

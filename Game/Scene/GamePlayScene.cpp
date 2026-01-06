@@ -160,7 +160,8 @@ void GamePlayScene::Update()
 		Vector3 playerPosition = player->GetTranslate();
 		cameraController_->SetTargetPosition(playerPosition);
 		cameraController_->Update(dt);
-		camera->SetTranslate(cameraController_->GetCameraPosition());
+		cameraTransform.translate = cameraController_->GetCameraPosition();
+		camera->SetTranslate(cameraTransform.translate);
 	}
 	for (auto& enemy : enemies) {
 		enemy->Update();

@@ -510,19 +510,19 @@ bool Player::CheckCollisionPoints(const std::array<Vector3, 2>& posList, Collisi
 		{
 		case CollisionType::kTop:
 			collisionInfo.celling = true;
-			collisionInfo.move.y = (std::max)(0.0f, rect.bottom - position.y - (status_.kHeight / 2.0f + status_.kBlank));
+			collisionInfo.move.y = (std::max)(0.0f, rect.bottom - position.y - (status_.kHeight / 2.0f + status_.kEpsilon));
 			break;
 		case CollisionType::kBottom:
 			collisionInfo.landing = true;
-			collisionInfo.move.y = (std::min)(0.0f, rect.top - position.y + (status_.kHeight / 2.0f + status_.kBlank));
+			collisionInfo.move.y = (std::min)(0.0f, rect.top - position.y + (status_.kHeight / 2.0f + status_.kEpsilon));
 			break;
 		case CollisionType::kRight:
 			collisionInfo.hitWall = true;
-			collisionInfo.move.x = (std::max)(0.0f, rect.left - position.x - (status_.kWidth / 2.0f + status_.kBlank));
+			collisionInfo.move.x = (std::max)(0.0f, rect.left - position.x - (status_.kWidth / 2.0f + status_.kEpsilon));
 			break;
 		case CollisionType::kLeft:
 			collisionInfo.hitWall = true;
-			collisionInfo.move.x = (std::min)(0.0f, rect.right - position.x + (status_.kWidth / 2.0f + status_.kBlank));
+			collisionInfo.move.x = (std::min)(0.0f, rect.right - position.x + (status_.kWidth / 2.0f + status_.kEpsilon));
 			break;
 		}
 	}
@@ -535,8 +535,8 @@ bool Player::IsHitBlockTable(BlockType type)
 	{
 	case BlockType::NormalBlock:
 	case BlockType::testBlock:
-	case BlockType::kGoalUp:
-	case BlockType::kGoalDown:
+	//case BlockType::kGoalUp:
+	//case BlockType::kGoalDown:
 	case BlockType::breakBlock:
 		return true;
 
