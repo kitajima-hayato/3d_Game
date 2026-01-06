@@ -87,7 +87,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	//ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
 	camera->Update();
 
@@ -96,17 +95,8 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
-	// 段々薄く
-
 	//sceneTransition->Update();
 
-
-
-	/*particleEmitter->SetTransform({
-	emitterScale,
-	emitterRotate,
-	emitterTranslate
-		});*/
 #ifdef USE_IMGUI
 	DrawImgui();
 #endif

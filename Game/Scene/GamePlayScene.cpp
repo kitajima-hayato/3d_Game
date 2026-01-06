@@ -99,7 +99,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 void GamePlayScene::Update()
 {
-	//ParticleManager::GetInstance()->Update();
 	camera->Update();
 	enemyHitSprite_->Update();
 
@@ -414,6 +413,8 @@ void GamePlayScene::DrawImgui()
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
 	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+	
 	ImGui::SeparatorText("Start Cam Params");
 	ImGui::DragFloat("durDollyIn", &durDollyIn_, 0.01f, 0.05f, 3.0f);
 	ImGui::DragFloat("durSettle", &durSettle_, 0.01f, 0.05f, 1.0f);
@@ -429,6 +430,10 @@ void GamePlayScene::DrawImgui()
 		cameraTransform.translate = camStartPos_;
 		startPhase_ = StartCamPhase::DollyIn;
 		startTimer_ = 0.0f;
+	}
+	if (ImGui::Button("Vertical Camera")) {
+		cameraTransform.translate = { 8.0f,20.0f,0.0f };
+		cameraTransform.rotate = { 1.6f,0.0f,0.0f };
 	}
 	ImGui::End();
 
