@@ -47,7 +47,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("test");
+	map->Initialize("test2");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -87,12 +87,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
 	
 	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-
-	/*ParticleManager::GetInstance()->CreateParticleGroup("test", "resources/HitDamage.png");
-	testParticle_ = std::make_unique<ParticleEmitter>();
-	testParticle_->SetParticleName("test");
-	testParticle_->SetTranslate({ 5.0f,-5.0f,0.0f });
-	testParticle_->SetScale({ 0.3f,0.3f,0.3f });*/
 	
 }
 
@@ -190,12 +184,6 @@ void GamePlayScene::Draw()
 	
 	/// プレイヤーの描画
 	player->Draw();
-
-
-	/// タイトルロゴの描画
-	//titleLogoObject->Draw();
-
-	//testParticle_->Emit();
 
 	/// 敵の描画
 	for (auto& enemy : enemies) {
@@ -336,8 +324,8 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	case StartCamPhase::Shake: {
 		startTimer_ += dt;
 		float u = std::clamp(1.0f - (startTimer_ / shakeTime_), 0.0f, 1.0f); // 減衰
-		// シンプルな1軸シェイク（必要ならxy両方にしてもOK）
-		float s = std::sin(startTimer_ * 60.0f); // フレーム相当で手早く
+		// シンプルな1軸シェイク
+		float s = std::sin(startTimer_ * 60.0f); 
 		Vector3 offset = { 0.0f, 0.0f, s * shakeAmp_ * u };
 		cameraTransform.translate = camTargetPos_ + offset;
 		if (startTimer_ >= shakeTime_) {
@@ -403,7 +391,6 @@ void GamePlayScene::Finalize()
 
 	/// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
-
 
 }
 

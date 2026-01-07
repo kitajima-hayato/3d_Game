@@ -86,6 +86,37 @@ void Player::FlashingUpdate()
 	}
 }
 
+void Player::PlayerTurn()
+{
+	switch (direction_)
+	{
+	case Direction::kRight:
+
+		// 右向き
+		targetYaw_ = 0.0f;
+
+		break;
+	case Direction::kLeft:
+		// 左向き
+		targetYaw_ = 3.5f;
+
+		break;
+
+	default:
+		break;
+	}
+
+	// 現在の回転を取得
+	Vector3 currentRotate = playerModel_->GetRotate();
+	// 補間係数の計算
+	float t = 1.0f - std::pow(0.5f, static_cast<float>(1.0f) / (status_.kTurnTime * 60.0f));
+	// ヨー角の補間
+	currentRotate.y += (targetYaw_ - currentRotate.y) * t;
+	// 回転の設定
+	playerModel_->SetRotate(currentRotate);
+
+}
+
 
 
 void Player::Initialize(Vector3 position)
@@ -104,9 +135,11 @@ void Player::Update()
 {
 	// プレイヤーの挙動更新
 	UpdateBehavior();
+	// プレイヤーの回転
+	PlayerTurn();
 	// エネミーにヒットしたら
 	FlashingUpdate();
-	
+
 #ifdef USE_IMGUI
 	ImGui();
 #endif 
@@ -144,7 +177,7 @@ void Player::UpdateBehavior()
 	// 地面にいなかったらリセット
 	if (playerModel_->GetTranslate().y < deathHeight_ && !onGround_)
 	{
-		// 死亡処理
+		// 死亡フラグ
 		isDead_ = true;
 	}
 	// 移動量の反映
@@ -161,8 +194,6 @@ void Player::UpdateBehavior()
 	PlayerCollisionMove(collisionInfo);
 }
 
-
-// Player.cpp
 
 void Player::Move()
 {
@@ -246,13 +277,16 @@ void Player::Move()
 		}
 		acceleration.x += status_.kAcceleration * dashScale;
 
-
+		// 押された方向にディレクションを向ける
+		direction_ = Direction::kRight;
 	} else if (movingLeft) {
 		if (velocity_.x > 0.0f) {
 			velocity_.x *= (1.0f - status_.kAttenuation);
 		}
 		acceleration.x -= status_.kAcceleration * dashScale;
 
+		// 押された方向にディレクションを向ける
+		direction_ = Direction::kLeft;
 	} else {
 		// 入力がないときは減速のみ（ダッシュ倍率はかけない）
 		velocity_.x *= (1.0f - status_.kAttenuation);
@@ -263,14 +297,13 @@ void Player::Move()
 
 	// 速度に応じて回転
 	Vector3 rotate = playerModel_->GetRotate();
-
 	rotate -= {0.0f, 0.0f, velocity_.x};
-	if (-6.3f >= rotate.z && movingRight) {
+	// 回転が規定値であるplayerTurnAround_が6.3fになったら回転の値をリセットする
+	if (-playerTurnAround_ >= rotate.z && movingRight ||
+		playerTurnAround_ <= rotate.z && movingLeft) {
 		rotate.z = 0.0f;
 	}
-	if (6.3f <= rotate.z && movingLeft) {
-		rotate.z = 0.0f;
-	}
+	// プレイヤーの回転
 	playerModel_->SetRotate(rotate);
 
 	// 最大速度をダッシュ状態に応じて変える
@@ -342,7 +375,7 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 	if (collisionInfo.celling) {
 		// 天井に衝突したら移動量を調整
 		velocity_.y = 0.0f;
-		
+
 		// プレイヤーの頭に当たったブロックを調べる
 		Vector3 position = playerModel_->GetTranslate();
 
@@ -354,15 +387,15 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 		// 各コーナーの新しい位置で当たったブロックを調べる
 		for (const auto& cornerPosition : topCorners) {
 			IndexSet indexSet = map_->GetMapChipIndexSetByPosition(cornerPosition);
-			BlockType blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex-1);
+			BlockType blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
 
 			// Break Blockだった場合破壊する 
-			if(IsHitBlockBreakableTable(blockType)) {
+			if (IsHitBlockBreakableTable(blockType)) {
 				// ブロック破壊
-				map_->BreakBlock(indexSet.xIndex, indexSet.yIndex-1);
+				map_->BreakBlock(indexSet.xIndex, indexSet.yIndex - 1);
 			}
 		}
-		
+
 	}
 }
 
@@ -403,7 +436,7 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			if (IsHitGoalBlockTable(blockType)) {
 				isGoal_ = true;
 			}
-			
+
 
 			// 右点の判定
 			// 自機の右下がマップチップの何番目にあるのか
@@ -470,7 +503,7 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, Collisio
 		// 必要であればImGui表示する
 		switch (type) {
 		case CollisionType::kTop:
-			
+
 			break;
 		case CollisionType::kBottom:
 			//Logger::Log("hit floor");
@@ -675,9 +708,10 @@ void Player::ImGui()
 			ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
 			ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
 			ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
+			ImGui::Text("Direction: %s",
+				(direction_ == Direction::kRight) ? "Right" : "Left");
 			ImGui::EndTabItem();
 		}
-
 		ImGui::EndTabBar();
 
 	}
