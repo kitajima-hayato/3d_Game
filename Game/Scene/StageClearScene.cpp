@@ -2,6 +2,10 @@
 #include "Game/Camera/Camera.h"
 #include "InsideScene/Framework.h"
 
+StageClearScene::StageClearScene()
+{
+}
+
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
 	// カメラの取得と設定
