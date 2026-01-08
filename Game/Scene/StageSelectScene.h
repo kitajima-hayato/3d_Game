@@ -1,5 +1,12 @@
 #pragma once
 #include "InsideScene/BaseScene.h"
+#include <MyMath.h>
+
+struct StageStatus {
+
+};
+class Object3D;
+class Camera;
 class StageSelectScene :
     public BaseScene
 {
@@ -33,6 +40,20 @@ class StageSelectScene :
     /// Imgui一括管理
 	/// </summary>
 	void DrawImgui();
+
+
+private:
+	// カメラ
+	Camera* camera = nullptr;
+	Transform cameraTransform;
+
+	// ステージ選択オブジェクト
+	std::unique_ptr<Object3D> playerModel;
+	Transform playerTransform;
+
+    // haikei
+	std::unique_ptr<Object3D> backgroundModel;
+	Transform backgroundTransform;
 
 };
 

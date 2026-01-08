@@ -33,6 +33,5 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("GoalUp.obj");
 	ModelManager::GetInstance()->LoadModel("GoalDown.obj");
 
-	ModelManager::GetInstance()->LoadModel("Player.obj");
 	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
 }

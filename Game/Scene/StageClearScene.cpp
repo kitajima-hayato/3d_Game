@@ -6,6 +6,10 @@ StageClearScene::StageClearScene()
 {
 }
 
+StageClearScene::~StageClearScene()
+{
+}
+
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
 	// カメラの取得と設定
