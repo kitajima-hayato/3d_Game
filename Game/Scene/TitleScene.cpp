@@ -102,8 +102,6 @@ void TitleScene::Update()
 #endif
 
 
-	
-
 	if (isStart) {
 		// object3dをひだりから右に
 		speed.x += 0.07f;
@@ -119,18 +117,11 @@ void TitleScene::Update()
 
 
 
-	//levelData->Update();
 	// プレイヤーを回転
 	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
 	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
 
-
-	// Rainbow回転（ここを追加）
-	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
-	//Rainbow->SetTransform(rainbowTransform);
-
-	//Rainbow->Update();
 
 
 	// ENTERキーが押されたら

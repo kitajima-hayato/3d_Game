@@ -35,7 +35,6 @@ class StageSelectScene :
     /// </summary>
     void Finalize()override;
 
-
 	/// <summary>
     /// Imgui一括管理
 	/// </summary>
@@ -51,9 +50,13 @@ private:
 	std::unique_ptr<Object3D> playerModel;
 	Transform playerTransform;
 
-    // haikei
-	std::unique_ptr<Object3D> backgroundModel;
-	Transform backgroundTransform;
+   // セレクト画面１の土台
+	std::unique_ptr<Object3D> stageSelectBase1;
+	Transform stageSelectBase1Transform;
+
+    // 空背景
+	std::unique_ptr<Object3D> skyBack;
+	Transform skyBackTransform;
 
 };
 
