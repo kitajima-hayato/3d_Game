@@ -81,9 +81,6 @@
     <ClCompile Include="Game\Scene\MyGame.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\StageCelectScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
@@ -153,6 +150,7 @@
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -228,9 +226,6 @@
     <ClInclude Include="Game\Scene\MyGame.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\StageCelectScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -304,6 +299,7 @@
     <ClInclude Include="Game\Camera\CameraController.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
+    <ClInclude Include="Game\Scene\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

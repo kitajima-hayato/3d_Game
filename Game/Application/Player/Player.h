@@ -9,7 +9,7 @@
 /// <summary>
 /// 向き
 /// </summary>
-enum class Direcrion {
+enum class Direction {
 	kRight,
 	kLeft
 };
@@ -98,7 +98,7 @@ struct PlayerStatus {
 
 	//振り向きパラメーター
 	// 角度の補間タイム
-	float kTurnTime = 1.0f;
+	float kTurnTime = 0.1f;
 };
 
 class Player :public Collider
@@ -248,6 +248,11 @@ private:
 	/// </summary>
 	void FlashingUpdate();
 
+	/// <summary>
+	/// 向きを変更したときにプレイヤーのモデルを回転させる
+	/// </summary>
+	void PlayerTurn();
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -312,6 +317,14 @@ private:	// メンバ変数
 	 uint32_t flashingIntervalFrame_ = 10;
 	// 可視フラグ
 	bool isVisible_ = true;
+
+	// プレイヤーの一周
+	float playerTurnAround_ = 6.3f;
+
+	// プレイヤーの向き
+	Direction direction_ = Direction::kRight;
+	float turnSpeed_ = 0.2f;
+	float targetYaw_ = 0.0f;
 
 
 };

@@ -87,7 +87,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	//ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
 	camera->Update();
 
@@ -96,23 +95,12 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
-	// 段々薄く
-
 	//sceneTransition->Update();
 
-
-
-	/*particleEmitter->SetTransform({
-	emitterScale,
-	emitterRotate,
-	emitterTranslate
-		});*/
 #ifdef USE_IMGUI
 	DrawImgui();
 #endif
 
-
-	
 
 	if (isStart) {
 		// object3dをひだりから右に
@@ -129,24 +117,21 @@ void TitleScene::Update()
 
 
 
-	//levelData->Update();
 	// プレイヤーを回転
 	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
 	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
 
 
-	// Rainbow回転（ここを追加）
-	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
-	//Rainbow->SetTransform(rainbowTransform);
-
-	//Rainbow->Update();
-
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
+	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+	{
+		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
 	}
 }
 
