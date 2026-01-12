@@ -62,10 +62,10 @@
 └──     ├── SceneTransition/
 └──     └── ├── SceneTransition.cpp
 └──     └── └── SceneTransition.h
-└──     ├── StageCelectScene.cpp
-└──     ├── StageCelectScene.h
 └──     ├── StageClearScene.cpp
 └──     ├── StageClearScene.h
+└──     ├── StageSelectScene.cpp
+└──     ├── StageSelectScene.h
 └──     ├── TitleScene.cpp
 └──     └── TitleScene.h
 ├── InsideScene/
@@ -288,7 +288,6 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="engine\bace\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
-    <ClCompile Include="Game\Scene\StageCelectScene.cpp" />
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
@@ -296,6 +295,7 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Application\Player\Player.cpp" />
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -343,7 +343,6 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="engine\bace\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Game\Application\StageType.h" />
-    <ClInclude Include="Game\Scene\StageCelectScene.h" />
     <ClInclude Include="Game\Application\Enemy\NormalEnemy.h" />
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
@@ -352,6 +351,7 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Application\Player\Player.h" />
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
+    <ClInclude Include="Game\Scene\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -462,9 +462,6 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Scene\MyGame.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\StageCelectScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
@@ -534,6 +531,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -609,9 +607,6 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Scene\MyGame.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\StageCelectScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -685,6 +680,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Camera\CameraController.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
+    <ClInclude Include="Game\Scene\StageSelectScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -864,8 +860,8 @@ void BackGround::Initialize()
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 1.0f,100.0f,400.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 120.0f,400.0f,1.0f },
+		{ 0.0f,0.0f,-1.5f },
 		{ 7.5f,0.0f,250.0f }
 	};
 	skyBack->SetTransform(skyBackTransform);
@@ -2714,8 +2710,6 @@ void ModelList::LoadAllModel()
 
 
 	/// TitleScene
-	// 仮オブジェ
-	ModelManager::GetInstance()->LoadModel("plane.obj");
 	// プレイヤー
 	ModelManager::GetInstance()->LoadModel("Player.obj");
 	// レインボープレーン
@@ -2728,6 +2722,10 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("back1.obj");
 	ModelManager::GetInstance()->LoadModel("BackSky.obj");
 	ModelManager::GetInstance()->LoadModel("soil.obj");
+
+	/// StageSelectScene
+	ModelManager::GetInstance()->LoadModel("SelectBaseGround.obj");
+
 	/// GamePlayScene
 	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
@@ -2739,7 +2737,6 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("GoalUp.obj");
 	ModelManager::GetInstance()->LoadModel("GoalDown.obj");
 
-	ModelManager::GetInstance()->LoadModel("Player.obj");
 	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
 }
 
@@ -2848,14 +2845,47 @@ void Player::FlashingUpdate()
 	}
 }
 
+void Player::PlayerTurn()
+{
+	switch (direction_)
+	{
+	case Direction::kRight:
+
+		// 右向き
+		targetYaw_ = 0.0f;
+
+		break;
+	case Direction::kLeft:
+		// 左向き
+		targetYaw_ = 3.5f;
+
+		break;
+
+	default:
+		break;
+	}
+
+	// 現在の回転を取得
+	Vector3 currentRotate = playerModel_->GetRotate();
+	// 補間係数の計算
+	float t = 1.0f - std::pow(0.5f, static_cast<float>(1.0f) / (status_.kTurnTime * 60.0f));
+	// ヨー角の補間
+	currentRotate.y += (targetYaw_ - currentRotate.y) * t;
+	// 回転の設定
+	playerModel_->SetRotate(currentRotate);
+
+}
+
 
 
 void Player::Initialize(Vector3 position)
 {
+	// プレイヤーモデルの生成と初期化
 	playerModel_ = std::make_unique<Object3D>();
 	playerModel_->Initialize();
 	playerModel_->SetTranslate(position);
 	playerModel_->SetModel("Player.obj");
+	// 死ぬ高さの設定
 	SetDeathHeight(-1.0f);
 }
 
@@ -2864,6 +2894,8 @@ void Player::Update()
 {
 	// プレイヤーの挙動更新
 	UpdateBehavior();
+	// プレイヤーの回転
+	PlayerTurn();
 	// エネミーにヒットしたら
 	FlashingUpdate();
 
@@ -2904,7 +2936,7 @@ void Player::UpdateBehavior()
 	// 地面にいなかったらリセット
 	if (playerModel_->GetTranslate().y < deathHeight_ && !onGround_)
 	{
-		// 死亡処理
+		// 死亡フラグ
 		isDead_ = true;
 	}
 	// 移動量の反映
@@ -2917,13 +2949,10 @@ void Player::UpdateBehavior()
 	LandingCollisionMove(collisionInfo);
 	// 壁衝突処理
 	WallCollisionMove(collisionInfo);
-
 	// 速度反映
 	PlayerCollisionMove(collisionInfo);
 }
 
-
-// Player.cpp
 
 void Player::Move()
 {
@@ -2999,6 +3028,7 @@ void Player::Move()
 	float dashScale = dashActive ? status_.kDashSpeedScale : 1.0f;
 	float maxSpeed = status_.kMaxSpeed * dashScale;
 
+	// 横方向速度更新
 	if (movingRight) {
 		// 左に動いていた場合は少し減速
 		if (velocity_.x < 0.0f) {
@@ -3006,12 +3036,16 @@ void Player::Move()
 		}
 		acceleration.x += status_.kAcceleration * dashScale;
 
+		// 押された方向にディレクションを向ける
+		direction_ = Direction::kRight;
 	} else if (movingLeft) {
 		if (velocity_.x > 0.0f) {
 			velocity_.x *= (1.0f - status_.kAttenuation);
 		}
 		acceleration.x -= status_.kAcceleration * dashScale;
 
+		// 押された方向にディレクションを向ける
+		direction_ = Direction::kLeft;
 	} else {
 		// 入力がないときは減速のみ（ダッシュ倍率はかけない）
 		velocity_.x *= (1.0f - status_.kAttenuation);
@@ -3019,6 +3053,17 @@ void Player::Move()
 
 	// 加速度反映
 	velocity_.x += acceleration.x;
+
+	// 速度に応じて回転
+	Vector3 rotate = playerModel_->GetRotate();
+	rotate -= {0.0f, 0.0f, velocity_.x};
+	// 回転が規定値であるplayerTurnAround_が6.3fになったら回転の値をリセットする
+	if (-playerTurnAround_ >= rotate.z && movingRight ||
+		playerTurnAround_ <= rotate.z && movingLeft) {
+		rotate.z = 0.0f;
+	}
+	// プレイヤーの回転
+	playerModel_->SetRotate(rotate);
 
 	// 最大速度をダッシュ状態に応じて変える
 	velocity_.x = std::clamp(velocity_.x, -maxSpeed, maxSpeed);
@@ -3089,7 +3134,7 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 	if (collisionInfo.celling) {
 		// 天井に衝突したら移動量を調整
 		velocity_.y = 0.0f;
-		
+
 		// プレイヤーの頭に当たったブロックを調べる
 		Vector3 position = playerModel_->GetTranslate();
 
@@ -3101,15 +3146,15 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 		// 各コーナーの新しい位置で当たったブロックを調べる
 		for (const auto& cornerPosition : topCorners) {
 			IndexSet indexSet = map_->GetMapChipIndexSetByPosition(cornerPosition);
-			BlockType blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex-1);
+			BlockType blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex - 1);
 
 			// Break Blockだった場合破壊する 
-			if(IsHitBlockBreakableTable(blockType)) {
+			if (IsHitBlockBreakableTable(blockType)) {
 				// ブロック破壊
-				map_->BreakBlock(indexSet.xIndex, indexSet.yIndex-1);
+				map_->BreakBlock(indexSet.xIndex, indexSet.yIndex - 1);
 			}
 		}
-		
+
 	}
 }
 
@@ -3150,7 +3195,7 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			if (IsHitGoalBlockTable(blockType)) {
 				isGoal_ = true;
 			}
-			
+
 
 			// 右点の判定
 			// 自機の右下がマップチップの何番目にあるのか
@@ -3217,7 +3262,7 @@ void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, Collisio
 		// 必要であればImGui表示する
 		switch (type) {
 		case CollisionType::kTop:
-			
+
 			break;
 		case CollisionType::kBottom:
 			//Logger::Log("hit floor");
@@ -3261,13 +3306,14 @@ bool Player::CheckCollisionPoints(const std::array<Vector3, 2>& posList, Collisi
 			isGoal_ = true;
 		}
 	}
-
+	// 衝突していたら移動量を調整
 	if (isHit) {
+		// プレイヤーの現在位置を取得
 		Vector3 position = playerModel_->GetTranslate();
 		IndexSet index = map_->GetMapChipIndexSetByPosition(position);
 
 		Rect rect = map_->GetRectByIndex(index.xIndex, index.yIndex);
-
+		// 移動量を調整
 		switch (type)
 		{
 		case CollisionType::kTop:
@@ -3293,12 +3339,11 @@ bool Player::CheckCollisionPoints(const std::array<Vector3, 2>& posList, Collisi
 
 bool Player::IsHitBlockTable(BlockType type)
 {
+	// 判定を取るブロックの種類かどうか
 	switch (type)
 	{
 	case BlockType::NormalBlock:
 	case BlockType::testBlock:
-	//case BlockType::kGoalUp:
-	//case BlockType::kGoalDown:
 	case BlockType::breakBlock:
 		return true;
 
@@ -3333,6 +3378,7 @@ void Player::DebugPlayerReset()
 	// デバッグ用にリセット
 	velocity_ = {};
 	playerModel_->SetTranslate({ 1.5f,1.5f,0.0f });
+	playerModel_->SetRotate({ 0.0f,0.0f,0.0f });
 	isDead_ = false;
 	onGround_ = true;
 }
@@ -3414,14 +3460,17 @@ void Player::ImGui()
 		{
 			ImGui::Text("=== Player Info ===");
 			Vector3 pos = playerModel_->GetTranslate();
+			Vector3 rotate = playerModel_->GetRotate();
 			ImGui::Text("Position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
 			ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
+			ImGui::Text("Rotate: (%.2f, %.2f, %.2f)", rotate.x, rotate.y, rotate.z);
 			ImGui::Text("On Ground: %s", onGround_ ? "Yes" : "No");
 			ImGui::Text("Is Dead: %s", isDead_ ? "Yes" : "No");
 			ImGui::Text("Is Goal: %s", isGoal_ ? "Yes" : "No");
+			ImGui::Text("Direction: %s",
+				(direction_ == Direction::kRight) ? "Right" : "Left");
 			ImGui::EndTabItem();
 		}
-
 		ImGui::EndTabBar();
 
 	}
@@ -3446,7 +3495,7 @@ File Path: Game/Application/Player/Player.h
 /// <summary>
 /// 向き
 /// </summary>
-enum class Direcrion {
+enum class Direction {
 	kRight,
 	kLeft
 };
@@ -3535,7 +3584,7 @@ struct PlayerStatus {
 
 	//振り向きパラメーター
 	// 角度の補間タイム
-	float kTurnTime = 1.0f;
+	float kTurnTime = 0.1f;
 };
 
 class Player :public Collider
@@ -3685,6 +3734,11 @@ private:
 	/// </summary>
 	void FlashingUpdate();
 
+	/// <summary>
+	/// 向きを変更したときにプレイヤーのモデルを回転させる
+	/// </summary>
+	void PlayerTurn();
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -3749,6 +3803,14 @@ private:	// メンバ変数
 	 uint32_t flashingIntervalFrame_ = 10;
 	// 可視フラグ
 	bool isVisible_ = true;
+
+	// プレイヤーの一周
+	float playerTurnAround_ = 6.3f;
+
+	// プレイヤーの向き
+	Direction direction_ = Direction::kRight;
+	float turnSpeed_ = 0.2f;
+	float targetYaw_ = 0.0f;
 
 
 };
@@ -6691,7 +6753,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("test");
+	map->Initialize("test2");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -6731,19 +6793,12 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
 	
 	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-
-	/*ParticleManager::GetInstance()->CreateParticleGroup("test", "resources/HitDamage.png");
-	testParticle_ = std::make_unique<ParticleEmitter>();
-	testParticle_->SetParticleName("test");
-	testParticle_->SetTranslate({ 5.0f,-5.0f,0.0f });
-	testParticle_->SetScale({ 0.3f,0.3f,0.3f });*/
 	
 }
 
 
 void GamePlayScene::Update()
 {
-	//ParticleManager::GetInstance()->Update();
 	camera->Update();
 	enemyHitSprite_->Update();
 
@@ -6835,12 +6890,6 @@ void GamePlayScene::Draw()
 	
 	/// プレイヤーの描画
 	player->Draw();
-
-
-	/// タイトルロゴの描画
-	//titleLogoObject->Draw();
-
-	//testParticle_->Emit();
 
 	/// 敵の描画
 	for (auto& enemy : enemies) {
@@ -6981,8 +7030,8 @@ void GamePlayScene::UpdateStartCamera(float dt)
 	case StartCamPhase::Shake: {
 		startTimer_ += dt;
 		float u = std::clamp(1.0f - (startTimer_ / shakeTime_), 0.0f, 1.0f); // 減衰
-		// シンプルな1軸シェイク（必要ならxy両方にしてもOK）
-		float s = std::sin(startTimer_ * 60.0f); // フレーム相当で手早く
+		// シンプルな1軸シェイク
+		float s = std::sin(startTimer_ * 60.0f); 
 		Vector3 offset = { 0.0f, 0.0f, s * shakeAmp_ * u };
 		cameraTransform.translate = camTargetPos_ + offset;
 		if (startTimer_ >= shakeTime_) {
@@ -7049,7 +7098,6 @@ void GamePlayScene::Finalize()
 	/// スプライトの終了処理
 	SpriteCommon::GetInstance()->Deletenstance();
 
-
 }
 
 
@@ -7058,6 +7106,8 @@ void GamePlayScene::DrawImgui()
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
 	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
+	
 	ImGui::SeparatorText("Start Cam Params");
 	ImGui::DragFloat("durDollyIn", &durDollyIn_, 0.01f, 0.05f, 3.0f);
 	ImGui::DragFloat("durSettle", &durSettle_, 0.01f, 0.05f, 1.0f);
@@ -7073,6 +7123,10 @@ void GamePlayScene::DrawImgui()
 		cameraTransform.translate = camStartPos_;
 		startPhase_ = StartCamPhase::DollyIn;
 		startTimer_ = 0.0f;
+	}
+	if (ImGui::Button("Vertical Camera")) {
+		cameraTransform.translate = { 8.0f,20.0f,0.0f };
+		cameraTransform.rotate = { 1.6f,0.0f,0.0f };
 	}
 	ImGui::End();
 
@@ -7815,71 +7869,19 @@ private:
 
 
 ============================================================
-File Path: Game/Scene/StageCelectScene.cpp
-============================================================
-#include "StageCelectScene.h"
-
-
-============================================================
-File Path: Game/Scene/StageCelectScene.h
-============================================================
-#pragma once
-#include "InsideScene/BaseScene.h"
-#include "engine/3d/Object3D.h"
-/// <summary>
-/// ステージセレクトシーン
-/// </summary>
-class StageCelectScene :
-	public BaseScene
-{
-
-public:
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	StageCelectScene();
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~StageCelectScene();
-	/// <summary>
-	/// 初期化処理
-	/// </summary>
-	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon)override;
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update()override;
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw()override;
-	/// <summary>
-	/// 終了処理
-	/// </summary>
-	void Finalize()override;
-
-
-private:
-	// ステージセレクトモデル
-	std::unique_ptr<Object3D> stageSelectModel;
-	// ステージ番号
-	int stageNum = 1;
-	// ステージセレクトフラグ
-	bool isStageSelect = false;
-
-
-};
-
-
-
-============================================================
 File Path: Game/Scene/StageClearScene.cpp
 ============================================================
 #include "StageClearScene.h"
 #include "Game/Camera/Camera.h"
 #include "InsideScene/Framework.h"
+
+StageClearScene::StageClearScene()
+{
+}
+
+StageClearScene::~StageClearScene()
+{
+}
 
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
@@ -7953,6 +7955,211 @@ public:
 private:
 	/// カメラ
 	Camera* camera = nullptr;
+};
+
+
+
+============================================================
+File Path: Game/Scene/StageSelectScene.cpp
+============================================================
+#include "StageSelectScene.h"
+#include "InsideScene/Framework.h"
+#include "Game/Camera/Camera.h"
+#include "engine/3d/Object3D.h"
+#ifdef USE_IMGUI
+#include "engine/bace/ImGuiManager.h"
+#endif
+
+StageSelectScene::StageSelectScene()
+{
+}
+
+StageSelectScene::~StageSelectScene()
+{
+}
+
+void StageSelectScene::Initialize(DirectXCommon* dxCommon)
+{
+	// カメラの取得
+	camera = Framework::GetMainCamera();
+	cameraTransform.translate = { 0.0f,20.0f,0.0f };
+	cameraTransform.rotate = { 0.35f,0.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+	// プレイヤーオブジェクトの初期化
+	playerModel = std::make_unique<Object3D>();
+	playerModel->Initialize();
+	playerModel->SetModel("Player.obj");
+	playerTransform = {
+		// scale
+		{1.5f,1.5f,1.5f},
+		// rotate
+		{0.0f,0.0f,0.0f},
+		// translate
+		{-20.0f,1.0f,50.0f},
+	};
+
+	// 背景オブジェクトの初期化
+	stageSelectBase1 = std::make_unique<Object3D>();
+	stageSelectBase1->Initialize();
+	stageSelectBase1->SetModel("SelectBaseGround.obj");
+	stageSelectBase1Transform = {
+		// Scale
+		{ 1.5f, 1.0f, 2.5f },
+		// Rotate
+		{ 0.0f, 0.0f, 0.0f },
+		// Translate
+		{ 0.0f, 0.0f, 50.0f }
+	};
+	stageSelectBase1->SetTransform(stageSelectBase1Transform);
+
+	skyBack = std::make_unique<Object3D>();
+	skyBack->Initialize();
+	skyBack->SetModel("BackSky.obj");
+	skyBackTransform = {
+		// Scale
+		{ 50.0f, 50.0f, 50.0f },
+		// Rotate
+		{ 0.0f, 0.0f, 0.0f },
+		// Translate
+		{ 0.0f, 0.0f, 50.0f }
+	};
+	skyBack->SetTransform(skyBackTransform);
+
+}
+
+void StageSelectScene::Update()
+{
+	// 空背景の更新
+	skyBack->Update();
+	// ステージセレクト土台の更新
+	stageSelectBase1->Update();
+
+	// プレイヤーモデルの更新
+	playerModel->Update();
+
+	// ImGuiの描画
+	DrawImgui();
+}
+
+void StageSelectScene::Draw()
+{
+	// 空背景の描画
+	skyBack->Draw();
+	// ステージセレクト土台の描画
+	stageSelectBase1->Draw();
+	// プレイヤーモデルの描画
+	playerModel->Draw();
+}
+
+void StageSelectScene::Finalize()
+{
+}
+
+void StageSelectScene::DrawImgui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("StageSelectScene");
+	// カメラ位置の調整
+	ImGui::DragFloat3("CameraPos", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("CameraRot", &cameraTransform.rotate.x, 0.01f);
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+	ImGui::Separator();
+
+	// プレイヤー
+	playerTransform = playerModel->GetTransform();
+	ImGui::DragFloat3("PlayerPos", &playerTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("PlayerRot", &playerTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("PlayerScale", &playerTransform.scale.x, 0.1f);
+	playerModel->SetTransform(playerTransform);
+
+	ImGui::Separator();
+	// ステージセレクト土台１
+	stageSelectBase1Transform = stageSelectBase1->GetTransform();
+	ImGui::DragFloat3("StageSelectBase1Pos", &stageSelectBase1Transform.translate.x, 0.1f);
+	ImGui::DragFloat3("StageSelectBase1Rot", &stageSelectBase1Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("StageSelectBase1Scale", &stageSelectBase1Transform.scale.x, 0.1f);
+	stageSelectBase1->SetTransform(stageSelectBase1Transform);
+
+	ImGui::Separator();
+
+	// 空背景
+	skyBackTransform = skyBack->GetTransform();
+	ImGui::DragFloat3("SkyBackPos", &skyBackTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("SkyBackRot", &skyBackTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("SkyBackScale", &skyBackTransform.scale.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
+
+	ImGui::End();
+#endif
+}
+
+
+============================================================
+File Path: Game/Scene/StageSelectScene.h
+============================================================
+#pragma once
+#include "InsideScene/BaseScene.h"
+#include <MyMath.h>
+
+struct StageStatus {
+
+};
+class Object3D;
+class Camera;
+class StageSelectScene :
+    public BaseScene
+{
+
+    public:
+    StageSelectScene();
+    ~StageSelectScene();
+
+    /// <summary>
+    /// 初期化処理
+    /// </summary>
+    void Initialize(DirectXCommon* dxCommon)override;
+
+    /// <summary>
+    /// 更新処理
+    /// </summary>
+    void Update()override;
+
+    /// <summary>
+    /// 描画処理
+    /// </summary>
+    void Draw()override;
+
+    /// <summary>
+    /// 終了処理
+    /// </summary>
+    void Finalize()override;
+
+	/// <summary>
+    /// Imgui一括管理
+	/// </summary>
+	void DrawImgui();
+
+
+private:
+	// カメラ
+	Camera* camera = nullptr;
+	Transform cameraTransform;
+
+	// ステージ選択オブジェクト
+	std::unique_ptr<Object3D> playerModel;
+	Transform playerTransform;
+
+   // セレクト画面１の土台
+	std::unique_ptr<Object3D> stageSelectBase1;
+	Transform stageSelectBase1Transform;
+
+    // 空背景
+	std::unique_ptr<Object3D> skyBack;
+	Transform skyBackTransform;
+
 };
 
 
@@ -8049,7 +8256,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	//ParticleManager::GetInstance()->Update();
 	//sprite_->Update();
 	camera->Update();
 
@@ -8058,23 +8264,12 @@ void TitleScene::Update()
 	object3D->Update();
 	titleLogo->Update();
 
-	// 段々薄く
-
 	//sceneTransition->Update();
 
-
-
-	/*particleEmitter->SetTransform({
-	emitterScale,
-	emitterRotate,
-	emitterTranslate
-		});*/
 #ifdef USE_IMGUI
 	DrawImgui();
 #endif
 
-
-	
 
 	if (isStart) {
 		// object3dをひだりから右に
@@ -8091,24 +8286,21 @@ void TitleScene::Update()
 
 
 
-	//levelData->Update();
 	// プレイヤーを回転
 	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
 	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
 
 
-	// Rainbow回転（ここを追加）
-	//rainbowTransform.rotate.y += 0.005f; // 回転速度は調整可能
-	//Rainbow->SetTransform(rainbowTransform);
-
-	//Rainbow->Update();
-
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
+	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+	{
+		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
 	}
 }
 
@@ -8802,6 +8994,7 @@ File Path: InsideScene/SceneFactory.cpp
 #include "SceneFactory.h"
 #include "Game/Scene/TitleScene.h"
 #include "Game/Scene/GamePlayScene.h"
+#include "Game/Scene/StageSelectScene.h"
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 {
     // 次のシーン生成
@@ -8809,6 +9002,10 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	if (sceneName == "TITLE")
 	{
 		scene = new TitleScene();
+	}
+	else if (sceneName == "STAGESELECT")
+	{
+		scene = new StageSelectScene();
 	}
 	else if (sceneName == "GAMEPLAY")
 	{
