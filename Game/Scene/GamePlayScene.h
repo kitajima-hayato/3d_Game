@@ -92,10 +92,7 @@ private:
 
 
 	/// エネミーファクトリー
-	std::vector<std::unique_ptr<EnemyBace>> enemies;
-
-	std::unique_ptr<EnemyBace>normalEnemy;
-	std::unique_ptr<EnemyBace> flyingEnemy;
+	std::vector<std::unique_ptr<EnemyBase>> enemies;
 
 	/// コリジョンマネージャー
 	std::unique_ptr<CollisionManager> collision_;

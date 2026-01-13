@@ -1,7 +1,7 @@
 #include "EnemyFactory.h"
 #include <Logger.h>
 
-std::unique_ptr<EnemyBace> EnemyFactory::CreateEnemy(const std::string& type)
+std::unique_ptr<EnemyBase> EnemyFactory::CreateEnemy(const std::string& type)
 {
 	if(type == "NormalEnemy")
 	{

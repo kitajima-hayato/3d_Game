@@ -1,8 +1,8 @@
 #pragma once
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 /// 基底クラス<BaceEnemy>を継承
 class NormalEnemy :
-	public EnemyBace
+	public EnemyBase
 {
 	/// <summary>
 	/// 初期化処理

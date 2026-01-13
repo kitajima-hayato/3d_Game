@@ -28,8 +28,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
 	// カメラの初期設定
-
-
 	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
 	// 強めに引く
@@ -47,7 +45,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("test2");
+	map->Initialize("1-1");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -202,18 +200,6 @@ void GamePlayScene::Draw()
 
 void GamePlayScene::InitializeEnemy()
 {
-
-	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
-	normalEnemy->Initialize();
-	normalEnemy->SetTranslate({ 3.0f,1.5f,0.0f });
-	enemies.push_back(std::move(normalEnemy));
-
-	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
-	flyingEnemy->Initialize();
-	flyingEnemy->SetTranslate({ 6.0f,8.5f,0.0f });
-	enemies.push_back(std::move(flyingEnemy));
-
-
 
 	// csvを読み込み敵の配置情報を取得
 	GenerateEnemy();

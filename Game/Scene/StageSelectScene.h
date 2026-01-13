@@ -40,6 +40,11 @@ class StageSelectScene :
 	/// </summary>
 	void DrawImgui();
 
+	/// <summary>
+	/// プレイヤー移動処理
+	/// </summary>
+    void PlayerMove();
+
 
 private:
 	// カメラ

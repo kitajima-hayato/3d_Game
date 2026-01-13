@@ -34,6 +34,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 		// translate
 		{-20.0f,1.0f,50.0f},
 	};
+	playerModel->SetTransform(playerTransform);
 
 	// 背景オブジェクトの初期化
 	stageSelectBase1 = std::make_unique<Object3D>();
@@ -54,11 +55,11 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
 		// Scale
-		{ 50.0f, 50.0f, 50.0f },
+		{ 50.0f, 50.0f, 40.0f },
 		// Rotate
-		{ 0.0f, 0.0f, 0.0f },
+		{ 3.2f, 0.0f, 0.0f },
 		// Translate
-		{ 0.0f, 0.0f, 50.0f }
+		{ 0.0f, 0.0f, 100.0f }
 	};
 	skyBack->SetTransform(skyBackTransform);
 
@@ -130,4 +131,16 @@ void StageSelectScene::DrawImgui()
 
 	ImGui::End();
 #endif
+}
+
+void StageSelectScene::PlayerMove()
+{
+	// プレイヤーの座標取得
+	playerTransform = playerModel->GetTransform();
+
+	if (Input::GetInstance()->PushKey(DIK_W)) {
+		playerTransform.translate.z += 0.5f;
+	}
+
+
 }

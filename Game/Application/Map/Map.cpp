@@ -49,7 +49,7 @@ void Map::Initialize(const char* filePath)
 
 void Map::Update()
 {
-    breakParticleEmitter_->Update();
+    //breakParticleEmitter_->Update();
     // マップの更新
     for (std::vector <Block*>& row : blockArray_) {
         for (Block* block : row) {
@@ -388,7 +388,6 @@ void Map::Draw()
 			block->Draw();
 		}
 	}
-	ParticleManager::GetInstance()->Draw();
 	
 }
 

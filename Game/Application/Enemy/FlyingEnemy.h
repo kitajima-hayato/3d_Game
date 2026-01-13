@@ -1,8 +1,8 @@
 #pragma once
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 /// 基底クラス<BaceEnemy>を継承
 class FlyingEnemy :
-    public EnemyBace
+    public EnemyBase
 {
     public:
     /// <summary>
