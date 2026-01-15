@@ -78,21 +78,16 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraController_ = std::make_unique<CameraController>();
 	cameraController_->Initialize();
 
-	// 自機がダメージを受けたら画面シェイク中に出すスプライト
-	enemyHitSprite_ = std::make_unique<Sprite>();
-	enemyHitSprite_->Initialize("resources/HitDamage.png");
-	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
-	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
-	
-	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-	
+	SpritesInitialize();
+
+
 }
 
 
 void GamePlayScene::Update()
 {
 	camera->Update();
-	enemyHitSprite_->Update();
+	
 
 	titleLogoObject->Update();
 
@@ -161,8 +156,12 @@ void GamePlayScene::Update()
 	/// 当たりは判定
 	CheckCollision();
 
+	SpritesUpdate();
+
 	/// imgui
 	DrawImgui();
+
+	
 }
 
 void GamePlayScene::Draw()
@@ -179,7 +178,6 @@ void GamePlayScene::Draw()
 	/// マップの描画
 	map->Draw();
 	
-	
 	/// プレイヤーの描画
 	player->Draw();
 
@@ -193,9 +191,9 @@ void GamePlayScene::Draw()
 	///////////////////
 	// スプライトの描画 //
 	///////////////////
-	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		enemyHitSprite_->Draw();
-	}
+
+	SpritesDraw();
+
 }
 
 void GamePlayScene::InitializeEnemy()
@@ -366,6 +364,126 @@ void GamePlayScene::EnemyHitShake(float dt)
 
 }
 
+void GamePlayScene::SpritesInitialize()
+{
+	// 自機がダメージを受けたら画面シェイク中に出すスプライト
+	enemyHitSprite_ = std::make_unique<Sprite>();
+	enemyHitSprite_->Initialize("resources/HitDamage.png");
+	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
+	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
+
+	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+	// コントロールUI
+	controlUI_D = std::make_unique<Sprite>();
+	controlUI_D->Initialize("resources/KyeUI/D.png");
+	controlUI_D->SetPosition({ 250.0f,120.0f });
+	controlUI_D->SetSize({ 100.0f,100.0f });
+
+	controlUI_A = std::make_unique<Sprite>();
+	controlUI_A->Initialize("resources/KyeUI/A.png");
+	controlUI_A->SetPosition({ 50.0f,120.0f });
+	controlUI_A->SetSize({ 100.0f,100.0f });
+
+	controlUI_S = std::make_unique<Sprite>();
+	controlUI_S->Initialize("resources/KyeUI/S.png");
+	controlUI_S->SetPosition({ 150.0f,120.0f });
+	controlUI_S->SetSize({ 100.0f,100.0f });
+
+	controlUI_W = std::make_unique<Sprite>();
+	controlUI_W->Initialize("resources/KyeUI/W.png");
+	controlUI_W->SetPosition({ 150.0f,20.0f });
+	controlUI_W->SetSize({ 100.0f,100.0f });
+
+	controlUI_DashUI = std::make_unique<Sprite>();
+	controlUI_DashUI->Initialize("resources/KyeUI/DashUI.png");
+	controlUI_DashUI->SetPosition({ 700.0f,115.0f });
+	controlUI_DashUI->SetSize({ 250.0f,100.0f });
+
+	controlUI_move = std::make_unique<Sprite>();
+	controlUI_move->Initialize("resources/KyeUI/moveUI.png");
+	controlUI_move->SetPosition({ 430.0f,115.0f });
+	controlUI_move->SetSize({ 250.0f,100.0f });
+}
+
+void GamePlayScene::SpritesUpdate()
+{
+	enemyHitSprite_->Update();
+
+	// UI
+	controlUI_D->Update();
+	controlUI_A->Update();
+	controlUI_S->Update();
+	controlUI_W->Update();
+	controlUI_DashUI->Update();
+	controlUI_move->Update();
+
+	// 押されているキーだけ色を濃くする
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	} else {
+		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_A)) {
+		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	} else {
+		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_S)) {
+		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	} else {
+		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_W)) {
+		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	} else {
+		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+	}
+	// どこかしらの移動キーが押されていたらDashUIとMoveUIを強調
+	if (Input::GetInstance()->PushKey(DIK_W) ||
+		Input::GetInstance()->PushKey(DIK_A) ||
+		Input::GetInstance()->PushKey(DIK_S) ||
+		Input::GetInstance()->PushKey(DIK_D)) {
+		UiActive_ = true;
+
+
+	} else {
+		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+	}
+
+	if (UiActive_)
+	{
+		uiTimer++;
+	}
+
+	if (uiTimer > 60) {
+		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (uiTimer > 240)
+	{
+		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (uiTimer >= 300)
+	{
+		UiActive_ = false;
+		uiTimer = 0;
+	}
+}
+
+void GamePlayScene::SpritesDraw()
+{
+	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
+		enemyHitSprite_->Draw();
+	}
+	controlUI_D->Draw();
+	controlUI_A->Draw();
+	controlUI_S->Draw();
+	controlUI_W->Draw();
+	controlUI_DashUI->Draw();
+	controlUI_move->Draw();
+}
+
 
 
 void GamePlayScene::Finalize()
@@ -404,6 +522,53 @@ void GamePlayScene::DrawImgui()
 		startPhase_ = StartCamPhase::DollyIn;
 		startTimer_ = 0.0f;
 	}
+	ImGui::SeparatorText("ControlUI Positions");
+	/*Vector2 dPos = controlUI_D->GetPosition();
+	Vector2 aPos = controlUI_A->GetPosition();
+	Vector2 sPos = controlUI_S->GetPosition();
+	Vector2 wPos = controlUI_W->GetPosition();
+
+	Vector2 dSize = controlUI_D->GetSize();
+	Vector2 aSize = controlUI_A->GetSize();
+	Vector2 sSize = controlUI_S->GetSize();
+	Vector2 wSize = controlUI_W->GetSize();
+
+	ImGui::DragFloat2("D Position", &dPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("D Size", &dSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("A Position", &aPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("A Size", &aSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("S Position", &sPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("S Size", &sSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("W Position", &wPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("W Size", &wSize.x, 1.0f, 0.0f, 500.0f);
+	controlUI_D->SetPosition(dPos);
+	controlUI_D->SetSize(dSize);
+	controlUI_A->SetPosition(aPos);
+	controlUI_A->SetSize(aSize);
+	controlUI_S->SetPosition(sPos);
+	controlUI_S->SetSize(sSize);
+	controlUI_W->SetPosition(wPos);
+	controlUI_W->SetSize(wSize);*/
+
+	controlUI_DashUI->SetPosition(controlUI_DashUI->GetPosition());
+	Vector2 dashPos = controlUI_DashUI->GetPosition();
+	Vector2 dashSize = controlUI_DashUI->GetSize();
+	ImGui::DragFloat2("DashUI Position", &dashPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("DashUI Size", &dashSize.x, 1.0f, 0.0f, 500.0f);
+	controlUI_DashUI->SetPosition(dashPos);
+	controlUI_DashUI->SetSize(dashSize);
+	controlUI_move->SetPosition(controlUI_move->GetPosition());
+	Vector2 movePos = controlUI_move->GetPosition();
+	Vector2 moveSize = controlUI_move->GetSize();
+	ImGui::DragFloat2("MoveUI Position", &movePos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("MoveUI Size", &moveSize.x, 1.0f, 0.0f, 500.0f);
+
+	controlUI_move->SetPosition(movePos);
+	controlUI_move->SetSize(moveSize);
+
+	
+
+
 	if (ImGui::Button("Vertical Camera")) {
 		cameraTransform.translate = { 8.0f,20.0f,0.0f };
 		cameraTransform.rotate = { 1.6f,0.0f,0.0f };
