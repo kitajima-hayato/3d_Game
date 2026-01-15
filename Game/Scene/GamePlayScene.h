@@ -75,8 +75,14 @@ public:
 	/// </summary>
 	void EnemyHitShake(float dt);
 
+	/// <summary>
+	/// UI/ダメージ/スプライト類の初期化 / 更新 / 描画
+	/// </summary>
+	void SpritesInitialize();
+	void SpritesUpdate();
+	void SpritesDraw();
 
-
+	
 
 private:
 	// マップ
@@ -178,5 +184,33 @@ private:
 	float alpha;
 
 	std::unique_ptr<ParticleEmitter>testParticle_;
+
+	// 操作UI
+	std::unique_ptr<Sprite> controlUI_D;
+	Vector2 controlUI_DPos_ = { 100.0f, 600.0f };
+	Vector4 controlUIColorD_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_A;
+	Vector2 controlUIAPos_ = { 50.0f,600.0f };
+	Vector4 controlUIColorA_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_W;
+	Vector2 controlUIWPos_ = { 75.0f,550.0f };
+	Vector4 controlUIColorW_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_S;
+	Vector2 controlUISPos_ = { 75.0f,650.0f };
+	Vector4 controlUIColorS_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_DashUI;
+	Vector2 controlUIDashUIPos_ = { 200.0f,600.0f };
+	Vector4 controlUIDashUIColor_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_move;
+	Vector2 controlUImovePos_ = { 100.0f,700.0f };
+	Vector4 controlUImoveColor_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	bool UiActive_ = false;
+	int32_t uiTimer = 0;
 };
 
