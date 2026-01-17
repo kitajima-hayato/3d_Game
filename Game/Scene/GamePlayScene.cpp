@@ -155,8 +155,14 @@ void GamePlayScene::Update()
 	
 	/// 当たりは判定
 	CheckCollision();
-
+	/// スプライトの更新
 	SpritesUpdate();
+
+	/// プレイヤーがゴールに触れていたらシーン遷移
+	bool isGoal = player->GetIsGoal();
+	if (isGoal) {
+		sceneManager->ChangeScene("STAGECLEAR");
+	}
 
 	/// imgui
 	DrawImgui();
