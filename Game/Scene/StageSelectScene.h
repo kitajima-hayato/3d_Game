@@ -1,7 +1,7 @@
 #pragma once
 #include "InsideScene/BaseScene.h"
 #include <MyMath.h>
-
+#include "SceneSelectGraph/StageSelectGraph.h"
 struct StageStatus {
 
 };
@@ -45,6 +45,12 @@ class StageSelectScene :
 	/// </summary>
     void PlayerMove();
 
+private:
+    void HandleSelectInput();
+
+	void ApplyNodeToCursorTransform();
+    
+	void DrawSelectGraphImGui();
 
 private:
 	// カメラ
@@ -55,7 +61,7 @@ private:
 	std::unique_ptr<Object3D> playerModel;
 	Transform playerTransform;
 
-   // セレクト画面１の土台
+    // セレクト画面１の土台
 	std::unique_ptr<Object3D> stageSelectBase1;
 	Transform stageSelectBase1Transform;
 
@@ -63,5 +69,27 @@ private:
 	std::unique_ptr<Object3D> skyBack;
 	Transform skyBackTransform;
 
+
+	// ステージセレクトグラフ
+	StageSelectGraph stageSelectGraph;
+    uint32_t currentNodeId = 0;
+	uint32_t startNodeId = 0;
+
+
+private:
+	uint32_t editNodeId_ = 0;
+
+	// 追加用入力
+	int newX_ = 0;
+	int newY_ = 0;
+	int newStageId_ = 0;
+	bool newUnlocked_ = true;
+
+	// 接続編集用（プルダウン）
+	int neighborUp_ = -1;
+	int neighborDown_ = -1;
+	int neighborLeft_ = -1;
+	int neighborRight_ = -1;
+	
 };
 
