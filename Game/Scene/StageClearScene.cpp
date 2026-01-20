@@ -58,6 +58,7 @@ void StageClearScene::Finalize()
 
 void StageClearScene::DrawImgui()
 {
+#ifdef USE_IMGUI
 	ImGui::Begin("StageClearScene");
 	// シーン遷移の説明
 	ImGui::Text("Press 1 to go to Title Scene");
@@ -71,4 +72,5 @@ void StageClearScene::DrawImgui()
 	camera->SetRotate(cameraTransform.rotate);
 
 	ImGui::End();
+#endif
 }

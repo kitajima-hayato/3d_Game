@@ -159,6 +159,7 @@
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

@@ -4,10 +4,10 @@
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
-#include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleEmitter.h"
+#include "SceneTransition/SceneTransition.h"
 // 前方宣言
 class Map;
 class Player;
@@ -87,7 +87,7 @@ public:
 private:
 	// マップ
 	std::unique_ptr<Map> map;
-	//
+	
 	// オーディオ
 	// サウンドデータ
 	SoundData soundData;
@@ -210,7 +210,10 @@ private:
 	Vector2 controlUImovePos_ = { 100.0f,700.0f };
 	Vector4 controlUImoveColor_ = { 1.0f,1.0f,1.0f,0.5f };
 
+	// UIアクティブフラグ
 	bool UiActive_ = false;
 	int32_t uiTimer = 0;
+
+
 };
 
