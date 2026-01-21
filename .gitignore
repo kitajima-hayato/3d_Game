@@ -90,7 +90,7 @@ ipch/
 *.vspx
 *.sap
 
-
+*.ini
 *.pdb
 # Visual Studio Trace Files
 *.e2e

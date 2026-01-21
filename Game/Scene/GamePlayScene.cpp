@@ -175,7 +175,7 @@ void GamePlayScene::Update()
 		sceneManager->ChangeScene("GAMEPLAY");
 	}
 
-	/// imgui
+	/// ImGuiの描画
 	DrawImgui();
 
 
