@@ -108,15 +108,44 @@ private:
 	Camera* camera = nullptr;
 	Transform cameraTransform;
 
-	/// スタート演出
-	enum class StartCamPhase { None, DollyIn, Settle, Shake };
+	// スタート演出
+	enum class StartCamPhase {
+		None,
+		MoveToLeft,   // 左端へ移動（初期位置から）
+		PanToRight,   // 左→右へパン
+		Hold,         // 少し止める（任意）
+		ReturnToStart // プレイヤー開始地点へ戻る
+	};
+
+	/// 横パン演出
+	// 目標位置
+	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	// 左端へ行く時間
+	float introMoveDur_ = 0.6f;
+	// 左から右パン時間
+	float introPanDur_ = 1.6f;
+	// 右端での停止時間
+	float introHoldDur_ = 1.0f;
+	// 開始地点へ戻る時間
+	float introReturnDur_ = 3.0f;
+
+	// 左端と右端
+	float introLeftX_ = 8.0f;
+	float introRightX_ = 92.0f;
+	// 背景が崩壊しない高さ
+	float introFixedY_ = 3.5f;
+	// 固定Z座標 / 通常距離
+	float introFixedZ_ = -20.0f;
+
+
+
+	// 現在のフェーズ
 	StartCamPhase startPhase_ = StartCamPhase::None;
 	// カメラタイマー
 	float startTimer_ = 0.0f;
 	// 開始位置
 	Vector3 camStartPos_;
-	// 目標位置
-	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	
 	// オーバーシュート位置
 	Vector3 camOvershootPos_;
 	// どれだけ引くか
@@ -214,6 +243,7 @@ private:
 	bool UiActive_ = false;
 	int32_t uiTimer = 0;
 
+	bool isPlayerControlLocked_ = false;
 
 };
 

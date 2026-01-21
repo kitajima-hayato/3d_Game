@@ -270,6 +270,11 @@ public:	/// Setter / Getter
 	// ゴールしているかどうか
 	bool GetIsGoal()const { return isGoal_; }
 
+	// 操作の有効/無効
+	void SetControlEnabled(bool enabled) { controlEnabled_ = enabled; }
+	bool IsControlEnabled() const { return controlEnabled_; }
+
+
 private:	// メンバ変数
 	// プレイヤーステータス
 	PlayerStatus status_;
@@ -325,6 +330,10 @@ private:	// メンバ変数
 	Direction direction_ = Direction::kRight;
 	float turnSpeed_ = 0.2f;
 	float targetYaw_ = 0.0f;
+
+
+	// 操作の有効/無効
+	bool controlEnabled_ = true;
 
 
 };
