@@ -54,7 +54,7 @@
     <ClCompile Include="Game\Particle\ParticleManager.cpp">
       <Filter>Game\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp">
+    <ClCompile Include="Game\Application\Enemy\EnemyBase.cpp">
       <Filter>Game\Application\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Game\Application\Enemy\EnemyFactory.cpp">
@@ -151,6 +151,7 @@
     <ClCompile Include="Game\Camera\CameraController.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -199,7 +200,7 @@
     <ClInclude Include="Game\Particle\ParticleManager.h">
       <Filter>Game\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\Enemy\EnemyBace.h">
+    <ClInclude Include="Game\Application\Enemy\EnemyBase.h">
       <Filter>Game\Application\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Game\Application\Enemy\EnemyFactory.h">
@@ -300,6 +301,7 @@
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

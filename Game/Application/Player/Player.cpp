@@ -1,6 +1,6 @@
 #include "Player.h"
 #include <algorithm>
-#include <Input.h>
+#include "Input.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
@@ -197,6 +197,21 @@ void Player::UpdateBehavior()
 
 void Player::Move()
 {
+
+	if (!controlEnabled_) {
+		// 走り続け防止（キー押しっぱなし解除直後の事故対策）
+		velocity_.x *= (1.0f - status_.kAttenuation);
+
+		// ダッシュ状態も解除
+		isDash_ = false;
+		dashDirection_ = 0;
+		rightTapTimer_ = 0;
+		leftTapTimer_ = 0;
+
+		return;
+	}
+
+
 	auto* input = Input::GetInstance();
 
 	// ------------------------
@@ -313,6 +328,16 @@ void Player::Move()
 
 void Player::Jump()
 {
+	// 操作ロック中：ジャンプ入力は無視
+	if (!controlEnabled_) {
+		// 重力だけは通常通り掛ける（空中で停止しないように）
+		if (!onGround_) {
+			velocity_.y += -status_.kGravity;
+			velocity_.y = (std::max)(velocity_.y, -status_.kMaxFallSpeed);
+		}
+		return;
+	}
+
 	// 地面にいる場合
 	if (onGround_) {
 		// ジャンプキーが押されたら

@@ -111,7 +111,7 @@
     <ClCompile Include="Game\Application\BackGround.cpp" />
     <ClCompile Include="Game\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Application\Enemy\FlyingEnemy.cpp" />
-    <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp" />
+    <ClCompile Include="Game\Application\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Game\Application\Enemy\EnemyFactory.cpp" />
     <ClCompile Include="Game\Collision\Collider.cpp" />
     <ClCompile Include="Game\Application\Map\CsvLoader.cpp" />
@@ -159,6 +159,7 @@
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -166,7 +167,7 @@
     <ClInclude Include="Game\Application\BackGround.h" />
     <ClInclude Include="Game\Collision\CollisionManager.h" />
     <ClInclude Include="Game\Application\Enemy\FlyingEnemy.h" />
-    <ClInclude Include="Game\Application\Enemy\EnemyBace.h" />
+    <ClInclude Include="Game\Application\Enemy\EnemyBase.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyFactory.h" />
     <ClInclude Include="Game\Collision\Collider.h" />
     <ClInclude Include="Game\Application\Block\BlockType.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

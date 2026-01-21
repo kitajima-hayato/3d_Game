@@ -2,7 +2,7 @@
 #include <memory>
 
 /// エネミー全てのファクトリークラス
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 #include "NormalEnemy.h"
 #include "FlyingEnemy.h"
 class EnemyFactory
@@ -13,7 +13,7 @@ public:
 	/// </summary>
 	/// <param name="type"></param>
 	/// <returns></returns>
-	static std::unique_ptr<EnemyBace> CreateEnemy(const std::string& type);
+	static std::unique_ptr<EnemyBase> CreateEnemy(const std::string& type);
 
 };
 

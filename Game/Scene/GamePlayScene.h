@@ -4,10 +4,10 @@
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
-#include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleEmitter.h"
+#include "SceneTransition/SceneTransition.h"
 // 前方宣言
 class Map;
 class Player;
@@ -75,13 +75,19 @@ public:
 	/// </summary>
 	void EnemyHitShake(float dt);
 
+	/// <summary>
+	/// UI/ダメージ/スプライト類の初期化 / 更新 / 描画
+	/// </summary>
+	void SpritesInitialize();
+	void SpritesUpdate();
+	void SpritesDraw();
 
-
+	
 
 private:
 	// マップ
 	std::unique_ptr<Map> map;
-	//
+	
 	// オーディオ
 	// サウンドデータ
 	SoundData soundData;
@@ -92,10 +98,7 @@ private:
 
 
 	/// エネミーファクトリー
-	std::vector<std::unique_ptr<EnemyBace>> enemies;
-
-	std::unique_ptr<EnemyBace>normalEnemy;
-	std::unique_ptr<EnemyBace> flyingEnemy;
+	std::vector<std::unique_ptr<EnemyBase>> enemies;
 
 	/// コリジョンマネージャー
 	std::unique_ptr<CollisionManager> collision_;
@@ -105,15 +108,44 @@ private:
 	Camera* camera = nullptr;
 	Transform cameraTransform;
 
-	/// スタート演出
-	enum class StartCamPhase { None, DollyIn, Settle, Shake };
+	// スタート演出
+	enum class StartCamPhase {
+		None,
+		MoveToLeft,   // 左端へ移動（初期位置から）
+		PanToRight,   // 左→右へパン
+		Hold,         // 少し止める（任意）
+		ReturnToStart // プレイヤー開始地点へ戻る
+	};
+
+	/// 横パン演出
+	// 目標位置
+	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	// 左端へ行く時間
+	float introMoveDur_ = 0.6f;
+	// 左から右パン時間
+	float introPanDur_ = 1.6f;
+	// 右端での停止時間
+	float introHoldDur_ = 1.0f;
+	// 開始地点へ戻る時間
+	float introReturnDur_ = 3.0f;
+
+	// 左端と右端
+	float introLeftX_ = 8.0f;
+	float introRightX_ = 92.0f;
+	// 背景が崩壊しない高さ
+	float introFixedY_ = 3.5f;
+	// 固定Z座標 / 通常距離
+	float introFixedZ_ = -20.0f;
+
+
+
+	// 現在のフェーズ
 	StartCamPhase startPhase_ = StartCamPhase::None;
 	// カメラタイマー
 	float startTimer_ = 0.0f;
 	// 開始位置
 	Vector3 camStartPos_;
-	// 目標位置
-	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	
 	// オーバーシュート位置
 	Vector3 camOvershootPos_;
 	// どれだけ引くか
@@ -181,5 +213,37 @@ private:
 	float alpha;
 
 	std::unique_ptr<ParticleEmitter>testParticle_;
+
+	// 操作UI
+	std::unique_ptr<Sprite> controlUI_D;
+	Vector2 controlUI_DPos_ = { 100.0f, 600.0f };
+	Vector4 controlUIColorD_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_A;
+	Vector2 controlUIAPos_ = { 50.0f,600.0f };
+	Vector4 controlUIColorA_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_W;
+	Vector2 controlUIWPos_ = { 75.0f,550.0f };
+	Vector4 controlUIColorW_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_S;
+	Vector2 controlUISPos_ = { 75.0f,650.0f };
+	Vector4 controlUIColorS_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_DashUI;
+	Vector2 controlUIDashUIPos_ = { 200.0f,600.0f };
+	Vector4 controlUIDashUIColor_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_move;
+	Vector2 controlUImovePos_ = { 100.0f,700.0f };
+	Vector4 controlUImoveColor_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	// UIアクティブフラグ
+	bool UiActive_ = false;
+	int32_t uiTimer = 0;
+
+	bool isPlayerControlLocked_ = false;
+
 };
 

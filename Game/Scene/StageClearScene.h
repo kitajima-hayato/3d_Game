@@ -1,5 +1,6 @@
 #pragma once
 #include "InsideScene/BaseScene.h"
+#include "MyMath.h"
 
 class Object3D;
 class Camera;
@@ -30,11 +31,14 @@ public:
 	/// </summary>
 	void Finalize()override;
 
-	// Imgui一括管理 / 描画関数
+	/// <summary>
+	/// Imgui一括管理
+	/// </summary>
 	void DrawImgui();
 
 private:
 	/// カメラ
 	Camera* camera = nullptr;
+	Transform cameraTransform;
 };
 

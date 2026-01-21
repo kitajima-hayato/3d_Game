@@ -112,8 +112,8 @@ void TitleScene::Update()
 	Transform transform;
 	transform.translate = { 1.0f, -5.0f, 15.0f };
 	particleEmitter->SetTransform(transform);
-	particleEmitter->Update();
-	particleEmitter2->Update();
+	//particleEmitter->Update();
+	//particleEmitter2->Update();
 
 
 

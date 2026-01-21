@@ -27,27 +27,25 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
-	// カメラの初期設定
 
 
-	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
-	// 強めに引く
-	camOvershootPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z - overShootAmt_ };
-
-	// 目標位置
-	cameraTransform.translate = camStartPos_;
+	// 固定YZ
+	introFixedY_ = camTargetPos_.y;
+	introFixedZ_ = camTargetPos_.z;
+	// 演出開始時のカメラの位置
+	cameraTransform.translate = camTargetPos_;
 	// カメラに反映
 	camera->SetTranslate(cameraTransform.translate);
-
 	// スタート演出の開始
-	startPhase_ = StartCamPhase::DollyIn;
+	startPhase_ = StartCamPhase::MoveToLeft;
 	startTimer_ = 0.0f;
+	stageStartEventFlag_ = true;
 
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("test2");
+	map->Initialize("Base1");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -80,21 +78,20 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraController_ = std::make_unique<CameraController>();
 	cameraController_->Initialize();
 
-	// 自機がダメージを受けたら画面シェイク中に出すスプライト
-	enemyHitSprite_ = std::make_unique<Sprite>();
-	enemyHitSprite_->Initialize("resources/HitDamage.png");
-	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
-	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
-	
-	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-	
+	SpritesInitialize();
+
+	stageStartEventFlag_ = true;
+	player->SetControlEnabled(false);
+
+	isPlayerControlLocked_ = true;
+
 }
 
 
 void GamePlayScene::Update()
 {
 	camera->Update();
-	enemyHitSprite_->Update();
+
 
 	titleLogoObject->Update();
 
@@ -109,13 +106,13 @@ void GamePlayScene::Update()
 	bool isEnemyHitNow = player->GetHitEnemy();
 
 	// プレイヤーが敵に当たったらカメラをシェイクする
-	if (player->GetHitEnemy()&& !wasEnemyHit_) {
+	if (player->GetHitEnemy() && !wasEnemyHit_) {
 		enemyHitShakeActive_ = true;
 		enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		enemyHitTimer_ = 0.0f;
 		// カメラの元の位置を保存
 		enemyHitBasePos = camera->GetTranslate();
-	
+
 	}
 	Vector4 currentColor = enemyHitSprite_->GetColor();
 	if (currentColor.w > 0.0f) {
@@ -126,13 +123,13 @@ void GamePlayScene::Update()
 	wasEnemyHit_ = isEnemyHitNow;
 
 	// カメラシェイクの更新
-	if(enemyHitShakeActive_){
+	if (enemyHitShakeActive_) {
 		// 
 		EnemyHitShake(dt);
 	}
 
 	//sceneTransition->Update();
-	
+
 	/// マップの更新
 	map->Update();
 
@@ -146,6 +143,13 @@ void GamePlayScene::Update()
 
 	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
+	if (isPlayerControlLocked_) {
+		player->SetControlEnabled(false);
+	} else {
+		player->SetControlEnabled(true);
+	}
+
+
 	player->Update();
 	if (stageStartEventFlag_ == false)
 	{
@@ -159,12 +163,22 @@ void GamePlayScene::Update()
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
-	
+
 	/// 当たりは判定
 	CheckCollision();
+	/// スプライトの更新
+	SpritesUpdate();
+
+	/// プレイヤーがゴールに触れていたらシーン遷移
+	bool isGoal = player->GetIsGoal();
+	if (isGoal) {
+		sceneManager->ChangeScene("GAMEPLAY");
+	}
 
 	/// imgui
 	DrawImgui();
+
+
 }
 
 void GamePlayScene::Draw()
@@ -172,16 +186,14 @@ void GamePlayScene::Draw()
 	///////////////////
 	//  モデルの描画   //
 	///////////////////
-	
+
 	backGround->Draw();
 
-	
 
 	//sceneTransition->Draw();
 	/// マップの描画
 	map->Draw();
-	
-	
+
 	/// プレイヤーの描画
 	player->Draw();
 
@@ -195,25 +207,13 @@ void GamePlayScene::Draw()
 	///////////////////
 	// スプライトの描画 //
 	///////////////////
-	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		enemyHitSprite_->Draw();
-	}
+
+	SpritesDraw();
+
 }
 
 void GamePlayScene::InitializeEnemy()
 {
-
-	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
-	normalEnemy->Initialize();
-	normalEnemy->SetTranslate({ 3.0f,1.5f,0.0f });
-	enemies.push_back(std::move(normalEnemy));
-
-	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
-	flyingEnemy->Initialize();
-	flyingEnemy->SetTranslate({ 6.0f,8.5f,0.0f });
-	enemies.push_back(std::move(flyingEnemy));
-
-
 
 	// csvを読み込み敵の配置情報を取得
 	GenerateEnemy();
@@ -289,60 +289,122 @@ void GamePlayScene::CheckCollision()
 			collision_->AddCollider(enemy.get());
 		}
 	}
-
+	// 衝突判定実行
 	collision_->CheckAllCollisions();
 
 }
 
 void GamePlayScene::UpdateStartCamera(float dt)
 {
+	// 左右の端の座標 / YZは固定
+	Vector3 leftPos = { introLeftX_,introFixedY_,introFixedZ_ };
+	Vector3 rightPos = { introRightX_,introFixedY_,introFixedZ_ };
+	// 開始座標
+	Vector3 startPos = { camTargetPos_.x,introFixedY_,introFixedZ_ };
+
+	// StartCamPhaseの各フェーズごとの処理
 	switch (startPhase_) {
-	case StartCamPhase::DollyIn: {
-		// 早→遅（スムーズな減速）
+
+	case StartCamPhase::MoveToLeft:
+	{
+		// @todo: 理解説明
+		// ゲーム内時間を進める
 		startTimer_ += dt;
-		float t = EaseOutCubic(startTimer_ / durDollyIn_);
-		cameraTransform.translate = Lerp(camStartPos_, camOvershootPos_, t);
-		if (startTimer_ >= durDollyIn_) {
-			startPhase_ = StartCamPhase::Settle;
+		// イージング適用
+		float t = EaseOutCubic(startTimer_ / introMoveDur_);
+		// 左端へ移動
+		cameraTransform.translate = Lerp(startPos, leftPos, t);
+
+		// フェーズ移行判定
+		if (startTimer_ >= introMoveDur_) {
+			// PanToRightへ移行
+			startPhase_ = StartCamPhase::PanToRight;
+			// タイマーリセット
+			startTimer_ = 0.0f;
+			// 位置補正
+			cameraTransform.translate = leftPos;
+		}
+	}
+	break;
+
+	case StartCamPhase::PanToRight:
+	{
+		// ゲーム内時間を進める
+		startTimer_ += dt;
+		// イージング適用
+		float t = EaseOutCubic(startTimer_ / introPanDur_);
+		// 右端へパン
+		cameraTransform.translate = Lerp(leftPos, rightPos, t);
+
+		// フェーズ移行判定 / 右端に到達したら
+		if (startTimer_ >= introPanDur_) {
+			// Holdへ移行
+			startPhase_ = StartCamPhase::Hold;
+			// タイマーリセット
+			startTimer_ = 0.0f;
+			// 位置補正
+			cameraTransform.translate = rightPos;
+		}
+	}
+	break;
+
+	case StartCamPhase::Hold:
+	{
+		// ゲーム内時間を進める
+		startTimer_ += dt;
+		// そのまま右端で停止
+		cameraTransform.translate = rightPos;
+		// フェーズ移行判定 / 停止時間経過したら
+		if (startTimer_ >= introHoldDur_) {
+			// ReturnToStartへ移行
+			startPhase_ = StartCamPhase::ReturnToStart;
+			// タイマーリセット
 			startTimer_ = 0.0f;
 		}
-	} break;
+	}
+	break;
 
-	case StartCamPhase::Settle: {
-		// “ボン”と戻る
+	case StartCamPhase::ReturnToStart:
+	{
+		// ゲーム内時間を進める
 		startTimer_ += dt;
-		float t = EaseOutBack(startTimer_ / durSettle_);
-		cameraTransform.translate = Lerp(camOvershootPos_, camTargetPos_, t);
-		if (startTimer_ >= durSettle_) {
-			startPhase_ = StartCamPhase::Shake;
-			startTimer_ = 0.0f;
-			// 目標にピタッ
-			cameraTransform.translate = camTargetPos_;
-		}
-	} break;
 
-	case StartCamPhase::Shake: {
-		startTimer_ += dt;
-		float u = std::clamp(1.0f - (startTimer_ / shakeTime_), 0.0f, 1.0f); // 減衰
-		// シンプルな1軸シェイク
-		float s = std::sin(startTimer_ * 60.0f); 
-		Vector3 offset = { 0.0f, 0.0f, s * shakeAmp_ * u };
-		cameraTransform.translate = camTargetPos_ + offset;
-		if (startTimer_ >= shakeTime_) {
+		// 0～1に正規化（duration=0対策込み）
+		float u = (introReturnDur_ > 0.0f) ? (startTimer_ / introReturnDur_) : 1.0f;
+		u = std::clamp(u, 0.0f, 1.0f);
+
+		// イージング適用（Backは1を超え得るので必要ならclamp）
+		float t = EaseOutBack(u);
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// 開始地点へ戻る
+		cameraTransform.translate = Lerp(rightPos, startPos, t);
+
+		// フェーズ移行判定 / 開始地点に戻ったら
+		if (startTimer_ >= introReturnDur_) {
+			// 演出終了
 			startPhase_ = StartCamPhase::None;
+			// タイマーリセット
 			startTimer_ = 0.0f;
-			cameraTransform.translate = camTargetPos_;
+			// 位置補正（最終フレームは必ず目標に固定）
+			cameraTransform.translate = startPos;
 		}
 	} break;
+
 
 	case StartCamPhase::None:
-		// スタート演出終了
+		// 演出終了
 		stageStartEventFlag_ = false;
+		isPlayerControlLocked_ = false;
+		player->SetControlEnabled(true);
+
 		break;
+
 	default:
-		// 何もしない（通常進行）
 		break;
+
 	}
+
 	camera->SetTranslate(cameraTransform.translate);
 }
 
@@ -354,7 +416,7 @@ void GamePlayScene::EnemyHitShake(float dt)
 
 	}
 	enemyHitTimer_ += dt;
-	
+
 	// 減衰
 	float u = std::clamp(1.0f - (enemyHitTimer_ / enemyHitShakeTime_), 0.0f, 1.0f);
 
@@ -380,6 +442,140 @@ void GamePlayScene::EnemyHitShake(float dt)
 
 }
 
+void GamePlayScene::SpritesInitialize()
+{
+	// 自機がダメージを受けたら画面シェイク中に出すスプライト
+	enemyHitSprite_ = std::make_unique<Sprite>();
+	enemyHitSprite_->Initialize("resources/HitDamage.png");
+	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
+	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
+
+	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+	// コントロールUI
+	controlUI_D = std::make_unique<Sprite>();
+	controlUI_D->Initialize("resources/KyeUI/D.png");
+	controlUI_D->SetPosition({ 200.0f,70.0f });
+	controlUI_D->SetSize({ 50.0f,50.0f });
+
+	controlUI_A = std::make_unique<Sprite>();
+	controlUI_A->Initialize("resources/KyeUI/A.png");
+	controlUI_A->SetPosition({ 100.0f,70.0f });
+	controlUI_A->SetSize({ 50.0f,50.0f });
+
+	controlUI_S = std::make_unique<Sprite>();
+	controlUI_S->Initialize("resources/KyeUI/S.png");
+	controlUI_S->SetPosition({ 150.0f,70.0f });
+	controlUI_S->SetSize({ 50.0f,50.0f });
+
+	controlUI_W = std::make_unique<Sprite>();
+	controlUI_W->Initialize("resources/KyeUI/W.png");
+	controlUI_W->SetPosition({ 150.0f,20.0f });
+	controlUI_W->SetSize({ 50.0f,50.0f });
+
+	controlUI_DashUI = std::make_unique<Sprite>();
+	controlUI_DashUI->Initialize("resources/KyeUI/DashUI.png");
+	controlUI_DashUI->SetPosition({ 700.0f,115.0f });
+	controlUI_DashUI->SetSize({ 250.0f,100.0f });
+
+	controlUI_move = std::make_unique<Sprite>();
+	controlUI_move->Initialize("resources/KyeUI/moveUI.png");
+	controlUI_move->SetPosition({ 430.0f,115.0f });
+	controlUI_move->SetSize({ 250.0f,100.0f });
+}
+
+void GamePlayScene::SpritesUpdate()
+{
+	enemyHitSprite_->Update();
+
+	// UI
+	controlUI_D->Update();
+	controlUI_A->Update();
+	controlUI_S->Update();
+	controlUI_W->Update();
+	controlUI_DashUI->Update();
+	controlUI_move->Update();
+
+	// 押されているキーだけ色を濃くする
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		// 少しだけ右にずらす
+		controlUI_D->SetPosition({ 205.0f,70.0f });
+	} else {
+		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_D->SetPosition({ 200.0f,70.0f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_A)) {
+		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		// 少しだけ左にずらす
+		controlUI_A->SetPosition({ 95.0f,70.0f });
+	} else {
+		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_A->SetPosition({ 100.0f,70.0f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_S)) {
+		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		controlUI_S->SetPosition({ 150.0f,75.0f });
+	} else {
+		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_S->SetPosition({ 150.0f,70.0f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_W)) {
+		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		controlUI_W->SetPosition({ 150.0f,15.0f });
+	} else {
+		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_W->SetPosition({ 150.0f,20.0f });
+	}
+	// どこかしらの移動キーが押されていたらDashUIとMoveUIを強調
+	if (Input::GetInstance()->PushKey(DIK_W) ||
+		Input::GetInstance()->PushKey(DIK_A) ||
+		Input::GetInstance()->PushKey(DIK_S) ||
+		Input::GetInstance()->PushKey(DIK_D)) {
+		UiActive_ = true;
+
+
+	} else {
+		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+	}
+
+	if (UiActive_)
+	{
+		uiTimer++;
+	}
+
+	if (uiTimer > 60) {
+		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (uiTimer > 240)
+	{
+		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (uiTimer >= 300)
+	{
+		UiActive_ = false;
+		uiTimer = 0;
+	}
+}
+
+void GamePlayScene::SpritesDraw()
+{
+	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
+		enemyHitSprite_->Draw();
+	}
+	if (!isPlayerControlLocked_) {
+
+		controlUI_D->Draw();
+		controlUI_A->Draw();
+		controlUI_S->Draw();
+		controlUI_W->Draw();
+	}
+
+	//controlUI_DashUI->Draw();
+	//controlUI_move->Draw();
+}
+
 
 
 void GamePlayScene::Finalize()
@@ -399,25 +595,110 @@ void GamePlayScene::DrawImgui()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	
-	ImGui::SeparatorText("Start Cam Params");
-	ImGui::DragFloat("durDollyIn", &durDollyIn_, 0.01f, 0.05f, 3.0f);
-	ImGui::DragFloat("durSettle", &durSettle_, 0.01f, 0.05f, 1.0f);
-	ImGui::DragFloat("overshoot", &overShootAmt_, 0.01f, 0.0f, 5.0f);
-	ImGui::DragFloat("shakeTime", &shakeTime_, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("shakeAmp", &shakeAmp_, 0.001f, 0.0f, 0.5f);
-	if (ImGui::Button("Replay Start Cam")) {
-		// 現在の目標位置を基準にリプレイ
-		camTargetPos_ = cameraTransform.translate;
-		const float pullBack = 12.0f;
-		camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
-		camOvershootPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z - overShootAmt_ };
-		cameraTransform.translate = camStartPos_;
-		startPhase_ = StartCamPhase::DollyIn;
-		startTimer_ = 0.0f;
+	//==============================
+	// Start Camera Intro Tuning UI
+	//==============================
+	if (ImGui::CollapsingHeader("Start Camera Intro", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Text("StageStartEventFlag: %s", stageStartEventFlag_ ? "true" : "false");
+		ImGui::Text("StartPhase: %d", static_cast<int>(startPhase_));
+		ImGui::Text("StartTimer: %.3f", startTimer_);
+
+		ImGui::SeparatorText("Positions");
+		ImGui::DragFloat("Intro Left X", &introLeftX_, 0.1f, -10000.0f, 10000.0f);
+		ImGui::DragFloat("Intro Right X", &introRightX_, 0.1f, -10000.0f, 10000.0f);
+
+		ImGui::DragFloat("Intro Fixed Y", &introFixedY_, 0.05f, -1000.0f, 1000.0f);
+		ImGui::DragFloat("Intro Fixed Z", &introFixedZ_, 0.1f, -1000.0f, 1000.0f);
+
+		ImGui::SeparatorText("Durations (sec)");
+		ImGui::DragFloat("Move To Left Dur", &introMoveDur_, 0.01f, 0.0f, 10.0f);
+		ImGui::DragFloat("Pan To Right Dur", &introPanDur_, 0.01f, 0.0f, 20.0f);
+		ImGui::DragFloat("Hold Dur", &introHoldDur_, 0.01f, 0.0f, 10.0f);
+		ImGui::DragFloat("Return Dur", &introReturnDur_, 0.01f, 0.0f, 10.0f);
+
+		// 事故防止：Right < Left になったら入れ替え
+		if (introRightX_ < introLeftX_)
+		{
+			ImGui::TextColored(ImVec4(1, 0.6f, 0.2f, 1), "Warning: RightX < LeftX. Auto swap available.");
+			if (ImGui::Button("Swap Left/Right"))
+			{
+				std::swap(introLeftX_, introRightX_);
+			}
+		}
+
+		ImGui::SeparatorText("Controls");
+
+		// その場で演出をやり直す
+		if (ImGui::Button("Restart Intro"))
+		{
+			// 演出の「戻り先」を camTargetPos_ 基準にする場合
+			// introFixedY_/Z はUIでいじれるのでそのまま
+			startPhase_ = StartCamPhase::MoveToLeft;
+			startTimer_ = 0.0f;
+			stageStartEventFlag_ = true;
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Skip Intro"))
+		{
+			startPhase_ = StartCamPhase::None;
+			startTimer_ = 0.0f;
+			stageStartEventFlag_ = false;
+		}
+
+		// camTargetPos_ を調整したい場合（必要なら）
+		ImGui::SeparatorText("Target (Return) Position");
+		ImGui::DragFloat3("Cam Target Pos", &camTargetPos_.x, 0.05f, -10000.0f, 10000.0f);
 	}
+
+	ImGui::SeparatorText("ControlUI Positions");
+	Vector2 dPos = controlUI_D->GetPosition();
+	Vector2 aPos = controlUI_A->GetPosition();
+	Vector2 sPos = controlUI_S->GetPosition();
+	Vector2 wPos = controlUI_W->GetPosition();
+
+	Vector2 dSize = controlUI_D->GetSize();
+	Vector2 aSize = controlUI_A->GetSize();
+	Vector2 sSize = controlUI_S->GetSize();
+	Vector2 wSize = controlUI_W->GetSize();
+
+	ImGui::DragFloat2("D Position", &dPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("D Size", &dSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("A Position", &aPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("A Size", &aSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("S Position", &sPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("S Size", &sSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("W Position", &wPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("W Size", &wSize.x, 1.0f, 0.0f, 500.0f);
+	controlUI_D->SetPosition(dPos);
+	controlUI_D->SetSize(dSize);
+	controlUI_A->SetPosition(aPos);
+	controlUI_A->SetSize(aSize);
+	controlUI_S->SetPosition(sPos);
+	controlUI_S->SetSize(sSize);
+	controlUI_W->SetPosition(wPos);
+	controlUI_W->SetSize(wSize);
+
+	controlUI_DashUI->SetPosition(controlUI_DashUI->GetPosition());
+	Vector2 dashPos = controlUI_DashUI->GetPosition();
+	Vector2 dashSize = controlUI_DashUI->GetSize();
+	ImGui::DragFloat2("DashUI Position", &dashPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("DashUI Size", &dashSize.x, 1.0f, 0.0f, 500.0f);
+	controlUI_DashUI->SetPosition(dashPos);
+	controlUI_DashUI->SetSize(dashSize);
+	controlUI_move->SetPosition(controlUI_move->GetPosition());
+	Vector2 movePos = controlUI_move->GetPosition();
+	Vector2 moveSize = controlUI_move->GetSize();
+	ImGui::DragFloat2("MoveUI Position", &movePos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("MoveUI Size", &moveSize.x, 1.0f, 0.0f, 500.0f);
+
+	controlUI_move->SetPosition(movePos);
+	controlUI_move->SetSize(moveSize);
+
+
+
+
 	if (ImGui::Button("Vertical Camera")) {
 		cameraTransform.translate = { 8.0f,20.0f,0.0f };
 		cameraTransform.rotate = { 1.6f,0.0f,0.0f };

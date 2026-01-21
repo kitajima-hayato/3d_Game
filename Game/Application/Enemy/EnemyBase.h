@@ -15,14 +15,14 @@ struct Stats {
 	int32_t attackPower;
 };
 
-class EnemyBace : public Collider
+class EnemyBase : public Collider
 {
 
 public:
 	/// <summary>
 	/// Enemy クラスの仮想デストラクタ。派生クラスのオブジェクトが正しく破棄されることを保証
 	/// </summary>
-	virtual ~EnemyBace() = default;
+	virtual ~EnemyBase() = default;
 
 	/// <summary>
 	/// エネミーの初期化
