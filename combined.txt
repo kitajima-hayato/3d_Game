@@ -11,8 +11,8 @@
 └── └── └── ├── Block.h
 └── └── └── └── BlockType.h
 └── └── ├── Enemy/
-└── └── └── ├── EnemyBace.cpp
-└── └── └── ├── EnemyBace.h
+└── └── └── ├── EnemyBase.cpp
+└── └── └── ├── EnemyBase.h
 └── └── └── ├── EnemyFactory.cpp
 └── └── └── ├── EnemyFactory.h
 └── └── └── ├── EnemyType.h
@@ -59,6 +59,9 @@
 └──     ├── GamePlayScene.h
 └──     ├── MyGame.cpp
 └──     ├── MyGame.h
+└──     ├── SceneSelectGraph/
+└──     └── ├── StageSelectGraph.cpp
+└──     └── └── StageSelectGraph.h
 └──     ├── SceneTransition/
 └──     └── ├── SceneTransition.cpp
 └──     └── └── SceneTransition.h
@@ -248,7 +251,7 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Application\BackGround.cpp" />
     <ClCompile Include="Game\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Application\Enemy\FlyingEnemy.cpp" />
-    <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp" />
+    <ClCompile Include="Game\Application\Enemy\EnemyBase.cpp" />
     <ClCompile Include="Game\Application\Enemy\EnemyFactory.cpp" />
     <ClCompile Include="Game\Collision\Collider.cpp" />
     <ClCompile Include="Game\Application\Map\CsvLoader.cpp" />
@@ -296,6 +299,7 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -303,7 +307,7 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Application\BackGround.h" />
     <ClInclude Include="Game\Collision\CollisionManager.h" />
     <ClInclude Include="Game\Application\Enemy\FlyingEnemy.h" />
-    <ClInclude Include="Game\Application\Enemy\EnemyBace.h" />
+    <ClInclude Include="Game\Application\Enemy\EnemyBase.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyFactory.h" />
     <ClInclude Include="Game\Collision\Collider.h" />
     <ClInclude Include="Game\Application\Block\BlockType.h" />
@@ -352,6 +356,7 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -435,7 +440,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Particle\ParticleManager.cpp">
       <Filter>Game\Particle</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Application\Enemy\EnemyBace.cpp">
+    <ClCompile Include="Game\Application\Enemy\EnemyBase.cpp">
       <Filter>Game\Application\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Game\Application\Enemy\EnemyFactory.cpp">
@@ -532,6 +537,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Camera\CameraController.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -580,7 +586,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Particle\ParticleManager.h">
       <Filter>Game\Particle</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Application\Enemy\EnemyBace.h">
+    <ClInclude Include="Game\Application\Enemy\EnemyBase.h">
       <Filter>Game\Application\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Game\Application\Enemy\EnemyFactory.h">
@@ -681,6 +687,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -1317,15 +1324,15 @@ enum class BlockType
 //	おかしかったら enum の順番や値をいじっていないか確認
 
 ============================================================
-File Path: Game/Application/Enemy/EnemyBace.cpp
+File Path: Game/Application/Enemy/EnemyBase.cpp
 ============================================================
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 
 
 
 
 ============================================================
-File Path: Game/Application/Enemy/EnemyBace.h
+File Path: Game/Application/Enemy/EnemyBase.h
 ============================================================
 #pragma once
 #include "engine/math/MyMath.h"
@@ -1344,14 +1351,14 @@ struct Stats {
 	int32_t attackPower;
 };
 
-class EnemyBace : public Collider
+class EnemyBase : public Collider
 {
 
 public:
 	/// <summary>
 	/// Enemy クラスの仮想デストラクタ。派生クラスのオブジェクトが正しく破棄されることを保証
 	/// </summary>
-	virtual ~EnemyBace() = default;
+	virtual ~EnemyBase() = default;
 
 	/// <summary>
 	/// エネミーの初期化
@@ -1427,7 +1434,7 @@ File Path: Game/Application/Enemy/EnemyFactory.cpp
 #include "EnemyFactory.h"
 #include <Logger.h>
 
-std::unique_ptr<EnemyBace> EnemyFactory::CreateEnemy(const std::string& type)
+std::unique_ptr<EnemyBase> EnemyFactory::CreateEnemy(const std::string& type)
 {
 	if(type == "NormalEnemy")
 	{
@@ -1451,7 +1458,7 @@ File Path: Game/Application/Enemy/EnemyFactory.h
 #include <memory>
 
 /// エネミー全てのファクトリークラス
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 #include "NormalEnemy.h"
 #include "FlyingEnemy.h"
 class EnemyFactory
@@ -1462,7 +1469,7 @@ public:
 	/// </summary>
 	/// <param name="type"></param>
 	/// <returns></returns>
-	static std::unique_ptr<EnemyBace> CreateEnemy(const std::string& type);
+	static std::unique_ptr<EnemyBase> CreateEnemy(const std::string& type);
 
 };
 
@@ -1570,10 +1577,10 @@ void FlyingEnemy::Action()
 File Path: Game/Application/Enemy/FlyingEnemy.h
 ============================================================
 #pragma once
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 /// 基底クラス<BaceEnemy>を継承
 class FlyingEnemy :
-    public EnemyBace
+    public EnemyBase
 {
     public:
     /// <summary>
@@ -1682,10 +1689,10 @@ void NormalEnemy::Action()
 File Path: Game/Application/Enemy/NormalEnemy.h
 ============================================================
 #pragma once
-#include "EnemyBace.h"
+#include "EnemyBase.h"
 /// 基底クラス<BaceEnemy>を継承
 class NormalEnemy :
-	public EnemyBace
+	public EnemyBase
 {
 	/// <summary>
 	/// 初期化処理
@@ -1977,7 +1984,7 @@ void Map::Initialize(const char* filePath)
 
 void Map::Update()
 {
-    breakParticleEmitter_->Update();
+    //breakParticleEmitter_->Update();
     // マップの更新
     for (std::vector <Block*>& row : blockArray_) {
         for (Block* block : row) {
@@ -2316,7 +2323,6 @@ void Map::Draw()
 			block->Draw();
 		}
 	}
-	ParticleManager::GetInstance()->Draw();
 	
 }
 
@@ -2759,7 +2765,7 @@ File Path: Game/Application/Player/Player.cpp
 ============================================================
 #include "Player.h"
 #include <algorithm>
-#include <Input.h>
+#include "Input.h"
 #ifdef USE_IMGUI
 #include "engine/bace/ImGuiManager.h"
 #endif
@@ -2956,6 +2962,21 @@ void Player::UpdateBehavior()
 
 void Player::Move()
 {
+
+	if (!controlEnabled_) {
+		// 走り続け防止（キー押しっぱなし解除直後の事故対策）
+		velocity_.x *= (1.0f - status_.kAttenuation);
+
+		// ダッシュ状態も解除
+		isDash_ = false;
+		dashDirection_ = 0;
+		rightTapTimer_ = 0;
+		leftTapTimer_ = 0;
+
+		return;
+	}
+
+
 	auto* input = Input::GetInstance();
 
 	// ------------------------
@@ -3072,6 +3093,16 @@ void Player::Move()
 
 void Player::Jump()
 {
+	// 操作ロック中：ジャンプ入力は無視
+	if (!controlEnabled_) {
+		// 重力だけは通常通り掛ける（空中で停止しないように）
+		if (!onGround_) {
+			velocity_.y += -status_.kGravity;
+			velocity_.y = (std::max)(velocity_.y, -status_.kMaxFallSpeed);
+		}
+		return;
+	}
+
 	// 地面にいる場合
 	if (onGround_) {
 		// ジャンプキーが押されたら
@@ -3756,6 +3787,11 @@ public:	/// Setter / Getter
 	// ゴールしているかどうか
 	bool GetIsGoal()const { return isGoal_; }
 
+	// 操作の有効/無効
+	void SetControlEnabled(bool enabled) { controlEnabled_ = enabled; }
+	bool IsControlEnabled() const { return controlEnabled_; }
+
+
 private:	// メンバ変数
 	// プレイヤーステータス
 	PlayerStatus status_;
@@ -3811,6 +3847,10 @@ private:	// メンバ変数
 	Direction direction_ = Direction::kRight;
 	float turnSpeed_ = 0.2f;
 	float targetYaw_ = 0.0f;
+
+
+	// 操作の有効/無効
+	bool controlEnabled_ = true;
 
 
 };
@@ -3919,45 +3959,54 @@ public:
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
+	
 	/// <summary>
 	/// 視野角の設定
 	/// </summary>
 	/// <param name="fov"></param>
 	void SetFovY(float fov) { this->fovY = fov; }
+
 	/// <summary>
 	/// アスペクト比の設定
 	/// </summary>
 	/// <param name="aspect"></param>
 	void SetAspectRatio(float aspect) { this->aspectRatio = aspect; }
+
 	/// <summary>
 	/// ニアクリップの設定
 	/// </summary>
 	/// <param name="nearClip"></param>
 	void SetNearClip(float nearClip) { this->nearClip = nearClip; }
+
 	/// <summary>
 	/// ファークリップの設定
 	/// </summary>
 	/// <param name="farClip"></param>
 	void SetFarClip(float farClip) { this->farClip = farClip; }
+
 	// getter
 	/// <summary>
 	/// 各種行列の取得
 	/// </summary>
 	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; }
+	
 	/// <summary>
 	/// ビュー行列の取得
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetViewMatrix()const { return viewMatrix; }
+	
 	/// <summary>
 	/// プロジェクション行列の取得
 	/// </summary>
 	const Matrix4x4& GetProjectionMatrix()const { return projectionMatrix; }
+	
 	/// <summary>
 	/// ビュープロジェクション行列の取得
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetViewProjectionMatrix()const { return viewProjectionMatrix; }
+	
 	/// <summary> 
 	/// 拡縮・回転・平行移動の取得
 	/// </summary>
@@ -3977,7 +4026,7 @@ private:
 	float nearClip = 0.1f;
 	// ファークリップ
 	float farClip = 100.0f;
-
+	// ワールド行列
 	Matrix4x4 worldMatrix;
 	Matrix4x4 viewMatrix;
 
@@ -6733,27 +6782,25 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
-	// カメラの初期設定
 
 
-	camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
 
-	// 強めに引く
-	camOvershootPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z - overShootAmt_ };
-
-	// 目標位置
-	cameraTransform.translate = camStartPos_;
+	// 固定YZ
+	introFixedY_ = camTargetPos_.y;
+	introFixedZ_ = camTargetPos_.z;
+	// 演出開始時のカメラの位置
+	cameraTransform.translate = camTargetPos_;
 	// カメラに反映
 	camera->SetTranslate(cameraTransform.translate);
-
 	// スタート演出の開始
-	startPhase_ = StartCamPhase::DollyIn;
+	startPhase_ = StartCamPhase::MoveToLeft;
 	startTimer_ = 0.0f;
+	stageStartEventFlag_ = true;
 
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("test2");
+	map->Initialize("Base1");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -6786,21 +6833,20 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	cameraController_ = std::make_unique<CameraController>();
 	cameraController_->Initialize();
 
-	// 自機がダメージを受けたら画面シェイク中に出すスプライト
-	enemyHitSprite_ = std::make_unique<Sprite>();
-	enemyHitSprite_->Initialize("resources/HitDamage.png");
-	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
-	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
-	
-	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-	
+	SpritesInitialize();
+
+	stageStartEventFlag_ = true;
+	player->SetControlEnabled(false);
+
+	isPlayerControlLocked_ = true;
+
 }
 
 
 void GamePlayScene::Update()
 {
 	camera->Update();
-	enemyHitSprite_->Update();
+
 
 	titleLogoObject->Update();
 
@@ -6815,13 +6861,13 @@ void GamePlayScene::Update()
 	bool isEnemyHitNow = player->GetHitEnemy();
 
 	// プレイヤーが敵に当たったらカメラをシェイクする
-	if (player->GetHitEnemy()&& !wasEnemyHit_) {
+	if (player->GetHitEnemy() && !wasEnemyHit_) {
 		enemyHitShakeActive_ = true;
 		enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		enemyHitTimer_ = 0.0f;
 		// カメラの元の位置を保存
 		enemyHitBasePos = camera->GetTranslate();
-	
+
 	}
 	Vector4 currentColor = enemyHitSprite_->GetColor();
 	if (currentColor.w > 0.0f) {
@@ -6832,13 +6878,13 @@ void GamePlayScene::Update()
 	wasEnemyHit_ = isEnemyHitNow;
 
 	// カメラシェイクの更新
-	if(enemyHitShakeActive_){
+	if (enemyHitShakeActive_) {
 		// 
 		EnemyHitShake(dt);
 	}
 
 	//sceneTransition->Update();
-	
+
 	/// マップの更新
 	map->Update();
 
@@ -6852,6 +6898,13 @@ void GamePlayScene::Update()
 
 	cameraController_->SetFollowRange(8.0f, 92.0f);
 	/// プレイヤーの更新
+	if (isPlayerControlLocked_) {
+		player->SetControlEnabled(false);
+	} else {
+		player->SetControlEnabled(true);
+	}
+
+
 	player->Update();
 	if (stageStartEventFlag_ == false)
 	{
@@ -6865,12 +6918,22 @@ void GamePlayScene::Update()
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
-	
+
 	/// 当たりは判定
 	CheckCollision();
+	/// スプライトの更新
+	SpritesUpdate();
+
+	/// プレイヤーがゴールに触れていたらシーン遷移
+	bool isGoal = player->GetIsGoal();
+	if (isGoal) {
+		sceneManager->ChangeScene("GAMEPLAY");
+	}
 
 	/// imgui
 	DrawImgui();
+
+
 }
 
 void GamePlayScene::Draw()
@@ -6878,16 +6941,14 @@ void GamePlayScene::Draw()
 	///////////////////
 	//  モデルの描画   //
 	///////////////////
-	
+
 	backGround->Draw();
 
-	
 
 	//sceneTransition->Draw();
 	/// マップの描画
 	map->Draw();
-	
-	
+
 	/// プレイヤーの描画
 	player->Draw();
 
@@ -6901,25 +6962,13 @@ void GamePlayScene::Draw()
 	///////////////////
 	// スプライトの描画 //
 	///////////////////
-	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		enemyHitSprite_->Draw();
-	}
+
+	SpritesDraw();
+
 }
 
 void GamePlayScene::InitializeEnemy()
 {
-
-	normalEnemy = EnemyFactory::CreateEnemy("NormalEnemy");
-	normalEnemy->Initialize();
-	normalEnemy->SetTranslate({ 3.0f,1.5f,0.0f });
-	enemies.push_back(std::move(normalEnemy));
-
-	flyingEnemy = EnemyFactory::CreateEnemy("FlyingEnemy");
-	flyingEnemy->Initialize();
-	flyingEnemy->SetTranslate({ 6.0f,8.5f,0.0f });
-	enemies.push_back(std::move(flyingEnemy));
-
-
 
 	// csvを読み込み敵の配置情報を取得
 	GenerateEnemy();
@@ -6995,60 +7044,122 @@ void GamePlayScene::CheckCollision()
 			collision_->AddCollider(enemy.get());
 		}
 	}
-
+	// 衝突判定実行
 	collision_->CheckAllCollisions();
 
 }
 
 void GamePlayScene::UpdateStartCamera(float dt)
 {
+	// 左右の端の座標 / YZは固定
+	Vector3 leftPos = { introLeftX_,introFixedY_,introFixedZ_ };
+	Vector3 rightPos = { introRightX_,introFixedY_,introFixedZ_ };
+	// 開始座標
+	Vector3 startPos = { camTargetPos_.x,introFixedY_,introFixedZ_ };
+
+	// StartCamPhaseの各フェーズごとの処理
 	switch (startPhase_) {
-	case StartCamPhase::DollyIn: {
-		// 早→遅（スムーズな減速）
+
+	case StartCamPhase::MoveToLeft:
+	{
+		// @todo: 理解説明
+		// ゲーム内時間を進める
 		startTimer_ += dt;
-		float t = EaseOutCubic(startTimer_ / durDollyIn_);
-		cameraTransform.translate = Lerp(camStartPos_, camOvershootPos_, t);
-		if (startTimer_ >= durDollyIn_) {
-			startPhase_ = StartCamPhase::Settle;
+		// イージング適用
+		float t = EaseOutCubic(startTimer_ / introMoveDur_);
+		// 左端へ移動
+		cameraTransform.translate = Lerp(startPos, leftPos, t);
+
+		// フェーズ移行判定
+		if (startTimer_ >= introMoveDur_) {
+			// PanToRightへ移行
+			startPhase_ = StartCamPhase::PanToRight;
+			// タイマーリセット
+			startTimer_ = 0.0f;
+			// 位置補正
+			cameraTransform.translate = leftPos;
+		}
+	}
+	break;
+
+	case StartCamPhase::PanToRight:
+	{
+		// ゲーム内時間を進める
+		startTimer_ += dt;
+		// イージング適用
+		float t = EaseOutCubic(startTimer_ / introPanDur_);
+		// 右端へパン
+		cameraTransform.translate = Lerp(leftPos, rightPos, t);
+
+		// フェーズ移行判定 / 右端に到達したら
+		if (startTimer_ >= introPanDur_) {
+			// Holdへ移行
+			startPhase_ = StartCamPhase::Hold;
+			// タイマーリセット
+			startTimer_ = 0.0f;
+			// 位置補正
+			cameraTransform.translate = rightPos;
+		}
+	}
+	break;
+
+	case StartCamPhase::Hold:
+	{
+		// ゲーム内時間を進める
+		startTimer_ += dt;
+		// そのまま右端で停止
+		cameraTransform.translate = rightPos;
+		// フェーズ移行判定 / 停止時間経過したら
+		if (startTimer_ >= introHoldDur_) {
+			// ReturnToStartへ移行
+			startPhase_ = StartCamPhase::ReturnToStart;
+			// タイマーリセット
 			startTimer_ = 0.0f;
 		}
-	} break;
+	}
+	break;
 
-	case StartCamPhase::Settle: {
-		// “ボン”と戻る
+	case StartCamPhase::ReturnToStart:
+	{
+		// ゲーム内時間を進める
 		startTimer_ += dt;
-		float t = EaseOutBack(startTimer_ / durSettle_);
-		cameraTransform.translate = Lerp(camOvershootPos_, camTargetPos_, t);
-		if (startTimer_ >= durSettle_) {
-			startPhase_ = StartCamPhase::Shake;
-			startTimer_ = 0.0f;
-			// 目標にピタッ
-			cameraTransform.translate = camTargetPos_;
-		}
-	} break;
 
-	case StartCamPhase::Shake: {
-		startTimer_ += dt;
-		float u = std::clamp(1.0f - (startTimer_ / shakeTime_), 0.0f, 1.0f); // 減衰
-		// シンプルな1軸シェイク
-		float s = std::sin(startTimer_ * 60.0f); 
-		Vector3 offset = { 0.0f, 0.0f, s * shakeAmp_ * u };
-		cameraTransform.translate = camTargetPos_ + offset;
-		if (startTimer_ >= shakeTime_) {
+		// 0～1に正規化（duration=0対策込み）
+		float u = (introReturnDur_ > 0.0f) ? (startTimer_ / introReturnDur_) : 1.0f;
+		u = std::clamp(u, 0.0f, 1.0f);
+
+		// イージング適用（Backは1を超え得るので必要ならclamp）
+		float t = EaseOutBack(u);
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// 開始地点へ戻る
+		cameraTransform.translate = Lerp(rightPos, startPos, t);
+
+		// フェーズ移行判定 / 開始地点に戻ったら
+		if (startTimer_ >= introReturnDur_) {
+			// 演出終了
 			startPhase_ = StartCamPhase::None;
+			// タイマーリセット
 			startTimer_ = 0.0f;
-			cameraTransform.translate = camTargetPos_;
+			// 位置補正（最終フレームは必ず目標に固定）
+			cameraTransform.translate = startPos;
 		}
 	} break;
+
 
 	case StartCamPhase::None:
-		// スタート演出終了
+		// 演出終了
 		stageStartEventFlag_ = false;
+		isPlayerControlLocked_ = false;
+		player->SetControlEnabled(true);
+
 		break;
+
 	default:
-		// 何もしない（通常進行）
 		break;
+
 	}
+
 	camera->SetTranslate(cameraTransform.translate);
 }
 
@@ -7060,7 +7171,7 @@ void GamePlayScene::EnemyHitShake(float dt)
 
 	}
 	enemyHitTimer_ += dt;
-	
+
 	// 減衰
 	float u = std::clamp(1.0f - (enemyHitTimer_ / enemyHitShakeTime_), 0.0f, 1.0f);
 
@@ -7086,6 +7197,140 @@ void GamePlayScene::EnemyHitShake(float dt)
 
 }
 
+void GamePlayScene::SpritesInitialize()
+{
+	// 自機がダメージを受けたら画面シェイク中に出すスプライト
+	enemyHitSprite_ = std::make_unique<Sprite>();
+	enemyHitSprite_->Initialize("resources/HitDamage.png");
+	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
+	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
+
+	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+	// コントロールUI
+	controlUI_D = std::make_unique<Sprite>();
+	controlUI_D->Initialize("resources/KyeUI/D.png");
+	controlUI_D->SetPosition({ 200.0f,70.0f });
+	controlUI_D->SetSize({ 50.0f,50.0f });
+
+	controlUI_A = std::make_unique<Sprite>();
+	controlUI_A->Initialize("resources/KyeUI/A.png");
+	controlUI_A->SetPosition({ 100.0f,70.0f });
+	controlUI_A->SetSize({ 50.0f,50.0f });
+
+	controlUI_S = std::make_unique<Sprite>();
+	controlUI_S->Initialize("resources/KyeUI/S.png");
+	controlUI_S->SetPosition({ 150.0f,70.0f });
+	controlUI_S->SetSize({ 50.0f,50.0f });
+
+	controlUI_W = std::make_unique<Sprite>();
+	controlUI_W->Initialize("resources/KyeUI/W.png");
+	controlUI_W->SetPosition({ 150.0f,20.0f });
+	controlUI_W->SetSize({ 50.0f,50.0f });
+
+	controlUI_DashUI = std::make_unique<Sprite>();
+	controlUI_DashUI->Initialize("resources/KyeUI/DashUI.png");
+	controlUI_DashUI->SetPosition({ 700.0f,115.0f });
+	controlUI_DashUI->SetSize({ 250.0f,100.0f });
+
+	controlUI_move = std::make_unique<Sprite>();
+	controlUI_move->Initialize("resources/KyeUI/moveUI.png");
+	controlUI_move->SetPosition({ 430.0f,115.0f });
+	controlUI_move->SetSize({ 250.0f,100.0f });
+}
+
+void GamePlayScene::SpritesUpdate()
+{
+	enemyHitSprite_->Update();
+
+	// UI
+	controlUI_D->Update();
+	controlUI_A->Update();
+	controlUI_S->Update();
+	controlUI_W->Update();
+	controlUI_DashUI->Update();
+	controlUI_move->Update();
+
+	// 押されているキーだけ色を濃くする
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		// 少しだけ右にずらす
+		controlUI_D->SetPosition({ 205.0f,70.0f });
+	} else {
+		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_D->SetPosition({ 200.0f,70.0f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_A)) {
+		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		// 少しだけ左にずらす
+		controlUI_A->SetPosition({ 95.0f,70.0f });
+	} else {
+		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_A->SetPosition({ 100.0f,70.0f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_S)) {
+		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		controlUI_S->SetPosition({ 150.0f,75.0f });
+	} else {
+		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_S->SetPosition({ 150.0f,70.0f });
+	}
+	if (Input::GetInstance()->PushKey(DIK_W)) {
+		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+		controlUI_W->SetPosition({ 150.0f,15.0f });
+	} else {
+		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,0.5f });
+		controlUI_W->SetPosition({ 150.0f,20.0f });
+	}
+	// どこかしらの移動キーが押されていたらDashUIとMoveUIを強調
+	if (Input::GetInstance()->PushKey(DIK_W) ||
+		Input::GetInstance()->PushKey(DIK_A) ||
+		Input::GetInstance()->PushKey(DIK_S) ||
+		Input::GetInstance()->PushKey(DIK_D)) {
+		UiActive_ = true;
+
+
+	} else {
+		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+	}
+
+	if (UiActive_)
+	{
+		uiTimer++;
+	}
+
+	if (uiTimer > 60) {
+		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (uiTimer > 240)
+	{
+		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (uiTimer >= 300)
+	{
+		UiActive_ = false;
+		uiTimer = 0;
+	}
+}
+
+void GamePlayScene::SpritesDraw()
+{
+	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
+		enemyHitSprite_->Draw();
+	}
+	if (!isPlayerControlLocked_) {
+
+		controlUI_D->Draw();
+		controlUI_A->Draw();
+		controlUI_S->Draw();
+		controlUI_W->Draw();
+	}
+
+	//controlUI_DashUI->Draw();
+	//controlUI_move->Draw();
+}
+
 
 
 void GamePlayScene::Finalize()
@@ -7105,25 +7350,110 @@ void GamePlayScene::DrawImgui()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	
-	ImGui::SeparatorText("Start Cam Params");
-	ImGui::DragFloat("durDollyIn", &durDollyIn_, 0.01f, 0.05f, 3.0f);
-	ImGui::DragFloat("durSettle", &durSettle_, 0.01f, 0.05f, 1.0f);
-	ImGui::DragFloat("overshoot", &overShootAmt_, 0.01f, 0.0f, 5.0f);
-	ImGui::DragFloat("shakeTime", &shakeTime_, 0.01f, 0.0f, 1.0f);
-	ImGui::DragFloat("shakeAmp", &shakeAmp_, 0.001f, 0.0f, 0.5f);
-	if (ImGui::Button("Replay Start Cam")) {
-		// 現在の目標位置を基準にリプレイ
-		camTargetPos_ = cameraTransform.translate;
-		const float pullBack = 12.0f;
-		camStartPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z + pullBack };
-		camOvershootPos_ = { camTargetPos_.x, camTargetPos_.y, camTargetPos_.z - overShootAmt_ };
-		cameraTransform.translate = camStartPos_;
-		startPhase_ = StartCamPhase::DollyIn;
-		startTimer_ = 0.0f;
+	//==============================
+	// Start Camera Intro Tuning UI
+	//==============================
+	if (ImGui::CollapsingHeader("Start Camera Intro", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Text("StageStartEventFlag: %s", stageStartEventFlag_ ? "true" : "false");
+		ImGui::Text("StartPhase: %d", static_cast<int>(startPhase_));
+		ImGui::Text("StartTimer: %.3f", startTimer_);
+
+		ImGui::SeparatorText("Positions");
+		ImGui::DragFloat("Intro Left X", &introLeftX_, 0.1f, -10000.0f, 10000.0f);
+		ImGui::DragFloat("Intro Right X", &introRightX_, 0.1f, -10000.0f, 10000.0f);
+
+		ImGui::DragFloat("Intro Fixed Y", &introFixedY_, 0.05f, -1000.0f, 1000.0f);
+		ImGui::DragFloat("Intro Fixed Z", &introFixedZ_, 0.1f, -1000.0f, 1000.0f);
+
+		ImGui::SeparatorText("Durations (sec)");
+		ImGui::DragFloat("Move To Left Dur", &introMoveDur_, 0.01f, 0.0f, 10.0f);
+		ImGui::DragFloat("Pan To Right Dur", &introPanDur_, 0.01f, 0.0f, 20.0f);
+		ImGui::DragFloat("Hold Dur", &introHoldDur_, 0.01f, 0.0f, 10.0f);
+		ImGui::DragFloat("Return Dur", &introReturnDur_, 0.01f, 0.0f, 10.0f);
+
+		// 事故防止：Right < Left になったら入れ替え
+		if (introRightX_ < introLeftX_)
+		{
+			ImGui::TextColored(ImVec4(1, 0.6f, 0.2f, 1), "Warning: RightX < LeftX. Auto swap available.");
+			if (ImGui::Button("Swap Left/Right"))
+			{
+				std::swap(introLeftX_, introRightX_);
+			}
+		}
+
+		ImGui::SeparatorText("Controls");
+
+		// その場で演出をやり直す
+		if (ImGui::Button("Restart Intro"))
+		{
+			// 演出の「戻り先」を camTargetPos_ 基準にする場合
+			// introFixedY_/Z はUIでいじれるのでそのまま
+			startPhase_ = StartCamPhase::MoveToLeft;
+			startTimer_ = 0.0f;
+			stageStartEventFlag_ = true;
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button("Skip Intro"))
+		{
+			startPhase_ = StartCamPhase::None;
+			startTimer_ = 0.0f;
+			stageStartEventFlag_ = false;
+		}
+
+		// camTargetPos_ を調整したい場合（必要なら）
+		ImGui::SeparatorText("Target (Return) Position");
+		ImGui::DragFloat3("Cam Target Pos", &camTargetPos_.x, 0.05f, -10000.0f, 10000.0f);
 	}
+
+	ImGui::SeparatorText("ControlUI Positions");
+	Vector2 dPos = controlUI_D->GetPosition();
+	Vector2 aPos = controlUI_A->GetPosition();
+	Vector2 sPos = controlUI_S->GetPosition();
+	Vector2 wPos = controlUI_W->GetPosition();
+
+	Vector2 dSize = controlUI_D->GetSize();
+	Vector2 aSize = controlUI_A->GetSize();
+	Vector2 sSize = controlUI_S->GetSize();
+	Vector2 wSize = controlUI_W->GetSize();
+
+	ImGui::DragFloat2("D Position", &dPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("D Size", &dSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("A Position", &aPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("A Size", &aSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("S Position", &sPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("S Size", &sSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("W Position", &wPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("W Size", &wSize.x, 1.0f, 0.0f, 500.0f);
+	controlUI_D->SetPosition(dPos);
+	controlUI_D->SetSize(dSize);
+	controlUI_A->SetPosition(aPos);
+	controlUI_A->SetSize(aSize);
+	controlUI_S->SetPosition(sPos);
+	controlUI_S->SetSize(sSize);
+	controlUI_W->SetPosition(wPos);
+	controlUI_W->SetSize(wSize);
+
+	controlUI_DashUI->SetPosition(controlUI_DashUI->GetPosition());
+	Vector2 dashPos = controlUI_DashUI->GetPosition();
+	Vector2 dashSize = controlUI_DashUI->GetSize();
+	ImGui::DragFloat2("DashUI Position", &dashPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("DashUI Size", &dashSize.x, 1.0f, 0.0f, 500.0f);
+	controlUI_DashUI->SetPosition(dashPos);
+	controlUI_DashUI->SetSize(dashSize);
+	controlUI_move->SetPosition(controlUI_move->GetPosition());
+	Vector2 movePos = controlUI_move->GetPosition();
+	Vector2 moveSize = controlUI_move->GetSize();
+	ImGui::DragFloat2("MoveUI Position", &movePos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("MoveUI Size", &moveSize.x, 1.0f, 0.0f, 500.0f);
+
+	controlUI_move->SetPosition(movePos);
+	controlUI_move->SetSize(moveSize);
+
+
+
+
 	if (ImGui::Button("Vertical Camera")) {
 		cameraTransform.translate = { 8.0f,20.0f,0.0f };
 		cameraTransform.rotate = { 1.6f,0.0f,0.0f };
@@ -7145,10 +7475,10 @@ File Path: Game/Scene/GamePlayScene.h
 #include "InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
-#include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleEmitter.h"
+#include "SceneTransition/SceneTransition.h"
 // 前方宣言
 class Map;
 class Player;
@@ -7216,13 +7546,19 @@ public:
 	/// </summary>
 	void EnemyHitShake(float dt);
 
+	/// <summary>
+	/// UI/ダメージ/スプライト類の初期化 / 更新 / 描画
+	/// </summary>
+	void SpritesInitialize();
+	void SpritesUpdate();
+	void SpritesDraw();
 
-
+	
 
 private:
 	// マップ
 	std::unique_ptr<Map> map;
-	//
+	
 	// オーディオ
 	// サウンドデータ
 	SoundData soundData;
@@ -7233,10 +7569,7 @@ private:
 
 
 	/// エネミーファクトリー
-	std::vector<std::unique_ptr<EnemyBace>> enemies;
-
-	std::unique_ptr<EnemyBace>normalEnemy;
-	std::unique_ptr<EnemyBace> flyingEnemy;
+	std::vector<std::unique_ptr<EnemyBase>> enemies;
 
 	/// コリジョンマネージャー
 	std::unique_ptr<CollisionManager> collision_;
@@ -7246,15 +7579,44 @@ private:
 	Camera* camera = nullptr;
 	Transform cameraTransform;
 
-	/// スタート演出
-	enum class StartCamPhase { None, DollyIn, Settle, Shake };
+	// スタート演出
+	enum class StartCamPhase {
+		None,
+		MoveToLeft,   // 左端へ移動（初期位置から）
+		PanToRight,   // 左→右へパン
+		Hold,         // 少し止める（任意）
+		ReturnToStart // プレイヤー開始地点へ戻る
+	};
+
+	/// 横パン演出
+	// 目標位置
+	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	// 左端へ行く時間
+	float introMoveDur_ = 0.6f;
+	// 左から右パン時間
+	float introPanDur_ = 1.6f;
+	// 右端での停止時間
+	float introHoldDur_ = 1.0f;
+	// 開始地点へ戻る時間
+	float introReturnDur_ = 3.0f;
+
+	// 左端と右端
+	float introLeftX_ = 8.0f;
+	float introRightX_ = 92.0f;
+	// 背景が崩壊しない高さ
+	float introFixedY_ = 3.5f;
+	// 固定Z座標 / 通常距離
+	float introFixedZ_ = -20.0f;
+
+
+
+	// 現在のフェーズ
 	StartCamPhase startPhase_ = StartCamPhase::None;
 	// カメラタイマー
 	float startTimer_ = 0.0f;
 	// 開始位置
 	Vector3 camStartPos_;
-	// 目標位置
-	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	
 	// オーバーシュート位置
 	Vector3 camOvershootPos_;
 	// どれだけ引くか
@@ -7322,6 +7684,38 @@ private:
 	float alpha;
 
 	std::unique_ptr<ParticleEmitter>testParticle_;
+
+	// 操作UI
+	std::unique_ptr<Sprite> controlUI_D;
+	Vector2 controlUI_DPos_ = { 100.0f, 600.0f };
+	Vector4 controlUIColorD_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_A;
+	Vector2 controlUIAPos_ = { 50.0f,600.0f };
+	Vector4 controlUIColorA_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_W;
+	Vector2 controlUIWPos_ = { 75.0f,550.0f };
+	Vector4 controlUIColorW_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_S;
+	Vector2 controlUISPos_ = { 75.0f,650.0f };
+	Vector4 controlUIColorS_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_DashUI;
+	Vector2 controlUIDashUIPos_ = { 200.0f,600.0f };
+	Vector4 controlUIDashUIColor_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	std::unique_ptr<Sprite>controlUI_move;
+	Vector2 controlUImovePos_ = { 100.0f,700.0f };
+	Vector4 controlUImoveColor_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	// UIアクティブフラグ
+	bool UiActive_ = false;
+	int32_t uiTimer = 0;
+
+	bool isPlayerControlLocked_ = false;
+
 };
 
 
@@ -7528,6 +7922,252 @@ private:	// メンバ変数
 
 	// レンダーテクスチャ
 	bool usePostProcess_ = false;
+
+};
+
+
+
+============================================================
+File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.cpp
+============================================================
+#include "StageSelectGraph.h"
+
+StageSelectGraph::StageSelectGraph()
+{
+}
+
+StageSelectGraph::~StageSelectGraph()
+{
+}
+
+void StageSelectGraph::Initialize()
+{
+	// ノードの追加
+	uint32_t nodeA = AddNode({ 0,0 }, 1, true);
+	uint32_t nodeB = AddNode({ 1,0 }, 2, false);
+	uint32_t nodeC = AddNode({ 1,1 }, 3, false);
+	uint32_t nodeD = AddNode({ 2,0 }, 4, false);
+	// ノードの接続
+	Link(nodeA, nodeB, Direction::Right);
+	Link(nodeB, nodeC, Direction::Up);
+	Link(nodeB, nodeD, Direction::Down);
+
+}
+
+
+void StageSelectGraph::Finalize()
+{
+}
+
+uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, bool unlocked)
+{
+	// 新しいノードを作成
+	StageNode newNode{};
+	newNode.id = static_cast<uint32_t>(nodes_.size());
+	newNode.position = pos;
+	newNode.unlocked = unlocked;
+
+	// 全方向の隣接ノードを無効に設定
+	for (uint32_t i = 0; i < (uint32_t)Direction::count; i++) {
+		newNode.neighbor[i] = INVALID_NODE_ID;
+	}
+	nodes_.push_back(newNode);
+	return newNode.id;
+}
+
+
+
+void StageSelectGraph::Link(uint32_t fromNodeId, uint32_t toNodeId, Direction dir)
+{
+	// ノード同士を接続
+	nodes_[fromNodeId].neighbor[(uint32_t)dir] = toNodeId;
+	// 逆方向も接続
+	Direction reverseDir{};
+	switch (dir) {
+	case Direction::Up:		reverseDir = Direction::Down;	break;
+	case Direction::Down:	reverseDir = Direction::Up;		break;
+	case Direction::Left:	reverseDir = Direction::Right;	break;
+	case Direction::Right:	reverseDir = Direction::Left;	break;
+	}
+
+	// 逆方向の接続
+	nodes_[toNodeId].neighbor[(uint32_t)reverseDir] = fromNodeId;
+}
+
+uint32_t StageSelectGraph::Move(uint32_t currentNodeId, Direction dir) const
+{
+	// 移動先ノードIDを取得
+	uint32_t nextNodeId = nodes_[currentNodeId].neighbor[(uint32_t)dir];
+	
+	// 未接続であれば現在のノードを返す
+	if (nextNodeId == INVALID_NODE_ID) {
+		return currentNodeId;
+	}
+	// ロックされていたら移動できない
+	if (!nodes_[nextNodeId].unlocked) {
+		return currentNodeId;
+	}
+
+	return nextNodeId;
+}
+
+const StageNode& StageSelectGraph::GetNode(uint32_t id) const
+{
+
+	return nodes_.at(id);
+
+}
+
+bool StageSelectGraph::RemoveNode(uint32_t id)
+{
+	return false;
+}
+
+bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
+{
+	// IDのチェック / 範囲外なら失敗
+	if (id >= nodes_.size()) return false;
+	// 座標の設定
+	nodes_[id].position = pos;
+	return true;
+}
+
+
+bool StageSelectGraph::SetNodeStageId(uint32_t id, uint32_t stageId)
+{
+	return false;
+}
+
+bool StageSelectGraph::SetNodeUnlocked(uint32_t id, bool unlocked)
+{
+	return false;
+}
+
+bool StageSelectGraph::SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid)
+{
+	// IDのチェック / 範囲外なら失敗
+	if (from >= nodes_.size()) return false;
+	// toが無効なノードIDでない場合、範囲外なら失敗
+	if (toOrInvalid != INVALID_NODE_ID && toOrInvalid >= nodes_.size()) return false;
+	// 隣接ノードの設定
+	nodes_[from].neighbor[(int)dir] = toOrInvalid;
+	return true;
+}
+
+
+bool StageSelectGraph::ClearNeighbor(uint32_t from, Direction dir)
+{
+	return false;
+}
+
+
+============================================================
+File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.h
+============================================================
+#pragma once
+#include "MyMath.h"
+#include <vector>
+#include <cstdint>
+
+struct MapPos
+{
+	uint32_t x;
+	uint32_t y;
+};
+
+enum class Direction
+{
+	Up,
+	Down,
+	Left,
+	Right,
+	count
+};
+
+struct StageNode {
+	// ノードID
+	uint32_t id;
+	// ノードの位置
+	MapPos position;
+	// アンロック状態
+	bool unlocked;
+	// 隣接ノードID配列 / 読み方はネイバー
+	uint32_t neighbor[(uint32_t)Direction::count];
+};
+
+/// <summary>
+/// ステージセレクトグラフ
+/// </summary>
+class StageSelectGraph
+{
+	
+public:
+	// 無効なノードID
+	static const uint32_t INVALID_NODE_ID = UINT32_MAX;
+	// コンストラクタ・デストラクタ
+	StageSelectGraph();
+	~StageSelectGraph();
+
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	void Initialize();
+
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
+	/// ノード追加
+	/// </summary>
+	/// <param name="node">  </param>
+	uint32_t AddNode(MapPos pos,uint32_t stageId,bool unlocked);
+
+	/// <summary>
+	/// ノード接続
+	/// </summary>
+	/// <param name="fromNodeId"></param>
+	/// <param name="toNodeId"></param>
+	/// <param name="dir"></param>
+	void Link(uint32_t fromNodeId, uint32_t toNodeId,Direction dir);
+	
+	/// <summary>
+	/// ノード移動
+	/// </summary>
+	/// <param name="currentNodeId">移動前</param>
+	/// <param name="dir">移動の方向</param>
+	/// <returns></returns>
+	uint32_t Move(uint32_t currentNodeId, Direction dir) const;
+	
+	/// <summary>
+	/// ノード取得
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	const StageNode& GetNode(uint32_t id)const;
+
+
+
+
+private:
+	// ノードリスト
+	std::vector<StageNode> nodes_;
+
+public:
+	// --- 編集API（ImGui用） ---
+	bool RemoveNode(uint32_t id);
+	// ノード情報編集
+	bool SetNodePos(uint32_t id, MapPos pos);
+	bool SetNodeStageId(uint32_t id, uint32_t stageId);
+	bool SetNodeUnlocked(uint32_t id, bool unlocked);
+	// 隣接ノード編集 / 追加・削除
+	bool SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid);
+	bool ClearNeighbor(uint32_t from, Direction dir);
+	// ノード数取得
+	uint32_t GetNodeCount() const { return (uint32_t)nodes_.size(); }
+
 
 };
 
@@ -7874,7 +8514,8 @@ File Path: Game/Scene/StageClearScene.cpp
 #include "StageClearScene.h"
 #include "Game/Camera/Camera.h"
 #include "InsideScene/Framework.h"
-
+#include "Input.h"
+#include "ImGuiManager.h"
 StageClearScene::StageClearScene()
 {
 }
@@ -7887,15 +8528,35 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
-	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
-	camera->SetRotate({ 0.0f,0.0f,0.0f });
+	cameraTransform.translate = { 0.0f,0.0f,-10.0f };
+	cameraTransform.rotate = { 0.0f,0.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+	// @todo: お祝い感のあるパーティクルを降らせる
 
 
 }
 
 void StageClearScene::Update()
 {
+	// カメラの更新
+	camera->Update();
 
+	// タイトルへ戻る (1)
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+	// ステージセレクトへ戻る (2)
+	else if (Input::GetInstance()->TriggerKey(DIK_2)) {
+		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	}
+	// ゲームプレイへ戻る (3)
+	else if (Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
+	// ImGuiの描画
+	DrawImgui();
 }
 
 void StageClearScene::Draw()
@@ -7910,7 +8571,21 @@ void StageClearScene::Finalize()
 
 void StageClearScene::DrawImgui()
 {
+#ifdef USE_IMGUI
+	ImGui::Begin("StageClearScene");
+	// シーン遷移の説明
+	ImGui::Text("Press 1 to go to Title Scene");
+	ImGui::Text("Press 2 to go to Stage Select Scene");
+	ImGui::Text("Press 3 to go to Game Play Scene");
 
+	// カメラ位置の調整
+	ImGui::DragFloat3("CameraPos", &cameraTransform.translate.x, 0.1f);
+	ImGui::DragFloat3("CameraRot", &cameraTransform.rotate.x, 0.01f);
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+	ImGui::End();
+#endif
 }
 
 
@@ -7919,6 +8594,7 @@ File Path: Game/Scene/StageClearScene.h
 ============================================================
 #pragma once
 #include "InsideScene/BaseScene.h"
+#include "MyMath.h"
 
 class Object3D;
 class Camera;
@@ -7949,12 +8625,15 @@ public:
 	/// </summary>
 	void Finalize()override;
 
-	// Imgui一括管理 / 描画関数
+	/// <summary>
+	/// Imgui一括管理
+	/// </summary>
 	void DrawImgui();
 
 private:
 	/// カメラ
 	Camera* camera = nullptr;
+	Transform cameraTransform;
 };
 
 
@@ -7998,6 +8677,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 		// translate
 		{-20.0f,1.0f,50.0f},
 	};
+	playerModel->SetTransform(playerTransform);
 
 	// 背景オブジェクトの初期化
 	stageSelectBase1 = std::make_unique<Object3D>();
@@ -8018,14 +8698,21 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
 		// Scale
-		{ 50.0f, 50.0f, 50.0f },
+		{ 50.0f, 50.0f, 40.0f },
 		// Rotate
-		{ 0.0f, 0.0f, 0.0f },
+		{ 3.2f, 0.0f, 0.0f },
 		// Translate
-		{ 0.0f, 0.0f, 50.0f }
+		{ 0.0f, 0.0f, 100.0f }
 	};
 	skyBack->SetTransform(skyBackTransform);
 
+
+	stageSelectGraph.Initialize();
+	// ノードの追加
+	startNodeId = 0;
+	currentNodeId = startNodeId;
+
+	ApplyNodeToCursorTransform();
 }
 
 void StageSelectScene::Update()
@@ -8034,6 +8721,9 @@ void StageSelectScene::Update()
 	skyBack->Update();
 	// ステージセレクト土台の更新
 	stageSelectBase1->Update();
+
+	// ステージセレクト入力処理
+	ApplyNodeToCursorTransform();
 
 	// プレイヤーモデルの更新
 	playerModel->Update();
@@ -8093,8 +8783,154 @@ void StageSelectScene::DrawImgui()
 	skyBack->SetTransform(skyBackTransform);
 
 	ImGui::End();
+	// ステージセレクトグラフのデバッグ表示
+	DrawSelectGraphImGui();
 #endif
 }
+
+void StageSelectScene::PlayerMove()
+{
+	// プレイヤーの座標取得
+	playerTransform = playerModel->GetTransform();
+
+	if (Input::GetInstance()->PushKey(DIK_W)) {
+		playerTransform.translate.z += 0.5f;
+	}
+
+	playerModel->SetTransform(playerTransform);
+}
+
+void StageSelectScene::HandleSelectInput()
+{
+	if (Input::GetInstance()->TriggerKey(DIK_W)) {
+		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Up);
+	} else if (Input::GetInstance()->TriggerKey(DIK_S)) {
+		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Down);
+	} else if (Input::GetInstance()->TriggerKey(DIK_A)) {
+		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Left);
+	} else if (Input::GetInstance()->TriggerKey(DIK_D)) {
+		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Right);
+	}
+}
+
+void StageSelectScene::ApplyNodeToCursorTransform()
+{
+	const StageNode& node = stageSelectGraph.GetNode(currentNodeId);
+	MapPos pos = node.position;
+	playerTransform.translate.x = static_cast<float>(pos.x);
+	playerTransform.translate.y;
+	playerTransform.translate.z = static_cast<float>(pos.y);
+	playerModel->SetTransform(playerTransform);
+
+	
+}
+
+void StageSelectScene::DrawSelectGraphImGui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("StageSelect Graph Editor");
+
+	const uint32_t count = stageSelectGraph.GetNodeCount();
+	ImGui::Text("Node Count: %u", count);
+
+	// --- ノード一覧（選択） ---
+	if (ImGui::BeginListBox("Nodes"))
+	{
+		for (uint32_t i = 0; i < count; ++i)
+		{
+			const StageNode& n = stageSelectGraph.GetNode(i);
+			char label[64];
+			sprintf_s(label, "ID %u  Pos(%d,%d)  Stage:%u  %s",
+				i, n.position.x, n.position.y, n.id, n.unlocked ? "Unlocked" : "Locked");
+
+			const bool selected = (editNodeId_ == i);
+			if (ImGui::Selectable(label, selected))
+			{
+				editNodeId_ = i;
+			}
+		}
+		ImGui::EndListBox();
+	}
+
+	ImGui::Separator();
+
+	// --- 選択ノード編集 ---
+	if (count > 0 && editNodeId_ < count)
+	{
+		StageNode n = stageSelectGraph.GetNode(editNodeId_); // コピー
+
+		ImGui::Text("Editing Node ID: %u", editNodeId_);
+
+		int x = n.position.x;
+		int y = n.position.y;
+		int stageId = (int)n.id;
+		bool unlocked = n.unlocked;
+
+		ImGui::InputInt("X", &x);
+		ImGui::InputInt("Y", &y);
+		ImGui::InputInt("StageId", &stageId);
+		ImGui::Checkbox("Unlocked", &unlocked);
+
+		if (ImGui::Button("Apply Node Changes"))
+		{
+			stageSelectGraph.SetNodePos(editNodeId_, { static_cast<uint32_t>(x), static_cast<uint32_t>(y) });
+			stageSelectGraph.SetNodeStageId(editNodeId_, (uint32_t)stageId);
+			stageSelectGraph.SetNodeUnlocked(editNodeId_, unlocked);
+		}
+
+		ImGui::Separator();
+
+		// --- 接続編集（Up/Down/Left/Right） ---
+		// UI用に "None = -1" を使う
+		auto toUi = [&](uint32_t id)->int {
+			return (id == StageSelectGraph::INVALID_NODE_ID) ? -1 : (int)id;
+			};
+		auto toId = [&](int v)->uint32_t {
+			return (v < 0) ? StageSelectGraph::INVALID_NODE_ID : (uint32_t)v;
+			};
+
+		neighborUp_ = toUi(n.neighbor[(int)Direction::Up]);
+		neighborDown_ = toUi(n.neighbor[(int)Direction::Down]);
+		neighborLeft_ = toUi(n.neighbor[(int)Direction::Left]);
+		neighborRight_ = toUi(n.neighbor[(int)Direction::Right]);
+
+		ImGui::InputInt("Neighbor Up (ID or -1)", &neighborUp_);
+		ImGui::InputInt("Neighbor Down (ID or -1)", &neighborDown_);
+		ImGui::InputInt("Neighbor Left (ID or -1)", &neighborLeft_);
+		ImGui::InputInt("Neighbor Right (ID or -1)", &neighborRight_);
+
+		if (ImGui::Button("Apply Neighbors"))
+		{
+			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Up, toId(neighborUp_));
+			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Down, toId(neighborDown_));
+			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Left, toId(neighborLeft_));
+			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Right, toId(neighborRight_));
+		}
+	}
+
+	ImGui::Separator();
+
+	// --- ノード追加 ---
+	ImGui::Text("Add New Node");
+	ImGui::InputInt("New X", &newX_);
+	ImGui::InputInt("New Y", &newY_);
+	ImGui::InputInt("New StageId", &newStageId_);
+	ImGui::Checkbox("New Unlocked", &newUnlocked_);
+
+	if (ImGui::Button("Add Node"))
+	{
+		uint32_t newId = stageSelectGraph.AddNode(
+			{ static_cast<uint32_t>((std::max)(newX_, 0)), static_cast<uint32_t>((std::max)(newY_, 0)) },
+			static_cast<uint32_t>((std::max)(newStageId_, 0)),
+			newUnlocked_
+		);
+		editNodeId_ = newId; // 追加したノードを編集対象に
+	}
+
+	ImGui::End();
+#endif
+}
+
 
 
 ============================================================
@@ -8103,7 +8939,7 @@ File Path: Game/Scene/StageSelectScene.h
 #pragma once
 #include "InsideScene/BaseScene.h"
 #include <MyMath.h>
-
+#include "SceneSelectGraph/StageSelectGraph.h"
 struct StageStatus {
 
 };
@@ -8142,6 +8978,17 @@ class StageSelectScene :
 	/// </summary>
 	void DrawImgui();
 
+	/// <summary>
+	/// プレイヤー移動処理
+	/// </summary>
+    void PlayerMove();
+
+private:
+    void HandleSelectInput();
+
+	void ApplyNodeToCursorTransform();
+    
+	void DrawSelectGraphImGui();
 
 private:
 	// カメラ
@@ -8152,7 +8999,7 @@ private:
 	std::unique_ptr<Object3D> playerModel;
 	Transform playerTransform;
 
-   // セレクト画面１の土台
+    // セレクト画面１の土台
 	std::unique_ptr<Object3D> stageSelectBase1;
 	Transform stageSelectBase1Transform;
 
@@ -8160,6 +9007,28 @@ private:
 	std::unique_ptr<Object3D> skyBack;
 	Transform skyBackTransform;
 
+
+	// ステージセレクトグラフ
+	StageSelectGraph stageSelectGraph;
+    uint32_t currentNodeId = 0;
+	uint32_t startNodeId = 0;
+
+
+private:
+	uint32_t editNodeId_ = 0;
+
+	// 追加用入力
+	int newX_ = 0;
+	int newY_ = 0;
+	int newStageId_ = 0;
+	bool newUnlocked_ = true;
+
+	// 接続編集用（プルダウン）
+	int neighborUp_ = -1;
+	int neighborDown_ = -1;
+	int neighborLeft_ = -1;
+	int neighborRight_ = -1;
+	
 };
 
 
@@ -8281,8 +9150,8 @@ void TitleScene::Update()
 	Transform transform;
 	transform.translate = { 1.0f, -5.0f, 15.0f };
 	particleEmitter->SetTransform(transform);
-	particleEmitter->Update();
-	particleEmitter2->Update();
+	//particleEmitter->Update();
+	//particleEmitter2->Update();
 
 
 
@@ -8995,6 +9864,7 @@ File Path: InsideScene/SceneFactory.cpp
 #include "Game/Scene/TitleScene.h"
 #include "Game/Scene/GamePlayScene.h"
 #include "Game/Scene/StageSelectScene.h"
+#include "Game/Scene/StageClearScene.h"
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 {
     // 次のシーン生成
@@ -9010,6 +9880,10 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
 	else if (sceneName == "GAMEPLAY")
 	{
 		scene = new GamePlayScene();
+	}
+	else if (sceneName == "STAGECLEAR")
+	{
+		scene = new StageClearScene();
 	}
 	return scene;
 }
