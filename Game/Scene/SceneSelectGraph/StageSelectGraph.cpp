@@ -1,4 +1,5 @@
 #include "StageSelectGraph.h"
+#include <fstream>  
 
 StageSelectGraph::StageSelectGraph()
 {
@@ -83,6 +84,60 @@ const StageNode& StageSelectGraph::GetNode(uint32_t id) const
 {
 
 	return nodes_.at(id);
+
+}
+
+void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
+{
+	// JSONファイルからノード情報を読み込む処理
+	// filePathはリソースフォルダからの相対パス
+	const std::string frontFilePath = "resources/StageSelect";
+	const std::string kExtension = ".json";
+	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
+
+	// ファイル読み込み
+	std::ifstream file;
+
+	// ファイルを開く
+	file.open(fullPath);
+
+	// ファイルが開けたかどうか
+	if (file.fail()){
+		// エラーメッセージを表示して終了
+		printf("Failed to open file: %s\n", fullPath.c_str());
+		return;
+	}
+
+	// JSON文字列
+	nlohmann::json deserialized;
+	// パース(解凍)
+	file >> deserialized;
+
+	// ノード情報の読み込み
+	for (const auto& jsonNode : deserialized["nodes"]) {
+		// ノード情報の取得
+		MapPos pos{};
+		pos.x = jsonNode["position"]["x"];
+		pos.y = jsonNode["position"]["y"];
+		uint32_t stageId = jsonNode["stage_id"];
+		bool unlocked = jsonNode["unlocked"];
+		// ノードの追加
+		uint32_t nodeId = AddNode(pos, stageId, unlocked);
+		// 隣接ノードの設定
+		for (const auto& neighbor : jsonNode["neighbors"].items()) {
+			std::string dirStr = neighbor.key();
+			uint32_t neighborId = neighbor.value();
+			Direction dir{};
+			if (dirStr == "Up") dir = Direction::Up;
+			else if (dirStr == "Down") dir = Direction::Down;
+			else if (dirStr == "Left") dir = Direction::Left;
+			else if (dirStr == "Right") dir = Direction::Right;
+			else continue; // 不明な方向はスキップ
+			// 隣接ノードの設定
+			SetNeighbor(nodeId, dir, neighborId);
+		}
+	}
+
 
 }
 

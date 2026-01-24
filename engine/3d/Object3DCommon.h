@@ -32,11 +32,11 @@ private:	// メンバ関数
 	/// <summary>
 	/// ルートシグネチャの作成
 	/// </summary>
-	void CreateRootSignatrue();
+	void CreateRootSignature();
 	/// <summary>
 	///　グラフィックスパイプラインの作成
 	/// </summary>
-	void CreateGraficsPipeLine();
+	void CreateGraphicsPipeLine();
 
 private:	// メンバ変数
 	// カメラ

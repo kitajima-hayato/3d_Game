@@ -5,7 +5,7 @@
 #include "Game/Particle/ParticleManager.h"
 #include "InsideScene/Framework.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 GamePlayScene::GamePlayScene()
 {
@@ -598,6 +598,16 @@ void GamePlayScene::DrawImgui()
 	//==============================
 	// Start Camera Intro Tuning UI
 	//==============================
+
+	// カメラの配置 / 回転修正
+	cameraTransform.translate = camera->GetTranslate();
+	ImGui::DragFloat3("Camera Position", &cameraTransform.translate.x, 0.1f, -10000.0f, 10000.0f);
+	
+	cameraTransform.rotate = camera->GetRotate();
+	ImGui::DragFloat3("Camera Rotation", &cameraTransform.rotate.x, 0.1f, -180.0f, 180.0f);
+	
+
+
 	if (ImGui::CollapsingHeader("Start Camera Intro", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("StageStartEventFlag: %s", stageStartEventFlag_ ? "true" : "false");

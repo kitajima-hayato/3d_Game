@@ -71,7 +71,7 @@ private:
 
 
 	// ステージセレクトグラフ
-	StageSelectGraph stageSelectGraph;
+	std::unique_ptr<StageSelectGraph> stageSelectGraph;
     uint32_t currentNodeId = 0;
 	uint32_t startNodeId = 0;
 

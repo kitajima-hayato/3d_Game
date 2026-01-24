@@ -1,6 +1,6 @@
 #include "BackGround.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 void BackGround::Initialize()
 {
@@ -68,34 +68,34 @@ void BackGround::Initialize()
 	};
 	titleBackGround1->SetTransform(titleBackGround1Transform);
 
-	titeleBackGround1_2 = std::make_unique<Object3D>();
-	titeleBackGround1_2->Initialize();
-	titeleBackGround1_2->SetModel("back1.obj");
-	titeleBackGround1_2Transform = {
+	titleBackGround1_2 = std::make_unique<Object3D>();
+	titleBackGround1_2->Initialize();
+	titleBackGround1_2->SetModel("back1.obj");
+	titleBackGround1_2Transform = {
 		{ 1.0f,20.0f,10.0f },
 		{ 0.0f,1.5f,0.0f },
 		{ 65,-2.0f,50.0f }
 	};
-	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
-	titeleBackGround1_3 = std::make_unique<Object3D>();
-	titeleBackGround1_3->Initialize();
-	titeleBackGround1_3->SetModel("back1.obj");
-	titeleBackGround1_3Transform = {
+	titleBackGround1_2->SetTransform(titleBackGround1_2Transform);
+	titleBackGround1_3 = std::make_unique<Object3D>();
+	titleBackGround1_3->Initialize();
+	titleBackGround1_3->SetModel("back1.obj");
+	titleBackGround1_3Transform = {
 		{ 1.0f,20.0f,10.0f },
 		{ 0.0f,-1.5f,0.0f },
 		{ 120,-2.0f,50.0f }
 	};
-	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
+	titleBackGround1_3->SetTransform(titleBackGround1_3Transform);
 
-	titeleBackGround1_4 = std::make_unique<Object3D>();
-	titeleBackGround1_4->Initialize();
-	titeleBackGround1_4->SetModel("back1.obj");
-	titeleBackGround1_4Transform = {
+	titleBackGround1_4 = std::make_unique<Object3D>();
+	titleBackGround1_4->Initialize();
+	titleBackGround1_4->SetModel("back1.obj");
+	titleBackGround1_4Transform = {
 		{ 1.0f,20.0f,10.0f },
 		{ 0.0f,1.5f,0.0f },
 		{ 178,-2.0f,50.0f }
 	};
-	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
+	titleBackGround1_4->SetTransform(titleBackGround1_4Transform);
 
 	skyBack = std::make_unique<Object3D>();
 	skyBack->Initialize();
@@ -126,11 +126,7 @@ void BackGround::Update()
 
 	// 背景
 	// 少しづつ左に流す 更新
-	// 3
-	/*titleBackGround3Transform.translate.x -= 0.03f;
-	titleBackGround3_2Transform.translate.x -= 0.03f;
-	titleBackGround3->SetTransform(titleBackGround3Transform);
-	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);*/
+	
 
 	titleBackGround3->Update();
 	titleBackGround3_2->Update();
@@ -145,18 +141,11 @@ void BackGround::Update()
 	titleBackGround2_2->Update();
 	titleBackGround2_3->Update();
 	// 1
-	/*titleBackGround1Transform.translate.x -= 0.1f;
-	titeleBackGround1_2Transform.translate.x -= 0.1f;
-	titeleBackGround1_3Transform.translate.x -= 0.1f;
-	titeleBackGround1_4Transform.translate.x -= 0.1f;
-	titleBackGround1->SetTransform(titleBackGround1Transform);
-	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
-	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
-	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);*/
+
 	titleBackGround1->Update();
-	titeleBackGround1_2->Update();
-	titeleBackGround1_3->Update();
-	titeleBackGround1_4->Update();
+	titleBackGround1_2->Update();
+	titleBackGround1_3->Update();
+	titleBackGround1_4->Update();
 	soil->Update();
 
 	DrawImgui();
@@ -172,9 +161,9 @@ void BackGround::Draw()
 	titleBackGround2_2->Draw();
 	titleBackGround2_3->Draw();
 	titleBackGround1->Draw();
-	titeleBackGround1_2->Draw();
-	titeleBackGround1_3->Draw();
-	titeleBackGround1_4->Draw();
+	titleBackGround1_2->Draw();
+	titleBackGround1_3->Draw();
+	titleBackGround1_4->Draw();
 	soil->Draw();
 }
 

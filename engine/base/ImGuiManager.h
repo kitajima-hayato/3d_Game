@@ -3,8 +3,8 @@
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #endif
-#include "engine/bace/WinAPI.h" 
-#include "engine/bace/DirectXCommon.h"
+#include "engine/base/WinAPI.h" 
+#include "engine/base/DirectXCommon.h"
 
 /// <summary>
 /// ImGui管理クラス

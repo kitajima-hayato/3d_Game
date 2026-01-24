@@ -6,7 +6,7 @@ Object3DCommon* Object3DCommon::instance = nullptr;
 void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 {
 	dxCommon_ = dxCommon;
-	CreateGraficsPipeLine();
+	CreateGraphicsPipeLine();
 }
 
 void Object3DCommon::DrawSettingCommon()
@@ -20,7 +20,7 @@ void Object3DCommon::DrawSettingCommon()
 }
 
 
-void Object3DCommon::CreateRootSignatrue()
+void Object3DCommon::CreateRootSignature()
 {
 #pragma region RootParameter
 	//RootSignature作成
@@ -105,9 +105,9 @@ void Object3DCommon::CreateRootSignatrue()
 
 }
 
-void Object3DCommon::CreateGraficsPipeLine()
+void Object3DCommon::CreateGraphicsPipeLine()
 {
-	CreateRootSignatrue();
+	CreateRootSignature();
 
 	// 頂点の位置データを表すセマンティクスを設定
 	inputElementDescs[0].SemanticName = "POSITION";

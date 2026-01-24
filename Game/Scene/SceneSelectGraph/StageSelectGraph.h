@@ -2,7 +2,7 @@
 #include "MyMath.h"
 #include <vector>
 #include <cstdint>
-
+#include <resources/json/json.hpp>
 struct MapPos
 {
 	uint32_t x;
@@ -82,7 +82,11 @@ public:
 	/// <returns></returns>
 	const StageNode& GetNode(uint32_t id)const;
 
-
+	/// <summary>
+	/// jsonファイルからノード情報の読み込み
+	/// </summary>
+	/// <param name="jsonNode"></param>
+	void LoadMapNodeFromJson(const std::string& fileName);
 
 
 private:

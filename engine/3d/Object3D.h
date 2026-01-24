@@ -4,8 +4,6 @@
 #include <d3d12.h>
 #include <vector>
 #include <wrl.h>
-#include "TextureManager.h"
-#include "Object3DCommon.h"
 #include "Model.h"
 #include "Game/Camera/Camera.h"
 

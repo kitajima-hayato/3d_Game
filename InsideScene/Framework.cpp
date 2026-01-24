@@ -40,7 +40,7 @@ void Framework::Initialize()
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
 
 	// 全シーンがアクセス可能なカメラに設定
-	mainCamamera_ = camera.get();
+	mainCamera_ = camera.get();
 
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
@@ -61,7 +61,7 @@ void Framework::Update()
 	//Windowのメッセージ処理
 	if (winAPI->ProcessMessage()) {
 		//ゲームループを抜ける
-		isEndRequst = true;
+		isEndRequest_ = true;
 		return;
 	}
 #pragma endregion
@@ -95,7 +95,7 @@ void Framework::Update()
 	// ESCキーで終了
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
 	{
-		isEndRequst = true;
+		isEndRequest_ = true;
 	}
 	
 }
@@ -122,7 +122,7 @@ void Framework::Finalize()
 	ModelManager::GetInstance()->Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
-	mainCamamera_ = nullptr;
+	mainCamera_ = nullptr;
 	ParticleManager::GetInstance()->DeleteInstance();
 
 }
@@ -135,7 +135,7 @@ void Framework::Run()
 	while (true) {
 		// ゲームの更新
 		Update();
-		if (IsEndRequst()) {
+		if (IsEndRequest()) {
 			break;
 		}
 		// ゲームの描画

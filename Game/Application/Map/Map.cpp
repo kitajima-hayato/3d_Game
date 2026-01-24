@@ -1,6 +1,6 @@
 #include "Map.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 #include "Game/Particle/ParticleManager.h"
 

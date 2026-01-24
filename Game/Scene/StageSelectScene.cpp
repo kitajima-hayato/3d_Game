@@ -3,7 +3,7 @@
 #include "Game/Camera/Camera.h"
 #include "engine/3d/Object3D.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 
 StageSelectScene::StageSelectScene()
@@ -64,7 +64,8 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	skyBack->SetTransform(skyBackTransform);
 
 
-	stageSelectGraph.Initialize();
+	stageSelectGraph = std::make_unique<StageSelectGraph>();
+	stageSelectGraph->Initialize();
 	// ノードの追加
 	startNodeId = 0;
 	currentNodeId = startNodeId;
@@ -81,6 +82,12 @@ void StageSelectScene::Update()
 
 	// ステージセレクト入力処理
 	ApplyNodeToCursorTransform();
+
+	// 入力した方向に移動 
+	HandleSelectInput();
+
+	// プレイヤー移動処理
+	PlayerMove();
 
 	// プレイヤーモデルの更新
 	playerModel->Update();
@@ -116,11 +123,11 @@ void StageSelectScene::DrawImgui()
 	ImGui::Separator();
 
 	// プレイヤー
-	playerTransform = playerModel->GetTransform();
-	ImGui::DragFloat3("PlayerPos", &playerTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("PlayerRot", &playerTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("PlayerScale", &playerTransform.scale.x, 0.1f);
-	playerModel->SetTransform(playerTransform);
+	Transform transform = playerModel->GetTransform();
+	ImGui::DragFloat3("PlayerPos", &transform.translate.x, 0.1f);
+	ImGui::DragFloat3("PlayerRot", &transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("PlayerScale", &transform.scale.x, 0.1f);
+	playerModel->SetTransform(transform);
 
 	ImGui::Separator();
 	// ステージセレクト土台１
@@ -148,36 +155,37 @@ void StageSelectScene::DrawImgui()
 void StageSelectScene::PlayerMove()
 {
 	// プレイヤーの座標取得
-	playerTransform = playerModel->GetTransform();
+	Transform transform = playerModel->GetTransform();
 
 	if (Input::GetInstance()->PushKey(DIK_W)) {
-		playerTransform.translate.z += 0.5f;
+		transform.translate.z += 0.5f;
 	}
 
-	playerModel->SetTransform(playerTransform);
+	playerModel->SetTransform(transform);
 }
 
 void StageSelectScene::HandleSelectInput()
 {
 	if (Input::GetInstance()->TriggerKey(DIK_W)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Up);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Up);
 	} else if (Input::GetInstance()->TriggerKey(DIK_S)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Down);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Down);
 	} else if (Input::GetInstance()->TriggerKey(DIK_A)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Left);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Left);
 	} else if (Input::GetInstance()->TriggerKey(DIK_D)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Right);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Right);
 	}
 }
 
 void StageSelectScene::ApplyNodeToCursorTransform()
 {
-	const StageNode& node = stageSelectGraph.GetNode(currentNodeId);
+	const StageNode& node = stageSelectGraph->GetNode(currentNodeId);
 	MapPos pos = node.position;
-	playerTransform.translate.x = static_cast<float>(pos.x);
-	playerTransform.translate.y;
-	playerTransform.translate.z = static_cast<float>(pos.y);
-	playerModel->SetTransform(playerTransform);
+	Vector3 translate = playerModel->GetTransform().translate;
+	translate.x += static_cast<float>(pos.x);
+	translate.y;
+	translate.z += static_cast<float>(pos.y);
+	playerModel->SetTranslate(translate);
 
 	
 }
@@ -187,7 +195,7 @@ void StageSelectScene::DrawSelectGraphImGui()
 #ifdef USE_IMGUI
 	ImGui::Begin("StageSelect Graph Editor");
 
-	const uint32_t count = stageSelectGraph.GetNodeCount();
+	const uint32_t count = stageSelectGraph->GetNodeCount();
 	ImGui::Text("Node Count: %u", count);
 
 	// --- ノード一覧（選択） ---
@@ -195,7 +203,7 @@ void StageSelectScene::DrawSelectGraphImGui()
 	{
 		for (uint32_t i = 0; i < count; ++i)
 		{
-			const StageNode& n = stageSelectGraph.GetNode(i);
+			const StageNode& n = stageSelectGraph->GetNode(i);
 			char label[64];
 			sprintf_s(label, "ID %u  Pos(%d,%d)  Stage:%u  %s",
 				i, n.position.x, n.position.y, n.id, n.unlocked ? "Unlocked" : "Locked");
@@ -214,7 +222,7 @@ void StageSelectScene::DrawSelectGraphImGui()
 	// --- 選択ノード編集 ---
 	if (count > 0 && editNodeId_ < count)
 	{
-		StageNode n = stageSelectGraph.GetNode(editNodeId_); // コピー
+		StageNode n = stageSelectGraph->GetNode(editNodeId_); // コピー
 
 		ImGui::Text("Editing Node ID: %u", editNodeId_);
 
@@ -230,9 +238,9 @@ void StageSelectScene::DrawSelectGraphImGui()
 
 		if (ImGui::Button("Apply Node Changes"))
 		{
-			stageSelectGraph.SetNodePos(editNodeId_, { static_cast<uint32_t>(x), static_cast<uint32_t>(y) });
-			stageSelectGraph.SetNodeStageId(editNodeId_, (uint32_t)stageId);
-			stageSelectGraph.SetNodeUnlocked(editNodeId_, unlocked);
+			stageSelectGraph->SetNodePos(editNodeId_, { static_cast<uint32_t>(x), static_cast<uint32_t>(y) });
+			stageSelectGraph->SetNodeStageId(editNodeId_, (uint32_t)stageId);
+			stageSelectGraph->SetNodeUnlocked(editNodeId_, unlocked);
 		}
 
 		ImGui::Separator();
@@ -258,10 +266,10 @@ void StageSelectScene::DrawSelectGraphImGui()
 
 		if (ImGui::Button("Apply Neighbors"))
 		{
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Up, toId(neighborUp_));
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Down, toId(neighborDown_));
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Left, toId(neighborLeft_));
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Right, toId(neighborRight_));
+			stageSelectGraph->SetNeighbor(editNodeId_, Direction::Up, toId(neighborUp_));
+			stageSelectGraph->SetNeighbor(editNodeId_, Direction::Down, toId(neighborDown_));
+			stageSelectGraph->SetNeighbor(editNodeId_, Direction::Left, toId(neighborLeft_));
+			stageSelectGraph->SetNeighbor(editNodeId_, Direction::Right, toId(neighborRight_));
 		}
 	}
 
@@ -276,12 +284,12 @@ void StageSelectScene::DrawSelectGraphImGui()
 
 	if (ImGui::Button("Add Node"))
 	{
-		uint32_t newId = stageSelectGraph.AddNode(
+		uint32_t newId = stageSelectGraph->AddNode(
 			{ static_cast<uint32_t>((std::max)(newX_, 0)), static_cast<uint32_t>((std::max)(newY_, 0)) },
 			static_cast<uint32_t>((std::max)(newStageId_, 0)),
 			newUnlocked_
 		);
-		editNodeId_ = newId; // 追加したノードを編集対象に
+		editNodeId_ = newId; 
 	}
 
 	ImGui::End();
