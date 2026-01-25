@@ -236,6 +236,7 @@ void StageSelectScene::DrawSelectGraphImGui()
 		ImGui::InputInt("StageId", &stageId);
 		ImGui::Checkbox("Unlocked", &unlocked);
 
+		
 		if (ImGui::Button("Apply Node Changes"))
 		{
 			stageSelectGraph->SetNodePos(editNodeId_, { static_cast<uint32_t>(x), static_cast<uint32_t>(y) });

@@ -9,13 +9,14 @@
 ImVec4 GetBlockColorByType(BlockType blockType) {
 	switch (blockType) {
 	case BlockType::Air:         return ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	case BlockType::NormalBlock: return ImVec4(0.4f, 0.4f, 0.8f, 1.0f);
-	case BlockType::testBlock:   return ImVec4(0.8f, 0.4f, 0.4f, 1.0f);
+	case BlockType::GrassBlock: return ImVec4(0.4f, 0.4f, 0.8f, 1.0f);
+	case BlockType::SoilBlock:   return ImVec4(0.8f, 0.4f, 0.4f, 1.0f);
 	case BlockType::kGoalUp:     return ImVec4(0.4f, 0.8f, 0.4f, 1.0f);
 	case BlockType::kGoalDown:   return ImVec4(0.4f, 0.8f, 0.8f, 1.0f);
 	case BlockType::breakBlock:  return ImVec4(0.8f, 0.8f, 0.4f, 1.0f);
 	case BlockType::moveBlock:   return ImVec4(0.8f, 0.4f, 0.8f, 1.0f);
 	case BlockType::sandBlock:   return ImVec4(0.7f, 0.6f, 0.3f, 1.0f);
+	case BlockType::Unbreakable: return ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
 	default:                     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	}
 }
@@ -39,7 +40,7 @@ void Map::Initialize(const char* filePath)
 	previousMapData_ = mapChipData_;
 
 	ParticleManager::GetInstance()->CreateParticleGroup(
-        "BreakParticle", "resources/sky.png");
+        "BreakParticle", "resources/BackSky.png");
 	breakParticleEmitter_ = std::make_unique<ParticleEmitter>();
 	breakParticleEmitter_->SetParticleName("BreakParticle");
 	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
@@ -138,13 +139,14 @@ void Map::Update()
             static int currentTypeInt = 0;
             const char* blockTypeNames[] = {
                 "Air",
-                "NormalBlock",
-                "TestBlock",
+                "GrassBlock",
+                "SoilBlock",
                 "GoalUp",
                 "GoalDown",
                 "BreakBlock",
                 "MoveBlock",
                 "SandBlock",
+				"Unbreakable",
             };
 
             ImGui::Text("Paint Type:");

@@ -608,9 +608,10 @@ bool Player::IsHitBlockTable(BlockType type)
 	// 判定を取るブロックの種類かどうか
 	switch (type)
 	{
-	case BlockType::NormalBlock:
-	case BlockType::testBlock:
+	case BlockType::GrassBlock:
+	case BlockType::SoilBlock:
 	case BlockType::breakBlock:
+	case BlockType::Unbreakable:
 		return true;
 
 	default:

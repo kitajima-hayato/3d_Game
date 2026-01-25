@@ -113,6 +113,13 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 	// パース(解凍)
 	file >> deserialized;
 
+	assert(deserialized.contains("nodes"));
+	assert(deserialized["nodes"].is_array());
+
+	//assert(jsonNode.contains("position"));
+	//assert(jsonNode["position"].contains("x"));
+	//assert(jsonNode["position"]["x"].is_number_integer());
+
 	// ノード情報の読み込み
 	for (const auto& jsonNode : deserialized["nodes"]) {
 		// ノード情報の取得
@@ -137,6 +144,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 			SetNeighbor(nodeId, dir, neighborId);
 		}
 	}
+
 
 
 }

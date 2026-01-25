@@ -3,13 +3,14 @@
 enum class BlockType
 {
 	Air = 0,
-	NormalBlock = 1,
-	testBlock = 2,
+	GrassBlock = 1,
+	SoilBlock = 2,
 	kGoalUp = 3,
 	kGoalDown = 4,
 	breakBlock = 5,
 	moveBlock = 6,
 	sandBlock = 7,
+	Unbreakable = 8,
 	// 範囲検索の最終値
 	/// 検索を行う際にCountを指定することで範囲検索を可能にできる
 	Count,	

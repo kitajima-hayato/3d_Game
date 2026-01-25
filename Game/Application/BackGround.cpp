@@ -6,10 +6,10 @@ void BackGround::Initialize()
 {
 	titleBackGround3 = std::make_unique<Object3D>();
 	titleBackGround3->Initialize();
-	titleBackGround3->SetModel("back3.obj");
+	titleBackGround3->SetModel("Back3Reverse.obj");
 	titleBackGround3Transform = {
-		{ 1.0f,50.0f,30.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 30.0f,50.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,200.0f }
 	};
 	titleBackGround3->SetTransform(titleBackGround3Transform);
@@ -17,32 +17,34 @@ void BackGround::Initialize()
 	// 右に繋げる
 	titleBackGround3_2 = std::make_unique<Object3D>();
 	titleBackGround3_2->Initialize();
-	titleBackGround3_2->SetModel("back3.obj");
+	titleBackGround3_2->SetModel("Back3.obj");
 	titleBackGround3_2Transform = {
-		{ 1.0f,50.0f,30.0f },
-		{ 0.0f,1.7f,0.0f },
+		{ 30.0f,50.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
 	};
 	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+
+
+
 
 	titleBackGround2 = std::make_unique<Object3D>();
 	titleBackGround2->Initialize();
 	titleBackGround2->SetModel("back2.obj");
 	titleBackGround2Transform = {
-		{ 1.0f,60.0f,30.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 30.0f,60.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,150.0f }
 	};
 
 	titleBackGround2->SetTransform(titleBackGround2Transform);
 
-
 	titleBackGround2_2 = std::make_unique<Object3D>();
 	titleBackGround2_2->Initialize();
-	titleBackGround2_2->SetModel("back2.obj");
+	titleBackGround2_2->SetModel("Back2Reverse.obj");
 	titleBackGround2_2Transform = {
-		{ 1.0f,60.0f,30.0f },
-		{ 0.0f,1.5f,0.0f },
+		{ 30.0f,60.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 180.0f,-4.0f,150.0f }
 	};
 	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
@@ -50,8 +52,8 @@ void BackGround::Initialize()
 	titleBackGround2_3->Initialize();
 	titleBackGround2_3->SetModel("back2.obj");
 	titleBackGround2_3Transform = {
-		{ 1.0f,60.0f,30.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 30.0f,60.0f,1.0f },
+		{ 0.0f,-0.0f,0.0f },
 		{ 350.0f,-4.0f,150.0f }
 	};
 	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
@@ -101,8 +103,8 @@ void BackGround::Initialize()
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 120.0f,400.0f,1.0f },
-		{ 0.0f,0.0f,-1.5f },
+		{ 400.0f,100.0f,1.0f },
+		{ 0.0f,0.0f, 0.0f },
 		{ 7.5f,0.0f,250.0f }
 	};
 	skyBack->SetTransform(skyBackTransform);
@@ -175,13 +177,30 @@ void BackGround::DrawImgui()
 
 	// 設定として保存
 	ImGui::Begin("BackGround Transform");
-	ImGui::DragFloat3("titleBackGround3 Translate", &titleBackGround3Transform.translate.x, 0.1f);
-	titleBackGround3->SetTransform(titleBackGround3Transform);
+	// 背景3 srt
+	Transform backGround3Transform = titleBackGround3->GetTransform();
+	ImGui::DragFloat3("titleBackGround3 Scale", &backGround3Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround3 Rotate", &backGround3Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround3 Translate", &backGround3Transform.translate.x, 0.1f);
+	titleBackGround3->SetTransform(backGround3Transform);
+
+
 	ImGui::DragFloat3("titleBackGround3_2 Translate", &titleBackGround3_2Transform.translate.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround3_2 Rotate", &titleBackGround3_2Transform.rotate.x, 0.1f);
 	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
 	ImGui::DragFloat3("titleBackGround2 Translate", &titleBackGround2Transform.translate.x, 0.1f);
 	titleBackGround2->SetTransform(titleBackGround2Transform);
 
+
+	// スカイバック　
+	ImGui::DragFloat3("SkyBack Translate", &skyBackTransform.translate.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
+	// rotate
+	ImGui::DragFloat3("SkyBack Rotate", &skyBackTransform.rotate.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
+	// scale
+	ImGui::DragFloat3("SkyBack Scale", &skyBackTransform.scale.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
 	ImGui::End();
 	
 
