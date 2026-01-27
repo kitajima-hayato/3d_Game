@@ -8,6 +8,7 @@
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleEmitter.h"
 #include "SceneTransition/SceneTransition.h"
+#include "Pause/PauseUI.h"
 // 前方宣言
 class Map;
 class Player;
@@ -244,6 +245,11 @@ private:
 	int32_t uiTimer = 0;
 
 	bool isPlayerControlLocked_ = false;
+
+	// ポーズUI
+	std::unique_ptr<PauseUI> pauseUI_;
+	// ポーズ中フラグ
+	bool isPause_ = false;
 
 };
 

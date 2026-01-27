@@ -54,23 +54,11 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	player = std::make_unique<Player>();
 	player->Initialize(Vector3{ 2.0f,2.0f,0.0f });
 	player->SetMap(map.get());
-	//player->SetTransitionTiming(TransitionTiming::OnDeath);
 
 	InitializeEnemy();
 
 	//sceneTransition = std::make_unique<SceneTransition>();
 	//sceneTransition->Initialize(10);
-
-	titleLogoObject = std::make_unique<Object3D>();
-	titleLogoObject->Initialize();
-	titleLogoObject->SetModel("title.obj");
-	titleLogoTransform = {
-		{ 1.0f,1.0f,1.0f },
-		{ 1.6f,3.2f,0.0f },
-		{ 7.4f,-3.1f,50.0f }
-	};
-
-	titleLogoObject->SetTransform(titleLogoTransform);
 
 	backGround = std::make_unique<BackGround>();
 	backGround->Initialize();
@@ -85,17 +73,37 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	isPlayerControlLocked_ = true;
 
+
+	// ポーズUI
+	pauseUI_ = std::make_unique<PauseUI>();
+	pauseUI_->Initialize();
 }
 
 
 void GamePlayScene::Update()
 {
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		isPause_ = !isPause_;
+	}
+	if (isPause_) {
+		// ポーズ画面
+		pauseUI_->Update();
+		// 続けるが選ばれて決定したらポーズ解除
+		if (pauseUI_->PauseReleaseRequested()) {
+			isPause_ = false;
+		}
+		// ポーズ中にもimguiを表示する
+		DrawImgui();
+		// ゲームの更新を行わない
+		return;
+	}
+	// カメラの更新
 	camera->Update();
 
 
-	titleLogoObject->Update();
-
 	backGround->Update();
+
+
 
 
 	// スタート演出中はカメラを更新
@@ -114,9 +122,10 @@ void GamePlayScene::Update()
 		enemyHitBasePos = camera->GetTranslate();
 
 	}
+	// 敵を点滅させる
 	Vector4 currentColor = enemyHitSprite_->GetColor();
 	if (currentColor.w > 0.0f) {
-		// 減算スピードは 0.01f ～ 0.05f くらいで調整してください
+		// 減算スピードは 0.01f ～ 0.05f くらいで調整
 		float newAlpha = (std::max)(0.0f, currentColor.w - 0.02f);
 		enemyHitSprite_->SetColor({ currentColor.x, currentColor.y, currentColor.z, newAlpha });
 	}
@@ -130,7 +139,7 @@ void GamePlayScene::Update()
 
 	//sceneTransition->Update();
 
-	/// マップの更新
+	// マップの更新
 	map->Update();
 
 	// エネミーレイヤーが変更されたらエネミーを再生成
@@ -139,18 +148,19 @@ void GamePlayScene::Update()
 	}
 
 
-	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
-
+	// カメラのフォロー範囲
 	cameraController_->SetFollowRange(8.0f, 92.0f);
-	/// プレイヤーの更新
+	// 開始演出中はプレイヤーへの入力を受け付けない
 	if (isPlayerControlLocked_) {
 		player->SetControlEnabled(false);
 	} else {
 		player->SetControlEnabled(true);
 	}
 
-
+	// プレイヤーの更新
 	player->Update();
+
+	// フォローカメラ
 	if (stageStartEventFlag_ == false)
 	{
 		cameraController_->SetCameraPosition(cameraTransform.translate);
@@ -160,22 +170,25 @@ void GamePlayScene::Update()
 		cameraTransform.translate = cameraController_->GetCameraPosition();
 		camera->SetTranslate(cameraTransform.translate);
 	}
+
+	// 敵の更新
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
 
-	/// 当たりは判定
+	// 当たりは判定
 	CheckCollision();
-	/// スプライトの更新
+	// スプライトの更新
 	SpritesUpdate();
 
-	/// プレイヤーがゴールに触れていたらシーン遷移
+	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
-		sceneManager->ChangeScene("GAMEPLAY");
+		sceneManager->ChangeScene("STAGECLEAR");
 	}
 
-	/// ImGuiの描画
+
+	// ImGuiの描画
 	DrawImgui();
 
 
@@ -208,6 +221,7 @@ void GamePlayScene::Draw()
 	// スプライトの描画 //
 	///////////////////
 
+	// スプライト描画前処理
 	SpritesDraw();
 
 }
@@ -574,6 +588,12 @@ void GamePlayScene::SpritesDraw()
 
 	//controlUI_DashUI->Draw();
 	//controlUI_move->Draw();
+
+	if (isPause_) {
+		// ポーズ画面
+		pauseUI_->Draw();
+
+	}
 }
 
 
@@ -602,10 +622,10 @@ void GamePlayScene::DrawImgui()
 	// カメラの配置 / 回転修正
 	cameraTransform.translate = camera->GetTranslate();
 	ImGui::DragFloat3("Camera Position", &cameraTransform.translate.x, 0.1f, -10000.0f, 10000.0f);
-	
+
 	cameraTransform.rotate = camera->GetRotate();
 	ImGui::DragFloat3("Camera Rotation", &cameraTransform.rotate.x, 0.1f, -180.0f, 180.0f);
-	
+
 
 
 	if (ImGui::CollapsingHeader("Start Camera Intro", ImGuiTreeNodeFlags_DefaultOpen))
