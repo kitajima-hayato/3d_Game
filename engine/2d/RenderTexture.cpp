@@ -1,6 +1,6 @@
 #include "RenderTexture.h"
-#include "engine/bace/DirectXCommon.h"
-#include "engine/bace/SrvManager.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/base/SrvManager.h"
 #include <map>
 RenderTexture::RenderTexture()
 {
@@ -36,7 +36,7 @@ void RenderTexture::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, 
 
 	currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
-	CreateGraficsPipeLine();
+	CreateGraphicsPipeLine();
 	CreateVertexBuffer();
 	
 }
@@ -164,10 +164,10 @@ void RenderTexture::Draw() {
 
 
 
-void RenderTexture::CreateGraficsPipeLine() {
+void RenderTexture::CreateGraphicsPipeLine() {
 
 	// ルートシグネチャの作成
-	CreateRootSignatrue();
+	CreateRootSignature();
 
 	// 頂点の位置データを表すセマンティクスを設定
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -242,7 +242,7 @@ void RenderTexture::CreateGraficsPipeLine() {
 	assert(SUCCEEDED(hr));
 }
 
-void RenderTexture::CreateRootSignatrue()
+void RenderTexture::CreateRootSignature()
 {
 #pragma region RootParameter
 	//RootSignature作成
@@ -256,7 +256,7 @@ void RenderTexture::CreateRootSignatrue()
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 #pragma endregion
 
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
+	//RootParameter作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
 	D3D12_ROOT_PARAMETER rootParam[1] = {};
 	rootParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;

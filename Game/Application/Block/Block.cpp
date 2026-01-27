@@ -26,16 +26,14 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	switch (this->blockType) {
 	case BlockType::Air:
 		break;
-	case BlockType::NormalBlock:
-		blockModel->SetModel("nullBlock.obj");
+	case BlockType::GrassBlock:
+		blockModel->SetModel("Grass.obj");
 		break;
-	case BlockType::testBlock:
-		blockModel->SetModel("XYZLabel.obj");
-		//元のブロックの大きさが1なので半分に縮小
-		transform.scale = { 0.5f,0.5f,0.5f };
+	case BlockType::SoilBlock:
+		blockModel->SetModel("soil.obj");
 		break;
 	case BlockType::breakBlock:
-		blockModel->SetModel("breakBlock.obj");
+		blockModel->SetModel("BreakBlock.obj");
 		break;
 	case BlockType::moveBlock:
 		blockModel->SetModel("moveBlock.obj");
@@ -48,6 +46,9 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 		break;
 	case BlockType::kGoalDown:
 		blockModel->SetModel("GoalDown.obj");
+		break;
+	case BlockType::Unbreakable:
+		blockModel->SetModel("Unbreakable.obj");
 		break;
 	default:
 		blockModel->SetModel("null.obj");

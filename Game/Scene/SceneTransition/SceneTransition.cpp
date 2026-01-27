@@ -1,6 +1,6 @@
 #include "SceneTransition.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 #include "engine/2d/SpriteCommon.h"
 #include "Input.h"

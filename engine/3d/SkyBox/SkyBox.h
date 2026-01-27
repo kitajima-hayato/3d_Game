@@ -1,7 +1,7 @@
 #pragma once
 #include "engine/math/MyMath.h"
-#include "engine/bace/DirectXCommon.h"
-#include "engine/bace/SrvManager.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/base/SrvManager.h"
 #include "Game/Camera/camera.h"
 /// <summary>
 /// スカイボックスクラス
@@ -96,7 +96,7 @@ private:
 	BlendMode currentBlendMode = BlendMode::kBlendModeAdd;  // 現在のブレンドモード
 
 	/// ラスタライザー
-	D3D12_RASTERIZER_DESC rasterrizerDesc{};
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
 
 	/// シェーダーバイナリ
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = nullptr;

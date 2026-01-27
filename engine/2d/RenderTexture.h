@@ -2,9 +2,9 @@
 #include <d3d12.h>
 #include <wrl.h>
 #include "engine/math/MyMath.h"
-#include "engine/bace/Logger.h"
-#include "engine/bace/DirectXCommon.h"
-#include "engine/bace/SrvManager.h"
+#include "engine/base/Logger.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/base/SrvManager.h"
 
 class DirectXCommon;
 class SrvManager;
@@ -51,11 +51,11 @@ private:
 	/// <summary>
 	/// グラフィックスパイプラインの生成
 	/// </summary>
-	void CreateGraficsPipeLine();
+	void CreateGraphicsPipeLine();
 	/// <summary>
 	/// ルートシグネチャの生成
 	/// </summary>
-	void CreateRootSignatrue();
+	void CreateRootSignature();
 	/// <summary>
 	/// 頂点バッファの生成
 	/// </summary>

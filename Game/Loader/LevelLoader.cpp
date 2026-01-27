@@ -2,7 +2,6 @@
 #ifdef USE_IMGUI
 #include "ImguiManager.h"
 #endif
-#include "ModelManager.h"
 void LevelLoader::Load(const std::string& fileName)
 {
 	const std::string kDefaultBaseDirectory = "resources/levels/stage/";

@@ -40,14 +40,14 @@ private:
 	std::unique_ptr<Object3D> titleBackGround1;
 	Transform titleBackGround1Transform;
 
-	std::unique_ptr<Object3D> titeleBackGround1_2;
-	Transform titeleBackGround1_2Transform;
+	std::unique_ptr<Object3D> titleBackGround1_2;
+	Transform titleBackGround1_2Transform;
 
-	std::unique_ptr<Object3D> titeleBackGround1_3;
-	Transform titeleBackGround1_3Transform;
+	std::unique_ptr<Object3D> titleBackGround1_3;
+	Transform titleBackGround1_3Transform;
 
-	std::unique_ptr<Object3D> titeleBackGround1_4;
-	Transform titeleBackGround1_4Transform;
+	std::unique_ptr<Object3D> titleBackGround1_4;
+	Transform titleBackGround1_4Transform;
 
 
 	std::unique_ptr<Object3D> skyBack;

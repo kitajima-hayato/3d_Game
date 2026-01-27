@@ -36,10 +36,10 @@
     <ClCompile Include="Game\Application\Map\CsvLoader.cpp">
       <Filter>Game\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp">
+    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\DirectXCommon.cpp">
+    <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
     <ClCompile Include="Game\Particle\EffectEmitter.cpp">
@@ -84,25 +84,25 @@
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\ImGuiManager.cpp">
+    <ClCompile Include="engine\base\ImGuiManager.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\Input.cpp">
+    <ClCompile Include="engine\base\Input.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\Logger.cpp">
+    <ClCompile Include="engine\base\Logger.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\SrvManager.cpp">
+    <ClCompile Include="engine\base\SrvManager.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\StringUtility.cpp">
+    <ClCompile Include="engine\base\StringUtility.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\TextureManager.cpp">
+    <ClCompile Include="engine\base\TextureManager.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\WinAPI.cpp">
+    <ClCompile Include="engine\base\WinAPI.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
     <ClCompile Include="Game\Loader\LevelLoader.cpp">
@@ -182,10 +182,10 @@
     <ClInclude Include="Game\Application\Map\CsvLoader.h">
       <Filter>Game\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\D3DResourceLeakChecker.h">
+    <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\DirectXCommon.h">
+    <ClInclude Include="engine\base\DirectXCommon.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\EffectEmitter.h">
@@ -230,25 +230,25 @@
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\ImGuiManager.h">
+    <ClInclude Include="engine\base\ImGuiManager.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\Input.h">
+    <ClInclude Include="engine\base\Input.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\Logger.h">
+    <ClInclude Include="engine\base\Logger.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\SrvManager.h">
+    <ClInclude Include="engine\base\SrvManager.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\StringUtility.h">
+    <ClInclude Include="engine\base\StringUtility.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\TextureManager.h">
+    <ClInclude Include="engine\base\TextureManager.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\WinAPI.h">
+    <ClInclude Include="engine\base\WinAPI.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
     <ClInclude Include="Game\Loader\LevelLoader.h">

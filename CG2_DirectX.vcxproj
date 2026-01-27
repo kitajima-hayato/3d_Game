@@ -66,7 +66,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\bace;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,7 +92,7 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\bace;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,13 +123,13 @@
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="InsideScene\BaseScene.cpp" />
     <ClCompile Include="Game\Camera\Camera.cpp" />
-    <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="engine\bace\DirectXCommon.cpp" />
-    <ClCompile Include="engine\bace\Input.cpp" />
-    <ClCompile Include="engine\bace\Logger.cpp" />
+    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="engine\base\DirectXCommon.cpp" />
+    <ClCompile Include="engine\base\Input.cpp" />
+    <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="InsideScene\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
-    <ClCompile Include="engine\bace\ImGuiManager.cpp" />
+    <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MakeMatrix.cpp" />
@@ -140,15 +140,15 @@
     <ClCompile Include="engine\3d\Object3DCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="engine\bace\StringUtility.cpp" />
-    <ClCompile Include="engine\bace\TextureManager.cpp" />
-    <ClCompile Include="engine\bace\WinAPI.cpp" />
+    <ClCompile Include="engine\base\StringUtility.cpp" />
+    <ClCompile Include="engine\base\TextureManager.cpp" />
+    <ClCompile Include="engine\base\WinAPI.cpp" />
     <ClCompile Include="Game\Scene\MyGame.cpp" />
     <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Game\Particle\ParticleManager.cpp" />
     <ClCompile Include="InsideScene\SceneFactory.cpp" />
     <ClCompile Include="InsideScene\SceneManager.cpp" />
-    <ClCompile Include="engine\bace\SrvManager.cpp" />
+    <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
@@ -180,10 +180,10 @@
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="InsideScene\BaseScene.h" />
     <ClInclude Include="Game\Camera\Camera.h" />
-    <ClInclude Include="engine\bace\D3DResourceLeakChecker.h" />
-    <ClInclude Include="engine\bace\DirectXCommon.h" />
-    <ClInclude Include="engine\bace\Input.h" />
-    <ClInclude Include="engine\bace\Logger.h" />
+    <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
+    <ClInclude Include="engine\base\DirectXCommon.h" />
+    <ClInclude Include="engine\base\Input.h" />
+    <ClInclude Include="engine\base\Logger.h" />
     <ClInclude Include="engine\math\MakeMatrix.h" />
     <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\3d\Model.h" />
@@ -193,18 +193,18 @@
     <ClInclude Include="engine\3d\Object3DCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
-    <ClInclude Include="engine\bace\StringUtility.h" />
-    <ClInclude Include="engine\bace\TextureManager.h" />
-    <ClInclude Include="engine\bace\WinAPI.h" />
+    <ClInclude Include="engine\base\StringUtility.h" />
+    <ClInclude Include="engine\base\TextureManager.h" />
+    <ClInclude Include="engine\base\WinAPI.h" />
     <ClInclude Include="InsideScene\Framework.h" />
     <ClInclude Include="Game\Scene\GamePlayScene.h" />
-    <ClInclude Include="engine\bace\ImGuiManager.h" />
+    <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\MyGame.h" />
     <ClInclude Include="Game\Particle\ParticleEmitter.h" />
     <ClInclude Include="Game\Particle\ParticleManager.h" />
     <ClInclude Include="InsideScene\SceneFactory.h" />
     <ClInclude Include="InsideScene\SceneManager.h" />
-    <ClInclude Include="engine\bace\SrvManager.h" />
+    <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Game\Application\StageType.h" />
     <ClInclude Include="Game\Application\Enemy\NormalEnemy.h" />
