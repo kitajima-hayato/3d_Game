@@ -108,7 +108,7 @@
 └── ├── Audio/
 └── └── ├── Audio.cpp
 └── └── └── Audio.h
-└── ├── bace/
+└── ├── base/
 └── └── ├── D3DResourceLeakChecker.cpp
 └── └── ├── D3DResourceLeakChecker.h
 └── └── ├── DirectXCommon.cpp
@@ -206,7 +206,7 @@ File Path: CG2_DirectX.vcxproj
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\bace;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -232,7 +232,7 @@ File Path: CG2_DirectX.vcxproj
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\bace;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\k023g\Desktop\GE3\engine\math;$(ProjectDir)engine\2d;$(ProjectDir)engine\3d;$(ProjectDir)engine\audio;$(ProjectDir)engine\base;$(ProjectDir)engine\math;$(ProjectDir)engine\scene;$(ProjectDir)imgui;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -263,13 +263,13 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="engine\Audio\Audio.cpp" />
     <ClCompile Include="InsideScene\BaseScene.cpp" />
     <ClCompile Include="Game\Camera\Camera.cpp" />
-    <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp" />
-    <ClCompile Include="engine\bace\DirectXCommon.cpp" />
-    <ClCompile Include="engine\bace\Input.cpp" />
-    <ClCompile Include="engine\bace\Logger.cpp" />
+    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
+    <ClCompile Include="engine\base\DirectXCommon.cpp" />
+    <ClCompile Include="engine\base\Input.cpp" />
+    <ClCompile Include="engine\base\Logger.cpp" />
     <ClCompile Include="InsideScene\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
-    <ClCompile Include="engine\bace\ImGuiManager.cpp" />
+    <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MakeMatrix.cpp" />
@@ -280,15 +280,15 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="engine\3d\Object3DCommon.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
-    <ClCompile Include="engine\bace\StringUtility.cpp" />
-    <ClCompile Include="engine\bace\TextureManager.cpp" />
-    <ClCompile Include="engine\bace\WinAPI.cpp" />
+    <ClCompile Include="engine\base\StringUtility.cpp" />
+    <ClCompile Include="engine\base\TextureManager.cpp" />
+    <ClCompile Include="engine\base\WinAPI.cpp" />
     <ClCompile Include="Game\Scene\MyGame.cpp" />
     <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Game\Particle\ParticleManager.cpp" />
     <ClCompile Include="InsideScene\SceneFactory.cpp" />
     <ClCompile Include="InsideScene\SceneManager.cpp" />
-    <ClCompile Include="engine\bace\SrvManager.cpp" />
+    <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
@@ -320,10 +320,10 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="engine\Audio\Audio.h" />
     <ClInclude Include="InsideScene\BaseScene.h" />
     <ClInclude Include="Game\Camera\Camera.h" />
-    <ClInclude Include="engine\bace\D3DResourceLeakChecker.h" />
-    <ClInclude Include="engine\bace\DirectXCommon.h" />
-    <ClInclude Include="engine\bace\Input.h" />
-    <ClInclude Include="engine\bace\Logger.h" />
+    <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
+    <ClInclude Include="engine\base\DirectXCommon.h" />
+    <ClInclude Include="engine\base\Input.h" />
+    <ClInclude Include="engine\base\Logger.h" />
     <ClInclude Include="engine\math\MakeMatrix.h" />
     <ClInclude Include="engine\math\MyMath.h" />
     <ClInclude Include="engine\3d\Model.h" />
@@ -333,18 +333,18 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="engine\3d\Object3DCommon.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
-    <ClInclude Include="engine\bace\StringUtility.h" />
-    <ClInclude Include="engine\bace\TextureManager.h" />
-    <ClInclude Include="engine\bace\WinAPI.h" />
+    <ClInclude Include="engine\base\StringUtility.h" />
+    <ClInclude Include="engine\base\TextureManager.h" />
+    <ClInclude Include="engine\base\WinAPI.h" />
     <ClInclude Include="InsideScene\Framework.h" />
     <ClInclude Include="Game\Scene\GamePlayScene.h" />
-    <ClInclude Include="engine\bace\ImGuiManager.h" />
+    <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\MyGame.h" />
     <ClInclude Include="Game\Particle\ParticleEmitter.h" />
     <ClInclude Include="Game\Particle\ParticleManager.h" />
     <ClInclude Include="InsideScene\SceneFactory.h" />
     <ClInclude Include="InsideScene\SceneManager.h" />
-    <ClInclude Include="engine\bace\SrvManager.h" />
+    <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Game\Application\StageType.h" />
     <ClInclude Include="Game\Application\Enemy\NormalEnemy.h" />
@@ -422,10 +422,10 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Application\Map\CsvLoader.cpp">
       <Filter>Game\Loader</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\D3DResourceLeakChecker.cpp">
+    <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\DirectXCommon.cpp">
+    <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
     <ClCompile Include="Game\Particle\EffectEmitter.cpp">
@@ -470,25 +470,25 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Scene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\ImGuiManager.cpp">
+    <ClCompile Include="engine\base\ImGuiManager.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\Input.cpp">
+    <ClCompile Include="engine\base\Input.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\Logger.cpp">
+    <ClCompile Include="engine\base\Logger.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\SrvManager.cpp">
+    <ClCompile Include="engine\base\SrvManager.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\StringUtility.cpp">
+    <ClCompile Include="engine\base\StringUtility.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\TextureManager.cpp">
+    <ClCompile Include="engine\base\TextureManager.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
-    <ClCompile Include="engine\bace\WinAPI.cpp">
+    <ClCompile Include="engine\base\WinAPI.cpp">
       <Filter>engine\bace</Filter>
     </ClCompile>
     <ClCompile Include="Game\Loader\LevelLoader.cpp">
@@ -568,10 +568,10 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Application\Map\CsvLoader.h">
       <Filter>Game\Loader</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\D3DResourceLeakChecker.h">
+    <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\DirectXCommon.h">
+    <ClInclude Include="engine\base\DirectXCommon.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\EffectEmitter.h">
@@ -616,25 +616,25 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Scene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\ImGuiManager.h">
+    <ClInclude Include="engine\base\ImGuiManager.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\Input.h">
+    <ClInclude Include="engine\base\Input.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\Logger.h">
+    <ClInclude Include="engine\base\Logger.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\SrvManager.h">
+    <ClInclude Include="engine\base\SrvManager.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\StringUtility.h">
+    <ClInclude Include="engine\base\StringUtility.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\TextureManager.h">
+    <ClInclude Include="engine\base\TextureManager.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
-    <ClInclude Include="engine\bace\WinAPI.h">
+    <ClInclude Include="engine\base\WinAPI.h">
       <Filter>engine\bace</Filter>
     </ClInclude>
     <ClInclude Include="Game\Loader\LevelLoader.h">
@@ -766,16 +766,16 @@ File Path: Game/Application/BackGround.cpp
 ============================================================
 #include "BackGround.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 void BackGround::Initialize()
 {
 	titleBackGround3 = std::make_unique<Object3D>();
 	titleBackGround3->Initialize();
-	titleBackGround3->SetModel("back3.obj");
+	titleBackGround3->SetModel("Back3Reverse.obj");
 	titleBackGround3Transform = {
-		{ 1.0f,50.0f,30.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 30.0f,50.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,200.0f }
 	};
 	titleBackGround3->SetTransform(titleBackGround3Transform);
@@ -783,32 +783,34 @@ void BackGround::Initialize()
 	// 右に繋げる
 	titleBackGround3_2 = std::make_unique<Object3D>();
 	titleBackGround3_2->Initialize();
-	titleBackGround3_2->SetModel("back3.obj");
+	titleBackGround3_2->SetModel("Back3.obj");
 	titleBackGround3_2Transform = {
-		{ 1.0f,50.0f,30.0f },
-		{ 0.0f,1.7f,0.0f },
+		{ 30.0f,50.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
 	};
 	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+
+
+
 
 	titleBackGround2 = std::make_unique<Object3D>();
 	titleBackGround2->Initialize();
 	titleBackGround2->SetModel("back2.obj");
 	titleBackGround2Transform = {
-		{ 1.0f,60.0f,30.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 30.0f,60.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,150.0f }
 	};
 
 	titleBackGround2->SetTransform(titleBackGround2Transform);
 
-
 	titleBackGround2_2 = std::make_unique<Object3D>();
 	titleBackGround2_2->Initialize();
-	titleBackGround2_2->SetModel("back2.obj");
+	titleBackGround2_2->SetModel("Back2Reverse.obj");
 	titleBackGround2_2Transform = {
-		{ 1.0f,60.0f,30.0f },
-		{ 0.0f,1.5f,0.0f },
+		{ 30.0f,60.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 180.0f,-4.0f,150.0f }
 	};
 	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
@@ -816,8 +818,8 @@ void BackGround::Initialize()
 	titleBackGround2_3->Initialize();
 	titleBackGround2_3->SetModel("back2.obj");
 	titleBackGround2_3Transform = {
-		{ 1.0f,60.0f,30.0f },
-		{ 0.0f,-1.5f,0.0f },
+		{ 30.0f,60.0f,1.0f },
+		{ 0.0f,-0.0f,0.0f },
 		{ 350.0f,-4.0f,150.0f }
 	};
 	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
@@ -834,41 +836,41 @@ void BackGround::Initialize()
 	};
 	titleBackGround1->SetTransform(titleBackGround1Transform);
 
-	titeleBackGround1_2 = std::make_unique<Object3D>();
-	titeleBackGround1_2->Initialize();
-	titeleBackGround1_2->SetModel("back1.obj");
-	titeleBackGround1_2Transform = {
+	titleBackGround1_2 = std::make_unique<Object3D>();
+	titleBackGround1_2->Initialize();
+	titleBackGround1_2->SetModel("back1.obj");
+	titleBackGround1_2Transform = {
 		{ 1.0f,20.0f,10.0f },
 		{ 0.0f,1.5f,0.0f },
 		{ 65,-2.0f,50.0f }
 	};
-	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
-	titeleBackGround1_3 = std::make_unique<Object3D>();
-	titeleBackGround1_3->Initialize();
-	titeleBackGround1_3->SetModel("back1.obj");
-	titeleBackGround1_3Transform = {
+	titleBackGround1_2->SetTransform(titleBackGround1_2Transform);
+	titleBackGround1_3 = std::make_unique<Object3D>();
+	titleBackGround1_3->Initialize();
+	titleBackGround1_3->SetModel("back1.obj");
+	titleBackGround1_3Transform = {
 		{ 1.0f,20.0f,10.0f },
 		{ 0.0f,-1.5f,0.0f },
 		{ 120,-2.0f,50.0f }
 	};
-	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
+	titleBackGround1_3->SetTransform(titleBackGround1_3Transform);
 
-	titeleBackGround1_4 = std::make_unique<Object3D>();
-	titeleBackGround1_4->Initialize();
-	titeleBackGround1_4->SetModel("back1.obj");
-	titeleBackGround1_4Transform = {
+	titleBackGround1_4 = std::make_unique<Object3D>();
+	titleBackGround1_4->Initialize();
+	titleBackGround1_4->SetModel("back1.obj");
+	titleBackGround1_4Transform = {
 		{ 1.0f,20.0f,10.0f },
 		{ 0.0f,1.5f,0.0f },
 		{ 178,-2.0f,50.0f }
 	};
-	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
+	titleBackGround1_4->SetTransform(titleBackGround1_4Transform);
 
 	skyBack = std::make_unique<Object3D>();
 	skyBack->Initialize();
 	skyBack->SetModel("BackSky.obj");
 	skyBackTransform = {
-		{ 120.0f,400.0f,1.0f },
-		{ 0.0f,0.0f,-1.5f },
+		{ 400.0f,100.0f,1.0f },
+		{ 0.0f,0.0f, 0.0f },
 		{ 7.5f,0.0f,250.0f }
 	};
 	skyBack->SetTransform(skyBackTransform);
@@ -892,11 +894,7 @@ void BackGround::Update()
 
 	// 背景
 	// 少しづつ左に流す 更新
-	// 3
-	/*titleBackGround3Transform.translate.x -= 0.03f;
-	titleBackGround3_2Transform.translate.x -= 0.03f;
-	titleBackGround3->SetTransform(titleBackGround3Transform);
-	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);*/
+	
 
 	titleBackGround3->Update();
 	titleBackGround3_2->Update();
@@ -911,18 +909,11 @@ void BackGround::Update()
 	titleBackGround2_2->Update();
 	titleBackGround2_3->Update();
 	// 1
-	/*titleBackGround1Transform.translate.x -= 0.1f;
-	titeleBackGround1_2Transform.translate.x -= 0.1f;
-	titeleBackGround1_3Transform.translate.x -= 0.1f;
-	titeleBackGround1_4Transform.translate.x -= 0.1f;
-	titleBackGround1->SetTransform(titleBackGround1Transform);
-	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
-	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
-	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);*/
+
 	titleBackGround1->Update();
-	titeleBackGround1_2->Update();
-	titeleBackGround1_3->Update();
-	titeleBackGround1_4->Update();
+	titleBackGround1_2->Update();
+	titleBackGround1_3->Update();
+	titleBackGround1_4->Update();
 	soil->Update();
 
 	DrawImgui();
@@ -938,9 +929,9 @@ void BackGround::Draw()
 	titleBackGround2_2->Draw();
 	titleBackGround2_3->Draw();
 	titleBackGround1->Draw();
-	titeleBackGround1_2->Draw();
-	titeleBackGround1_3->Draw();
-	titeleBackGround1_4->Draw();
+	titleBackGround1_2->Draw();
+	titleBackGround1_3->Draw();
+	titleBackGround1_4->Draw();
 	soil->Draw();
 }
 
@@ -952,13 +943,30 @@ void BackGround::DrawImgui()
 
 	// 設定として保存
 	ImGui::Begin("BackGround Transform");
-	ImGui::DragFloat3("titleBackGround3 Translate", &titleBackGround3Transform.translate.x, 0.1f);
-	titleBackGround3->SetTransform(titleBackGround3Transform);
+	// 背景3 srt
+	Transform backGround3Transform = titleBackGround3->GetTransform();
+	ImGui::DragFloat3("titleBackGround3 Scale", &backGround3Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround3 Rotate", &backGround3Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround3 Translate", &backGround3Transform.translate.x, 0.1f);
+	titleBackGround3->SetTransform(backGround3Transform);
+
+
 	ImGui::DragFloat3("titleBackGround3_2 Translate", &titleBackGround3_2Transform.translate.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround3_2 Rotate", &titleBackGround3_2Transform.rotate.x, 0.1f);
 	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
 	ImGui::DragFloat3("titleBackGround2 Translate", &titleBackGround2Transform.translate.x, 0.1f);
 	titleBackGround2->SetTransform(titleBackGround2Transform);
 
+
+	// スカイバック　
+	ImGui::DragFloat3("SkyBack Translate", &skyBackTransform.translate.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
+	// rotate
+	ImGui::DragFloat3("SkyBack Rotate", &skyBackTransform.rotate.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
+	// scale
+	ImGui::DragFloat3("SkyBack Scale", &skyBackTransform.scale.x, 0.1f);
+	skyBack->SetTransform(skyBackTransform);
 	ImGui::End();
 	
 
@@ -1014,14 +1022,14 @@ private:
 	std::unique_ptr<Object3D> titleBackGround1;
 	Transform titleBackGround1Transform;
 
-	std::unique_ptr<Object3D> titeleBackGround1_2;
-	Transform titeleBackGround1_2Transform;
+	std::unique_ptr<Object3D> titleBackGround1_2;
+	Transform titleBackGround1_2Transform;
 
-	std::unique_ptr<Object3D> titeleBackGround1_3;
-	Transform titeleBackGround1_3Transform;
+	std::unique_ptr<Object3D> titleBackGround1_3;
+	Transform titleBackGround1_3Transform;
 
-	std::unique_ptr<Object3D> titeleBackGround1_4;
-	Transform titeleBackGround1_4Transform;
+	std::unique_ptr<Object3D> titleBackGround1_4;
+	Transform titleBackGround1_4Transform;
 
 
 	std::unique_ptr<Object3D> skyBack;
@@ -1065,16 +1073,14 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	switch (this->blockType) {
 	case BlockType::Air:
 		break;
-	case BlockType::NormalBlock:
-		blockModel->SetModel("nullBlock.obj");
+	case BlockType::GrassBlock:
+		blockModel->SetModel("Grass.obj");
 		break;
-	case BlockType::testBlock:
-		blockModel->SetModel("XYZLabel.obj");
-		//元のブロックの大きさが1なので半分に縮小
-		transform.scale = { 0.5f,0.5f,0.5f };
+	case BlockType::SoilBlock:
+		blockModel->SetModel("soil.obj");
 		break;
 	case BlockType::breakBlock:
-		blockModel->SetModel("breakBlock.obj");
+		blockModel->SetModel("BreakBlock.obj");
 		break;
 	case BlockType::moveBlock:
 		blockModel->SetModel("moveBlock.obj");
@@ -1087,6 +1093,9 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 		break;
 	case BlockType::kGoalDown:
 		blockModel->SetModel("GoalDown.obj");
+		break;
+	case BlockType::Unbreakable:
+		blockModel->SetModel("Unbreakable.obj");
 		break;
 	default:
 		blockModel->SetModel("null.obj");
@@ -1274,13 +1283,14 @@ File Path: Game/Application/Block/BlockType.h
 enum class BlockType
 {
 	Air = 0,
-	NormalBlock = 1,
-	testBlock = 2,
+	GrassBlock = 1,
+	SoilBlock = 2,
 	kGoalUp = 3,
 	kGoalDown = 4,
 	breakBlock = 5,
 	moveBlock = 6,
 	sandBlock = 7,
+	Unbreakable = 8,
 	// 範囲検索の最終値
 	/// 検索を行う際にCountを指定することで範囲検索を可能にできる
 	Count,	
@@ -1578,7 +1588,7 @@ File Path: Game/Application/Enemy/FlyingEnemy.h
 ============================================================
 #pragma once
 #include "EnemyBase.h"
-/// 基底クラス<BaceEnemy>を継承
+/// 基底クラス<BaseEnemy>を継承
 class FlyingEnemy :
     public EnemyBase
 {
@@ -1690,7 +1700,7 @@ File Path: Game/Application/Enemy/NormalEnemy.h
 ============================================================
 #pragma once
 #include "EnemyBase.h"
-/// 基底クラス<BaceEnemy>を継承
+/// 基底クラス<Bas8eEnemy>を継承
 class NormalEnemy :
 	public EnemyBase
 {
@@ -1935,7 +1945,7 @@ File Path: Game/Application/Map/Map.cpp
 ============================================================
 #include "Map.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 #include "Game/Particle/ParticleManager.h"
 
@@ -1944,13 +1954,14 @@ File Path: Game/Application/Map/Map.cpp
 ImVec4 GetBlockColorByType(BlockType blockType) {
 	switch (blockType) {
 	case BlockType::Air:         return ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-	case BlockType::NormalBlock: return ImVec4(0.4f, 0.4f, 0.8f, 1.0f);
-	case BlockType::testBlock:   return ImVec4(0.8f, 0.4f, 0.4f, 1.0f);
+	case BlockType::GrassBlock: return ImVec4(0.4f, 0.4f, 0.8f, 1.0f);
+	case BlockType::SoilBlock:   return ImVec4(0.8f, 0.4f, 0.4f, 1.0f);
 	case BlockType::kGoalUp:     return ImVec4(0.4f, 0.8f, 0.4f, 1.0f);
 	case BlockType::kGoalDown:   return ImVec4(0.4f, 0.8f, 0.8f, 1.0f);
 	case BlockType::breakBlock:  return ImVec4(0.8f, 0.8f, 0.4f, 1.0f);
 	case BlockType::moveBlock:   return ImVec4(0.8f, 0.4f, 0.8f, 1.0f);
 	case BlockType::sandBlock:   return ImVec4(0.7f, 0.6f, 0.3f, 1.0f);
+	case BlockType::Unbreakable: return ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
 	default:                     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	}
 }
@@ -1974,7 +1985,7 @@ void Map::Initialize(const char* filePath)
 	previousMapData_ = mapChipData_;
 
 	ParticleManager::GetInstance()->CreateParticleGroup(
-        "BreakParticle", "resources/sky.png");
+        "BreakParticle", "resources/BackSky.png");
 	breakParticleEmitter_ = std::make_unique<ParticleEmitter>();
 	breakParticleEmitter_->SetParticleName("BreakParticle");
 	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
@@ -2073,13 +2084,14 @@ void Map::Update()
             static int currentTypeInt = 0;
             const char* blockTypeNames[] = {
                 "Air",
-                "NormalBlock",
-                "TestBlock",
+                "GrassBlock",
+                "SoilBlock",
                 "GoalUp",
                 "GoalDown",
                 "BreakBlock",
                 "MoveBlock",
                 "SandBlock",
+				"Unbreakable",
             };
 
             ImGui::Text("Paint Type:");
@@ -2723,8 +2735,10 @@ void ModelList::LoadAllModel()
 	// タイトルロゴ
 	ModelManager::GetInstance()->LoadModel("title.obj");
 	// タイトル背景
-	ModelManager::GetInstance()->LoadModel("back3.obj");
+	ModelManager::GetInstance()->LoadModel("Back3.obj");
+	ModelManager::GetInstance()->LoadModel("Back3Reverse.obj");
 	ModelManager::GetInstance()->LoadModel("back2.obj");
+	ModelManager::GetInstance()->LoadModel("Back2Reverse.obj");
 	ModelManager::GetInstance()->LoadModel("back1.obj");
 	ModelManager::GetInstance()->LoadModel("BackSky.obj");
 	ModelManager::GetInstance()->LoadModel("soil.obj");
@@ -2733,12 +2747,14 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance()->LoadModel("SelectBaseGround.obj");
 
 	/// GamePlayScene
+	ModelManager::GetInstance()->LoadModel("Grass.obj");
 	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
 	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
 	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
-	ModelManager::GetInstance()->LoadModel("breakBlock.obj");
+	ModelManager::GetInstance()->LoadModel("BreakBlock.obj");
 	ModelManager::GetInstance()->LoadModel("moveBlock.obj");
 	ModelManager::GetInstance()->LoadModel("sand.obj");
+	ModelManager::GetInstance()->LoadModel("Unbreakable.obj");
 
 	ModelManager::GetInstance()->LoadModel("GoalUp.obj");
 	ModelManager::GetInstance()->LoadModel("GoalDown.obj");
@@ -2767,7 +2783,7 @@ File Path: Game/Application/Player/Player.cpp
 #include <algorithm>
 #include "Input.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 
 
@@ -3373,9 +3389,10 @@ bool Player::IsHitBlockTable(BlockType type)
 	// 判定を取るブロックの種類かどうか
 	switch (type)
 	{
-	case BlockType::NormalBlock:
-	case BlockType::testBlock:
+	case BlockType::GrassBlock:
+	case BlockType::SoilBlock:
 	case BlockType::breakBlock:
+	case BlockType::Unbreakable:
 		return true;
 
 	default:
@@ -4315,7 +4332,6 @@ File Path: Game/Loader/LevelLoader.cpp
 #ifdef USE_IMGUI
 #include "ImguiManager.h"
 #endif
-#include "ModelManager.h"
 void LevelLoader::Load(const std::string& fileName)
 {
 	const std::string kDefaultBaseDirectory = "resources/levels/stage/";
@@ -4526,7 +4542,7 @@ File Path: Game/Loader/LevelLoader.h
 #include <string>  
 #include <fstream>  
 #include <cassert>  
-#include "resources/levels/json.hpp"  
+#include "resources/json/json.hpp"  
 #include "engine/math/MyMath.h"  
 #include "engine/3d/Model.h"
 #include "engine/3d/Object3D.h"
@@ -6760,7 +6776,7 @@ File Path: Game/Scene/GamePlayScene.cpp
 #include "Game/Particle/ParticleManager.h"
 #include "InsideScene/Framework.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 GamePlayScene::GamePlayScene()
 {
@@ -6800,7 +6816,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("Base1");
+	map->Initialize("1-1");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -7353,6 +7369,16 @@ void GamePlayScene::DrawImgui()
 	//==============================
 	// Start Camera Intro Tuning UI
 	//==============================
+
+	// カメラの配置 / 回転修正
+	cameraTransform.translate = camera->GetTranslate();
+	ImGui::DragFloat3("Camera Position", &cameraTransform.translate.x, 0.1f, -10000.0f, 10000.0f);
+	
+	cameraTransform.rotate = camera->GetRotate();
+	ImGui::DragFloat3("Camera Rotation", &cameraTransform.rotate.x, 0.1f, -180.0f, 180.0f);
+	
+
+
 	if (ImGui::CollapsingHeader("Start Camera Intro", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("StageStartEventFlag: %s", stageStartEventFlag_ ? "true" : "false");
@@ -7756,7 +7782,7 @@ void MyGame::Initialize()
 	renderTexture->Initialize(dxCommon.get(),srvManager.get(),
 		WinAPI::kClientWidth,WinAPI::kClientHeight,
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, 
-		Vector4{ 1.0f, 1.0f, 1.0f, 0.0f });
+		Vector4{ 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void MyGame::Update()
@@ -7931,6 +7957,7 @@ private:	// メンバ変数
 File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.cpp
 ============================================================
 #include "StageSelectGraph.h"
+#include <fstream>  
 
 StageSelectGraph::StageSelectGraph()
 {
@@ -7942,15 +7969,17 @@ StageSelectGraph::~StageSelectGraph()
 
 void StageSelectGraph::Initialize()
 {
-	// ノードの追加
-	uint32_t nodeA = AddNode({ 0,0 }, 1, true);
-	uint32_t nodeB = AddNode({ 1,0 }, 2, false);
-	uint32_t nodeC = AddNode({ 1,1 }, 3, false);
-	uint32_t nodeD = AddNode({ 2,0 }, 4, false);
-	// ノードの接続
-	Link(nodeA, nodeB, Direction::Right);
-	Link(nodeB, nodeC, Direction::Up);
-	Link(nodeB, nodeD, Direction::Down);
+	//// ノードの追加
+	//uint32_t nodeA = AddNode({ 0,0 }, 1, true);
+	//uint32_t nodeB = AddNode({ 1,0 }, 2, false);
+	//uint32_t nodeC = AddNode({ 1,1 }, 3, false);
+	//uint32_t nodeD = AddNode({ 2,0 }, 4, false);
+	//// ノードの接続
+	//Link(nodeA, nodeB, Direction::Right);
+	//Link(nodeB, nodeC, Direction::Up);
+	//Link(nodeB, nodeD, Direction::Down);
+
+	LoadMapNodeFromJson("StageSelectNodes");
 
 }
 
@@ -7965,6 +7994,7 @@ uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, bool unlocked)
 	StageNode newNode{};
 	newNode.id = static_cast<uint32_t>(nodes_.size());
 	newNode.position = pos;
+	newNode.stageId = stageId;
 	newNode.unlocked = unlocked;
 
 	// 全方向の隣接ノードを無効に設定
@@ -8018,6 +8048,155 @@ const StageNode& StageSelectGraph::GetNode(uint32_t id) const
 
 }
 
+void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
+{
+	// JSONファイルからノード情報を読み込む処理
+	// filePathはリソースフォルダからの相対パス
+	const std::string frontFilePath = "resources/StageSelect";
+	const std::string kExtension = ".json";
+	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
+
+	// ファイル読み込み
+	std::ifstream file;
+
+	// ファイルを開く
+	file.open(fullPath);
+
+	// ファイルが開けたかどうか
+	if (file.fail()){
+		// エラーメッセージを表示して終了
+		printf("Failed to open file: %s\n", fullPath.c_str());
+		return;
+	}
+
+	// JSON文字列
+	nlohmann::json deserialized;
+	// パース(解凍)
+	file >> deserialized;
+
+	// ノード情報の確認
+	assert(deserialized.contains("nodes"));
+	assert(deserialized["nodes"].is_array());
+
+	// 既存ノード情報のクリア
+	nodes_.clear();
+
+	// -------- 1パス目：ノード生成のみ --------
+	for (const auto& jsonNode : deserialized["nodes"]) {
+		// ノード情報の確認
+		assert(jsonNode.contains("position"));
+		assert(jsonNode["position"].contains("x"));
+		assert(jsonNode["position"].contains("y"));
+		assert(jsonNode["position"]["x"].is_number_integer());
+		assert(jsonNode["position"]["y"].is_number_integer());
+
+		assert(jsonNode.contains("stage_id"));
+		assert(jsonNode["stage_id"].is_number_integer());
+		assert(jsonNode.contains("unlocked"));
+		assert(jsonNode["unlocked"].is_boolean());
+
+		// ノード情報の取得
+		MapPos pos{};
+		pos.x = jsonNode["position"]["x"].get<uint32_t>();
+		pos.y = jsonNode["position"]["y"].get<uint32_t>();
+		uint32_t stageId = jsonNode["stage_id"].get<uint32_t>();
+		bool unlocked = jsonNode["unlocked"].get<bool>();
+
+		// ノードの追加
+		AddNode(pos, stageId, unlocked);
+	}
+
+	// -------- 2パス目：neighbors 設定 --------
+	for (uint32_t i = 0; i < (uint32_t)nodes_.size(); ++i) {
+		const auto& jsonNode = deserialized["nodes"][i];
+
+		// neighbors情報の確認
+		if (!jsonNode.contains("neighbors")) continue;
+		assert(jsonNode["neighbors"].is_object());
+
+		// neighbors情報の取得と設定
+		for (const auto& it : jsonNode["neighbors"].items()) {
+			const std::string& dirStr = it.key();
+			uint32_t neighborId = it.value().get<uint32_t>();
+
+			// 方向の文字列をDirection列挙型に変換
+			Direction dir{};
+			if (dirStr == "Up") dir = Direction::Up;
+			else if (dirStr == "Down") dir = Direction::Down;
+			else if (dirStr == "Left") dir = Direction::Left;
+			else if (dirStr == "Right") dir = Direction::Right;
+			else continue;
+
+			// 範囲外参照の保護
+			if (neighborId >= nodes_.size()) continue;
+
+			// 隣接ノードの設定
+			SetNeighbor(i, dir, neighborId);
+		}
+	}
+
+
+
+}
+
+
+const char* DirectionToString(Direction d)
+{
+	switch (d) {
+	case Direction::Up:    return "Up";
+	case Direction::Down:  return "Down";
+	case Direction::Left:  return "Left";
+	case Direction::Right: return "Right";
+	default:               return "Unknown"; 
+	}
+}
+
+
+nlohmann::json StageSelectGraph::ToJson() const
+{
+	// json
+	nlohmann::json root;
+	// nodes 
+	root["nodes"] = nlohmann::json::array();
+
+	for (const auto& n : nodes_) {
+		nlohmann::json jn;
+		jn["position"] = { {"x",n.position.x},{"y",n.position.y} };
+		jn["stage_id"] = n.stageId;
+		jn["unlocked"] = n.unlocked;
+
+		nlohmann::json neigh = nlohmann::json::object();
+		for (uint32_t i = 0; i < (uint32_t)Direction::count; i++) {
+			uint32_t to = n.neighbor[i];
+			if (to != INVALID_NODE_ID) {
+				neigh[DirectionToString((Direction)i)] = to;
+			}
+		}
+		jn["neighbors"] = neigh;
+
+		root["nodes"].push_back(jn);
+	}
+	return root;
+}
+
+std::string StageSelectGraph::ToJsonString(int indent) const
+{
+	return ToJson().dump(indent);
+}
+
+bool StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
+{
+	const std::string frontFilePath = "resources/StageSelect";
+	const std::string kExtension = ".json";
+	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
+
+	std::ofstream ofs(fullPath);
+	if (ofs.fail())return false;
+
+	ofs << ToJsonString(2);
+	return true;
+}
+
 bool StageSelectGraph::RemoveNode(uint32_t id)
 {
 	return false;
@@ -8035,12 +8214,20 @@ bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
 
 bool StageSelectGraph::SetNodeStageId(uint32_t id, uint32_t stageId)
 {
-	return false;
+	// IDのチェック / 範囲外なら失敗
+	if (id >= nodes_.size()) return false;
+	// ステージIDの設定
+	nodes_[id].stageId = stageId;
+	return true;
 }
 
 bool StageSelectGraph::SetNodeUnlocked(uint32_t id, bool unlocked)
 {
-	return false;
+	// IDのチェック / 範囲外なら失敗
+	if (id >= nodes_.size()) return false;
+	// アンロック状態の設定
+	nodes_[id].unlocked = unlocked;
+	return true;
 }
 
 bool StageSelectGraph::SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid)
@@ -8057,7 +8244,8 @@ bool StageSelectGraph::SetNeighbor(uint32_t from, Direction dir, uint32_t toOrIn
 
 bool StageSelectGraph::ClearNeighbor(uint32_t from, Direction dir)
 {
-	return false;
+	// 隣接ノードを無効に設定
+	return SetNeighbor(from, dir, INVALID_NODE_ID);
 }
 
 
@@ -8068,7 +8256,7 @@ File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.h
 #include "MyMath.h"
 #include <vector>
 #include <cstdint>
-
+#include <resources/json/json.hpp>
 struct MapPos
 {
 	uint32_t x;
@@ -8089,6 +8277,8 @@ struct StageNode {
 	uint32_t id;
 	// ノードの位置
 	MapPos position;
+	// ステージID
+	uint32_t stageId;
 	// アンロック状態
 	bool unlocked;
 	// 隣接ノードID配列 / 読み方はネイバー
@@ -8148,13 +8338,23 @@ public:
 	/// <returns></returns>
 	const StageNode& GetNode(uint32_t id)const;
 
+	/// <summary>
+	/// jsonファイルからノード情報の読み込み
+	/// </summary>
+	/// <param name="jsonNode"></param>
+	void LoadMapNodeFromJson(const std::string& fileName);
 
 
+	nlohmann::json ToJson() const;
 
+	std::string ToJsonString(int indent = 2) const;
+
+	bool SaveToJsonFile(const std::string& fileName) const;
 private:
 	// ノードリスト
 	std::vector<StageNode> nodes_;
 
+	
 public:
 	// --- 編集API（ImGui用） ---
 	bool RemoveNode(uint32_t id);
@@ -8178,7 +8378,7 @@ File Path: Game/Scene/SceneTransition/SceneTransition.cpp
 ============================================================
 #include "SceneTransition.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 #include "engine/2d/SpriteCommon.h"
 #include "Input.h"
@@ -8646,7 +8846,7 @@ File Path: Game/Scene/StageSelectScene.cpp
 #include "Game/Camera/Camera.h"
 #include "engine/3d/Object3D.h"
 #ifdef USE_IMGUI
-#include "engine/bace/ImGuiManager.h"
+#include "engine/base/ImGuiManager.h"
 #endif
 
 StageSelectScene::StageSelectScene()
@@ -8707,7 +8907,8 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	skyBack->SetTransform(skyBackTransform);
 
 
-	stageSelectGraph.Initialize();
+	stageSelectGraph = std::make_unique<StageSelectGraph>();
+	stageSelectGraph->Initialize();
 	// ノードの追加
 	startNodeId = 0;
 	currentNodeId = startNodeId;
@@ -8724,6 +8925,12 @@ void StageSelectScene::Update()
 
 	// ステージセレクト入力処理
 	ApplyNodeToCursorTransform();
+
+	// 入力した方向に移動 
+	HandleSelectInput();
+
+	// プレイヤー移動処理
+	PlayerMove();
 
 	// プレイヤーモデルの更新
 	playerModel->Update();
@@ -8759,11 +8966,11 @@ void StageSelectScene::DrawImgui()
 	ImGui::Separator();
 
 	// プレイヤー
-	playerTransform = playerModel->GetTransform();
-	ImGui::DragFloat3("PlayerPos", &playerTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("PlayerRot", &playerTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("PlayerScale", &playerTransform.scale.x, 0.1f);
-	playerModel->SetTransform(playerTransform);
+	Transform transform = playerModel->GetTransform();
+	ImGui::DragFloat3("PlayerPos", &transform.translate.x, 0.1f);
+	ImGui::DragFloat3("PlayerRot", &transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("PlayerScale", &transform.scale.x, 0.1f);
+	playerModel->SetTransform(transform);
 
 	ImGui::Separator();
 	// ステージセレクト土台１
@@ -8791,36 +8998,37 @@ void StageSelectScene::DrawImgui()
 void StageSelectScene::PlayerMove()
 {
 	// プレイヤーの座標取得
-	playerTransform = playerModel->GetTransform();
+	Transform transform = playerModel->GetTransform();
 
 	if (Input::GetInstance()->PushKey(DIK_W)) {
-		playerTransform.translate.z += 0.5f;
+		transform.translate.z += 0.5f;
 	}
 
-	playerModel->SetTransform(playerTransform);
+	playerModel->SetTransform(transform);
 }
 
 void StageSelectScene::HandleSelectInput()
 {
 	if (Input::GetInstance()->TriggerKey(DIK_W)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Up);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Up);
 	} else if (Input::GetInstance()->TriggerKey(DIK_S)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Down);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Down);
 	} else if (Input::GetInstance()->TriggerKey(DIK_A)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Left);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Left);
 	} else if (Input::GetInstance()->TriggerKey(DIK_D)) {
-		currentNodeId = stageSelectGraph.Move(currentNodeId, Direction::Right);
+		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Right);
 	}
 }
 
 void StageSelectScene::ApplyNodeToCursorTransform()
 {
-	const StageNode& node = stageSelectGraph.GetNode(currentNodeId);
+	const StageNode& node = stageSelectGraph->GetNode(currentNodeId);
 	MapPos pos = node.position;
-	playerTransform.translate.x = static_cast<float>(pos.x);
-	playerTransform.translate.y;
-	playerTransform.translate.z = static_cast<float>(pos.y);
-	playerModel->SetTransform(playerTransform);
+	Vector3 translate = playerModel->GetTransform().translate;
+	translate.x += static_cast<float>(pos.x);
+	translate.y;
+	translate.z += static_cast<float>(pos.y);
+	playerModel->SetTranslate(translate);
 
 	
 }
@@ -8828,109 +9036,341 @@ void StageSelectScene::ApplyNodeToCursorTransform()
 void StageSelectScene::DrawSelectGraphImGui()
 {
 #ifdef USE_IMGUI
-	ImGui::Begin("StageSelect Graph Editor");
+    // Graph が無い場合は何もしない
+    if (!stageSelectGraph)
+    {
+        ImGui::Begin("StageSelect Graph");
+        ImGui::TextDisabled("stageSelectGraph is null.");
+        ImGui::End();
+        return;
+    }
 
-	const uint32_t count = stageSelectGraph.GetNodeCount();
-	ImGui::Text("Node Count: %u", count);
+    const uint32_t count = stageSelectGraph->GetNodeCount();
 
-	// --- ノード一覧（選択） ---
-	if (ImGui::BeginListBox("Nodes"))
-	{
-		for (uint32_t i = 0; i < count; ++i)
-		{
-			const StageNode& n = stageSelectGraph.GetNode(i);
-			char label[64];
-			sprintf_s(label, "ID %u  Pos(%d,%d)  Stage:%u  %s",
-				i, n.position.x, n.position.y, n.id, n.unlocked ? "Unlocked" : "Locked");
+    // 選択IDの補正
+    if (count == 0)
+    {
+        editNodeId_ = 0;
+        prevEditNodeId_ = UINT32_MAX; // 次にノードができたらロードされるように
+    } else if (editNodeId_ >= count)
+    {
+        editNodeId_ = count - 1;
+    }
 
-			const bool selected = (editNodeId_ == i);
-			if (ImGui::Selectable(label, selected))
-			{
-				editNodeId_ = i;
-			}
-		}
-		ImGui::EndListBox();
-	}
+    // 選択が変わったときだけ編集バッファへロード（★途中編集できない問題の解消点）
+    auto toUi = [&](uint32_t id)->int {
+        return (id == StageSelectGraph::INVALID_NODE_ID) ? -1 : (int)id;
+        };
 
-	ImGui::Separator();
+    if (count > 0 && editNodeId_ != prevEditNodeId_)
+    {
+        prevEditNodeId_ = editNodeId_;
+        const StageNode& n = stageSelectGraph->GetNode(editNodeId_);
 
-	// --- 選択ノード編集 ---
-	if (count > 0 && editNodeId_ < count)
-	{
-		StageNode n = stageSelectGraph.GetNode(editNodeId_); // コピー
+        editX_ = (int)n.position.x;
+        editY_ = (int)n.position.y;
+        editStageId_ = (int)n.stageId;
+        editUnlocked_ = n.unlocked;
 
-		ImGui::Text("Editing Node ID: %u", editNodeId_);
+        editNeighUp_ = toUi(n.neighbor[(int)Direction::Up]);
+        editNeighDown_ = toUi(n.neighbor[(int)Direction::Down]);
+        editNeighLeft_ = toUi(n.neighbor[(int)Direction::Left]);
+        editNeighRight_ = toUi(n.neighbor[(int)Direction::Right]);
 
-		int x = n.position.x;
-		int y = n.position.y;
-		int stageId = (int)n.id;
-		bool unlocked = n.unlocked;
+        jsonDirty_ = true;
+    }
 
-		ImGui::InputInt("X", &x);
-		ImGui::InputInt("Y", &y);
-		ImGui::InputInt("StageId", &stageId);
-		ImGui::Checkbox("Unlocked", &unlocked);
+    auto toId = [&](int v)->uint32_t {
+        return (v < 0) ? StageSelectGraph::INVALID_NODE_ID : (uint32_t)v;
+        };
 
-		if (ImGui::Button("Apply Node Changes"))
-		{
-			stageSelectGraph.SetNodePos(editNodeId_, { static_cast<uint32_t>(x), static_cast<uint32_t>(y) });
-			stageSelectGraph.SetNodeStageId(editNodeId_, (uint32_t)stageId);
-			stageSelectGraph.SetNodeUnlocked(editNodeId_, unlocked);
-		}
+    auto validateNeighbor = [&](int v)->int {
+        if (v < 0) return 0;                 // none
+        if ((uint32_t)v >= count) return 2;  // invalid
+        return 1;                            // ok
+        };
 
-		ImGui::Separator();
+    // ========= UI =========
+    ImGui::Begin("StageSelect Graph", nullptr, ImGuiWindowFlags_NoCollapse);
 
-		// --- 接続編集（Up/Down/Left/Right） ---
-		// UI用に "None = -1" を使う
-		auto toUi = [&](uint32_t id)->int {
-			return (id == StageSelectGraph::INVALID_NODE_ID) ? -1 : (int)id;
-			};
-		auto toId = [&](int v)->uint32_t {
-			return (v < 0) ? StageSelectGraph::INVALID_NODE_ID : (uint32_t)v;
-			};
+    ImGui::Text("Nodes: %u", count);
+    ImGui::SameLine();
+    ImGui::TextDisabled("Selected: %u", (count > 0) ? editNodeId_ : 0);
+    ImGui::Separator();
 
-		neighborUp_ = toUi(n.neighbor[(int)Direction::Up]);
-		neighborDown_ = toUi(n.neighbor[(int)Direction::Down]);
-		neighborLeft_ = toUi(n.neighbor[(int)Direction::Left]);
-		neighborRight_ = toUi(n.neighbor[(int)Direction::Right]);
+    // ---- Tabs ----
+    if (ImGui::BeginTabBar("GraphTabs"))
+    {
+        // ======================
+        // List tab
+        // ======================
+        if (ImGui::BeginTabItem("List"))
+        {
+            ImGui::Checkbox("Unlocked only", &filterUnlockedOnly_);
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(140.0f);
+            ImGui::InputInt("Filter StageId", &filterStageId_);
+            ImGui::SameLine();
+            if (ImGui::Button("Clear"))
+            {
+                filterUnlockedOnly_ = false;
+                filterStageId_ = -1;
+            }
 
-		ImGui::InputInt("Neighbor Up (ID or -1)", &neighborUp_);
-		ImGui::InputInt("Neighbor Down (ID or -1)", &neighborDown_);
-		ImGui::InputInt("Neighbor Left (ID or -1)", &neighborLeft_);
-		ImGui::InputInt("Neighbor Right (ID or -1)", &neighborRight_);
+            ImGui::Separator();
 
-		if (ImGui::Button("Apply Neighbors"))
-		{
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Up, toId(neighborUp_));
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Down, toId(neighborDown_));
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Left, toId(neighborLeft_));
-			stageSelectGraph.SetNeighbor(editNodeId_, Direction::Right, toId(neighborRight_));
-		}
-	}
+            ImGui::BeginChild("NodeList", ImVec2(0, 0), true);
 
-	ImGui::Separator();
+            if (ImGui::BeginTable("nodes_table", 6,
+                ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY |
+                ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+            {
+                ImGui::TableSetupColumn("Index", ImGuiTableColumnFlags_WidthFixed, 60);
+                ImGui::TableSetupColumn("StageId", ImGuiTableColumnFlags_WidthFixed, 70);
+                ImGui::TableSetupColumn("Unlocked", ImGuiTableColumnFlags_WidthFixed, 80);
+                ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 60);
+                ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 60);
+                ImGui::TableSetupColumn("Neigh", ImGuiTableColumnFlags_WidthFixed, 70);
+                ImGui::TableHeadersRow();
 
-	// --- ノード追加 ---
-	ImGui::Text("Add New Node");
-	ImGui::InputInt("New X", &newX_);
-	ImGui::InputInt("New Y", &newY_);
-	ImGui::InputInt("New StageId", &newStageId_);
-	ImGui::Checkbox("New Unlocked", &newUnlocked_);
+                for (uint32_t i = 0; i < count; ++i)
+                {
+                    const StageNode& n = stageSelectGraph->GetNode(i);
 
-	if (ImGui::Button("Add Node"))
-	{
-		uint32_t newId = stageSelectGraph.AddNode(
-			{ static_cast<uint32_t>((std::max)(newX_, 0)), static_cast<uint32_t>((std::max)(newY_, 0)) },
-			static_cast<uint32_t>((std::max)(newStageId_, 0)),
-			newUnlocked_
-		);
-		editNodeId_ = newId; // 追加したノードを編集対象に
-	}
+                    if (filterUnlockedOnly_ && !n.unlocked) continue;
+                    if (filterStageId_ >= 0 && (int)n.stageId != filterStageId_) continue;
 
-	ImGui::End();
+                    int neighCount = 0;
+                    for (int d = 0; d < (int)Direction::count; ++d)
+                        if (n.neighbor[d] != StageSelectGraph::INVALID_NODE_ID) neighCount++;
+
+                    ImGui::TableNextRow();
+
+                    ImGui::TableNextColumn();
+                    bool selected = (editNodeId_ == i);
+
+                    ImGui::PushID((int)i);
+                    if (!n.unlocked) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
+                    if (ImGui::Selectable("##row", selected, ImGuiSelectableFlags_SpanAllColumns))
+                    {
+                        editNodeId_ = i;     // 次フレームでバッファがロードされる
+                    }
+                    if (!n.unlocked) ImGui::PopStyleColor();
+                    ImGui::PopID();
+
+                    ImGui::SameLine();
+                    ImGui::Text("%u", i);
+
+                    ImGui::TableNextColumn(); ImGui::Text("%u", n.stageId);
+                    ImGui::TableNextColumn(); ImGui::TextUnformatted(n.unlocked ? "Yes" : "No");
+                    ImGui::TableNextColumn(); ImGui::Text("%u", n.position.x);
+                    ImGui::TableNextColumn(); ImGui::Text("%u", n.position.y);
+                    ImGui::TableNextColumn(); ImGui::Text("%d", neighCount);
+                }
+
+                ImGui::EndTable();
+            }
+
+            ImGui::EndChild();
+            ImGui::EndTabItem();
+        }
+
+        // ======================
+        // Node tab
+        // ======================
+        if (ImGui::BeginTabItem("Node"))
+        {
+            if (count == 0)
+            {
+                ImGui::TextDisabled("No nodes.");
+            } else
+            {
+                ImGui::Text("Editing node: %u", editNodeId_);
+                ImGui::Separator();
+
+                ImGui::SetNextItemWidth(200.0f);
+                ImGui::InputInt("StageId", &editStageId_);
+                ImGui::Checkbox("Unlocked", &editUnlocked_);
+
+                ImGui::Separator();
+
+                ImGui::SetNextItemWidth(120.0f);
+                ImGui::InputInt("PosX", &editX_);
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(120.0f);
+                ImGui::InputInt("PosY", &editY_);
+
+                if (ImGui::Button("Apply Node"))
+                {
+                    stageSelectGraph->SetNodeStageId(editNodeId_, (uint32_t)(std::max)(editStageId_, 0));
+                    stageSelectGraph->SetNodeUnlocked(editNodeId_, editUnlocked_);
+                    stageSelectGraph->SetNodePos(editNodeId_, {
+                        (uint32_t)(std::max)(editX_, 0),
+                        (uint32_t)(std::max)(editY_, 0)
+                        });
+
+                    jsonDirty_ = true;
+                }
+
+                ImGui::SameLine();
+                if (ImGui::Button("Reload From Graph"))
+                {
+                    prevEditNodeId_ = UINT32_MAX; // 次フレームで再ロード
+                }
+            }
+
+            ImGui::EndTabItem();
+        }
+
+        // ======================
+        // Neighbors tab
+        // ======================
+        if (ImGui::BeginTabItem("Neighbors"))
+        {
+            if (count == 0)
+            {
+                ImGui::TextDisabled("No nodes.");
+            } else
+            {
+                ImGui::Text("Editing node: %u", editNodeId_);
+                ImGui::TextDisabled("Use -1 for none. Valid range: 0..%u", (count > 0) ? (count - 1) : 0);
+                ImGui::Separator();
+
+                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Up", &editNeighUp_);
+                {
+                    int s = validateNeighbor(editNeighUp_);
+                    ImGui::SameLine();
+                    if (s == 0) ImGui::TextDisabled("none");
+                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+                    else ImGui::Text("ok");
+                }
+
+                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Down", &editNeighDown_);
+                {
+                    int s = validateNeighbor(editNeighDown_);
+                    ImGui::SameLine();
+                    if (s == 0) ImGui::TextDisabled("none");
+                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+                    else ImGui::Text("ok");
+                }
+
+                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Left", &editNeighLeft_);
+                {
+                    int s = validateNeighbor(editNeighLeft_);
+                    ImGui::SameLine();
+                    if (s == 0) ImGui::TextDisabled("none");
+                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+                    else ImGui::Text("ok");
+                }
+
+                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Right", &editNeighRight_);
+                {
+                    int s = validateNeighbor(editNeighRight_);
+                    ImGui::SameLine();
+                    if (s == 0) ImGui::TextDisabled("none");
+                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+                    else ImGui::Text("ok");
+                }
+
+                if (ImGui::Button("Apply Neighbors"))
+                {
+                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Up, toId(editNeighUp_));
+                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Down, toId(editNeighDown_));
+                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Left, toId(editNeighLeft_));
+                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Right, toId(editNeighRight_));
+                    jsonDirty_ = true;
+                }
+
+                ImGui::SameLine();
+                if (ImGui::Button("Jump To Up") && editNeighUp_ >= 0 && (uint32_t)editNeighUp_ < count)    editNodeId_ = (uint32_t)editNeighUp_;
+                ImGui::SameLine();
+                if (ImGui::Button("Jump To Down") && editNeighDown_ >= 0 && (uint32_t)editNeighDown_ < count) editNodeId_ = (uint32_t)editNeighDown_;
+
+                if (ImGui::Button("Jump To Left") && editNeighLeft_ >= 0 && (uint32_t)editNeighLeft_ < count) editNodeId_ = (uint32_t)editNeighLeft_;
+                ImGui::SameLine();
+                if (ImGui::Button("Jump To Right") && editNeighRight_ >= 0 && (uint32_t)editNeighRight_ < count) editNodeId_ = (uint32_t)editNeighRight_;
+            }
+
+            ImGui::EndTabItem();
+        }
+
+        // ======================
+        // JSON tab
+        // ======================
+        if (ImGui::BeginTabItem("JSON"))
+        {
+            ImGui::TextDisabled("Graph JSON preview (read-only).");
+
+            if (ImGui::Button("Refresh"))
+            {
+                jsonDirty_ = true;
+            }
+            ImGui::SameLine();
+
+            static char saveName[128] = "StageSelectNodes";
+            ImGui::SetNextItemWidth(220.0f);
+            ImGui::InputText("Save BaseName", saveName, sizeof(saveName));
+            ImGui::SameLine();
+            if (ImGui::Button("Save JSON"))
+            {
+                stageSelectGraph->SaveToJsonFile(saveName);
+            }
+
+            ImGui::Separator();
+
+            if (jsonDirty_)
+            {
+                std::string s = stageSelectGraph->ToJsonString(2);
+                strncpy_s(jsonBuf_, sizeof(jsonBuf_), s.c_str(), _TRUNCATE);
+                jsonDirty_ = false;
+            }
+
+            ImGui::InputTextMultiline("##json",
+                jsonBuf_, sizeof(jsonBuf_),
+                ImVec2(-1.0f, -1.0f),
+                ImGuiInputTextFlags_ReadOnly);
+
+            ImGui::EndTabItem();
+        }
+
+        // ======================
+        // Ops tab
+        // ======================
+        if (ImGui::BeginTabItem("Ops"))
+        {
+            ImGui::Text("Add Node");
+            ImGui::SetNextItemWidth(90.0f);  ImGui::InputInt("New X", &newX_);
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(90.0f);  ImGui::InputInt("New Y", &newY_);
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(120.0f); ImGui::InputInt("New StageId", &newStageId_);
+            ImGui::SameLine();
+            ImGui::Checkbox("New Unlocked", &newUnlocked_);
+
+            if (ImGui::Button("Add"))
+            {
+                uint32_t newId = stageSelectGraph->AddNode(
+                    { (uint32_t)(std::max)(newX_, 0), (uint32_t)(std::max)(newY_, 0) },
+                    (uint32_t)(std::max)(newStageId_, 0),
+                    newUnlocked_
+                );
+                editNodeId_ = newId;
+                prevEditNodeId_ = UINT32_MAX; // 次フレームでロード
+                jsonDirty_ = true;
+            }
+
+            ImGui::Separator();
+            ImGui::TextDisabled("Tips: Edit values here, then press Apply in each tab.");
+
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
+
+    ImGui::End();
 #endif
 }
-
 
 
 ============================================================
@@ -9009,7 +9449,7 @@ private:
 
 
 	// ステージセレクトグラフ
-	StageSelectGraph stageSelectGraph;
+	std::unique_ptr<StageSelectGraph> stageSelectGraph;
     uint32_t currentNodeId = 0;
 	uint32_t startNodeId = 0;
 
@@ -9029,6 +9469,33 @@ private:
 	int neighborLeft_ = -1;
 	int neighborRight_ = -1;
 	
+
+#ifdef USE_IMGUI
+	// 選択中ノードが変わったか判定用
+	uint32_t prevEditNodeId_ = UINT32_MAX;
+
+
+	// 編集バッファ（毎フレーム上書きされないように保持）
+	int editX_ = 0;
+	int editY_ = 0;
+	int editStageId_ = 0;
+	bool editUnlocked_ = false;
+
+	int editNeighUp_ = -1;
+	int editNeighDown_ = -1;
+	int editNeighLeft_ = -1;
+	int editNeighRight_ = -1;
+
+	// フィルタ
+	int filterStageId_ = -1;     // -1で無効
+	bool filterUnlockedOnly_ = false;
+
+	// JSON
+	bool jsonDirty_ = true;
+	char jsonBuf_[32768] = {};
+
+	
+#endif
 };
 
 
@@ -9639,7 +10106,7 @@ void Framework::Initialize()
 	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
 
 	// 全シーンがアクセス可能なカメラに設定
-	mainCamamera_ = camera.get();
+	mainCamera_ = camera.get();
 
 	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
 
@@ -9660,7 +10127,7 @@ void Framework::Update()
 	//Windowのメッセージ処理
 	if (winAPI->ProcessMessage()) {
 		//ゲームループを抜ける
-		isEndRequst = true;
+		isEndRequest_ = true;
 		return;
 	}
 #pragma endregion
@@ -9694,7 +10161,7 @@ void Framework::Update()
 	// ESCキーで終了
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
 	{
-		isEndRequst = true;
+		isEndRequest_ = true;
 	}
 	
 }
@@ -9721,7 +10188,7 @@ void Framework::Finalize()
 	ModelManager::GetInstance()->Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
-	mainCamamera_ = nullptr;
+	mainCamera_ = nullptr;
 	ParticleManager::GetInstance()->DeleteInstance();
 
 }
@@ -9734,7 +10201,7 @@ void Framework::Run()
 	while (true) {
 		// ゲームの更新
 		Update();
-		if (IsEndRequst()) {
+		if (IsEndRequest()) {
 			break;
 		}
 		// ゲームの描画
@@ -9810,11 +10277,11 @@ public:	// メンバ関数
 	/// 終了リクエストの有無
 	/// </summary>
 	/// <returns></returns>
-	bool IsEndRequst() { return isEndRequst; }
+	bool IsEndRequest() { return isEndRequest_; }
 
 protected:
 	// 終了リクエスト
-	bool isEndRequst = false;
+	bool isEndRequest_ = false;
 protected:// Initialize関連
 	// リークチェッカー
 	//D3DResourceLeakChecker leakCheck;
@@ -9841,7 +10308,7 @@ public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	// 全シーンがアクセス可能なカメラ
-	static Camera* GetMainCamera() { return mainCamamera_; }
+	static Camera* GetMainCamera() { return mainCamera_; }
 private:
 	
 	/// カメラの座標
@@ -9851,7 +10318,7 @@ private:
 		{ 1.0f, 1.0f,-10.0f } // scale
 	};
 
-	static inline Camera* mainCamamera_ = nullptr;
+	static inline Camera* mainCamera_ = nullptr;
 	
 };
 
@@ -10072,8 +10539,8 @@ private:
 File Path: engine/2d/RenderTexture.cpp
 ============================================================
 #include "RenderTexture.h"
-#include "engine/bace/DirectXCommon.h"
-#include "engine/bace/SrvManager.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/base/SrvManager.h"
 #include <map>
 RenderTexture::RenderTexture()
 {
@@ -10109,7 +10576,7 @@ void RenderTexture::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, 
 
 	currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
-	CreateGraficsPipeLine();
+	CreateGraphicsPipeLine();
 	CreateVertexBuffer();
 	
 }
@@ -10237,10 +10704,10 @@ void RenderTexture::Draw() {
 
 
 
-void RenderTexture::CreateGraficsPipeLine() {
+void RenderTexture::CreateGraphicsPipeLine() {
 
 	// ルートシグネチャの作成
-	CreateRootSignatrue();
+	CreateRootSignature();
 
 	// 頂点の位置データを表すセマンティクスを設定
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -10315,7 +10782,7 @@ void RenderTexture::CreateGraficsPipeLine() {
 	assert(SUCCEEDED(hr));
 }
 
-void RenderTexture::CreateRootSignatrue()
+void RenderTexture::CreateRootSignature()
 {
 #pragma region RootParameter
 	//RootSignature作成
@@ -10329,7 +10796,7 @@ void RenderTexture::CreateRootSignatrue()
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 #pragma endregion
 
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
+	//RootParameter作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
 	D3D12_ROOT_PARAMETER rootParam[1] = {};
 	rootParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 	rootParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -10401,9 +10868,9 @@ File Path: engine/2d/RenderTexture.h
 #include <d3d12.h>
 #include <wrl.h>
 #include "engine/math/MyMath.h"
-#include "engine/bace/Logger.h"
-#include "engine/bace/DirectXCommon.h"
-#include "engine/bace/SrvManager.h"
+#include "engine/base/Logger.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/base/SrvManager.h"
 
 class DirectXCommon;
 class SrvManager;
@@ -10450,11 +10917,11 @@ private:
 	/// <summary>
 	/// グラフィックスパイプラインの生成
 	/// </summary>
-	void CreateGraficsPipeLine();
+	void CreateGraphicsPipeLine();
 	/// <summary>
 	/// ルートシグネチャの生成
 	/// </summary>
-	void CreateRootSignatrue();
+	void CreateRootSignature();
 	/// <summary>
 	/// 頂点バッファの生成
 	/// </summary>
@@ -11850,8 +12317,6 @@ File Path: engine/3d/Object3D.h
 #include <d3d12.h>
 #include <vector>
 #include <wrl.h>
-#include "TextureManager.h"
-#include "Object3DCommon.h"
 #include "Model.h"
 #include "Game/Camera/Camera.h"
 
@@ -11990,7 +12455,7 @@ Object3DCommon* Object3DCommon::instance = nullptr;
 void Object3DCommon::Initialize(DirectXCommon* dxCommon)
 {
 	dxCommon_ = dxCommon;
-	CreateGraficsPipeLine();
+	CreateGraphicsPipeLine();
 }
 
 void Object3DCommon::DrawSettingCommon()
@@ -12004,7 +12469,7 @@ void Object3DCommon::DrawSettingCommon()
 }
 
 
-void Object3DCommon::CreateRootSignatrue()
+void Object3DCommon::CreateRootSignature()
 {
 #pragma region RootParameter
 	//RootSignature作成
@@ -12089,9 +12554,9 @@ void Object3DCommon::CreateRootSignatrue()
 
 }
 
-void Object3DCommon::CreateGraficsPipeLine()
+void Object3DCommon::CreateGraphicsPipeLine()
 {
-	CreateRootSignatrue();
+	CreateRootSignature();
 
 	// 頂点の位置データを表すセマンティクスを設定
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -12221,11 +12686,11 @@ private:	// メンバ関数
 	/// <summary>
 	/// ルートシグネチャの作成
 	/// </summary>
-	void CreateRootSignatrue();
+	void CreateRootSignature();
 	/// <summary>
 	///　グラフィックスパイプラインの作成
 	/// </summary>
-	void CreateGraficsPipeLine();
+	void CreateGraphicsPipeLine();
 
 private:	// メンバ変数
 	// カメラ
@@ -12450,9 +12915,9 @@ void SkyBox::CreateRootSignature() {
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 	// RasterrizerStateの設定
 	// カリングなし
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 塗りつぶしモード
-	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	// 4. Shaderをコンパイルする
 	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/SkyBox.VS.hlsl",
 		L"vs_6_0");
@@ -12479,7 +12944,7 @@ void SkyBox::SetGraphicsPipeline()
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
 										pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
-	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 	// Depthstencitの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -12647,8 +13112,8 @@ File Path: engine/3d/SkyBox/SkyBox.h
 ============================================================
 #pragma once
 #include "engine/math/MyMath.h"
-#include "engine/bace/DirectXCommon.h"
-#include "engine/bace/SrvManager.h"
+#include "engine/base/DirectXCommon.h"
+#include "engine/base/SrvManager.h"
 #include "Game/Camera/camera.h"
 /// <summary>
 /// スカイボックスクラス
@@ -12743,7 +13208,7 @@ private:
 	BlendMode currentBlendMode = BlendMode::kBlendModeAdd;  // 現在のブレンドモード
 
 	/// ラスタライザー
-	D3D12_RASTERIZER_DESC rasterrizerDesc{};
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
 
 	/// シェーダーバイナリ
 	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = nullptr;
@@ -13018,7 +13483,7 @@ private:
 
 
 ============================================================
-File Path: engine/bace/D3DResourceLeakChecker.cpp
+File Path: engine/base/D3DResourceLeakChecker.cpp
 ============================================================
 #include "D3DResourceLeakChecker.h"
 #include <dxgidebug.h>
@@ -13038,7 +13503,7 @@ D3DResourceLeakChecker::~D3DResourceLeakChecker() {
 }
 
 ============================================================
-File Path: engine/bace/D3DResourceLeakChecker.h
+File Path: engine/base/D3DResourceLeakChecker.h
 ============================================================
 #pragma once
 
@@ -13063,7 +13528,7 @@ public:
 
 
 ============================================================
-File Path: engine/bace/DirectXCommon.cpp
+File Path: engine/base/DirectXCommon.cpp
 ============================================================
 #include "DirectXCommon.h"
 #include <cassert>
@@ -13814,7 +14279,7 @@ void DirectXCommon::UpdateFixFPS()
 
 
 ============================================================
-File Path: engine/bace/DirectXCommon.h
+File Path: engine/base/DirectXCommon.h
 ============================================================
 #pragma once
 #include <d3d12.h>
@@ -14104,7 +14569,7 @@ private:	// メンバ変数
 
 
 ============================================================
-File Path: engine/bace/ImGuiManager.cpp
+File Path: engine/base/ImGuiManager.cpp
 ============================================================
 #include "ImGuiManager.h"
 #include "externals/imgui/imgui_impl_win32.h"
@@ -14188,15 +14653,15 @@ void ImGuiManager::Draw()
 #endif
 
 ============================================================
-File Path: engine/bace/ImGuiManager.h
+File Path: engine/base/ImGuiManager.h
 ============================================================
 #pragma once
 #include <d3d12.h>
 #ifdef USE_IMGUI
 #include "externals/imgui/imgui.h"
 #endif
-#include "engine/bace/WinAPI.h" 
-#include "engine/bace/DirectXCommon.h"
+#include "engine/base/WinAPI.h" 
+#include "engine/base/DirectXCommon.h"
 
 /// <summary>
 /// ImGui管理クラス
@@ -14248,7 +14713,7 @@ private:
 
 
 ============================================================
-File Path: engine/bace/Input.cpp
+File Path: engine/base/Input.cpp
 ============================================================
 #include "Input.h"
 #include <cassert>
@@ -14329,7 +14794,7 @@ bool Input::TriggerKey(BYTE keyNumber)
 
 
 ============================================================
-File Path: engine/bace/Input.h
+File Path: engine/base/Input.h
 ============================================================
 #pragma once
 #define DIRECTINPUT_VERSION		0x0800	//DirectInputのバージョン指定
@@ -14415,7 +14880,7 @@ private:
 
 
 ============================================================
-File Path: engine/bace/Logger.cpp
+File Path: engine/base/Logger.cpp
 ============================================================
 #include "Logger.h"
 #include <debugapi.h>
@@ -14427,7 +14892,7 @@ namespace Logger {
 
 
 ============================================================
-File Path: engine/bace/Logger.h
+File Path: engine/base/Logger.h
 ============================================================
 #pragma once
 #include <string>
@@ -14448,7 +14913,7 @@ namespace Logger {
 
 
 ============================================================
-File Path: engine/bace/SrvManager.cpp
+File Path: engine/base/SrvManager.cpp
 ============================================================
 #include "SrvManager.h"
 const uint32_t SrvManager::kMaxSRVCount = 512;
@@ -14551,7 +15016,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> SrvManager::GetSRVHeap() const
 
 
 ============================================================
-File Path: engine/bace/SrvManager.h
+File Path: engine/base/SrvManager.h
 ============================================================
 #pragma once
 #include "DirectXCommon.h"
@@ -14638,7 +15103,7 @@ private:
 
 
 ============================================================
-File Path: engine/bace/StringUtility.cpp
+File Path: engine/base/StringUtility.cpp
 ============================================================
 #include "StringUtility.h"
 #include <Windows.h>
@@ -14678,7 +15143,7 @@ namespace StringUtility {
 
 
 ============================================================
-File Path: engine/bace/StringUtility.h
+File Path: engine/base/StringUtility.h
 ============================================================
 #pragma once
 #include <string>
@@ -14702,7 +15167,7 @@ namespace StringUtility {
 }
 
 ============================================================
-File Path: engine/bace/TextureManager.cpp
+File Path: engine/base/TextureManager.cpp
 ============================================================
 #include "TextureManager.h"
 #include "DirectXCommon.h"
@@ -14911,7 +15376,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 }
 
 ============================================================
-File Path: engine/bace/TextureManager.h
+File Path: engine/base/TextureManager.h
 ============================================================
 #pragma once
 #include <string>
@@ -15018,7 +15483,7 @@ private:	// メンバ変数
 
 
 ============================================================
-File Path: engine/bace/WinAPI.cpp
+File Path: engine/base/WinAPI.cpp
 ============================================================
 #include "WinAPI.h"
 #include <cstdint>
@@ -15115,7 +15580,7 @@ bool WinAPI::ProcessMessage()
 
 
 ============================================================
-File Path: engine/bace/WinAPI.h
+File Path: engine/base/WinAPI.h
 ============================================================
 #pragma once
 #include <Windows.h>
