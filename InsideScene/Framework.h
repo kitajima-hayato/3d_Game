@@ -59,11 +59,11 @@ public:	// メンバ関数
 	/// 終了リクエストの有無
 	/// </summary>
 	/// <returns></returns>
-	bool IsEndRequst() { return isEndRequst; }
+	bool IsEndRequest() { return isEndRequest_; }
 
 protected:
 	// 終了リクエスト
-	bool isEndRequst = false;
+	bool isEndRequest_ = false;
 protected:// Initialize関連
 	// リークチェッカー
 	//D3DResourceLeakChecker leakCheck;
@@ -90,7 +90,7 @@ public:
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 	// 全シーンがアクセス可能なカメラ
-	static Camera* GetMainCamera() { return mainCamamera_; }
+	static Camera* GetMainCamera() { return mainCamera_; }
 private:
 	
 	/// カメラの座標
@@ -100,7 +100,7 @@ private:
 		{ 1.0f, 1.0f,-10.0f } // scale
 	};
 
-	static inline Camera* mainCamamera_ = nullptr;
+	static inline Camera* mainCamera_ = nullptr;
 	
 };
 

@@ -71,7 +71,7 @@ private:
 
 
 	// ステージセレクトグラフ
-	StageSelectGraph stageSelectGraph;
+	std::unique_ptr<StageSelectGraph> stageSelectGraph;
     uint32_t currentNodeId = 0;
 	uint32_t startNodeId = 0;
 
@@ -91,5 +91,32 @@ private:
 	int neighborLeft_ = -1;
 	int neighborRight_ = -1;
 	
+
+#ifdef USE_IMGUI
+	// 選択中ノードが変わったか判定用
+	uint32_t prevEditNodeId_ = UINT32_MAX;
+
+
+	// 編集バッファ（毎フレーム上書きされないように保持）
+	int editX_ = 0;
+	int editY_ = 0;
+	int editStageId_ = 0;
+	bool editUnlocked_ = false;
+
+	int editNeighUp_ = -1;
+	int editNeighDown_ = -1;
+	int editNeighLeft_ = -1;
+	int editNeighRight_ = -1;
+
+	// フィルタ
+	int filterStageId_ = -1;     // -1で無効
+	bool filterUnlockedOnly_ = false;
+
+	// JSON
+	bool jsonDirty_ = true;
+	char jsonBuf_[32768] = {};
+
+	
+#endif
 };
 

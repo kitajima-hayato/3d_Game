@@ -176,9 +176,9 @@ void SkyBox::CreateRootSignature() {
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 	// RasterrizerStateの設定
 	// カリングなし
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 塗りつぶしモード
-	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	// 4. Shaderをコンパイルする
 	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/SkyBox.VS.hlsl",
 		L"vs_6_0");
@@ -205,7 +205,7 @@ void SkyBox::SetGraphicsPipeline()
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
 										pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
-	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 	// Depthstencitの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
