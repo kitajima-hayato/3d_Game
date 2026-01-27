@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "neighbors": {
+        "Right": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "statge_id": 1,
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Down": 3,
+        "Left": 0,
+        "Up": 2
+      },
+      "position": {
+        "x": 1,
+        "y": 0
+      },
+      "statge_id": 2,
+      "unlocked": false
+    },
+    {
+      "neighbors": {
+        "Down": 1
+      },
+      "position": {
+        "x": 1,
+        "y": 1
+      },
+      "statge_id": 3,
+      "unlocked": false
+    },
+    {
+      "neighbors": {
+        "Up": 1
+      },
+      "position": {
+        "x": 2,
+        "y": 0
+      },
+      "statge_id": 4,
+      "unlocked": false
+    }
+  ]
+}

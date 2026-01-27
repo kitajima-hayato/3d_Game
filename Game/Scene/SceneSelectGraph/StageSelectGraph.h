@@ -23,6 +23,8 @@ struct StageNode {
 	uint32_t id;
 	// ノードの位置
 	MapPos position;
+	// ステージID
+	uint32_t stageId;
 	// アンロック状態
 	bool unlocked;
 	// 隣接ノードID配列 / 読み方はネイバー
@@ -89,10 +91,16 @@ public:
 	void LoadMapNodeFromJson(const std::string& fileName);
 
 
+	nlohmann::json ToJson() const;
+
+	std::string ToJsonString(int indent = 2) const;
+
+	bool SaveToJsonFile(const std::string& fileName) const;
 private:
 	// ノードリスト
 	std::vector<StageNode> nodes_;
 
+	
 public:
 	// --- 編集API（ImGui用） ---
 	bool RemoveNode(uint32_t id);
