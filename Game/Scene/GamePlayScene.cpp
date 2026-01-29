@@ -77,6 +77,11 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// ポーズUI
 	pauseUI_ = std::make_unique<PauseUI>();
 	pauseUI_->Initialize();
+
+	pauseSprite_ = std::make_unique<Sprite>();
+	pauseSprite_->Initialize("resources/KyeUI/Esc.png");
+	pauseSprite_->SetPosition({ 30.0f,30.0f });
+	pauseSprite_->SetSize({ 50.0f,50.0f });
 }
 
 
@@ -184,7 +189,7 @@ void GamePlayScene::Update()
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
-		sceneManager->ChangeScene("STAGECLEAR");
+		sceneManager->ChangeScene("GAMEPLAY");
 	}
 
 
@@ -571,28 +576,31 @@ void GamePlayScene::SpritesUpdate()
 		UiActive_ = false;
 		uiTimer = 0;
 	}
+
+	pauseSprite_->Update();
 }
 
 void GamePlayScene::SpritesDraw()
 {
-	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		enemyHitSprite_->Draw();
-	}
-	if (!isPlayerControlLocked_) {
+	
 
-		controlUI_D->Draw();
-		controlUI_A->Draw();
-		controlUI_S->Draw();
-		controlUI_W->Draw();
-	}
-
-	//controlUI_DashUI->Draw();
-	//controlUI_move->Draw();
-
+	
 	if (isPause_) {
 		// ポーズ画面
 		pauseUI_->Draw();
 
+	} else {
+		if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
+			enemyHitSprite_->Draw();
+		}
+		if (!isPlayerControlLocked_) {
+
+			controlUI_D->Draw();
+			controlUI_A->Draw();
+			controlUI_S->Draw();
+			controlUI_W->Draw();
+		}
+		pauseSprite_->Draw();
 	}
 }
 

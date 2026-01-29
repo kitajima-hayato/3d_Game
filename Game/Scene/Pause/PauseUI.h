@@ -97,6 +97,8 @@ private:
 	std::unique_ptr<Sprite> slotTextUILeft_;
 	std::unique_ptr<Sprite> slotTextUIRight_;
 
+	// Space
+	std::unique_ptr<Sprite> decideKeyUI_;
 
 
 	// 選択時のスロットのカラー

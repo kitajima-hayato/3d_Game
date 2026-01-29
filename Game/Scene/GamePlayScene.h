@@ -251,5 +251,7 @@ private:
 	// ポーズ中フラグ
 	bool isPause_ = false;
 
+	std::unique_ptr<Sprite> pauseSprite_;
+
 };
 

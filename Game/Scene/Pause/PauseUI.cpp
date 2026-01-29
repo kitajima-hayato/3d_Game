@@ -73,6 +73,8 @@ void PauseUI::Update()
 	slotTextUILeft_->Update();
 	slotTextUIRight_->Update();
 
+	decideKeyUI_->Update();
+
 	// 方向（外側）ベクトル：上= (0,-1), 右=(1,0), 下=(0,1), 左=(-1,0)
 	ApplySelectedStyle(slotUIUp_.get(), basePosUp_, baseSizeUp_,
 		selectedSlot_ == Slot::Continue, { 0.0f, -1.0f });
@@ -101,6 +103,8 @@ void PauseUI::Draw()
 		slotUIDown_->Draw();
 		slotUILeft_->Draw();
 		slotUIRight_->Draw();
+
+		decideKeyUI_->Draw();
 
 		switch (selectedSlot_)
 		{
@@ -196,6 +200,12 @@ void PauseUI::LoadSprite()
 	slotTextUIRight_->SetSize({ 1280.0f, 720.0f });
 
 
+	decideKeyUI_ = std::make_unique<Sprite>();
+	decideKeyUI_->Initialize("resources/PauseUI/SpaceText.png");
+	decideKeyUI_->SetPosition({ 0.0f, 0.0f });
+	decideKeyUI_->SetSize({ 1280.0f, 720.0f });
+
+
 }
 
 void PauseUI::ApplySelectedStyle(Sprite* sp,
@@ -230,6 +240,7 @@ void PauseUI::ApplySelectedStyle(Sprite* sp,
 
 void PauseUI::DrawImGui()
 {
+#ifdef USE_IMGUI
 	ImGui::Begin("Pause UI");
 
 	// スプライトのカラーセット
@@ -257,6 +268,7 @@ void PauseUI::DrawImGui()
 
 
 	ImGui::End();
+#endif
 }
 
 bool PauseUI::PauseReleaseRequested()
@@ -286,7 +298,8 @@ void PauseUI::HandleDecideInput()
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 		break;
 	case Slot::StageSelect:
-		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+		//SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 		break;
 	case Slot::Title:
 		SceneManager::GetInstance()->ChangeScene("TITLE");
