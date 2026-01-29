@@ -16,6 +16,7 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 {
+    SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 	// カメラの取得
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,20.0f,0.0f };
@@ -75,6 +76,9 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 void StageSelectScene::Update()
 {
+
+	
+
 	// 空背景の更新
 	skyBack->Update();
 	// ステージセレクト土台の更新

@@ -129,10 +129,10 @@ void TitleScene::Update()
 	{
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 	}
-	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+	/*else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
-	}
+	}*/
 }
 
 void TitleScene::Draw()
