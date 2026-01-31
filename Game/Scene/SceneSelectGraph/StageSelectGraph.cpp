@@ -226,23 +226,19 @@ std::string StageSelectGraph::ToJsonString(int indent) const
 	return ToJson().dump(indent);
 }
 
-bool StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
+void StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
 {
+	// JSONファイルに保存する処理
 	const std::string frontFilePath = "resources/StageSelect";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
-
+	// ファイル出力ストリームを開く
 	std::ofstream ofs(fullPath);
-	if (ofs.fail())return false;
-
+	// JSON文字列を書き込む
 	ofs << ToJsonString(2);
-	return true;
 }
 
-bool StageSelectGraph::RemoveNode(uint32_t id)
-{
-	return false;
-}
+
 
 bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
 {

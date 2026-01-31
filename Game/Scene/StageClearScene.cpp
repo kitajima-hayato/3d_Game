@@ -1,6 +1,6 @@
 #include "StageClearScene.h"
 #include "Game/Camera/Camera.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
 StageClearScene::StageClearScene()

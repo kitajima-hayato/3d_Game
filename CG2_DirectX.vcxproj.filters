@@ -12,11 +12,11 @@
     <!-- 統合されたClCompile。重複排除・Filter保持 -->
     <!-- masterブランチから追加された分 -->
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\AbstractSceneFactory.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\BaseScene.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\BaseScene.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
     <ClCompile Include="engine\Audio\Audio.cpp">
       <Filter>engine\Audio</Filter>
@@ -37,16 +37,10 @@
       <Filter>Game\Loader</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\DirectXCommon.cpp">
-      <Filter>engine\bace</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Particle\EffectEmitter.cpp">
-      <Filter>Game\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Particle\EffectManager.cpp">
-      <Filter>Game\Particle</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="Game\Particle\ParticleEmitter.cpp">
       <Filter>Game\Particle</Filter>
@@ -66,14 +60,14 @@
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp">
       <Filter>Game\Application\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\Framework.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\Framework.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\SceneManager.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\SceneManager.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\SceneFactory.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\SceneFactory.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene.cpp">
       <Filter>Game\Scene</Filter>
@@ -85,25 +79,25 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\ImGuiManager.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Input.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Logger.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\SrvManager.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\StringUtility.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\TextureManager.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\WinAPI.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="Game\Loader\LevelLoader.cpp">
       <Filter>Game\Application\Loader</Filter>
@@ -144,23 +138,45 @@
     <ClCompile Include="Game\Application\StageType.cpp">
       <Filter>Game\Application\Map</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
-    <ClCompile Include="Game\Application\BackGround.cpp" />
-    <ClCompile Include="Game\Application\Player\Player.cpp" />
-    <ClCompile Include="Game\Application\Map\Map.cpp" />
-    <ClCompile Include="Game\Camera\CameraController.cpp" />
-    <ClCompile Include="Game\Scene\StageClearScene.cpp" />
-    <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
-    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
-    <ClCompile Include="Game\Scene\Pause\PauseUI.cpp" />
+    <ClCompile Include="Game\Camera\CameraController.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Player\Player.cpp">
+      <Filter>Game\Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Map\Map.cpp">
+      <Filter>Game\Application\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\StageClearScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Pause\PauseUI.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\BackGround.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
+    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
+    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
+    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
-    <ClInclude Include="InsideScene\AbstractSceneFactory.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\AbstractSceneFactory.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\BaseScene.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\BaseScene.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
     <ClInclude Include="engine\Audio\Audio.h">
       <Filter>engine\Audio</Filter>
@@ -184,16 +200,10 @@
       <Filter>Game\Loader</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\DirectXCommon.h">
-      <Filter>engine\bace</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Particle\EffectEmitter.h">
-      <Filter>Game\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Particle\EffectManager.h">
-      <Filter>Game\Particle</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\ParticleEmitter.h">
       <Filter>Game\Particle</Filter>
@@ -213,14 +223,14 @@
     <ClInclude Include="Game\Application\Enemy\NormalEnemy.h">
       <Filter>Game\Application\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\Framework.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\Framework.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\SceneManager.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\SceneManager.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\SceneFactory.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\SceneFactory.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene.h">
       <Filter>Game\Scene</Filter>
@@ -232,25 +242,25 @@
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\ImGuiManager.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Input.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Logger.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SrvManager.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\StringUtility.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\TextureManager.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\WinAPI.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="Game\Loader\LevelLoader.h">
       <Filter>Game\Application\Loader</Filter>
@@ -294,16 +304,40 @@
     <ClInclude Include="Game\Application\ModelList.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
-    <ClInclude Include="Game\Application\BackGround.h" />
-    <ClInclude Include="Game\Application\Player\Player.h" />
-    <ClInclude Include="Game\Application\Map\Map.h" />
-    <ClInclude Include="Game\Camera\CameraController.h" />
-    <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
-    <ClInclude Include="Game\Scene\StageClearScene.h" />
-    <ClInclude Include="Game\Scene\StageSelectScene.h" />
-    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
-    <ClInclude Include="Game\Scene\Pause\PauseUI.h" />
+    <ClInclude Include="Game\Camera\CameraController.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Enemy\EnemyType.h">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Player\Player.h">
+      <Filter>Game\Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Map\Map.h">
+      <Filter>Game\Application\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\StageClearScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\StageSelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Pause\PauseUI.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\BackGround.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Camera\StartCamPhase.h" />
+    <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
+    <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
+    <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -317,9 +351,6 @@
     </Filter>
     <Filter Include="engine\Audio">
       <UniqueIdentifier>{71dd5415-3c4e-4bb0-b3f9-1bffe38d396b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\bace">
-      <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\math">
       <UniqueIdentifier>{8c514b5d-934d-48fe-adfb-7259d210c0a6}</UniqueIdentifier>
@@ -345,9 +376,6 @@
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{c6eecef6-e7d8-4050-a866-f31dd4a028a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="InsideScene">
-      <UniqueIdentifier>{90e59181-f685-48db-808d-73212c0b33ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Application\Enemy">
       <UniqueIdentifier>{431302d6-9528-409f-a6cc-c4076693d624}</UniqueIdentifier>
     </Filter>
@@ -368,6 +396,15 @@
     </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{588ada5e-8e2c-43c1-8997-4bcf269d6a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\InsideScene">
+      <UniqueIdentifier>{90e59181-f685-48db-808d-73212c0b33ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\UI">
+      <UniqueIdentifier>{5c38ea4b-3666-4e57-aad9-65c2b1358921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\base">
+      <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

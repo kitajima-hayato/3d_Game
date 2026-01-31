@@ -1,10 +1,11 @@
 #pragma once
 #include"externals/DirectXTex/d3dx12.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #include "Game/Application/ModelList.h"
 #include "engine/3d/SkyBox/SkyBox.h"
-
-// ゲーム全体 : フレームワーククラス継承
+/// <summary>
+/// ゲーム全体 : フレームワーククラス継承
+/// </summary>
 class MyGame :public Framework
 {
 public:	// メンバ関数

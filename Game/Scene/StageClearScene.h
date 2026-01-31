@@ -1,7 +1,11 @@
 #pragma once
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include "MyMath.h"
 
+/// <summary>
+/// ステージクリアシーン
+/// ステージをクリアしたときに表示されるシーン
+/// </summary>
 class Object3D;
 class Camera;
 class StageClearScene :

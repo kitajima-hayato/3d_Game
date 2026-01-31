@@ -21,9 +21,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelCommon"></param>
-	/// <param name="directorypath"></param>
-	/// <param name="filename"></param>
+	/// <param name="directory path">モデルのファイル名</param>
+	/// <param name="filename">モデルの名前</param>
 	void Initialize(ModelCommon* modelCommon,const string& directorypath,const string&filename);
 	/// <summary>
 	/// 更新

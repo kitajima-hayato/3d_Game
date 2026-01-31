@@ -1,7 +1,13 @@
 #pragma once
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include <MyMath.h>
 #include "SceneSelectGraph/StageSelectGraph.h"
+
+/// <summary>
+/// ステージセレクトシーン
+/// ステージ選択画面のシーン
+/// </summary>
+
 struct StageStatus {
 
 };
@@ -46,14 +52,22 @@ class StageSelectScene :
     void PlayerMove();
 
 private:
+    /// <summary>
+	/// ステージセレクト入力処理
+    /// </summary>
     void HandleSelectInput();
-
+	/// <summary>
+	/// ノード位置をカーソル位置に合わせる
+	/// </summary>
 	void ApplyNodeToCursorTransform();
     
+	/// <summary>
+	/// ステージセレクトグラフ編集ImGui
+	/// </summary>
 	void DrawSelectGraphImGui();
 
 private:
-	// カメラ
+	// カメラ / トランスフォーム
 	Camera* camera = nullptr;
 	Transform cameraTransform;
 

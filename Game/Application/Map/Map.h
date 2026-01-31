@@ -76,7 +76,7 @@ public:
 	/// <summary>
 	/// マップブロック生成
 	/// </summary>
-	void GenerareMapBlock();
+	void GenerateMapBlock();
 
 	/// <summary>
 	/// エネミーレイヤー生成

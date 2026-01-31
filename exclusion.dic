@@ -4,3 +4,15 @@ Imgui
 aabb
 Imove
 xaudio
+texleft
+texright
+textop
+texbottom
+dxgi
+directorypath
+wparam
+lparam
+aabb
+Unmap
+Imgui
+Anim

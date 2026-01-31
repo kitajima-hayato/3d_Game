@@ -152,7 +152,7 @@ void ParticleManager::CreateRootSignature()
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
-	// 3. BlendDtateの設定
+	// 3. BlendDateの設定
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0].BlendEnable = true;
 
@@ -162,11 +162,11 @@ void ParticleManager::CreateRootSignature()
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	// RasterrizerStateの設定
+	// RasterizerStateの設定
 	// カリングなし
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 塗りつぶしモード
-	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	// 4. Shaderをコンパイルする
 	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.VS.hlsl",
 		L"vs_6_0");
@@ -196,8 +196,8 @@ void ParticleManager::SetGraphicsPipeline()
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
 										pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
-	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
-	// Depthstencitの設定
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+	// Dehiscenceの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	// 書き込むRTVの情報

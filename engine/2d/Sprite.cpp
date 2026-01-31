@@ -1,17 +1,17 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #include "TextureManager.h"
-void Sprite::Initialize( std::string textureFilePath)
+void Sprite::Initialize(std::string_view textureFilePath)
 {
-	this->textureFilePath = textureFilePath;
+	this->textureFilePath_ = textureFilePath;
 	CreateVertexResourceData();
 	CreateMaterialResource();
 	CreateTransformationMatrixData();
 	// 単位行列を書き込んでおく
-	TextureManager::GetInstance()->LoadTexture(textureFilePath);
-	textureIndex = TextureManager::GetInstance()->GetSrvIndex(textureFilePath);
+	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+	textureIndex = TextureManager::GetInstance()->GetSrvIndex(textureFilePath_);
 	transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-	AdjustTextureSizee();
+	AdjustTextureSize();
 }
 
 void Sprite::Update()
@@ -34,7 +34,7 @@ void Sprite::Update()
 		bottom = -bottom;
 	}
 
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath_);
 
 	float texleft = textureLeftTop.x / metadata.width;
 	float texright = (textureLeftTop.x + textureSize.x) / metadata.width;
@@ -97,29 +97,27 @@ void Sprite::Draw()
 {
 
 	//Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-	SpriteCommon::GetInstance()->DrawSettingCommon();
+	SpriteCommon::GetInstance().DrawSettingCommon();
 
-	// VertexbufferViewを設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	// Vertex bufferViewを設定
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	// IndexBufferViewを設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 	// マテリアルCBufferの場所を設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// 座標変換行列CBufferの場所を設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	// SRVのDescriptorHeapの場所を設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath));
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 	// 描画
-	//spriteCommon->GetDxCommon()->GetCommandList()->DrawInstanced(6, 1, 0, 0);
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(6, 1, 0, 0);
-	//spriteCommon->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 }
 
 void Sprite::CreateVertexResourceData()
 {
 
 	// VertexResourceを作る
-	vertexResource = SpriteCommon::GetInstance()->CreateSpriteVertexResource();
+	vertexResource = SpriteCommon::GetInstance().CreateSpriteVertexResource();
 	// VertexBufferViewを作成する(値を設定するだけ)
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 6個分のデータを書き込むので6倍
@@ -128,7 +126,7 @@ void Sprite::CreateVertexResourceData()
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 	// IndexResourceを作る
-	indexResource = SpriteCommon::GetInstance()->CreateSpriteIndexResource();
+	indexResource = SpriteCommon::GetInstance().CreateSpriteIndexResource();
 
 	// IndexBufferViewを作成する
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
@@ -154,7 +152,7 @@ void Sprite::CreateVertexResourceData()
 
 void Sprite::CreateMaterialResource() {
 	// マテリアルデータを作成する
-	materialResource = SpriteCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Material));
+	materialResource = SpriteCommon::GetInstance().GetDxCommon()->CreateBufferResource(sizeof(Material));
 	// マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialに割り当てる
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));	// マップする
 
@@ -167,7 +165,7 @@ void Sprite::CreateMaterialResource() {
 void Sprite::CreateTransformationMatrixData()
 {
 	// 変換行列データを作成する
-	transformationMatrixResource = SpriteCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+	transformationMatrixResource = SpriteCommon::GetInstance().GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	// 変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixに割り当てる
 	transformationMatrix = nullptr; // nullptrを代入しておく
@@ -178,10 +176,10 @@ void Sprite::CreateTransformationMatrixData()
 	transformationMatrix->World = MakeIdentity4x4();
 }
 
-void Sprite::AdjustTextureSizee()
+void Sprite::AdjustTextureSize()
 {
 	// テクスチャメタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath_);
 	textureSize = { static_cast<float>(metadata.width),static_cast<float>(metadata.height) };
 	// 画像サイズをテクスチャサイズに合わせる
 	size = textureSize;

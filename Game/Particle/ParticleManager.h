@@ -104,8 +104,8 @@ public:
 	///  パーティクルグループの作成
 	/// </summary>
 	/// <param name="name"></param>
-	/// <param name="textureFilrPath"></param>
-	void CreateParticleGroup(const std::string& name, const std::string textureFilrPath);
+	/// <param name="textureFilePath"></param>
+	void CreateParticleGroup(const std::string& name, const std::string textureFilePath);
 
 
 	/// <summary>
@@ -234,7 +234,7 @@ private:
 	BlendMode currentBlendMode;
 	D3D12_BLEND_DESC blendDesc{};
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	D3D12_RASTERIZER_DESC rasterrizerDesc{};
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc;

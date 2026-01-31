@@ -1,14 +1,20 @@
 #pragma once
 #include "Audio.h"
 #include "SpriteCommon.h"
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleEmitter.h"
 #include "SceneTransition/SceneTransition.h"
-#include "Pause/PauseUI.h"
+#include "Game/Scene/Pause/PauseSystem.h"
+
+/// <summary>
+/// ゲームプレイシーン
+/// ゲームプレイ中のシーンを管理する
+/// </summary>
+
 // 前方宣言
 class Map;
 class Player;
@@ -82,6 +88,7 @@ public:
 	void SpritesInitialize();
 	void SpritesUpdate();
 	void SpritesDraw();
+
 
 	
 
@@ -191,6 +198,9 @@ private:
 	// フォローカメラ
 	std::unique_ptr<CameraController> cameraController_;
 
+	// ポーズシステム
+	std::unique_ptr<PauseSystem> pauseSystem_;
+
 	// ステージ開始演出フラグ
 	bool stageStartEventFlag_ = true;
 	// 固定フレームレート用のデルタタイム
@@ -246,10 +256,8 @@ private:
 
 	bool isPlayerControlLocked_ = false;
 
-	// ポーズUI
-	std::unique_ptr<PauseUI> pauseUI_;
-	// ポーズ中フラグ
-	bool isPause_ = false;
+	
+	
 
 	std::unique_ptr<Sprite> pauseSprite_;
 

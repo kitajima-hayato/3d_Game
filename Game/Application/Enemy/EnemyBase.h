@@ -2,6 +2,13 @@
 #include "engine/math/MyMath.h"
 #include "engine/3d/Object3D.h"
 #include "Game/Collision/Collider.h"
+
+/// <summary>
+/// エネミーの基本構造
+/// 継承元として使用する
+/// </summary>
+
+/// エネミーのステータス
 struct Stats {
 	/// 座標
 	Transform transform;
@@ -59,6 +66,10 @@ public:
 				t.translate + t.scale * 0.5f };
 	}
 
+	/// <summary>
+	/// 衝突時の処理
+	/// </summary>
+	/// <param name="other">どれと判定をとるか</param>
 	void OnCollision(Collider* other) override {
 		// 衝突時の処理を実装
 		if (other->GetType() == Type::Player) {

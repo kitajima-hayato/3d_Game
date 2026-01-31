@@ -511,10 +511,15 @@ void Player::PlayerCollisionMove(const CollisionMapInfo& info)
 	playerModel_->SetTranslate(position);
 }
 
-void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, CollisionType type, const std::array<Corner, 2>& checkCorners, const Vector3& offset, std::function<bool(const CollisionMapInfo&)> mooveCondition)
+void Player::CollisionMapInfoDirection(
+	CollisionMapInfo& collisionInfo, 
+	CollisionType type, 
+	const std::array<Corner, 2>& checkCorners, 
+	const Vector3& offset, 
+	std::function<bool(const CollisionMapInfo&)> moveCondition)
 {
 	// 移動量が0なら処理しない
-	if (!mooveCondition(collisionInfo))return;
+	if (!moveCondition(collisionInfo))return;
 	// 現在の位置に移動量を加算した位置を取得
 	Vector3 position = playerModel_->GetTranslate() + collisionInfo.move;
 

@@ -1,16 +1,16 @@
 #include "MyGame.h"
-#include "InsideScene/SceneFactory.h"
+#include "engine/InsideScene/SceneFactory.h"
 #include <dxgiformat.h>
 #include <memory>
-#include <RenderTexture.h>
-#include <ModelManager.h>
-#include <SkyBox/SkyBox.h>
-#include <TextureManager.h>
-#include <WinAPI.h>
-#include <MyMath.h>
-#include <Game/Application/ModelList.h>
-#include <InsideScene/Framework.h>
-#include <InsideScene/SceneManager.h>
+#include "RenderTexture.h"
+#include "ModelManager.h"
+#include "SkyBox/SkyBox.h"
+#include "TextureManager.h"
+#include "WinAPI.h"
+#include "MyMath.h"
+#include "Game/Application/ModelList.h"
+#include "engine/InsideScene/Framework.h"
+#include "engine/InsideScene/SceneManager.h"
 void MyGame::Initialize()
 {
 	Framework::Initialize();
@@ -72,70 +72,8 @@ void MyGame::Draw()
 #endif
 	dxCommon->PostDraw();
 
-	
-//	renderTexture->BeginRender();
-//	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-//	dxCommon->PreDraw();
-//	srvManager->PreDraw();
-//
-//	// シーンマネージャーの描画	
-//	SceneManager::GetInstance()->Draw();
-//
-//	
-//	renderTexture->EndRender();
-//	
-//	
-//	
-//	// レンダーテクスチャの描画
-//	renderTexture->Draw();
-//	// スカイボックスの描画
-//	//skyBox->Draw();
-//	
-//	Framework::Draw();
-//	
-//#ifdef USE_IMGUI
-//	// ImGuiの描画
-//	imGui->Draw();
-//#endif
-//	
-//	dxCommon->PostDraw();
-
 }
-#pragma region グレイスケール並び
-//void MyGame::Draw()
-//{
-//
-//	renderTexture->BeginRender();
-//
-//	srvManager->PreDraw();
-//	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-//	Object3DCommon::GetInstance()->DrawSettingCommon();
-//
-//	// シーンマネージャーの描画	
-//	SceneManager::GetInstance()->Draw();
-//
-//
-//	renderTexture->EndRender();
-//
-//	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-//	dxCommon->PreDraw();
-//
-//	// レンダーテクスチャの描画
-//	renderTexture->Draw();
-//	// スカイボックスの描画
-//	//skyBox->Draw();
-//
-//	Framework::Draw();
-//
-//#ifdef _DEBUG
-//	// ImGuiの描画
-//	imGui->Draw();
-//#endif
-//
-//	dxCommon->PostDraw();
-//
-//}
-#pragma endregion
+
 
 void MyGame::Finalize()
 {
@@ -148,7 +86,7 @@ void MyGame::Finalize()
 	// CloseHandle(fenceEvent);
 	TextureManager::GetInstance()->Finalize();
 	// モデルマネージャの終了処理
-	ModelManager::GetInstance()->Finalize();
+	ModelManager::GetInstance().Finalize();
 	winAPI->Finalize();
 
 #pragma endregion

@@ -3,7 +3,7 @@
 #include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
 #include "Game/Particle/ParticleManager.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -18,25 +18,24 @@ GamePlayScene::~GamePlayScene()
 void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 {
 	/// スプライトの初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon);
+	SpriteCommon::GetInstance().Initialize(dxCommon);
 	/// オーディオの初期化
-	Audio::GetInstance()->Initialize();
-	soundData = Audio::GetInstance()->LoadWave("resources/mokugyo.wav");
-	xaudio2_ = Audio::GetInstance()->GetXAudio2();
-	Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
+	Audio::GetInstance().Initialize();
+	soundData = Audio::GetInstance().LoadWave("resources/mokugyo.wav");
+	xaudio2_ = Audio::GetInstance().GetXAudio2();
+	Audio::GetInstance().SoundPlayWave(xaudio2_, soundData);
 
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
-
-
-
 	// 固定YZ
 	introFixedY_ = camTargetPos_.y;
 	introFixedZ_ = camTargetPos_.z;
 	// 演出開始時のカメラの位置
 	cameraTransform.translate = camTargetPos_;
+	cameraTransform.rotate = { 0.0f,0.0f,0.0f };
 	// カメラに反映
 	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
 	// スタート演出の開始
 	startPhase_ = StartCamPhase::MoveToLeft;
 	startTimer_ = 0.0f;
@@ -74,34 +73,24 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	isPlayerControlLocked_ = true;
 
 
-	// ポーズUI
-	pauseUI_ = std::make_unique<PauseUI>();
-	pauseUI_->Initialize();
-
 	pauseSprite_ = std::make_unique<Sprite>();
 	pauseSprite_->Initialize("resources/KyeUI/Esc.png");
 	pauseSprite_->SetPosition({ 30.0f,30.0f });
 	pauseSprite_->SetSize({ 50.0f,50.0f });
+
+
+	pauseSystem_ = std::make_unique<PauseSystem>();
+	pauseSystem_->Initialize();
 }
 
 
 void GamePlayScene::Update()
 {
-	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
-		isPause_ = !isPause_;
-	}
-	if (isPause_) {
-		// ポーズ画面
-		pauseUI_->Update();
-		// 続けるが選ばれて決定したらポーズ解除
-		if (pauseUI_->PauseReleaseRequested()) {
-			isPause_ = false;
-		}
-		// ポーズ中にもimguiを表示する
-		DrawImgui();
-		// ゲームの更新を行わない
+
+	if (pauseSystem_->Update()) {
 		return;
 	}
+
 	// カメラの更新
 	camera->Update();
 
@@ -582,26 +571,22 @@ void GamePlayScene::SpritesUpdate()
 
 void GamePlayScene::SpritesDraw()
 {
-	
 
-	
-	if (isPause_) {
-		// ポーズ画面
-		pauseUI_->Draw();
 
-	} else {
-		if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-			enemyHitSprite_->Draw();
-		}
-		if (!isPlayerControlLocked_) {
 
-			controlUI_D->Draw();
-			controlUI_A->Draw();
-			controlUI_S->Draw();
-			controlUI_W->Draw();
-		}
-		pauseSprite_->Draw();
+
+	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
+		enemyHitSprite_->Draw();
 	}
+	if (!isPlayerControlLocked_) {
+
+		controlUI_D->Draw();
+		controlUI_A->Draw();
+		controlUI_S->Draw();
+		controlUI_W->Draw();
+	}
+	pauseSprite_->Draw();
+
 }
 
 
@@ -611,10 +596,10 @@ void GamePlayScene::Finalize()
 	map->Finalize();
 
 	/// オーディオの終了処理
-	Audio::GetInstance()->SoundUnload(&soundData);
+	Audio::GetInstance().SoundUnload(&soundData);
 
 	/// スプライトの終了処理
-	SpriteCommon::GetInstance()->Deletenstance();
+	SpriteCommon::GetInstance().DeleteInstance();
 
 }
 

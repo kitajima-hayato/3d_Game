@@ -1,6 +1,7 @@
 #pragma once
 #include "EnemyBase.h"
 /// 基底クラス<Bas8eEnemy>を継承
+/// ノーマルエネミークラス
 class NormalEnemy :
 	public EnemyBase
 {

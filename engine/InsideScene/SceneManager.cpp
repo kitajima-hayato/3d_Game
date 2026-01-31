@@ -12,7 +12,7 @@ SceneManager* SceneManager::GetInstance()
 	return instance;
 }
 
-void SceneManager::Deletenstance()
+void SceneManager::DestroyInstance()
 {
 	if (instance != nullptr)
 	{
@@ -28,11 +28,10 @@ void SceneManager::Update(DirectXCommon* dxCommon)
         // 今のシーンの終了処理
         if (scene_) {
             scene_->Finalize();
-            delete scene_;
+			scene_.reset();
         }
         // 次のシーンの初期化
-        scene_ = nextScene_;
-        nextScene_ = nullptr;
+        scene_ = std::move(nextScene_);
         // シーンマネージャーの設定
         scene_->SetSceneManager(this);
         scene_->Initialize(dxCommon);
@@ -55,17 +54,16 @@ void SceneManager::Draw()
 void SceneManager::Finalize()
 {
     // 最後のシーンの終了処理
-    // 使えるようなら
     if (scene_)
     {
         scene_->Finalize();
-        delete scene_;
+        scene_.reset();
     }
 }
 
 void SceneManager::ChangeScene(const std::string& sceneName)
 {
-    assert(nextScene_ == nullptr);
+    assert(!nextScene_);
     assert(sceneFactory_);
 
 	// 次のシーン生成

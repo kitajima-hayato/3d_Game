@@ -4,7 +4,10 @@
 #include "engine/3d/Object3D.h"
 #include "Game/Application/Map/Map.h"
 #include "Game/Collision/Collider.h"
+/// <summary>
 /// プレイヤークラス
+/// </summary>
+
 
 /// <summary>
 /// 向き
@@ -114,6 +117,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="position">初期配置</param>
 	void Initialize(Vector3 position);
 
 	/// <summary>
@@ -143,9 +147,9 @@ private:
 	/// </summary>
 	void Move();
 
-	/// <sumary>
+	/// <summary>
 	/// ジャンプ処理
-	/// </sumary>
+	/// </summary>
 	void Jump();
 
 	/// <summary>
@@ -158,16 +162,16 @@ private:
 	/// </summary>
 	void MapCollision(CollisionMapInfo& collisionInfo);
 
-	/// <sumary>
+	/// <summary>
 	/// 天井衝突チェック
 	///　天井に衝突したら移動量を調整
-	///　</sumary>
+	///　</summary>
 	void CellingCollisionMove(CollisionMapInfo& collisionInfo);
 
-	/// <sumary>
+	/// <summary>
 	/// 床衝突チェック
 	/// 床に衝突したら移動量を調整
-	/// </sumary>
+	/// </summary>
 	void LandingCollisionMove(CollisionMapInfo& collisionInfo);
 
 	/// <summary>
@@ -184,19 +188,20 @@ private:
 
 
 	/// <summary>
-	/// 衝突マップ情報取得
+	/// マップとの衝突判定を指定方向に行う共通処理
+	/// 移動後の当たり判定ポイントをチェックし、移動条件を満たす場合に移動量を更新する
 	/// </summary>
-	/// <param name="collisionInfo"></param>
-	/// <param name="type"></param>
-	/// <param name="checkCorners"></param>
-	/// <param name="offset"></param>
-	/// <param name="mooveCondition"></param>
+	/// <param name="collisionInfo">衝突判定に使用する情報</param>
+	/// <param name="type">判定方向</param>
+	/// <param name="checkCorners">判定を取る２つのコーナー</param>
+	/// <param name="offset">判定点に加算するオフセット</param>
+	/// <param name="moveCondition">方向の判定を行う条件 falseの場合判定をスキップ</param>
 	void CollisionMapInfoDirection(
 		CollisionMapInfo& collisionInfo,
 		CollisionType type,
 		const std::array<Corner, 2>& checkCorners,
 		const Vector3& offset,
-		std::function<bool(const CollisionMapInfo&)>mooveCondition);
+		std::function<bool(const CollisionMapInfo&)>moveCondition);
 
 	/// <summary>
 	/// コーナー位置取得
