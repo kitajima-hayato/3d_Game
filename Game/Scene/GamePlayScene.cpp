@@ -31,7 +31,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("1-1");
+	map->Initialize("1-2");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -80,6 +80,11 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	startCam_->Start();
 
+	damageFeedBack_ = std::make_unique<DamageFeedBack>();
+	damageFeedBack_->Bind(player.get(), camera, &cameraTransform);
+	damageFeedBack_->Initialize();
+
+
 }
 
 
@@ -92,17 +97,18 @@ void GamePlayScene::Update()
 
 	// カメラの更新
 	camera->Update();
-
-
+	// 背景の更新
 	backGround->Update();
-	enemyHitSprite_->Update();
+	// スタートカメラの更新
 	startCam_->Update(dt);
 	stageStartEventFlag_ = startCam_->IsRunning();
 	isPlayerControlLocked_ = stageStartEventFlag_;
 	player->SetControlEnabled(!isPlayerControlLocked_);
 	
-
-
+	// マップの更新
+	map->Update();
+	// プレイヤーの更新
+	player->Update();
 	
 
 	bool isEnemyHitNow = player->GetHitEnemy();
@@ -133,8 +139,7 @@ void GamePlayScene::Update()
 
 	//sceneTransition->Update();
 
-	// マップの更新
-	map->Update();
+	
 
 	// エネミーレイヤーが変更されたらエネミーを再生成
 	if (map->ConsumeEnemyLayerDirtyFlag()) {
@@ -151,22 +156,30 @@ void GamePlayScene::Update()
 		player->SetControlEnabled(true);
 	}
 
-	// プレイヤーの更新
-	player->Update();
+	
 
 	// フォローカメラ
 	if (!startCam_->IsRunning())
 	{
-		cameraTransform.translate = camera->GetTranslate(); 
-
-		cameraController_->SetFollowRange(8.0f, 92.0f);
-		cameraController_->SetCameraPosition(cameraTransform.translate);
+		// baseCamPos_ を入力として使う（前フレームのシェイクを混ぜない）
+		cameraController_->SetCameraPosition(baseCameraPos_);
 		cameraController_->SetTargetPosition(player->GetTranslate());
 		cameraController_->Update(dt);
 
-		cameraTransform.translate = cameraController_->GetCameraPosition();
-		camera->SetTranslate(cameraTransform.translate);
+		// フォロー結果を「基準」として保存
+		baseCameraPos_ = cameraController_->GetCameraPosition();
+
+	} else {
+				// 開始演出中は基準位置もカメラ位置も開始演出の位置にする
+		baseCameraPos_ = cameraTransform.translate;
+
 	}
+	cameraTransform.translate = baseCameraPos_;
+	camera->SetTranslate(baseCameraPos_);
+
+	damageFeedBack_->SetBaseCameraPos(baseCameraPos_);
+	damageFeedBack_->Update(dt);
+
 
 	// 敵の更新
 	for (auto& enemy : enemies) {
@@ -178,12 +191,14 @@ void GamePlayScene::Update()
 	// スプライトの更新
 	gamePlayHUD_->Update();
 
+
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
 		sceneManager->ChangeScene("GAMEPLAY");
 	}
 
+	
 
 	// ImGuiの描画
 	DrawImgui();
@@ -221,9 +236,12 @@ void GamePlayScene::Draw()
 	// スプライト描画処理
 	SpritesDraw();
 
+	damageFeedBack_->Draw();
 	gamePlayHUD_->Draw(pauseSystem_->GetPause(), !isPlayerControlLocked_);
 
+
 	pauseSystem_->Draw();
+
 }
 
 void GamePlayScene::InitializeEnemy()

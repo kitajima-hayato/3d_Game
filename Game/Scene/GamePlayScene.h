@@ -11,7 +11,7 @@
 #include "Game/Scene/Pause/PauseSystem.h"
 #include "Game/Application/UI/GamePlayHUD.h"
 #include "Game/Camera/StartCamPhase.h"
-
+#include "Game/Application/UI/DamageFeedBack.h"
 /// <summary>
 /// ゲームプレイシーン
 /// ゲームプレイ中のシーンを管理する
@@ -120,29 +120,11 @@ private:
 
 	
 
+	// 被弾フィードバック
+	std::unique_ptr<DamageFeedBack> damageFeedBack_;
+
+
 	
-
-
-
-	// カメラタイマー
-	float startTimer_ = 0.0f;
-	
-	
-	// オーバーシュート位置
-	Vector3 camOvershootPos_;
-	// どれだけ引くか
-	const float pullBack = 30.0f;
-
-	// カメラのパラメーター
-	// ドリーイン時間
-	float durDollyIn_ = 2.5f;
-	// 揺れ時間
-	float durSettle_ = 0.35f;
-	// どれくらい近づくか
-	float overShootAmt_ = 2.0f;
-	// 揺れの時間
-	float shakeTime_ = 0.3f;
-	// 揺れの強さ
 	float shakeAmp_ = 0.1f;
 
 	
@@ -199,5 +181,7 @@ private:
 	std::unique_ptr<GamePlayHUD> gamePlayHUD_;
 
 	std::unique_ptr<StartCamPhase> startCam_;
+
+	Vector3 baseCameraPos_ = {};
 };
 

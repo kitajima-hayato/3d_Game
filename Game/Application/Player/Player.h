@@ -9,13 +9,6 @@
 /// </summary>
 
 
-/// <summary>
-/// 向き
-/// </summary>
-enum class Direction {
-	kRight,
-	kLeft
-};
 
 /// <summary>
 /// 衝突情報
@@ -107,6 +100,16 @@ struct PlayerStatus {
 class Player :public Collider
 {
 public:
+
+	/// <summary>
+	/// 向き
+	/// </summary>
+	enum class Direction {
+		kRight,
+		kLeft
+	};
+
+
 	// コライダーインターフェイス
 	Collider::Type GetType() const override;
 	AABB GetAABB() const override;
@@ -271,7 +274,7 @@ public:	/// Setter / Getter
 
 	// プレイヤーが敵にヒットしているかどうか
 	bool GetHitEnemy()const { return isEnemyHit_; }
-	
+
 	// ゴールしているかどうか
 	bool GetIsGoal()const { return isGoal_; }
 
@@ -316,15 +319,15 @@ private:	// メンバ変数
 
 	// エネミーに当たったかどうか
 	bool isEnemyHit_ = false;
-	
+
 	// 点滅用フレームカウント
 	uint32_t flashingFrameCount_ = 0;
 	// 現状の点滅回数
 	uint32_t flashingCount_ = 0;
 	// 点滅持続フレーム数
-	 uint32_t maxFlashingFlame_ = 120;
+	uint32_t maxFlashingFlame_ = 120;
 	// 何フレームごとに点滅するか
-	 uint32_t flashingIntervalFrame_ = 10;
+	uint32_t flashingIntervalFrame_ = 10;
 	// 可視フラグ
 	bool isVisible_ = true;
 
