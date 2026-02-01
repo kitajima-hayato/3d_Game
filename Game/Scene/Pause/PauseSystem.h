@@ -31,6 +31,11 @@ public:
 	/// </summary>
 	void DrawImgui();
 
+public:
+	// Getter / Setter
+	bool GetPause() const { return isPause_; }
+
+
 private:
 
 	// ポーズ中フラグ

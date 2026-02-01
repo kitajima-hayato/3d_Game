@@ -1,6 +1,7 @@
 #include "PauseSystem.h"
 #include "Input.h"
 
+#include "engine/InsideScene/SceneManager.h"
 
 
 void PauseSystem::Initialize()
@@ -21,6 +22,24 @@ bool PauseSystem::Update()
 		if (pauseUI_->PauseReleaseRequested()) {
 			isPause_ = false;
 		}
+
+		switch (pauseUI_->ConsumeAction())
+		{
+			
+			case PauseUI::Action::Retry:
+				// リトライ処理
+				SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+				break;
+			case PauseUI::Action::StageSelect:
+				// ステージセレクトへ
+				SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+				break;
+			case PauseUI::Action::Title:
+				// タイトルへ
+				SceneManager::GetInstance()->ChangeScene("TITLE");
+				break;
+		}
+
 		// ポーズ中にもimguiを表示する
 		DrawImgui();
 		// ゲームの更新を行わない

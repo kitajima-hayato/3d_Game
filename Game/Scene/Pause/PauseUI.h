@@ -19,6 +19,14 @@ class PauseUI
 	};
 	enum class UiAnimState { Idle, Decide };
 public:
+	enum class Action {
+		None,
+		Continue,
+		Retry,
+		StageSelect,
+		Title
+	};
+public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -76,9 +84,13 @@ public:	// Getter / Setter
 	/// </summary>
 	Slot GetSelectedSlot() const { return selectedSlot_; }
 
+	Action ConsumeAction();
+
 private:
 	// メニュー項目数
-	Slot selectedSlot_ = Slot::Count;
+	Slot selectedSlot_ = Slot::Continue;
+
+	Action pendingAction_ = Action::None;
 
 	// ポーズ解除要求フラグ
 	bool requestPauseRelease_ = false;
@@ -100,7 +112,7 @@ private:
 	// Space
 	std::unique_ptr<Sprite> decideKeyUI_;
 
-
+	
 	// 選択時のスロットのカラー
 	// PauseUI.h
 	const Vector4 normalSlotColor_{ 1.0f, 1.0f, 1.0f, 1.0f };
@@ -117,6 +129,7 @@ private:
 	float bounceT_ = 1.0f;        // 0→1（1なら終了）
 	float bounceDuration_ = 0.10f; // 秒（0.08〜0.12推奨）
 
+	
 
 };
 
