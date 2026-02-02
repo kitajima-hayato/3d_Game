@@ -31,12 +31,19 @@
 └── └── └── ├── Player.cpp
 └── └── └── └── Player.h
 └── └── ├── StageType.cpp
-└── └── └── StageType.h
+└── └── ├── StageType.h
+└── └── └── UI/
+└── └──     ├── DamageFeedBack.cpp
+└── └──     ├── DamageFeedBack.h
+└── └──     ├── GamePlayHUD.cpp
+└── └──     └── GamePlayHUD.h
 └── ├── Camera/
 └── └── ├── Camera.cpp
 └── └── ├── Camera.h
 └── └── ├── CameraController.cpp
-└── └── └── CameraController.h
+└── └── ├── CameraController.h
+└── └── ├── StartCamPhase.cpp
+└── └── └── StartCamPhase.h
 └── ├── Collision/
 └── └── ├── Collider.cpp
 └── └── ├── Collider.h
@@ -46,10 +53,6 @@
 └── └── ├── LevelLoader.cpp
 └── └── └── LevelLoader.h
 └── ├── Particle/
-└── └── ├── EffectEmitter.cpp
-└── └── ├── EffectEmitter.h
-└── └── ├── EffectManager.cpp
-└── └── ├── EffectManager.h
 └── └── ├── ParticleEmitter.cpp
 └── └── ├── ParticleEmitter.h
 └── └── ├── ParticleManager.cpp
@@ -59,6 +62,11 @@
 └──     ├── GamePlayScene.h
 └──     ├── MyGame.cpp
 └──     ├── MyGame.h
+└──     ├── Pause/
+└──     └── ├── PauseSystem.cpp
+└──     └── ├── PauseSystem.h
+└──     └── ├── PauseUI.cpp
+└──     └── └── PauseUI.h
 └──     ├── SceneSelectGraph/
 └──     └── ├── StageSelectGraph.cpp
 └──     └── └── StageSelectGraph.h
@@ -71,17 +79,6 @@
 └──     ├── StageSelectScene.h
 └──     ├── TitleScene.cpp
 └──     └── TitleScene.h
-├── InsideScene/
-└── ├── AbstractSceneFactory.cpp
-└── ├── AbstractSceneFactory.h
-└── ├── BaseScene.cpp
-└── ├── BaseScene.h
-└── ├── Framework.cpp
-└── ├── Framework.h
-└── ├── SceneFactory.cpp
-└── ├── SceneFactory.h
-└── ├── SceneManager.cpp
-└── └── SceneManager.h
 ├── Lib/
 ├── engine/
 └── ├── 2d/
@@ -108,6 +105,17 @@
 └── ├── Audio/
 └── └── ├── Audio.cpp
 └── └── └── Audio.h
+└── ├── InsideScene/
+└── └── ├── AbstractSceneFactory.cpp
+└── └── ├── AbstractSceneFactory.h
+└── └── ├── BaseScene.cpp
+└── └── ├── BaseScene.h
+└── └── ├── Framework.cpp
+└── └── ├── Framework.h
+└── └── ├── SceneFactory.cpp
+└── └── ├── SceneFactory.h
+└── └── ├── SceneManager.cpp
+└── └── └── SceneManager.h
 └── ├── base/
 └── └── ├── D3DResourceLeakChecker.cpp
 └── └── ├── D3DResourceLeakChecker.h
@@ -247,6 +255,8 @@ File Path: CG2_DirectX.vcxproj
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
+    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
     <ClCompile Include="Game\Collision\CollisionManager.cpp" />
@@ -257,17 +267,15 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Application\Map\CsvLoader.cpp" />
     <ClCompile Include="Game\Application\Block\Block.cpp" />
     <ClCompile Include="Game\Application\ModelList.cpp" />
-    <ClCompile Include="Game\Particle\EffectEmitter.cpp" />
-    <ClCompile Include="Game\Particle\EffectManager.cpp" />
-    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp" />
+    <ClCompile Include="engine\InsideScene\AbstractSceneFactory.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
-    <ClCompile Include="InsideScene\BaseScene.cpp" />
+    <ClCompile Include="engine\InsideScene\BaseScene.cpp" />
     <ClCompile Include="Game\Camera\Camera.cpp" />
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXCommon.cpp" />
     <ClCompile Include="engine\base\Input.cpp" />
     <ClCompile Include="engine\base\Logger.cpp" />
-    <ClCompile Include="InsideScene\Framework.cpp" />
+    <ClCompile Include="engine\InsideScene\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
@@ -286,8 +294,8 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Scene\MyGame.cpp" />
     <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Game\Particle\ParticleManager.cpp" />
-    <ClCompile Include="InsideScene\SceneFactory.cpp" />
-    <ClCompile Include="InsideScene\SceneManager.cpp" />
+    <ClCompile Include="engine\InsideScene\SceneFactory.cpp" />
+    <ClCompile Include="engine\InsideScene\SceneManager.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
@@ -300,8 +308,13 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
     <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
+    <ClCompile Include="Game\Scene\Pause\PauseUI.cpp" />
+    <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
+    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
+    <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
     <ClInclude Include="Game\Camera\CameraController.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
@@ -314,11 +327,9 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Application\Map\CsvLoader.h" />
     <ClInclude Include="Game\Application\Block\Block.h" />
     <ClInclude Include="Game\Application\ModelList.h" />
-    <ClInclude Include="Game\Particle\EffectEmitter.h" />
-    <ClInclude Include="Game\Particle\EffectManager.h" />
-    <ClInclude Include="InsideScene\AbstractSceneFactory.h" />
+    <ClInclude Include="engine\InsideScene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
-    <ClInclude Include="InsideScene\BaseScene.h" />
+    <ClInclude Include="engine\InsideScene\BaseScene.h" />
     <ClInclude Include="Game\Camera\Camera.h" />
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXCommon.h" />
@@ -336,14 +347,14 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="engine\base\StringUtility.h" />
     <ClInclude Include="engine\base\TextureManager.h" />
     <ClInclude Include="engine\base\WinAPI.h" />
-    <ClInclude Include="InsideScene\Framework.h" />
+    <ClInclude Include="engine\InsideScene\Framework.h" />
     <ClInclude Include="Game\Scene\GamePlayScene.h" />
     <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\MyGame.h" />
     <ClInclude Include="Game\Particle\ParticleEmitter.h" />
     <ClInclude Include="Game\Particle\ParticleManager.h" />
-    <ClInclude Include="InsideScene\SceneFactory.h" />
-    <ClInclude Include="InsideScene\SceneManager.h" />
+    <ClInclude Include="engine\InsideScene\SceneFactory.h" />
+    <ClInclude Include="engine\InsideScene\SceneManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Game\Application\StageType.h" />
@@ -357,6 +368,9 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Scene\StageClearScene.h" />
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
     <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
+    <ClInclude Include="Game\Scene\Pause\PauseUI.h" />
+    <ClInclude Include="Game\Camera\StartCamPhase.h" />
+    <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -398,11 +412,11 @@ File Path: CG2_DirectX.vcxproj.filters
     <!-- 統合されたClCompile。重複排除・Filter保持 -->
     <!-- masterブランチから追加された分 -->
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\AbstractSceneFactory.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\BaseScene.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\BaseScene.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
     <ClCompile Include="engine\Audio\Audio.cpp">
       <Filter>engine\Audio</Filter>
@@ -423,16 +437,10 @@ File Path: CG2_DirectX.vcxproj.filters
       <Filter>Game\Loader</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\DirectXCommon.cpp">
-      <Filter>engine\bace</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Particle\EffectEmitter.cpp">
-      <Filter>Game\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Particle\EffectManager.cpp">
-      <Filter>Game\Particle</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="Game\Particle\ParticleEmitter.cpp">
       <Filter>Game\Particle</Filter>
@@ -452,14 +460,14 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp">
       <Filter>Game\Application\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\Framework.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\Framework.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\SceneManager.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\SceneManager.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
-    <ClCompile Include="InsideScene\SceneFactory.cpp">
-      <Filter>InsideScene</Filter>
+    <ClCompile Include="engine\InsideScene\SceneFactory.cpp">
+      <Filter>engine\InsideScene</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene.cpp">
       <Filter>Game\Scene</Filter>
@@ -471,25 +479,25 @@ File Path: CG2_DirectX.vcxproj.filters
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\ImGuiManager.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Input.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\Logger.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\SrvManager.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\StringUtility.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\TextureManager.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\WinAPI.cpp">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClCompile>
     <ClCompile Include="Game\Loader\LevelLoader.cpp">
       <Filter>Game\Application\Loader</Filter>
@@ -530,22 +538,45 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Application\StageType.cpp">
       <Filter>Game\Application\Map</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
-    <ClCompile Include="Game\Application\BackGround.cpp" />
-    <ClCompile Include="Game\Application\Player\Player.cpp" />
-    <ClCompile Include="Game\Application\Map\Map.cpp" />
-    <ClCompile Include="Game\Camera\CameraController.cpp" />
-    <ClCompile Include="Game\Scene\StageClearScene.cpp" />
-    <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
-    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
+    <ClCompile Include="Game\Camera\CameraController.cpp">
+      <Filter>Game\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Player\Player.cpp">
+      <Filter>Game\Application\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\Map\Map.cpp">
+      <Filter>Game\Application\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\StageClearScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\StageSelectScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Pause\PauseUI.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\BackGround.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
+    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
+    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
+    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
-    <ClInclude Include="InsideScene\AbstractSceneFactory.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\AbstractSceneFactory.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\BaseScene.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\BaseScene.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
     <ClInclude Include="engine\Audio\Audio.h">
       <Filter>engine\Audio</Filter>
@@ -569,16 +600,10 @@ File Path: CG2_DirectX.vcxproj.filters
       <Filter>Game\Loader</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\DirectXCommon.h">
-      <Filter>engine\bace</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Particle\EffectEmitter.h">
-      <Filter>Game\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Particle\EffectManager.h">
-      <Filter>Game\Particle</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\ParticleEmitter.h">
       <Filter>Game\Particle</Filter>
@@ -598,14 +623,14 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Application\Enemy\NormalEnemy.h">
       <Filter>Game\Application\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\Framework.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\Framework.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\SceneManager.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\SceneManager.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
-    <ClInclude Include="InsideScene\SceneFactory.h">
-      <Filter>InsideScene</Filter>
+    <ClInclude Include="engine\InsideScene\SceneFactory.h">
+      <Filter>engine\InsideScene</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene.h">
       <Filter>Game\Scene</Filter>
@@ -617,25 +642,25 @@ File Path: CG2_DirectX.vcxproj.filters
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\ImGuiManager.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Input.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\Logger.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SrvManager.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\StringUtility.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\TextureManager.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\WinAPI.h">
-      <Filter>engine\bace</Filter>
+      <Filter>engine\base</Filter>
     </ClInclude>
     <ClInclude Include="Game\Loader\LevelLoader.h">
       <Filter>Game\Application\Loader</Filter>
@@ -679,15 +704,40 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Application\ModelList.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
-    <ClInclude Include="Game\Application\BackGround.h" />
-    <ClInclude Include="Game\Application\Player\Player.h" />
-    <ClInclude Include="Game\Application\Map\Map.h" />
-    <ClInclude Include="Game\Camera\CameraController.h" />
-    <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
-    <ClInclude Include="Game\Scene\StageClearScene.h" />
-    <ClInclude Include="Game\Scene\StageSelectScene.h" />
-    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
+    <ClInclude Include="Game\Camera\CameraController.h">
+      <Filter>Game\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Enemy\EnemyType.h">
+      <Filter>Game\Application\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Player\Player.h">
+      <Filter>Game\Application\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\Map\Map.h">
+      <Filter>Game\Application\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\StageClearScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\StageSelectScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Pause\PauseUI.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\BackGround.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Camera\StartCamPhase.h" />
+    <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
+    <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
+    <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -701,9 +751,6 @@ File Path: CG2_DirectX.vcxproj.filters
     </Filter>
     <Filter Include="engine\Audio">
       <UniqueIdentifier>{71dd5415-3c4e-4bb0-b3f9-1bffe38d396b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="engine\bace">
-      <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
     </Filter>
     <Filter Include="engine\math">
       <UniqueIdentifier>{8c514b5d-934d-48fe-adfb-7259d210c0a6}</UniqueIdentifier>
@@ -729,9 +776,6 @@ File Path: CG2_DirectX.vcxproj.filters
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{c6eecef6-e7d8-4050-a866-f31dd4a028a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="InsideScene">
-      <UniqueIdentifier>{90e59181-f685-48db-808d-73212c0b33ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Application\Enemy">
       <UniqueIdentifier>{431302d6-9528-409f-a6cc-c4076693d624}</UniqueIdentifier>
     </Filter>
@@ -752,6 +796,15 @@ File Path: CG2_DirectX.vcxproj.filters
     </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{588ada5e-8e2c-43c1-8997-4bcf269d6a66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\InsideScene">
+      <UniqueIdentifier>{90e59181-f685-48db-808d-73212c0b33ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Application\UI">
+      <UniqueIdentifier>{5c38ea4b-3666-4e57-aad9-65c2b1358921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\base">
+      <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -984,6 +1037,11 @@ File Path: Game/Application/BackGround.h
 #include "engine/3d/Object3D.h"
 #include "engine/math/MyMath.h"
 #include <memory>
+/// <summary>
+/// 背景クラス
+/// 各ステージの背景を管理する
+/// </summary>
+
 class BackGround
 {
 public:
@@ -999,16 +1057,17 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
-
+	/// <summary>
+	/// Imgui一括管理 / 描画関数
+	/// </summary>
 	void DrawImgui();
 private:
+	// タイトル背景
 	std::unique_ptr<Object3D> titleBackGround3;
 	Transform titleBackGround3Transform;
 
 	std::unique_ptr<Object3D> titleBackGround3_2;
 	Transform titleBackGround3_2Transform;
-
-
 
 	std::unique_ptr<Object3D> titleBackGround2;
 	Transform titleBackGround2Transform;
@@ -1031,7 +1090,7 @@ private:
 	std::unique_ptr<Object3D> titleBackGround1_4;
 	Transform titleBackGround1_4Transform;
 
-
+	// ステージセレクト背景
 	std::unique_ptr<Object3D> skyBack;
 	Transform skyBackTransform;
 
@@ -1280,6 +1339,11 @@ File Path: Game/Application/Block/BlockType.h
 ============================================================
 #pragma once
 
+/// <summary>
+/// ブロックタイプ列挙型
+/// ブロックの種類を定義する
+/// </summary>
+
 enum class BlockType
 {
 	Air = 0,
@@ -1299,7 +1363,7 @@ enum class BlockType
 
 
 
-// 新しいブロックを追加するときは、下のリストを上から順にチェックすればOKです。
+// 新しいブロックを追加するときは、下のリストを上から順にチェックすればOK
 //
 // BlockType に追加
 //
@@ -1307,7 +1371,7 @@ enum class BlockType
 //
 //	既存の数値は変えない
 //
-//	ImGui 表示名を追加
+//	Map クラス の ImGui 表示名を追加
 //
 //	blockTypeNames[] に "NewBlockName" を追加
 //
@@ -1348,6 +1412,13 @@ File Path: Game/Application/Enemy/EnemyBase.h
 #include "engine/math/MyMath.h"
 #include "engine/3d/Object3D.h"
 #include "Game/Collision/Collider.h"
+
+/// <summary>
+/// エネミーの基本構造
+/// 継承元として使用する
+/// </summary>
+
+/// エネミーのステータス
 struct Stats {
 	/// 座標
 	Transform transform;
@@ -1405,6 +1476,10 @@ public:
 				t.translate + t.scale * 0.5f };
 	}
 
+	/// <summary>
+	/// 衝突時の処理
+	/// </summary>
+	/// <param name="other">どれと判定をとるか</param>
 	void OnCollision(Collider* other) override {
 		// 衝突時の処理を実装
 		if (other->GetType() == Type::Player) {
@@ -1467,6 +1542,11 @@ File Path: Game/Application/Enemy/EnemyFactory.h
 #pragma once
 #include <memory>
 
+/// <summary>
+/// ファクトリメソッドパターンのファクトリー部分
+/// エネミーを生成する
+/// </summary>
+
 /// エネミー全てのファクトリークラス
 #include "EnemyBase.h"
 #include "NormalEnemy.h"
@@ -1477,8 +1557,8 @@ public:
 	/// <summary>
 	///  エネミーを生成するファクトリーメソッド
 	/// </summary>
-	/// <param name="type"></param>
-	/// <returns></returns>
+	/// <param name="type">生成するエネミーの名前</param>
+	/// <returns>エネミーデータのインスタンス</returns>
 	static std::unique_ptr<EnemyBase> CreateEnemy(const std::string& type);
 
 };
@@ -1701,6 +1781,7 @@ File Path: Game/Application/Enemy/NormalEnemy.h
 #pragma once
 #include "EnemyBase.h"
 /// 基底クラス<Bas8eEnemy>を継承
+/// ノーマルエネミークラス
 class NormalEnemy :
 	public EnemyBase
 {
@@ -1979,7 +2060,7 @@ void Map::Initialize(const char* filePath)
 	LoadMapData(filePath);
 
 	// マップブロックの生成
-	GenerareMapBlock();
+	GenerateMapBlock();
 
 	// マップデータの変更検知
 	previousMapData_ = mapChipData_;
@@ -2061,7 +2142,7 @@ void Map::Update()
                     LoadMapData(baseName.c_str());
 
                     // マップブロックも作り直す
-                    GenerareMapBlock();
+                    GenerateMapBlock();
 
                     mapFileMessage = std::string("Loaded: ") + mapFileName;
                 }
@@ -2351,7 +2432,7 @@ void Map::Finalize()
 	}
 }
 
-void Map::GenerareMapBlock()
+void Map::GenerateMapBlock()
 {
 	const uint32_t h = GetHeight();
 	const uint32_t w = GetWidth();
@@ -2601,7 +2682,7 @@ public:
 	/// <summary>
 	/// マップブロック生成
 	/// </summary>
-	void GenerareMapBlock();
+	void GenerateMapBlock();
 
 	/// <summary>
 	/// エネミーレイヤー生成
@@ -2723,43 +2804,43 @@ File Path: Game/Application/ModelList.cpp
 void ModelList::LoadAllModel()
 {
 	/// LoadModelList
-	ModelManager::GetInstance()->LoadModel("cubeR.obj");
-	ModelManager::GetInstance()->LoadModel("Cube.obj");
-
-
-	/// TitleScene
-	// プレイヤー
-	ModelManager::GetInstance()->LoadModel("Player.obj");
-	// レインボープレーン
-	ModelManager::GetInstance()->LoadModel("RainbowPlane.obj");
-	// タイトルロゴ
-	ModelManager::GetInstance()->LoadModel("title.obj");
-	// タイトル背景
-	ModelManager::GetInstance()->LoadModel("Back3.obj");
-	ModelManager::GetInstance()->LoadModel("Back3Reverse.obj");
-	ModelManager::GetInstance()->LoadModel("back2.obj");
-	ModelManager::GetInstance()->LoadModel("Back2Reverse.obj");
-	ModelManager::GetInstance()->LoadModel("back1.obj");
-	ModelManager::GetInstance()->LoadModel("BackSky.obj");
-	ModelManager::GetInstance()->LoadModel("soil.obj");
-
-	/// StageSelectScene
-	ModelManager::GetInstance()->LoadModel("SelectBaseGround.obj");
-
-	/// GamePlayScene
-	ModelManager::GetInstance()->LoadModel("Grass.obj");
-	ModelManager::GetInstance()->LoadModel("SceneChange.obj");
-	ModelManager::GetInstance()->LoadModel("nullBlock.obj");
-	ModelManager::GetInstance()->LoadModel("XYZLabel.obj");
-	ModelManager::GetInstance()->LoadModel("BreakBlock.obj");
-	ModelManager::GetInstance()->LoadModel("moveBlock.obj");
-	ModelManager::GetInstance()->LoadModel("sand.obj");
-	ModelManager::GetInstance()->LoadModel("Unbreakable.obj");
-
-	ModelManager::GetInstance()->LoadModel("GoalUp.obj");
-	ModelManager::GetInstance()->LoadModel("GoalDown.obj");
-
-	ModelManager::GetInstance()->LoadModel("Tentativeenemy.obj");
+	ModelManager::GetInstance().LoadModel("cubeR.obj");
+	ModelManager::GetInstance().LoadModel("Cube.obj");
+							   
+							   
+	/// TitleScene			   
+	// プレイヤー				
+	ModelManager::GetInstance().LoadModel("Player.obj");
+	// レインボープレーン		 
+	ModelManager::GetInstance().LoadModel("RainbowPlane.obj");
+	// タイトルロゴ			   
+	ModelManager::GetInstance().LoadModel("title.obj");
+	// タイトル背景			   
+	ModelManager::GetInstance().LoadModel("Back3.obj");
+	ModelManager::GetInstance().LoadModel("Back3Reverse.obj");
+	ModelManager::GetInstance().LoadModel("back2.obj");
+	ModelManager::GetInstance().LoadModel("Back2Reverse.obj");
+	ModelManager::GetInstance().LoadModel("back1.obj");
+	ModelManager::GetInstance().LoadModel("BackSky.obj");
+	ModelManager::GetInstance().LoadModel("soil.obj");
+							   
+	/// StageSelectScene	   
+	ModelManager::GetInstance().LoadModel("SelectBaseGround.obj");
+							   
+	/// GamePlayScene		   
+	ModelManager::GetInstance().LoadModel("Grass.obj");
+	ModelManager::GetInstance().LoadModel("SceneChange.obj");
+	ModelManager::GetInstance().LoadModel("nullBlock.obj");
+	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
+	ModelManager::GetInstance().LoadModel("BreakBlock.obj");
+	ModelManager::GetInstance().LoadModel("moveBlock.obj");
+	ModelManager::GetInstance().LoadModel("sand.obj");
+	ModelManager::GetInstance().LoadModel("Unbreakable.obj");
+							   
+	ModelManager::GetInstance().LoadModel("GoalUp.obj");
+	ModelManager::GetInstance().LoadModel("GoalDown.obj");
+							   
+	ModelManager::GetInstance().LoadModel("Tentativeenemy.obj");
 }
 
 
@@ -3122,7 +3203,7 @@ void Player::Jump()
 	// 地面にいる場合
 	if (onGround_) {
 		// ジャンプキーが押されたら
-		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		if (Input::GetInstance()->PushKey(DIK_SPACE)|| Input::GetInstance()->PushKey(DIK_W)) {
 			// ジャンプ処理
 			velocity_.y = status_.kJumpPower;
 		}
@@ -3292,10 +3373,15 @@ void Player::PlayerCollisionMove(const CollisionMapInfo& info)
 	playerModel_->SetTranslate(position);
 }
 
-void Player::CollisionMapInfoDirection(CollisionMapInfo& collisionInfo, CollisionType type, const std::array<Corner, 2>& checkCorners, const Vector3& offset, std::function<bool(const CollisionMapInfo&)> mooveCondition)
+void Player::CollisionMapInfoDirection(
+	CollisionMapInfo& collisionInfo, 
+	CollisionType type, 
+	const std::array<Corner, 2>& checkCorners, 
+	const Vector3& offset, 
+	std::function<bool(const CollisionMapInfo&)> moveCondition)
 {
 	// 移動量が0なら処理しない
-	if (!mooveCondition(collisionInfo))return;
+	if (!moveCondition(collisionInfo))return;
 	// 現在の位置に移動量を加算した位置を取得
 	Vector3 position = playerModel_->GetTranslate() + collisionInfo.move;
 
@@ -3538,15 +3624,11 @@ File Path: Game/Application/Player/Player.h
 #include "engine/3d/Object3D.h"
 #include "Game/Application/Map/Map.h"
 #include "Game/Collision/Collider.h"
-/// プレイヤークラス
-
 /// <summary>
-/// 向き
+/// プレイヤークラス
 /// </summary>
-enum class Direction {
-	kRight,
-	kLeft
-};
+
+
 
 /// <summary>
 /// 衝突情報
@@ -3638,6 +3720,16 @@ struct PlayerStatus {
 class Player :public Collider
 {
 public:
+
+	/// <summary>
+	/// 向き
+	/// </summary>
+	enum class Direction {
+		kRight,
+		kLeft
+	};
+
+
 	// コライダーインターフェイス
 	Collider::Type GetType() const override;
 	AABB GetAABB() const override;
@@ -3648,6 +3740,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	/// <param name="position">初期配置</param>
 	void Initialize(Vector3 position);
 
 	/// <summary>
@@ -3677,9 +3770,9 @@ private:
 	/// </summary>
 	void Move();
 
-	/// <sumary>
+	/// <summary>
 	/// ジャンプ処理
-	/// </sumary>
+	/// </summary>
 	void Jump();
 
 	/// <summary>
@@ -3692,16 +3785,16 @@ private:
 	/// </summary>
 	void MapCollision(CollisionMapInfo& collisionInfo);
 
-	/// <sumary>
+	/// <summary>
 	/// 天井衝突チェック
 	///　天井に衝突したら移動量を調整
-	///　</sumary>
+	///　</summary>
 	void CellingCollisionMove(CollisionMapInfo& collisionInfo);
 
-	/// <sumary>
+	/// <summary>
 	/// 床衝突チェック
 	/// 床に衝突したら移動量を調整
-	/// </sumary>
+	/// </summary>
 	void LandingCollisionMove(CollisionMapInfo& collisionInfo);
 
 	/// <summary>
@@ -3718,19 +3811,20 @@ private:
 
 
 	/// <summary>
-	/// 衝突マップ情報取得
+	/// マップとの衝突判定を指定方向に行う共通処理
+	/// 移動後の当たり判定ポイントをチェックし、移動条件を満たす場合に移動量を更新する
 	/// </summary>
-	/// <param name="collisionInfo"></param>
-	/// <param name="type"></param>
-	/// <param name="checkCorners"></param>
-	/// <param name="offset"></param>
-	/// <param name="mooveCondition"></param>
+	/// <param name="collisionInfo">衝突判定に使用する情報</param>
+	/// <param name="type">判定方向</param>
+	/// <param name="checkCorners">判定を取る２つのコーナー</param>
+	/// <param name="offset">判定点に加算するオフセット</param>
+	/// <param name="moveCondition">方向の判定を行う条件 falseの場合判定をスキップ</param>
 	void CollisionMapInfoDirection(
 		CollisionMapInfo& collisionInfo,
 		CollisionType type,
 		const std::array<Corner, 2>& checkCorners,
 		const Vector3& offset,
-		std::function<bool(const CollisionMapInfo&)>mooveCondition);
+		std::function<bool(const CollisionMapInfo&)>moveCondition);
 
 	/// <summary>
 	/// コーナー位置取得
@@ -3800,7 +3894,7 @@ public:	/// Setter / Getter
 
 	// プレイヤーが敵にヒットしているかどうか
 	bool GetHitEnemy()const { return isEnemyHit_; }
-	
+
 	// ゴールしているかどうか
 	bool GetIsGoal()const { return isGoal_; }
 
@@ -3845,15 +3939,15 @@ private:	// メンバ変数
 
 	// エネミーに当たったかどうか
 	bool isEnemyHit_ = false;
-	
+
 	// 点滅用フレームカウント
 	uint32_t flashingFrameCount_ = 0;
 	// 現状の点滅回数
 	uint32_t flashingCount_ = 0;
 	// 点滅持続フレーム数
-	 uint32_t maxFlashingFlame_ = 120;
+	uint32_t maxFlashingFlame_ = 120;
 	// 何フレームごとに点滅するか
-	 uint32_t flashingIntervalFrame_ = 10;
+	uint32_t flashingIntervalFrame_ = 10;
 	// 可視フラグ
 	bool isVisible_ = true;
 
@@ -3897,6 +3991,468 @@ enum class StatgeType {
 	stage9,
 	stage10,
 };
+
+
+============================================================
+File Path: Game/Application/UI/DamageFeedBack.cpp
+============================================================
+#include "DamageFeedBack.h"
+
+static float Clamp01(float x) {
+	return std::clamp(x, 0.0f, 1.0f);
+}
+
+void DamageFeedBack::Bind(Player* player, Camera* camera, Transform* cameraTransform)
+{
+	player_ = player;
+	camera_ = camera;
+	cameraTransform_ = cameraTransform;
+
+}
+
+bool DamageFeedBack::IsActive() const
+{
+	if (!hitSprite_) {
+		return false;
+	}
+	const float a = hitSprite_->GetColor().w;
+	return shakeActive_ || (a > 0.0f);
+}
+
+void DamageFeedBack::Reset()
+{
+	wasHitPrev_ = false;
+	shakeActive_ = false;
+	shakeTimer_ = 0.0f;
+	baseCamPos_ = {};
+
+	if (hitSprite_) {
+		hitSprite_->SetColor(flashColorOff_);
+	}
+}
+
+void DamageFeedBack::BeginHit()
+{
+	shakeActive_ = true;
+	shakeTimer_ = 0.0f;
+
+	// ダメージエフェクト
+	if (hitSprite_) {
+		hitSprite_->SetColor(flashColorOn_);
+	}
+
+	
+}
+
+void DamageFeedBack::UpdateFlash()
+{
+	if (!hitSprite_) {
+		return;
+	}
+	Vector4 currentColor = hitSprite_->GetColor();
+	if (currentColor.w > 0.0f) {
+		// 減算スピードは 0.01f ～ 0.05f くらいで調整
+		currentColor.w = (std::max)(0.0f, currentColor.w - fadeSpeed_);
+		hitSprite_->SetColor(currentColor);
+	}
+}
+
+void DamageFeedBack::UpdateShake(float dt)
+{
+	if (!shakeActive_)return;
+	if (!camera_ || !cameraTransform_) return;
+
+	shakeTimer_ += dt;
+
+	// 減衰
+	float u = Clamp01(1.0f - (shakeTimer_ / shakeTime_));
+
+	// ２軸(x,y)のシェイク
+	float sx = std::sin(shakeTimer_ * 80.0f);
+	float sy = std::sin(shakeTimer_ * 100.0f);
+
+	Vector3 offset = { sx * shakeAmp_ * u, sy * shakeAmp_ * u, 0.0f };
+
+	cameraTransform_->translate = baseCamPos_ + offset;
+	camera_->SetTranslate(cameraTransform_->translate);
+
+	// シェイク終了
+	if (shakeTimer_ >= shakeTime_) {
+		shakeTimer_ = 0.0f;
+		shakeActive_ = false;
+		// 最終的には元の位置に戻す
+		cameraTransform_->translate = baseCamPos_;
+		camera_->SetTranslate(baseCamPos_);
+	}
+
+}
+
+
+void DamageFeedBack::Initialize()
+{
+	hitSprite_ = std::make_unique<Sprite>();
+	hitSprite_->Initialize(texturePath_);
+	hitSprite_->SetSize({ 1280.0f,720.0f });
+	hitSprite_->SetPosition({ 0.0f,0.0f });
+	hitSprite_->SetColor(flashColorOff_);
+
+	Reset();
+}
+
+void DamageFeedBack::Update(float dt)
+{
+	if (!player_ || !camera_ || !cameraTransform_)return;
+
+	const bool hitNow = player_->GetHitEnemy();
+
+	if(hitNow && !wasHitPrev_){
+		BeginHit();
+	}
+
+	wasHitPrev_ = hitNow;
+
+
+	if (hitSprite_) {
+		hitSprite_->Update();
+	}
+
+	// フラッシュ減衰
+	UpdateFlash();
+
+	// シェイク更新
+	UpdateShake(dt);
+}
+
+void DamageFeedBack::Draw()
+{
+	if (!hitSprite_){
+		return;
+	}
+	if (IsActive()){
+		hitSprite_->Draw();
+	}
+}
+
+
+
+
+============================================================
+File Path: Game/Application/UI/DamageFeedBack.h
+============================================================
+#pragma once
+#include "Game/Camera/Camera.h"
+#include "Game/Application/Player/Player.h"
+#include "engine/2d/Sprite.h"
+class Player;
+class Camera;
+class DamageFeedBack
+{
+
+public:
+	void Initialize();
+
+	void Update(float dt);
+
+	void Draw();
+
+	void Bind(Player* player,Camera*camera,Transform*cameraTransform);
+
+	bool IsActive()const;
+
+	void Reset();
+
+
+public: // Getter / Setter
+	void SetBaseCameraPos(const Vector3& basePos) { baseCamPos_ = basePos; }
+
+private:
+	void BeginHit();
+
+	void UpdateFlash();
+
+	void UpdateShake(float dt);
+
+private:
+	// 敵に衝突したときのシェイク時間
+	float shakeTime_ = 0.5f;
+	// シェイクの強さ
+	float shakeAmp_ = 0.2f;
+	// α値の減衰速度
+	float fadeSpeed_ = 0.02f;
+
+	Vector4 flashColorOn_ = { 1.0f,1.0f,1.0f,0.5f };
+	Vector4 flashColorOff_ = { 1.0f,1.0f,1.0f,0.0f };
+
+	// 画像パス
+	std::string texturePath_ = "resources/HitDamage.png";
+
+private:
+	Player* player_ = nullptr;
+	Camera* camera_ = nullptr;
+	Transform* cameraTransform_ = nullptr;
+
+	// ヒット検出
+	bool wasHitPrev_ = false;
+
+	// シェイク
+	bool shakeActive_ = false;
+	float shakeTimer_ = 0.0f;
+	Vector3 baseCamPos_ = {};
+
+	// ヒット時のスプライト
+	std::unique_ptr<Sprite> hitSprite_ = nullptr;
+
+};
+
+
+
+============================================================
+File Path: Game/Application/UI/GamePlayHUD.cpp
+============================================================
+#include "GamePlayHUD.h"
+#include "Input.h"
+#include "ImGuiManager.h"
+void GamePlayHUD::Initialize()
+{
+	// ポーズアイコン
+	pauseSprite_ = MakeSprite("resources/KyeUI/Esc.png",
+		{ 30.0f,30.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,1.0f });
+	// コントロールUI
+	// Dキー
+	controlUI_D = MakeSprite("resources/KyeUI/D.png",
+		{ 200.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+	// Aキー
+	controlUI_A = MakeSprite("resources/KyeUI/A.png",
+		{ 100.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+	// Sキー
+	controlUI_S = MakeSprite("resources/KyeUI/S.png",
+		{ 150.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+	// Wキー
+	controlUI_W = MakeSprite("resources/KyeUI/W.png",
+		{ 150.0f,20.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+
+	UiActive_ = false;
+	uiTimer = 0;
+	
+}
+
+void GamePlayHUD::Update()
+{
+	// UI
+	pauseSprite_->Update();
+	controlUI_D->Update();
+	controlUI_A->Update();
+	controlUI_S->Update();
+	controlUI_W->Update();
+	
+	UpdateControlUI();
+	
+	
+	
+}
+
+void GamePlayHUD::UpdateControlUI()
+{
+	// 押されているキーだけ色を濃くする
+	// D
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		// 色を濃くする
+		controlUI_D->SetColor(activeColor_);
+		// 少しだけ右にずらす
+		controlUI_D->SetPosition({ 200 + pressedOffset_,70.0f });
+	} else {
+		// 元の薄い色に戻す
+		controlUI_D->SetColor(inactiveColor_);
+		// 元の位置に戻す
+		controlUI_D->SetPosition({ 200.0f,70.0f });
+	}
+	 if (Input::GetInstance()->PushKey(DIK_A)) {
+        controlUI_A->SetColor(activeColor_);
+        controlUI_A->SetPosition({ 100.0f - pressedOffset_, 70.0f });
+    } else {
+        controlUI_A->SetColor(inactiveColor_);
+        controlUI_A->SetPosition({ 100.0f, 70.0f });
+    }
+
+    // S
+    if (Input::GetInstance()->PushKey(DIK_S)) {
+        controlUI_S->SetColor(activeColor_);
+        controlUI_S->SetPosition({ 150.0f, 70.0f + pressedOffset_ });
+    } else {
+        controlUI_S->SetColor(inactiveColor_);
+        controlUI_S->SetPosition({ 150.0f, 70.0f });
+    }
+
+    // W
+    if (Input::GetInstance()->PushKey(DIK_W)) {
+        controlUI_W->SetColor(activeColor_);
+        controlUI_W->SetPosition({ 150.0f, 20.0f - pressedOffset_ });
+    } else {
+        controlUI_W->SetColor(inactiveColor_);
+        controlUI_W->SetPosition({ 150.0f, 20.0f });
+    }
+}
+
+void GamePlayHUD::UpdatePauseIcon()
+{
+}
+
+void GamePlayHUD::Draw(bool isPaused, bool showControls)
+{
+	// ポーズ中はポーズアイコンを表示
+	if (isPaused) {
+		pauseSprite_->Draw();
+	}
+	
+	// 操作系UI表示
+	if (showControls) {
+		controlUI_D->Draw();
+		controlUI_A->Draw();
+		controlUI_S->Draw();
+		controlUI_W->Draw();
+	}
+	pauseSprite_->Draw();
+}
+
+void GamePlayHUD::DrawImGui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("GamePlay HUD");
+	ImGui::SeparatorText("Pause Icon");
+	Vector2 pausePos = pauseSprite_->GetPosition();
+	Vector2 pauseSize = pauseSprite_->GetSize();
+	ImGui::DragFloat2("Pause Position", &pausePos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("Pause Size", &pauseSize.x, 1.0f, 0.0f, 500.0f);
+	pauseSprite_->SetPosition(pausePos);
+	pauseSprite_->SetSize(pauseSize);
+	ImGui::SeparatorText("Control UI Positions and Sizes");
+	Vector2 dPos = controlUI_D->GetPosition();
+	Vector2 aPos = controlUI_A->GetPosition();
+	Vector2 sPos = controlUI_S->GetPosition();
+	Vector2 wPos = controlUI_W->GetPosition();
+	Vector2 dSize = controlUI_D->GetSize();
+	Vector2 aSize = controlUI_A->GetSize();
+	Vector2 sSize = controlUI_S->GetSize();
+	Vector2 wSize = controlUI_W->GetSize();
+	ImGui::DragFloat2("D Position", &dPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("D Size", &dSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("A Position", &aPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("A Size", &aSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("S Position", &sPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("S Size", &sSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("W Position", &wPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("W Size", &wSize.x, 1.0f, 0.0, 500.0f);
+	controlUI_D->SetPosition(dPos);
+	controlUI_D->SetSize(dSize);
+	controlUI_A->SetPosition(aPos);
+	controlUI_A->SetSize(aSize);
+	controlUI_S->SetPosition(sPos);
+	controlUI_S->SetSize(sSize);
+	controlUI_W->SetPosition(wPos);
+	controlUI_W->SetSize(wSize);
+	ImGui::End();
+#endif
+}
+
+std::unique_ptr<Sprite> GamePlayHUD::MakeSprite(const std::string& path, const Vector2& pos, const Vector2& size, const Vector4 color)
+{
+	// スプライト生成
+	auto sprite = std::make_unique<Sprite>();
+	sprite->Initialize(path);
+	sprite->SetPosition(pos);
+	sprite->SetSize(size);
+	sprite->SetColor(color);
+	return sprite;
+}
+
+
+============================================================
+File Path: Game/Application/UI/GamePlayHUD.h
+============================================================
+#pragma once
+#include <memory>
+#include "engine/2d/Sprite.h"
+#include "engine/math/MyMath.h"
+
+class GamePlayHUD
+{
+public:
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+	/// <summary>
+	/// 更新
+	/// </summary>
+	/// <param name="dt">ゲーム内時間</param>
+	void Update();
+
+	/// <summary>
+	/// 操作UIの更新
+	/// </summary>
+	void UpdateControlUI();
+
+	/// <summary>
+	/// ポーズアイコンの更新
+	/// </summary>
+	void UpdatePauseIcon();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	/// <param name="isPaused">ポーズ中か</param>
+	/// <param name="showControls">操作系UIが見える状態か</param>
+	void Draw(bool isPaused,bool showControls);
+
+
+	/// <summary>
+	/// ImGuiの描画
+	/// </summary>
+	void DrawImGui();
+
+	/// <summary>
+	/// スプライトの生成ヘルパ
+	/// </summary>
+	std::unique_ptr<Sprite> MakeSprite(const std::string& path, const Vector2& pos, const Vector2& size, const Vector4 color);
+
+
+private:
+	// 操作UI
+	// DキーUI
+	std::unique_ptr<Sprite> controlUI_D;
+	Vector2 controlUI_DPos_ = { 100.0f, 600.0f };
+	Vector4 controlUIColorD_ = { 1.0f,1.0f,1.0f,0.5f };
+	// AキーUI
+	std::unique_ptr<Sprite>controlUI_A;
+	Vector2 controlUIAPos_ = { 50.0f,600.0f };
+	Vector4 controlUIColorA_ = { 1.0f,1.0f,1.0f,0.5f };
+	// WキーUI
+	std::unique_ptr<Sprite>controlUI_W;
+	Vector2 controlUIWPos_ = { 75.0f,550.0f };
+	Vector4 controlUIColorW_ = { 1.0f,1.0f,1.0f,0.5f };
+	// SキーUI
+	std::unique_ptr<Sprite>controlUI_S;
+	Vector2 controlUISPos_ = { 75.0f,650.0f };
+	Vector4 controlUIColorS_ = { 1.0f,1.0f,1.0f,0.5f };
+
+	// ポーズ案内(esc)
+	std::unique_ptr<Sprite> pauseSprite_;
+
+	// UIアクティブフラグ
+	bool UiActive_ = false;
+	int32_t uiTimer = 0;
+
+	// 非アクティブカラー / 押されていない時は半透明
+	Vector4 inactiveColor_ = { 1.0f,1.0f,1.0f,0.5f };
+	// アクティブカラー / 押されている時は不透明
+	Vector4 activeColor_ = { 1.0f,1.0f,1.0f,1.0f };
+
+	// 押された時のオフセット量
+	float pressedOffset_ = 5.0f;
+
+	
+};
+
 
 
 ============================================================
@@ -4179,6 +4735,227 @@ private:
 	float currentOffsetX_ = 0.0f;
 	// オフセットの補間速度
 	float offsetLerpSpeed_ = 2.0f;
+};
+
+
+
+============================================================
+File Path: Game/Camera/StartCamPhase.cpp
+============================================================
+#include "StartCamPhase.h"
+#include <cassert>
+
+void StartCamPhase::Bind(Camera* camera, Transform* cameraTransform)
+{
+	// カメラ情報のバインド
+	camera_ = camera;
+	cameraTransform_ = cameraTransform;
+}
+
+void StartCamPhase::Start()
+{
+	// 中身があるかどうか
+	assert(camera_ != nullptr);
+
+	// 固定地点の保存
+	introFixedY_ = camTargetPos_.y;
+	introFixedZ_ = camTargetPos_.z;
+
+	// 開始地点保存
+	startPos_ = { camTargetPos_.x,introFixedY_,introFixedZ_ };
+
+	// カメラを初期位置へ
+	cameraTransform_->translate = startPos_;
+	cameraTransform_->rotate = { 0.0f,0.0f,0.0f };
+	// カメラに反映
+	camera_->SetTranslate(cameraTransform_->translate);
+	camera_->SetRotate(cameraTransform_->rotate);
+
+	phase_ = Phase::MoveToLeft;
+	timer_ = 0.0f;
+
+
+
+}
+
+void StartCamPhase::Skip()
+{
+	// 即座にターゲットへ
+	introFixedY_ = camTargetPos_.y;
+	introFixedZ_ = camTargetPos_.z;
+
+	startPos_ = { camTargetPos_.x,introFixedY_,introFixedZ_ };
+	cameraTransform_->translate = startPos_;
+	camera_->SetTranslate(cameraTransform_->translate);
+
+	phase_ = Phase::None;
+	timer_ = 0.0f;
+}
+
+
+void StartCamPhase::Update(float dt)
+{
+	if (phase_ == Phase::None) {
+		return;
+	}
+
+	const Vector3 leftPos = { introLeftX_,introFixedY_,introFixedZ_ };
+	const Vector3 rightPos = { introRightX_,introFixedY_,introFixedZ_ };
+	const Vector3 startPos = { camTargetPos_.x,introFixedY_,introFixedZ_ };
+
+	switch (phase_)
+	{
+	case StartCamPhase::Phase::None:
+		break;
+	case StartCamPhase::Phase::MoveToLeft:
+	{
+		timer_ += dt;
+		const float t = EaseOutCubic(timer_ / introMoveDur_);
+		cameraTransform_->translate = Lerp(startPos_, Vector3{ introLeftX_,introFixedY_,introFixedZ_ }, t);
+		if (timer_ >= introMoveDur_) {
+			phase_ = Phase::PanToRight;
+			timer_ = 0.0f;
+			cameraTransform_->translate = leftPos;
+		}
+	}
+	break;
+	case StartCamPhase::Phase::PanToRight:
+	{
+		timer_ += dt;
+		const float t = EaseOutCubic(timer_ / introPanDur_);
+		cameraTransform_->translate = Lerp(leftPos, rightPos, t);
+		if (timer_ >= introPanDur_) {
+			phase_ = Phase::Hold;
+			timer_ = 0.0f;
+			cameraTransform_->translate = rightPos;
+		}
+	}
+	break;
+	case StartCamPhase::Phase::Hold: 
+	{
+		timer_ += dt;
+		cameraTransform_->translate = rightPos;
+
+		if (timer_ >= introHoldDur_) {
+			phase_ = Phase::ReturnToStart;
+			timer_ = 0.0f;
+		}
+	}
+	break;
+	case StartCamPhase::Phase::ReturnToStart: {
+
+		timer_ += dt;
+
+		float u = (introReturnDur_ > 0.0f) ? (timer_ / introReturnDur_) : 1.0f;
+		u = std::clamp(u, 0.0f, 1.0f);
+
+		float t = EaseOutBack(u);
+		t = std::clamp(t, 0.0f, 1.0f);
+		cameraTransform_->translate = Lerp(rightPos, startPos, t);
+
+		if (timer_ >= introReturnDur_) {
+			phase_ = Phase::None;
+			timer_ = 0.0f;
+			cameraTransform_->translate = startPos;
+		}
+	}
+											break;
+	default:
+
+		break;
+	}
+	camera_->SetTranslate(cameraTransform_->translate);
+}
+
+
+bool StartCamPhase::IsRunning() const
+{
+	return phase_ != Phase::None;
+}
+
+void StartCamPhase::DrawImgui()
+{
+}
+
+
+============================================================
+File Path: Game/Camera/StartCamPhase.h
+============================================================
+#pragma once
+#include "MyMath.h"
+#include "Game/Camera/Camera.h"
+#include <algorithm>
+class Camera;
+class StartCamPhase
+{
+public:
+	// スタート演出
+	enum class Phase {
+		None,
+		MoveToLeft,   // 左端へ移動（初期位置から）
+		PanToRight,   // 左→右へパン
+		Hold,         // 少し止める（任意）
+		ReturnToStart // プレイヤー開始地点へ戻る
+	};
+
+public:
+	void Bind(Camera* camera, Transform* cameraTransform);
+
+	void Start();
+
+	void Update(float dt);
+
+	void Skip();
+
+	bool IsRunning()const;
+
+	Phase GetCurrentPhase() const { return phase_; }
+
+	void DrawImgui();
+
+
+private:
+	static inline float EaseOutCubic(float t) {
+		t = std::clamp(t, 0.0f, 1.0f);
+		return 1.0f - std::pow(1.0f - t, 3.0f);
+	}
+	static inline float EaseOutBack(float t, float s = 1.70158f) {
+		t = std::clamp(t, 0.0f, 1.0f);
+		return 1.0f + (s + 1.0f) * std::pow(t - 1.0f, 3.0f) + s * std::pow(t - 1.0f, 2.0f);
+	}
+	static inline Vector3 Lerp(const Vector3& a, const Vector3& b, float t) {
+		return { a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t };
+	}
+private:
+	// 
+	Camera* camera_ = nullptr;
+	Transform* cameraTransform_;
+
+	Phase phase_ = Phase::None;
+	float timer_ = 0.0f;
+
+	// 開始地点
+	Vector3 startPos_ = {};
+
+	/// 横パン演出
+	// 目標位置
+	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
+	// 左端へ行く時間
+	float introMoveDur_ = 0.6f;
+	// 左から右パン時間
+	float introPanDur_ = 1.6f;
+	// 右端での停止時間
+	float introHoldDur_ = 1.0f;
+	// 開始地点へ戻る時間
+	float introReturnDur_ = 3.0f;
+
+	// 左端と右端
+	float introLeftX_ = 8.0f;
+	float introRightX_ = 92.0f;
+	// 背景が崩壊しない高さ
+	float introFixedY_ = 3.5f;
+	// 固定Z座標 / 通常距離
+	float introFixedZ_ = -20.0f;
 };
 
 
@@ -4595,934 +5372,9 @@ private:
 
 
 ============================================================
-File Path: Game/Particle/EffectEmitter.cpp
-============================================================
-#include "EffectEmitter.h"
-EffectEmitter::EffectEmitter()
-{
-}
-
-EffectEmitter::~EffectEmitter()
-{
-
-}
-
-void EffectEmitter::Update()
-{
-	// EmitCylinder();
-	//EmitRing();
-}
-
-void EffectEmitter::EmitCylinder() 
-{
-	EffectManager::GetInstance()->EmitCylinder(effectName, emitter.transform, 1);
-}
-
-void EffectEmitter::EmitRing()
-{
-	EffectManager::GetInstance()->EmitRing(effectName, emitter.transform, 2);
-}
-
-
-============================================================
-File Path: Game/Particle/EffectEmitter.h
-============================================================
-#pragma once
-#include "EffectManager.h"
-#include "engine/math/Mymath.h"
-/// <summary>
-/// エフェクトエミッタクラス
-/// </summary>
-class EffectEmitter
-{
-public:
-	// コンストラクタ・デストラクタ
-	EffectEmitter();
-	~EffectEmitter();
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
-	/// <summary>
-	/// エフェクト発生
-	/// </summary>
-	void EmitCylinder();
-	void EmitRing();
-
-	// Getter / Setter
-	/// <summary>
-	/// エミッタのTransform設定・取得
-	/// </summary>
-	Transform GetTransform() { return emitter.transform; }
-	void SetTransform(const Transform& transform) { emitter.transform = transform; }
-
-	void SetEffectName(const std::string& name) { effectName = name; }
-private:
-	struct Emitter {
-		Transform transform;		// エフェクトのTRANSAM
-		float lifeTime;				// 発生時間
-	};
-	// 発生させるエフェクトの情報
-	Emitter emitter;
-
-	// エフェクトネーム
-	std::string effectName;
-
-};
-
-
-
-============================================================
-File Path: Game/Particle/EffectManager.cpp
-============================================================
-#include "EffectManager.h"
-#include <Logger.h>
-#include "MakeMatrix.h"
-#include <TextureManager.h>
-#include "WinAPI.h"
-#include <numbers>
-
-EffectManager* EffectManager::instance = nullptr;
-
-EffectManager* EffectManager::GetInstance()
-{
-	if (instance == nullptr)
-	{
-		instance = new EffectManager();
-	}
-	return instance;
-}
-
-void EffectManager::DeleteInstance()
-{
-	delete instance;
-	instance = nullptr;
-}
-
-void EffectManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera)
-{
-	// 各種取得
-	this->dxCommon = dxCommon;
-	this->srvManager = srvManager;
-	this->camera = camera;
-	// ブレンドモードの設定
-	blendMode = BlendMode::kBlendModeAdd;
-
-	// パイプラインの生成
-	CreatePipeline();
-
-	// 頂点データの初期化
-	CreateRingVertex();
-	CreateCylinderVertex();
-
-	// マテリアルの初期化
-	InitializeMaterial();
-}
-
-void EffectManager::Update()
-{
-	// 行列の更新
-	UpdateMatrix();
-	
-	uvOffset.x += uvScrollSpeed.x * kDeltaTime;
-	uvOffset.y += uvScrollSpeed.y * kDeltaTime;
-
-	// wrap (0〜1の範囲に保つ)
-	uvOffset.x = std::fmod(uvOffset.x, 5.0f);
-	uvOffset.y = std::fmod(uvOffset.y, 5.0f);
-	materialData->uvTransform = MakeTranslateMatrix({ uvOffset.x, uvOffset.y, 0.0f });
-
-	// 更新した行列をGPUに送る
-	UpdateEffectInstanceData();
-}
-
-
-
-void EffectManager::CreateEffectGroup(const std::string& name, const std::string textureFilrPath)
-{
-	// 登録済みの名前か確認
-	if (effectGroups.contains(name)) {
-		// 登録されていたらリターン
-		Logger::Log("すでに登録されているエフェクトグループ名です");
-		return;
-	}
-	// 新たな空のエフェクトグループを作成してコンテナに登録
-	effectGroups[name] = EffectGroup();
-
-	// マテリアルデータの作成
-	EffectGroup& effectGroup = effectGroups[name];
-
-	// 新たなエフェクトのマテリアルデータを作成
-	effectGroup.materialData.textureFilePath = textureFilrPath;
-	// テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture(effectGroup.materialData.textureFilePath);
-	// マテリアルデータにテクスチャのインデックスを設定
-	effectGroup.materialData.textureIndex = TextureManager::GetInstance()->GetSrvIndex(effectGroup.materialData.textureFilePath);
-	// インスタンシング用のリソースを作成
-	effectGroup.instancingResource = dxCommon->CreateBufferResource(sizeof(ParticleForGPU) * kMaxEffectCount);
-	effectGroup.srvIndex = srvManager->Allocate();
-	// 書き込む為のアドレスを取得
-	effectGroup.instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&effectGroup.instancingData));
-
-	srvManager->CreateSRVforStructuredBuffer(effectGroup.srvIndex, effectGroup.instancingResource.Get(), kMaxEffectCount, sizeof(ParticleForGPU));
-
-	// インスタンス数を初期化
-	effectGroup.kNumInstance = 0;
-}
-
-void EffectManager::DeleteEffectGroup(const std::string& name)
-{
-	auto it = effectGroups.find(name);
-	if (it != effectGroups.end()) {
-		// Unmapでリークしないようにする
-		if (it->second.instancingResource) {
-			it->second.instancingResource->Unmap(0, nullptr);
-			it->second.instancingData = nullptr; // ポインタの無効化
-			it->second.instancingResource.Reset(); // ComPtrの解放
-		}
-
-		// SRVの解放も（もし必要であれば）
-		// srvManager->Release(it->second.srvIndex); // 必要なら
-
-		// Mapから削除
-		effectGroups.erase(it);
-	}
-}
-
-void EffectManager::EmitCylinder(const std::string& name, const Transform& transform, uint32_t count)
-{
-	// 登録済みのエフェクトグループ名か確認
-	auto it = effectGroups.find(name);
-	// エフェクトグループが存在することを確認
-	assert(it != effectGroups.end());
-	// 指定されたエフェクトグループにエフェクトを追加
-	EffectGroup& group = it->second;
-	for (uint32_t i = 0; i < count; ++i) {
-		EffectInstance effect;
-		effect.transform = transform;
-		effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		effect.lifeTime = 1.0f;
-		effect.currentTime = 0.0f;
-		group.cylinderEffects.push_back(effect);
-	}
-}
-
-void EffectManager::EmitRing(const std::string& name, const Transform& transform, uint32_t count)
-{
-	// 登録済みのエフェクトグループ名か確認
-	auto it = effectGroups.find(name);
-	// エフェクトグループが存在することを確認
-	assert(it != effectGroups.end());
-	// 指定されたエフェクトグループにエフェクトを追加
-	EffectGroup& group = it->second;
-	for (uint32_t i = 0; i < count; ++i) {
-		EffectInstance effect;
-		effect.transform = transform;
-		effect.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		effect.lifeTime = 1.0f;
-		effect.currentTime = 0.0f;
-		group.ringEffects.push_back(effect);
-	}
-}
-
-
-
-
-void EffectManager::CreateRingVertex()
-{
-	std::vector<VertexData> vertices;
-	const uint32_t kRingDivide = 32;
-	const float kOuterRadius = 1.0f;
-	const float kInnerRadius = 0.2f;
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide);
-
-	for (uint32_t i = 0; i < kRingDivide; ++i) {
-		float angle0 = i * radianPerDivide;
-		float angle1 = (i + 1) * radianPerDivide;
-
-		float sin0 = std::sin(angle0);
-		float cos0 = std::cos(angle0);
-		float sin1 = std::sin(angle1);
-		float cos1 = std::cos(angle1);
-
-		// 外側・内側の各点
-		Vector4 outer0 = { sin0 * kOuterRadius, cos0 * kOuterRadius, 0.0f, 1.0f };
-		Vector4 outer1 = { sin1 * kOuterRadius, cos1 * kOuterRadius, 0.0f, 1.0f };
-		Vector4 inner0 = { sin0 * kInnerRadius, cos0 * kInnerRadius, 0.0f, 1.0f };
-		Vector4 inner1 = { sin1 * kInnerRadius, cos1 * kInnerRadius, 0.0f, 1.0f };
-
-		Vector2 uvOuter0 = { float(i) / kRingDivide, 0.0f };
-		Vector2 uvOuter1 = { float(i + 1) / kRingDivide, 0.0f };
-		Vector2 uvInner0 = { float(i) / kRingDivide, 1.0f };
-		Vector2 uvInner1 = { float(i + 1) / kRingDivide, 1.0f };
-
-		Vector3 normal = { 0.0f, 0.0f, 1.0f };
-
-		// 三角形 1（outer0, outer1, inner0）
-		vertices.push_back({ outer0, uvOuter0, normal });
-		vertices.push_back({ outer1, uvOuter1, normal });
-		vertices.push_back({ inner0, uvInner0, normal });
-
-		// 三角形 2（inner0, outer1, inner1）
-		vertices.push_back({ inner0, uvInner0, normal });
-		vertices.push_back({ outer1, uvOuter1, normal });
-		vertices.push_back({ inner1, uvInner1, normal });
-	}
-
-	// 頂点バッファの作成
-	size_t vertexSize = sizeof(VertexData) * vertices.size();
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
-	D3D12_HEAP_PROPERTIES heapProp{};
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Width = vertexSize;
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	dxCommon->GetDevice()->CreateCommittedResource(
-		&heapProp,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer));
-
-	VertexData* mapData = nullptr;
-	vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mapData));
-	memcpy(mapData, vertices.data(), vertexSize);
-	vertexBuffer->Unmap(0, nullptr);
-
-	D3D12_VERTEX_BUFFER_VIEW vbView{};
-	vbView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vbView.SizeInBytes = static_cast<UINT>(vertexSize);
-	vbView.StrideInBytes = sizeof(VertexData);
-
-	ringVertexBuffer = vertexBuffer;
-	ringVertexBufferView = vbView;
-	ringVertexCount = static_cast<uint32_t>(vertices.size());
-}
-
-void EffectManager::CreateCylinderVertex()
-{
-	std::vector<VertexData> vertices;
-	const uint32_t kCylinderDivide = 32;
-	const float kTopRadius = 1.0f;
-	const float kBottomRadius = 1.0f;
-	const float kHeight = 3.0f;
-	const float halfHeight = kHeight * 0.5f;
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide);
-
-	for (uint32_t i = 0; i < kCylinderDivide; ++i) {
-		float angle0 = i * radianPerDivide;
-		float angle1 = (i + 1) * radianPerDivide;
-
-		float sin0 = std::sin(angle0);
-		float cos0 = std::cos(angle0);
-		float sin1 = std::sin(angle1);
-		float cos1 = std::cos(angle1);
-
-		float u0 = float(i) / float(kCylinderDivide);
-		float u1 = float(i + 1) / float(kCylinderDivide);
-
-		Vector4 top0 = { sin0 * kTopRadius, +halfHeight, cos0 * kTopRadius, 1.0f };
-		Vector4 top1 = { sin1 * kTopRadius, +halfHeight, cos1 * kTopRadius, 1.0f };
-		Vector4 bottom0 = { sin0 * kBottomRadius, -halfHeight, cos0 * kBottomRadius, 1.0f };
-		Vector4 bottom1 = { sin1 * kBottomRadius, -halfHeight, cos1 * kBottomRadius, 1.0f };
-
-		Vector2 uvTop0 = { u0, 0.0f };
-		Vector2 uvTop1 = { u1, 0.0f };
-		Vector2 uvBottom0 = { u0, 1.0f };
-		Vector2 uvBottom1 = { u1, 1.0f };
-
-		Vector3 normal0 = Vector3{ sin0, 0.0f, cos0 }.Normalized();
-		Vector3 normal1 = Vector3{ sin1, 0.0f, cos1 }.Normalized();
-
-		vertices.push_back({ top0,    uvTop0,    normal0 });
-		vertices.push_back({ top1,    uvTop1,    normal1 });
-		vertices.push_back({ bottom0, uvBottom0, normal0 });
-
-		vertices.push_back({ top1,    uvTop1,    normal1 });
-		vertices.push_back({ bottom1, uvBottom1, normal1 });
-		vertices.push_back({ bottom0, uvBottom0, normal0 });
-	}
-
-	// 頂点バッファの作成
-	size_t vertexSize = sizeof(VertexData) * vertices.size();
-
-	Microsoft::WRL::ComPtr<ID3D12Resource>vertexBuffer;
-	D3D12_HEAP_PROPERTIES heapProp{};
-	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourceDesc.Width = vertexSize;
-	resourceDesc.Height = 1;
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 1;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	HRESULT hr = dxCommon->GetDevice()->CreateCommittedResource(
-		&heapProp,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&vertexBuffer));
-	assert(SUCCEEDED(hr));
-
-	VertexData* mapData = nullptr;
-	vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mapData));
-	memcpy(mapData, vertices.data(), vertexSize);
-	vertexBuffer->Unmap(0, nullptr);
-
-	D3D12_VERTEX_BUFFER_VIEW vbView{};
-	vbView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
-	vbView.SizeInBytes = static_cast<UINT>(vertexSize);
-	vbView.StrideInBytes = sizeof(VertexData);
-
-	cylinderVertexBuffer = vertexBuffer;
-	cylinderVertexBufferView = vbView;
-	cylinderVertexCount = static_cast<uint32_t>(vertices.size());
-}
-
-void EffectManager::DrawRing()
-{
-	// コマンド : ルートシグネチャを設定
-	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
-	// コマンド : パイプラインステートオブジェクトを設定
-	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
-	// コマンド : プリミティブトポロジ(描画形状)を設定
-	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// コマンド : Ring用のVertexBufferViewを設定
-	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &ringVertexBufferView);
-	// コマンド : マテリアルリソースを設定
-	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
-	for (auto& [name, effectGroup] : effectGroups) {
-		// Skip: リングエフェクトが1つもない場合
-		if (effectGroup.ringEffects.empty()) {
-			continue;
-		}
-
-		// インスタンシングデータの更新
-		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
-
-		// テクスチャSRV
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(effectGroup.materialData.textureIndex);
-		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
-
-		// 頂点データの描画（正しいインスタンス数を指定）
-		dxCommon->GetCommandList()->DrawInstanced(ringVertexCount, 1, 0, 0);
-	}
-}
-
-
-void EffectManager::DrawCylinder()
-{
-	// コマンド : ルートシグネチャを設定
-	dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
-	// コマンド : パイプラインステートオブジェクトを設定
-	dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
-	// コマンド : プリミティブトロポジ(描画形状)を設定
-	dxCommon->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// コマンド : Cylinder用のVertexBufferViewを設定
-	dxCommon->GetCommandList()->IASetVertexBuffers(0, 1, &cylinderVertexBufferView);
-	// コマンド : マテリアルリソースを設定
-	dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
-	for (auto& [name, effectGroup] : effectGroups) {
-		if (effectGroup.cylinderEffects.empty()) {
-			continue;
-		}
-		// インスタンシングデータの更新
-		srvManager->SetGraphicsDescriptorTable(1, effectGroup.srvIndex);
-		
-		// テクスチャSRV index = 0(仮)
-		D3D12_GPU_DESCRIPTOR_HANDLE textureHandle = srvManager->GetGPUDescriptorHandle(effectGroup.materialData.textureIndex);
-		dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureHandle);
-		// 頂点データの描画
-		dxCommon->GetCommandList()->DrawInstanced(cylinderVertexCount, 1, 0, 0);
-	}
-
-
-}
-
-#pragma region 内部処理 / 初期化
-void EffectManager::CreatePipeline()
-{
-	// ルートシグネチャの作成
-	CreateRootSignature();
-	// グラフィックスパイプラインの設定
-	SetGraphicsPipeline();
-}
-
-void EffectManager::CreateRootSignature()
-{
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
-	D3D12_DESCRIPTOR_RANGE descriptorRangeInstancing[1] = {};
-	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
-	descriptorRange[0].NumDescriptors = 1; // 数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRV
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
-
-	// 1. RootSignatureの作成
-	descriptionRootSignature.Flags =
-		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-	// RootParameter作成。複数設定できるので配列。
-	// 0.Material
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[0].Descriptor.ShaderRegister = 0;
-
-	// 1. パーティクルのRootSignatureの作成
-	descriptorRangeInstancing[0].BaseShaderRegister = 0;
-	descriptorRangeInstancing[0].NumDescriptors = 1;
-	descriptorRangeInstancing[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
-	descriptorRangeInstancing[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-	// 1.TransformMatrix
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
-	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRangeInstancing;
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRangeInstancing);
-	// 2.Texture
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;
-	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);
-
-	descriptionRootSignature.pParameters = rootParameters;
-	descriptionRootSignature.NumParameters = _countof(rootParameters);
-
-	// Samplerの設定
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	descriptionRootSignature.pStaticSamplers = staticSamplers;
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers);
-
-	// シリアライズしてバイナリにする
-	Microsoft::WRL::ComPtr<ID3DBlob> signatureBlob = nullptr;
-	Microsoft::WRL::ComPtr<ID3DBlob> errorBlob = nullptr;
-	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
-		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)) {
-		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	// バイナリを元に生成
-	hr = dxCommon->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	assert(SUCCEEDED(hr));
-
-
-
-	// 2. InputLayoutの設定
-	inputElementDescs[0].SemanticName = "POSITION";
-	inputElementDescs[0].SemanticIndex = 0;
-	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	inputElementDescs[0].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[1].SemanticName = "TEXCOORD";
-	inputElementDescs[1].SemanticIndex = 0;
-	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-
-	inputElementDescs[2].SemanticName = "NORMAL";
-	inputElementDescs[2].SemanticIndex = 0;
-	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputLayoutDesc.pInputElementDescs = inputElementDescs;
-	inputLayoutDesc.NumElements = _countof(inputElementDescs);
-
-	// 3. BlendDtateの設定
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.RenderTarget[0].BlendEnable = true;
-
-	SetBlendMode(blendDesc, blendMode);
-	currentBlendMode = BlendMode::kBlendModeAdd;  // 現在のブレンドモード
-	// α値のブレンド
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	// RasterrizerStateの設定
-	// カリングなし
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_NONE;
-	// 塗りつぶしモード
-	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	// 4. Shaderをコンパイルする
-	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.VS.hlsl",
-		L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-	pixelShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.PS.hlsl",
-		L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
-
-	// DepthStencilStateの設定
-	// Depthの機能を有効化する
-	depthStencilDesc.DepthEnable = true;
-	//書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	//比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-}
-
-void EffectManager::SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode)
-{
-	switch (mode)
-	{
-	case kBlendModeAdd:
-		desc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
-		desc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		desc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-		break;
-	case kBlendModeSubtract:
-		desc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
-		desc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_REV_SUBTRACT;
-		desc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-		break;
-	case kBlendModeMultiply:
-		desc.RenderTarget[0].SrcBlend = D3D12_BLEND_DEST_COLOR;
-		desc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		desc.RenderTarget[0].DestBlend = D3D12_BLEND_ZERO;
-		break;
-	case kBlendModeScreen:
-		desc.RenderTarget[0].SrcBlend = D3D12_BLEND_ONE;
-		desc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		desc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_COLOR;
-		break;
-	default:
-		assert(false);
-		break;
-	}
-}
-
-void EffectManager::SetGraphicsPipeline()
-{
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
-	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
-	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(),
-										vertexShaderBlob->GetBufferSize() };
-	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
-										pixelShaderBlob->GetBufferSize() };
-	graphicsPipelineStateDesc.BlendState = blendDesc;
-	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
-	// Depthstencitの設定
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	// 利用するトポロジ（形状）のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType =
-		D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	// どのように画面に色を打ち込むのか設定（気にしなくて良い）
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
-	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
-	HRESULT hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState));
-	assert(SUCCEEDED(hr));
-
-}
-
-void EffectManager::InitializeMaterial()
-{
-	materialResource = dxCommon->CreateBufferResource(sizeof(Material));
-	// マテリアルデータに書き込み
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-	// マテリアルデータの初期化
-	//materialData->color = Vector4(0.3f, 1.0f, 0.7f, 1.0f);
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialData->enableLighting = true;
-	materialData->uvTransform = MakeIdentity4x4();
-}
-
-#pragma endregion
-
-#pragma region 内部処理 / 更新
-void EffectManager::UpdateMatrix()
-{
-	// カメラ行列の取得
-	cameraMatrix = camera->GetWorldMatrix();
-	// ビュー行列の取得
-	viewMatrix = camera->GetViewMatrix();
-	// ワールド日行列の取得
-	backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-
-	// ビルボード用の行列
-	billboardMatrix = Multiply(backToFrontMatrix, cameraMatrix);
-	billboardMatrix.m[3][0] = 0.0f;
-	billboardMatrix.m[3][1] = 0.0f;
-	billboardMatrix.m[3][2] = 0.0f;
-}
-
-void EffectManager::UpdateEffectInstanceData()
-{
-	for (auto& [name, group] : effectGroups) {
-		group.kNumInstance = 0;
-
-		for (const auto& effect : group.cylinderEffects) {
-			if (group.kNumInstance >= kMaxEffectCount) break;
-
-			Matrix4x4 world = MakeAffineMatrix(effect.transform.scale, effect.transform.rotate, effect.transform.translate);
-			Matrix4x4 wvp = Multiply(world, camera->GetViewProjectionMatrix());
-
-			group.instancingData[group.kNumInstance].WVP = wvp;
-			group.instancingData[group.kNumInstance].World = world;
-			group.instancingData[group.kNumInstance].color = effect.color;
-
-			++group.kNumInstance;
-		}
-		for (const auto& effect : group.ringEffects) {
-			if (group.kNumInstance >= kMaxEffectCount) break;
-
-			Matrix4x4 world = MakeAffineMatrix(effect.transform.scale, effect.transform.rotate, effect.transform.translate);
-			Matrix4x4 wvp = Multiply(world, camera->GetViewProjectionMatrix());
-
-			group.instancingData[group.kNumInstance].WVP = wvp;
-			group.instancingData[group.kNumInstance].World = world;
-			group.instancingData[group.kNumInstance].color = effect.color;
-
-			++group.kNumInstance;
-		}
-	}
-	
-		
-	
-}
-
-
-
-#pragma endregion
-
-============================================================
-File Path: Game/Particle/EffectManager.h
-============================================================
-#pragma once
-#include "DirectXCommon.h"
-#include "SrvManager.h"
-#include "MyMath.h"
-#include "Game/Camera/Camera.h"
-/// <summary>
-/// エフェクト管理クラス
-/// </summary>
-class EffectManager
-{
-public:
-    // シングルトン
-    static EffectManager* GetInstance();
-    static void DeleteInstance();
-
-private:
-    static EffectManager* instance;
-    EffectManager() = default;
-    ~EffectManager() = default;
-    EffectManager(EffectManager&) = delete;
-    EffectManager& operator=(EffectManager&) = delete;
-
-    /// <summary>
-	/// パイプラインの作成 / 初期化処理内部
-    /// </summary>
-    void CreatePipeline();
-    /// <summary>
-	/// ルートシグネチャの作成 / パイプライン生成内部
-    /// </summary>
-    void CreateRootSignature();
-    /// <summary>
-	/// グラフィックスパイプラインの設定 / パイプライン生成内部
-    /// </summary>
-    void SetGraphicsPipeline();
-    /// <summary>
-	/// ブレンドモードの設定 / パイプライン生成内部
-    /// </summary>
-    /// <param name="desc"></param>
-    /// <param name="mode"></param>
-    void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
-
-    /// <summary>
-	/// 頂点バッファビューの作成 / 初期化処理内部
-    /// </summary>
-    void CreateVertexBufferView();
-    /// <summary>
-	/// マテリアルの初期化 / 初期化処理内部
-    /// </summary>
-    void InitializeMaterial();
-
-    /// <summary>
-	/// 行列の更新 / 更新処理内部
-    /// </summary>
-    void UpdateMatrix();
-
-    /// <summary>
-	/// エフェクトインスタンスデータの更新 / 更新処理内部
-    /// </summary>
-    void UpdateEffectInstanceData();
-
-
-public:
-    /// <summary>
-	/// 初期化
-    /// </summary>
-    /// <param name="dxCommon"></param>
-    /// <param name="srvManager"></param>
-    /// <param name="camera"></param>
-    void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
-    
-    /// <summary>
-	/// 更新
-    /// </summary>
-    void Update();
-    
-    /// <summary>
-	/// 描画
-    /// </summary>
-    void DrawRing();
-    void DrawCylinder();
-
-
-    /// <summary>
-	/// エフェクトグループの作成
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="textureFilrPath"></param>
-    void CreateEffectGroup(const std::string& name, const std::string textureFilrPath);
-    /// <summary>
-	/// エフェクトグループの削除
-    /// </summary>
-    /// <param name="name"></param>
-    void DeleteEffectGroup(const std::string& name);
-    /// <summary>
-	/// シリンダーエフェクトの発生
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="transform"></param>
-    /// <param name="count"></param>
-    void EmitCylinder(const std::string& name, const Transform& transform, uint32_t count);
-    void EmitRing(const std::string& name, const Transform& transform, uint32_t count);
-
-
-    // エフェクトの生成
-    //void CreateRing(const Transform& transform);
-    //void CreateCylinder(const Transform& transform);
-    //void CreatePrimitive(const Transform& transform);
-
-  
-private:
-    // エフェクト用
-    struct EffectGroup {
-        MaterialData materialData;
-        uint32_t srvIndex;
-        Microsoft::WRL::ComPtr<ID3D12Resource>instancingResource;
-        UINT kNumInstance;
-        ParticleForGPU* instancingData;
-
-		std::list <EffectInstance> ringEffects;
-		std::list <EffectInstance> cylinderEffects;
-    };
-
-    
-
-    DirectXCommon* dxCommon;
-    SrvManager* srvManager;
-    Camera* camera;
-
-    // リングエフェクト用の頂点バッファ
-    Microsoft::WRL::ComPtr<ID3D12Resource> ringVertexBuffer = nullptr;
-    D3D12_VERTEX_BUFFER_VIEW ringVertexBufferView{};
-    uint32_t ringVertexCount = 0;
-
-    // シリンダーエフェクト用の頂点バッファ
-    Microsoft::WRL::ComPtr<ID3D12Resource> cylinderVertexBuffer = nullptr;
-    D3D12_VERTEX_BUFFER_VIEW cylinderVertexBufferView{};
-    uint32_t cylinderVertexCount = 0;
-
-    // エフェクトのリスト
-    
-    // 頂点生成
-    void CreateRingVertex();
-    void CreateCylinderVertex();
-
-   
-
-    // 行列
-    Matrix4x4 cameraMatrix;
-    Matrix4x4 viewMatrix;
-    Matrix4x4 backToFrontMatrix;
-    Matrix4x4 billboardMatrix;
-
-    // 定数
-    const float kDeltaTime = 1.0f / 60.0f;
-
-    // UV座標変更
-    Vector2 uvOffset = { 0.0f, 0.0f };
-    Vector2 uvScrollSpeed = { 0.1f, 0.0f };  // 水平方向に流す場合
-
-private:    // 内部で処理で使用している変数
-    /// CreateRootSignature
-    // ルートシグネチャ
-    D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-    // ルートパラメーター
-    D3D12_ROOT_PARAMETER rootParameters[3] = {};
-    // サンプラー
-    D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
-    // ルートシグネチャ
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
-    // インプットレイアウト
-    D3D12_INPUT_ELEMENT_DESC inputElementDescs[3];
-    // インプットレイアウト
-    D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-
-    // blendmode
-    BlendMode blendMode;
-    BlendMode currentBlendMode;
-    D3D12_BLEND_DESC blendDesc{};
-    D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-    D3D12_RASTERIZER_DESC rasterrizerDesc{};
-
-    // シェーダーバイナリ
-    Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob;
-    Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob;
-
-    /// SetGraphicsPipeLine
-    // パイプライン
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc;
-    Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
-
-    /// InitializeMaterial
-    // マテリアルリソース
-    Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
-    // マテリアルデータ
-    Material* materialData = nullptr;
-
-    /// CreateEffectGroup
-    // エフェクトグループ
-    std::unordered_map<std::string, EffectGroup> effectGroups;
-    // エフェクトの発生上限
-    static const int kMaxEffectCount = 1000;
-
-};
-
-
-
-
-============================================================
 File Path: Game/Particle/ParticleEmitter.cpp
 ============================================================
 #include "ParticleEmitter.h"
-#include "EffectEmitter.h"
 
 ParticleEmitter::ParticleEmitter()
     : currentTime(0.0f)
@@ -5824,7 +5676,7 @@ void ParticleManager::CreateRootSignature()
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 
-	// 3. BlendDtateの設定
+	// 3. BlendDateの設定
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 	blendDesc.RenderTarget[0].BlendEnable = true;
 
@@ -5834,11 +5686,11 @@ void ParticleManager::CreateRootSignature()
 	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-	// RasterrizerStateの設定
+	// RasterizerStateの設定
 	// カリングなし
-	rasterrizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
 	// 塗りつぶしモード
-	rasterrizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	// 4. Shaderをコンパイルする
 	vertexShaderBlob = dxCommon->CompileShader(L"resources/shaders/Particle.VS.hlsl",
 		L"vs_6_0");
@@ -5868,8 +5720,8 @@ void ParticleManager::SetGraphicsPipeline()
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(),
 										pixelShaderBlob->GetBufferSize() };
 	graphicsPipelineStateDesc.BlendState = blendDesc;
-	graphicsPipelineStateDesc.RasterizerState = rasterrizerDesc;
-	// Depthstencitの設定
+	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+	// Dehiscenceの設定
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	// 書き込むRTVの情報
@@ -6578,8 +6430,8 @@ public:
 	///  パーティクルグループの作成
 	/// </summary>
 	/// <param name="name"></param>
-	/// <param name="textureFilrPath"></param>
-	void CreateParticleGroup(const std::string& name, const std::string textureFilrPath);
+	/// <param name="textureFilePath"></param>
+	void CreateParticleGroup(const std::string& name, const std::string textureFilePath);
 
 
 	/// <summary>
@@ -6708,7 +6560,7 @@ private:
 	BlendMode currentBlendMode;
 	D3D12_BLEND_DESC blendDesc{};
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-	D3D12_RASTERIZER_DESC rasterrizerDesc{};
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
 	// グラフィックスパイプライン
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc;
@@ -6774,7 +6626,7 @@ File Path: Game/Scene/GamePlayScene.cpp
 #include "Game/Application/Player/Player.h"
 #include "Game/Collision/CollisionManager.h"
 #include "Game/Particle/ParticleManager.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -6789,34 +6641,20 @@ GamePlayScene::~GamePlayScene()
 void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 {
 	/// スプライトの初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon);
+	SpriteCommon::GetInstance().Initialize(dxCommon);
 	/// オーディオの初期化
-	Audio::GetInstance()->Initialize();
-	soundData = Audio::GetInstance()->LoadWave("resources/mokugyo.wav");
-	xaudio2_ = Audio::GetInstance()->GetXAudio2();
-	Audio::GetInstance()->SoundPlayWave(xaudio2_, soundData);
+	Audio::GetInstance().Initialize();
+	soundData = Audio::GetInstance().LoadWave("resources/mokugyo.wav");
+	xaudio2_ = Audio::GetInstance().GetXAudio2();
+	Audio::GetInstance().SoundPlayWave(xaudio2_, soundData);
 
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
 
 
-
-	// 固定YZ
-	introFixedY_ = camTargetPos_.y;
-	introFixedZ_ = camTargetPos_.z;
-	// 演出開始時のカメラの位置
-	cameraTransform.translate = camTargetPos_;
-	// カメラに反映
-	camera->SetTranslate(cameraTransform.translate);
-	// スタート演出の開始
-	startPhase_ = StartCamPhase::MoveToLeft;
-	startTimer_ = 0.0f;
-	stageStartEventFlag_ = true;
-
-
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("1-1");
+	map->Initialize("1-2");
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -6825,23 +6663,11 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	player = std::make_unique<Player>();
 	player->Initialize(Vector3{ 2.0f,2.0f,0.0f });
 	player->SetMap(map.get());
-	//player->SetTransitionTiming(TransitionTiming::OnDeath);
 
 	InitializeEnemy();
 
 	//sceneTransition = std::make_unique<SceneTransition>();
 	//sceneTransition->Initialize(10);
-
-	titleLogoObject = std::make_unique<Object3D>();
-	titleLogoObject->Initialize();
-	titleLogoObject->SetModel("title.obj");
-	titleLogoTransform = {
-		{ 1.0f,1.0f,1.0f },
-		{ 1.6f,3.2f,0.0f },
-		{ 7.4f,-3.1f,50.0f }
-	};
-
-	titleLogoObject->SetTransform(titleLogoTransform);
 
 	backGround = std::make_unique<BackGround>();
 	backGround->Initialize();
@@ -6856,41 +6682,76 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	isPlayerControlLocked_ = true;
 
+	// 自機がダメージを受けたら画面シェイク中に出すスプライト
+	enemyHitSprite_ = std::make_unique<Sprite>();
+	enemyHitSprite_->Initialize("resources/HitDamage.png");
+	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
+	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
+
+	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+	
+
+
+	pauseSystem_ = std::make_unique<PauseSystem>();
+	pauseSystem_->Initialize();
+
+	gamePlayHUD_ = std::make_unique<GamePlayHUD>();
+	gamePlayHUD_->Initialize();
+
+	startCam_ = std::make_unique<StartCamPhase>();
+	startCam_->Bind(camera, &cameraTransform);
+
+	startCam_->Start();
+
+	damageFeedBack_ = std::make_unique<DamageFeedBack>();
+	damageFeedBack_->Bind(player.get(), camera, &cameraTransform);
+	damageFeedBack_->Initialize();
+
+
 }
 
 
 void GamePlayScene::Update()
 {
-	camera->Update();
 
-
-	titleLogoObject->Update();
-
-	backGround->Update();
-
-
-	// スタート演出中はカメラを更新
-	if (stageStartEventFlag_) {
-		UpdateStartCamera(dt);
+	if (pauseSystem_->Update()) {
+		return;
 	}
+
+	// カメラの更新
+	camera->Update();
+	// 背景の更新
+	backGround->Update();
+	// スタートカメラの更新
+	startCam_->Update(dt);
+	stageStartEventFlag_ = startCam_->IsRunning();
+	isPlayerControlLocked_ = stageStartEventFlag_;
+	player->SetControlEnabled(!isPlayerControlLocked_);
+	
+	// マップの更新
+	map->Update();
+	// プレイヤーの更新
+	player->Update();
+	
 
 	bool isEnemyHitNow = player->GetHitEnemy();
 
 	// プレイヤーが敵に当たったらカメラをシェイクする
 	if (player->GetHitEnemy() && !wasEnemyHit_) {
 		enemyHitShakeActive_ = true;
-		enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		//enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 		enemyHitTimer_ = 0.0f;
 		// カメラの元の位置を保存
 		enemyHitBasePos = camera->GetTranslate();
 
 	}
-	Vector4 currentColor = enemyHitSprite_->GetColor();
-	if (currentColor.w > 0.0f) {
-		// 減算スピードは 0.01f ～ 0.05f くらいで調整してください
-		float newAlpha = (std::max)(0.0f, currentColor.w - 0.02f);
-		enemyHitSprite_->SetColor({ currentColor.x, currentColor.y, currentColor.z, newAlpha });
-	}
+	// 敵を点滅させる
+	//Vector4 currentColor = enemyHitSprite_->GetColor();
+	//if (currentColor.w > 0.0f) {
+	//	// 減算スピードは 0.01f ～ 0.05f くらいで調整
+	//	float newAlpha = (std::max)(0.0f, currentColor.w - 0.02f);
+	//	enemyHitSprite_->SetColor({ currentColor.x, currentColor.y, currentColor.z, newAlpha });
+	//}
 	wasEnemyHit_ = isEnemyHitNow;
 
 	// カメラシェイクの更新
@@ -6901,8 +6762,7 @@ void GamePlayScene::Update()
 
 	//sceneTransition->Update();
 
-	/// マップの更新
-	map->Update();
+	
 
 	// エネミーレイヤーが変更されたらエネミーを再生成
 	if (map->ConsumeEnemyLayerDirtyFlag()) {
@@ -6910,43 +6770,60 @@ void GamePlayScene::Update()
 	}
 
 
-	/// マップとプレイヤーの判定のためマップチップデータをプレイヤーにも渡す
-
+	// カメラのフォロー範囲
 	cameraController_->SetFollowRange(8.0f, 92.0f);
-	/// プレイヤーの更新
+	// 開始演出中はプレイヤーへの入力を受け付けない
 	if (isPlayerControlLocked_) {
 		player->SetControlEnabled(false);
 	} else {
 		player->SetControlEnabled(true);
 	}
 
+	
 
-	player->Update();
-	if (stageStartEventFlag_ == false)
+	// フォローカメラ
+	if (!startCam_->IsRunning())
 	{
-		cameraController_->SetCameraPosition(cameraTransform.translate);
-		Vector3 playerPosition = player->GetTranslate();
-		cameraController_->SetTargetPosition(playerPosition);
+		// baseCamPos_ を入力として使う（前フレームのシェイクを混ぜない）
+		cameraController_->SetCameraPosition(baseCameraPos_);
+		cameraController_->SetTargetPosition(player->GetTranslate());
 		cameraController_->Update(dt);
-		cameraTransform.translate = cameraController_->GetCameraPosition();
-		camera->SetTranslate(cameraTransform.translate);
+
+		// フォロー結果を「基準」として保存
+		baseCameraPos_ = cameraController_->GetCameraPosition();
+
+	} else {
+				// 開始演出中は基準位置もカメラ位置も開始演出の位置にする
+		baseCameraPos_ = cameraTransform.translate;
+
 	}
+	cameraTransform.translate = baseCameraPos_;
+	camera->SetTranslate(baseCameraPos_);
+
+	damageFeedBack_->SetBaseCameraPos(baseCameraPos_);
+	damageFeedBack_->Update(dt);
+
+
+	// 敵の更新
 	for (auto& enemy : enemies) {
 		enemy->Update();
 	}
 
-	/// 当たりは判定
+	// 当たりは判定
 	CheckCollision();
-	/// スプライトの更新
-	SpritesUpdate();
+	// スプライトの更新
+	gamePlayHUD_->Update();
 
-	/// プレイヤーがゴールに触れていたらシーン遷移
+
+	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
 		sceneManager->ChangeScene("GAMEPLAY");
 	}
 
-	/// ImGuiの描画
+	
+
+	// ImGuiの描画
 	DrawImgui();
 
 
@@ -6979,7 +6856,14 @@ void GamePlayScene::Draw()
 	// スプライトの描画 //
 	///////////////////
 
+	// スプライト描画処理
 	SpritesDraw();
+
+	damageFeedBack_->Draw();
+	gamePlayHUD_->Draw(pauseSystem_->GetPause(), !isPlayerControlLocked_);
+
+
+	pauseSystem_->Draw();
 
 }
 
@@ -7067,116 +6951,8 @@ void GamePlayScene::CheckCollision()
 
 void GamePlayScene::UpdateStartCamera(float dt)
 {
-	// 左右の端の座標 / YZは固定
-	Vector3 leftPos = { introLeftX_,introFixedY_,introFixedZ_ };
-	Vector3 rightPos = { introRightX_,introFixedY_,introFixedZ_ };
-	// 開始座標
-	Vector3 startPos = { camTargetPos_.x,introFixedY_,introFixedZ_ };
-
-	// StartCamPhaseの各フェーズごとの処理
-	switch (startPhase_) {
-
-	case StartCamPhase::MoveToLeft:
-	{
-		// @todo: 理解説明
-		// ゲーム内時間を進める
-		startTimer_ += dt;
-		// イージング適用
-		float t = EaseOutCubic(startTimer_ / introMoveDur_);
-		// 左端へ移動
-		cameraTransform.translate = Lerp(startPos, leftPos, t);
-
-		// フェーズ移行判定
-		if (startTimer_ >= introMoveDur_) {
-			// PanToRightへ移行
-			startPhase_ = StartCamPhase::PanToRight;
-			// タイマーリセット
-			startTimer_ = 0.0f;
-			// 位置補正
-			cameraTransform.translate = leftPos;
-		}
-	}
-	break;
-
-	case StartCamPhase::PanToRight:
-	{
-		// ゲーム内時間を進める
-		startTimer_ += dt;
-		// イージング適用
-		float t = EaseOutCubic(startTimer_ / introPanDur_);
-		// 右端へパン
-		cameraTransform.translate = Lerp(leftPos, rightPos, t);
-
-		// フェーズ移行判定 / 右端に到達したら
-		if (startTimer_ >= introPanDur_) {
-			// Holdへ移行
-			startPhase_ = StartCamPhase::Hold;
-			// タイマーリセット
-			startTimer_ = 0.0f;
-			// 位置補正
-			cameraTransform.translate = rightPos;
-		}
-	}
-	break;
-
-	case StartCamPhase::Hold:
-	{
-		// ゲーム内時間を進める
-		startTimer_ += dt;
-		// そのまま右端で停止
-		cameraTransform.translate = rightPos;
-		// フェーズ移行判定 / 停止時間経過したら
-		if (startTimer_ >= introHoldDur_) {
-			// ReturnToStartへ移行
-			startPhase_ = StartCamPhase::ReturnToStart;
-			// タイマーリセット
-			startTimer_ = 0.0f;
-		}
-	}
-	break;
-
-	case StartCamPhase::ReturnToStart:
-	{
-		// ゲーム内時間を進める
-		startTimer_ += dt;
-
-		// 0～1に正規化（duration=0対策込み）
-		float u = (introReturnDur_ > 0.0f) ? (startTimer_ / introReturnDur_) : 1.0f;
-		u = std::clamp(u, 0.0f, 1.0f);
-
-		// イージング適用（Backは1を超え得るので必要ならclamp）
-		float t = EaseOutBack(u);
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// 開始地点へ戻る
-		cameraTransform.translate = Lerp(rightPos, startPos, t);
-
-		// フェーズ移行判定 / 開始地点に戻ったら
-		if (startTimer_ >= introReturnDur_) {
-			// 演出終了
-			startPhase_ = StartCamPhase::None;
-			// タイマーリセット
-			startTimer_ = 0.0f;
-			// 位置補正（最終フレームは必ず目標に固定）
-			cameraTransform.translate = startPos;
-		}
-	} break;
-
-
-	case StartCamPhase::None:
-		// 演出終了
-		stageStartEventFlag_ = false;
-		isPlayerControlLocked_ = false;
-		player->SetControlEnabled(true);
-
-		break;
-
-	default:
-		break;
-
-	}
-
-	camera->SetTranslate(cameraTransform.translate);
+	
+	
 }
 
 void GamePlayScene::EnemyHitShake(float dt)
@@ -7215,136 +6991,34 @@ void GamePlayScene::EnemyHitShake(float dt)
 
 void GamePlayScene::SpritesInitialize()
 {
-	// 自機がダメージを受けたら画面シェイク中に出すスプライト
-	enemyHitSprite_ = std::make_unique<Sprite>();
-	enemyHitSprite_->Initialize("resources/HitDamage.png");
-	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
-	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
+	
 
-	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-
-	// コントロールUI
-	controlUI_D = std::make_unique<Sprite>();
-	controlUI_D->Initialize("resources/KyeUI/D.png");
-	controlUI_D->SetPosition({ 200.0f,70.0f });
-	controlUI_D->SetSize({ 50.0f,50.0f });
-
-	controlUI_A = std::make_unique<Sprite>();
-	controlUI_A->Initialize("resources/KyeUI/A.png");
-	controlUI_A->SetPosition({ 100.0f,70.0f });
-	controlUI_A->SetSize({ 50.0f,50.0f });
-
-	controlUI_S = std::make_unique<Sprite>();
-	controlUI_S->Initialize("resources/KyeUI/S.png");
-	controlUI_S->SetPosition({ 150.0f,70.0f });
-	controlUI_S->SetSize({ 50.0f,50.0f });
-
-	controlUI_W = std::make_unique<Sprite>();
-	controlUI_W->Initialize("resources/KyeUI/W.png");
-	controlUI_W->SetPosition({ 150.0f,20.0f });
-	controlUI_W->SetSize({ 50.0f,50.0f });
-
-	controlUI_DashUI = std::make_unique<Sprite>();
-	controlUI_DashUI->Initialize("resources/KyeUI/DashUI.png");
-	controlUI_DashUI->SetPosition({ 700.0f,115.0f });
-	controlUI_DashUI->SetSize({ 250.0f,100.0f });
-
-	controlUI_move = std::make_unique<Sprite>();
-	controlUI_move->Initialize("resources/KyeUI/moveUI.png");
-	controlUI_move->SetPosition({ 430.0f,115.0f });
-	controlUI_move->SetSize({ 250.0f,100.0f });
+	
 }
 
 void GamePlayScene::SpritesUpdate()
 {
-	enemyHitSprite_->Update();
+	
 
-	// UI
-	controlUI_D->Update();
-	controlUI_A->Update();
-	controlUI_S->Update();
-	controlUI_W->Update();
-	controlUI_DashUI->Update();
-	controlUI_move->Update();
-
-	// 押されているキーだけ色を濃くする
-	if (Input::GetInstance()->PushKey(DIK_D)) {
-		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-		// 少しだけ右にずらす
-		controlUI_D->SetPosition({ 205.0f,70.0f });
-	} else {
-		controlUI_D->SetColor({ 1.0f,1.0f,1.0f,0.5f });
-		controlUI_D->SetPosition({ 200.0f,70.0f });
-	}
-	if (Input::GetInstance()->PushKey(DIK_A)) {
-		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-		// 少しだけ左にずらす
-		controlUI_A->SetPosition({ 95.0f,70.0f });
-	} else {
-		controlUI_A->SetColor({ 1.0f,1.0f,1.0f,0.5f });
-		controlUI_A->SetPosition({ 100.0f,70.0f });
-	}
-	if (Input::GetInstance()->PushKey(DIK_S)) {
-		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-		controlUI_S->SetPosition({ 150.0f,75.0f });
-	} else {
-		controlUI_S->SetColor({ 1.0f,1.0f,1.0f,0.5f });
-		controlUI_S->SetPosition({ 150.0f,70.0f });
-	}
-	if (Input::GetInstance()->PushKey(DIK_W)) {
-		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-		controlUI_W->SetPosition({ 150.0f,15.0f });
-	} else {
-		controlUI_W->SetColor({ 1.0f,1.0f,1.0f,0.5f });
-		controlUI_W->SetPosition({ 150.0f,20.0f });
-	}
-	// どこかしらの移動キーが押されていたらDashUIとMoveUIを強調
-	if (Input::GetInstance()->PushKey(DIK_W) ||
-		Input::GetInstance()->PushKey(DIK_A) ||
-		Input::GetInstance()->PushKey(DIK_S) ||
-		Input::GetInstance()->PushKey(DIK_D)) {
-		UiActive_ = true;
-
-
-	} else {
-		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,0.0f });
-		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,0.0f });
-	}
-
-	if (UiActive_)
-	{
-		uiTimer++;
-	}
-
-	if (uiTimer > 60) {
-		controlUI_move->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-	}
-	if (uiTimer > 240)
-	{
-		controlUI_DashUI->SetColor({ 1.0f,1.0f,1.0f,1.0f });
-	}
-	if (uiTimer >= 300)
-	{
-		UiActive_ = false;
-		uiTimer = 0;
-	}
+	
+	
+	
 }
 
 void GamePlayScene::SpritesDraw()
 {
+
+
+
+
 	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		enemyHitSprite_->Draw();
+		// ダメージフィードバック
+		/*if (damageFeedback) {
+			enemyHitSprite_->Draw();
+		}*/
 	}
-	if (!isPlayerControlLocked_) {
+	
 
-		controlUI_D->Draw();
-		controlUI_A->Draw();
-		controlUI_S->Draw();
-		controlUI_W->Draw();
-	}
-
-	//controlUI_DashUI->Draw();
-	//controlUI_move->Draw();
 }
 
 
@@ -7354,10 +7028,10 @@ void GamePlayScene::Finalize()
 	map->Finalize();
 
 	/// オーディオの終了処理
-	Audio::GetInstance()->SoundUnload(&soundData);
+	Audio::GetInstance().SoundUnload(&soundData);
 
 	/// スプライトの終了処理
-	SpriteCommon::GetInstance()->Deletenstance();
+	SpriteCommon::GetInstance().DeleteInstance();
 
 }
 
@@ -7373,110 +7047,9 @@ void GamePlayScene::DrawImgui()
 	// カメラの配置 / 回転修正
 	cameraTransform.translate = camera->GetTranslate();
 	ImGui::DragFloat3("Camera Position", &cameraTransform.translate.x, 0.1f, -10000.0f, 10000.0f);
-	
+
 	cameraTransform.rotate = camera->GetRotate();
 	ImGui::DragFloat3("Camera Rotation", &cameraTransform.rotate.x, 0.1f, -180.0f, 180.0f);
-	
-
-
-	if (ImGui::CollapsingHeader("Start Camera Intro", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		ImGui::Text("StageStartEventFlag: %s", stageStartEventFlag_ ? "true" : "false");
-		ImGui::Text("StartPhase: %d", static_cast<int>(startPhase_));
-		ImGui::Text("StartTimer: %.3f", startTimer_);
-
-		ImGui::SeparatorText("Positions");
-		ImGui::DragFloat("Intro Left X", &introLeftX_, 0.1f, -10000.0f, 10000.0f);
-		ImGui::DragFloat("Intro Right X", &introRightX_, 0.1f, -10000.0f, 10000.0f);
-
-		ImGui::DragFloat("Intro Fixed Y", &introFixedY_, 0.05f, -1000.0f, 1000.0f);
-		ImGui::DragFloat("Intro Fixed Z", &introFixedZ_, 0.1f, -1000.0f, 1000.0f);
-
-		ImGui::SeparatorText("Durations (sec)");
-		ImGui::DragFloat("Move To Left Dur", &introMoveDur_, 0.01f, 0.0f, 10.0f);
-		ImGui::DragFloat("Pan To Right Dur", &introPanDur_, 0.01f, 0.0f, 20.0f);
-		ImGui::DragFloat("Hold Dur", &introHoldDur_, 0.01f, 0.0f, 10.0f);
-		ImGui::DragFloat("Return Dur", &introReturnDur_, 0.01f, 0.0f, 10.0f);
-
-		// 事故防止：Right < Left になったら入れ替え
-		if (introRightX_ < introLeftX_)
-		{
-			ImGui::TextColored(ImVec4(1, 0.6f, 0.2f, 1), "Warning: RightX < LeftX. Auto swap available.");
-			if (ImGui::Button("Swap Left/Right"))
-			{
-				std::swap(introLeftX_, introRightX_);
-			}
-		}
-
-		ImGui::SeparatorText("Controls");
-
-		// その場で演出をやり直す
-		if (ImGui::Button("Restart Intro"))
-		{
-			// 演出の「戻り先」を camTargetPos_ 基準にする場合
-			// introFixedY_/Z はUIでいじれるのでそのまま
-			startPhase_ = StartCamPhase::MoveToLeft;
-			startTimer_ = 0.0f;
-			stageStartEventFlag_ = true;
-		}
-
-		ImGui::SameLine();
-		if (ImGui::Button("Skip Intro"))
-		{
-			startPhase_ = StartCamPhase::None;
-			startTimer_ = 0.0f;
-			stageStartEventFlag_ = false;
-		}
-
-		// camTargetPos_ を調整したい場合（必要なら）
-		ImGui::SeparatorText("Target (Return) Position");
-		ImGui::DragFloat3("Cam Target Pos", &camTargetPos_.x, 0.05f, -10000.0f, 10000.0f);
-	}
-
-	ImGui::SeparatorText("ControlUI Positions");
-	Vector2 dPos = controlUI_D->GetPosition();
-	Vector2 aPos = controlUI_A->GetPosition();
-	Vector2 sPos = controlUI_S->GetPosition();
-	Vector2 wPos = controlUI_W->GetPosition();
-
-	Vector2 dSize = controlUI_D->GetSize();
-	Vector2 aSize = controlUI_A->GetSize();
-	Vector2 sSize = controlUI_S->GetSize();
-	Vector2 wSize = controlUI_W->GetSize();
-
-	ImGui::DragFloat2("D Position", &dPos.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("D Size", &dSize.x, 1.0f, 0.0f, 500.0f);
-	ImGui::DragFloat2("A Position", &aPos.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("A Size", &aSize.x, 1.0f, 0.0f, 500.0f);
-	ImGui::DragFloat2("S Position", &sPos.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("S Size", &sSize.x, 1.0f, 0.0f, 500.0f);
-	ImGui::DragFloat2("W Position", &wPos.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("W Size", &wSize.x, 1.0f, 0.0f, 500.0f);
-	controlUI_D->SetPosition(dPos);
-	controlUI_D->SetSize(dSize);
-	controlUI_A->SetPosition(aPos);
-	controlUI_A->SetSize(aSize);
-	controlUI_S->SetPosition(sPos);
-	controlUI_S->SetSize(sSize);
-	controlUI_W->SetPosition(wPos);
-	controlUI_W->SetSize(wSize);
-
-	controlUI_DashUI->SetPosition(controlUI_DashUI->GetPosition());
-	Vector2 dashPos = controlUI_DashUI->GetPosition();
-	Vector2 dashSize = controlUI_DashUI->GetSize();
-	ImGui::DragFloat2("DashUI Position", &dashPos.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("DashUI Size", &dashSize.x, 1.0f, 0.0f, 500.0f);
-	controlUI_DashUI->SetPosition(dashPos);
-	controlUI_DashUI->SetSize(dashSize);
-	controlUI_move->SetPosition(controlUI_move->GetPosition());
-	Vector2 movePos = controlUI_move->GetPosition();
-	Vector2 moveSize = controlUI_move->GetSize();
-	ImGui::DragFloat2("MoveUI Position", &movePos.x, 1.0f, 0.0f, 1280.0f);
-	ImGui::DragFloat2("MoveUI Size", &moveSize.x, 1.0f, 0.0f, 500.0f);
-
-	controlUI_move->SetPosition(movePos);
-	controlUI_move->SetSize(moveSize);
-
 
 
 
@@ -7498,13 +7071,22 @@ File Path: Game/Scene/GamePlayScene.h
 #pragma once
 #include "Audio.h"
 #include "SpriteCommon.h"
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleEmitter.h"
 #include "SceneTransition/SceneTransition.h"
+#include "Game/Scene/Pause/PauseSystem.h"
+#include "Game/Application/UI/GamePlayHUD.h"
+#include "Game/Camera/StartCamPhase.h"
+#include "Game/Application/UI/DamageFeedBack.h"
+/// <summary>
+/// ゲームプレイシーン
+/// ゲームプレイ中のシーンを管理する
+/// </summary>
+
 // 前方宣言
 class Map;
 class Player;
@@ -7579,6 +7161,7 @@ public:
 	void SpritesUpdate();
 	void SpritesDraw();
 
+
 	
 
 private:
@@ -7605,72 +7188,16 @@ private:
 	Camera* camera = nullptr;
 	Transform cameraTransform;
 
-	// スタート演出
-	enum class StartCamPhase {
-		None,
-		MoveToLeft,   // 左端へ移動（初期位置から）
-		PanToRight,   // 左→右へパン
-		Hold,         // 少し止める（任意）
-		ReturnToStart // プレイヤー開始地点へ戻る
-	};
-
-	/// 横パン演出
-	// 目標位置
-	Vector3 camTargetPos_ = { 8.0f,3.5f,-20.0f };
-	// 左端へ行く時間
-	float introMoveDur_ = 0.6f;
-	// 左から右パン時間
-	float introPanDur_ = 1.6f;
-	// 右端での停止時間
-	float introHoldDur_ = 1.0f;
-	// 開始地点へ戻る時間
-	float introReturnDur_ = 3.0f;
-
-	// 左端と右端
-	float introLeftX_ = 8.0f;
-	float introRightX_ = 92.0f;
-	// 背景が崩壊しない高さ
-	float introFixedY_ = 3.5f;
-	// 固定Z座標 / 通常距離
-	float introFixedZ_ = -20.0f;
-
-
-
-	// 現在のフェーズ
-	StartCamPhase startPhase_ = StartCamPhase::None;
-	// カメラタイマー
-	float startTimer_ = 0.0f;
-	// 開始位置
-	Vector3 camStartPos_;
 	
-	// オーバーシュート位置
-	Vector3 camOvershootPos_;
-	// どれだけ引くか
-	const float pullBack = 30.0f;
 
-	// カメラのパラメーター
-	// ドリーイン時間
-	float durDollyIn_ = 2.5f;
-	// 揺れ時間
-	float durSettle_ = 0.35f;
-	// どれくらい近づくか
-	float overShootAmt_ = 2.0f;
-	// 揺れの時間
-	float shakeTime_ = 0.3f;
-	// 揺れの強さ
+	// 被弾フィードバック
+	std::unique_ptr<DamageFeedBack> damageFeedBack_;
+
+
+	
 	float shakeAmp_ = 0.1f;
 
-	static inline float EaseOutCubic(float t) {
-		t = std::clamp(t, 0.0f, 1.0f);
-		return 1.0f - std::pow(1.0f - t, 3.0f);
-	}
-	static inline float EaseOutBack(float t, float s = 1.70158f) {
-		t = std::clamp(t, 0.0f, 1.0f);
-		return 1.0f + (s + 1.0f) * std::pow(t - 1.0f, 3.0f) + s * std::pow(t - 1.0f, 2.0f);
-	}
-	static inline Vector3 Lerp(const Vector3& a, const Vector3& b, float t) {
-		return { a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t };
-	}
+	
 
 
 	/// タイトルロゴ
@@ -7686,6 +7213,9 @@ private:
 
 	// フォローカメラ
 	std::unique_ptr<CameraController> cameraController_;
+
+	// ポーズシステム
+	std::unique_ptr<PauseSystem> pauseSystem_;
 
 	// ステージ開始演出フラグ
 	bool stageStartEventFlag_ = true;
@@ -7705,43 +7235,24 @@ private:
 	Vector3 enemyHitBasePos{};
 	// 前フレームの敵当たり判定
 	bool wasEnemyHit_ = false;
-	// エネミーヒット時のシェイク中に出す被弾スプライト
-	std::unique_ptr<Sprite> enemyHitSprite_;
-	float alpha;
+	
 
 	std::unique_ptr<ParticleEmitter>testParticle_;
 
-	// 操作UI
-	std::unique_ptr<Sprite> controlUI_D;
-	Vector2 controlUI_DPos_ = { 100.0f, 600.0f };
-	Vector4 controlUIColorD_ = { 1.0f,1.0f,1.0f,0.5f };
-
-	std::unique_ptr<Sprite>controlUI_A;
-	Vector2 controlUIAPos_ = { 50.0f,600.0f };
-	Vector4 controlUIColorA_ = { 1.0f,1.0f,1.0f,0.5f };
-
-	std::unique_ptr<Sprite>controlUI_W;
-	Vector2 controlUIWPos_ = { 75.0f,550.0f };
-	Vector4 controlUIColorW_ = { 1.0f,1.0f,1.0f,0.5f };
-
-	std::unique_ptr<Sprite>controlUI_S;
-	Vector2 controlUISPos_ = { 75.0f,650.0f };
-	Vector4 controlUIColorS_ = { 1.0f,1.0f,1.0f,0.5f };
-
-	std::unique_ptr<Sprite>controlUI_DashUI;
-	Vector2 controlUIDashUIPos_ = { 200.0f,600.0f };
-	Vector4 controlUIDashUIColor_ = { 1.0f,1.0f,1.0f,0.5f };
-
-	std::unique_ptr<Sprite>controlUI_move;
-	Vector2 controlUImovePos_ = { 100.0f,700.0f };
-	Vector4 controlUImoveColor_ = { 1.0f,1.0f,1.0f,0.5f };
-
-	// UIアクティブフラグ
-	bool UiActive_ = false;
-	int32_t uiTimer = 0;
+	
 
 	bool isPlayerControlLocked_ = false;
 
+	
+	// エネミーヒット時のシェイク中に出す被弾スプライト
+	std::unique_ptr<Sprite> enemyHitSprite_;
+	float alpha;
+	
+	std::unique_ptr<GamePlayHUD> gamePlayHUD_;
+
+	std::unique_ptr<StartCamPhase> startCam_;
+
+	Vector3 baseCameraPos_ = {};
 };
 
 
@@ -7750,18 +7261,18 @@ private:
 File Path: Game/Scene/MyGame.cpp
 ============================================================
 #include "MyGame.h"
-#include "InsideScene/SceneFactory.h"
+#include "engine/InsideScene/SceneFactory.h"
 #include <dxgiformat.h>
 #include <memory>
-#include <RenderTexture.h>
-#include <ModelManager.h>
-#include <SkyBox/SkyBox.h>
-#include <TextureManager.h>
-#include <WinAPI.h>
-#include <MyMath.h>
-#include <Game/Application/ModelList.h>
-#include <InsideScene/Framework.h>
-#include <InsideScene/SceneManager.h>
+#include "RenderTexture.h"
+#include "ModelManager.h"
+#include "SkyBox/SkyBox.h"
+#include "TextureManager.h"
+#include "WinAPI.h"
+#include "MyMath.h"
+#include "Game/Application/ModelList.h"
+#include "engine/InsideScene/Framework.h"
+#include "engine/InsideScene/SceneManager.h"
 void MyGame::Initialize()
 {
 	Framework::Initialize();
@@ -7823,70 +7334,8 @@ void MyGame::Draw()
 #endif
 	dxCommon->PostDraw();
 
-	
-//	renderTexture->BeginRender();
-//	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-//	dxCommon->PreDraw();
-//	srvManager->PreDraw();
-//
-//	// シーンマネージャーの描画	
-//	SceneManager::GetInstance()->Draw();
-//
-//	
-//	renderTexture->EndRender();
-//	
-//	
-//	
-//	// レンダーテクスチャの描画
-//	renderTexture->Draw();
-//	// スカイボックスの描画
-//	//skyBox->Draw();
-//	
-//	Framework::Draw();
-//	
-//#ifdef USE_IMGUI
-//	// ImGuiの描画
-//	imGui->Draw();
-//#endif
-//	
-//	dxCommon->PostDraw();
-
 }
-#pragma region グレイスケール並び
-//void MyGame::Draw()
-//{
-//
-//	renderTexture->BeginRender();
-//
-//	srvManager->PreDraw();
-//	// 3Dオブジェクトの描画準備。3Dオブジェクトの描画に共通のグラフィックスコマンドを積む
-//	Object3DCommon::GetInstance()->DrawSettingCommon();
-//
-//	// シーンマネージャーの描画	
-//	SceneManager::GetInstance()->Draw();
-//
-//
-//	renderTexture->EndRender();
-//
-//	// DirectXの描画準備。全ての描画に共通のグラフィックスコマンドを積む
-//	dxCommon->PreDraw();
-//
-//	// レンダーテクスチャの描画
-//	renderTexture->Draw();
-//	// スカイボックスの描画
-//	//skyBox->Draw();
-//
-//	Framework::Draw();
-//
-//#ifdef _DEBUG
-//	// ImGuiの描画
-//	imGui->Draw();
-//#endif
-//
-//	dxCommon->PostDraw();
-//
-//}
-#pragma endregion
+
 
 void MyGame::Finalize()
 {
@@ -7899,7 +7348,7 @@ void MyGame::Finalize()
 	// CloseHandle(fenceEvent);
 	TextureManager::GetInstance()->Finalize();
 	// モデルマネージャの終了処理
-	ModelManager::GetInstance()->Finalize();
+	ModelManager::GetInstance().Finalize();
 	winAPI->Finalize();
 
 #pragma endregion
@@ -7913,11 +7362,12 @@ File Path: Game/Scene/MyGame.h
 ============================================================
 #pragma once
 #include"externals/DirectXTex/d3dx12.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #include "Game/Application/ModelList.h"
 #include "engine/3d/SkyBox/SkyBox.h"
-
-// ゲーム全体 : フレームワーククラス継承
+/// <summary>
+/// ゲーム全体 : フレームワーククラス継承
+/// </summary>
 class MyGame :public Framework
 {
 public:	// メンバ関数
@@ -7948,6 +7398,608 @@ private:	// メンバ変数
 
 	// レンダーテクスチャ
 	bool usePostProcess_ = false;
+
+};
+
+
+
+============================================================
+File Path: Game/Scene/Pause/PauseSystem.cpp
+============================================================
+#include "PauseSystem.h"
+#include "Input.h"
+
+#include "engine/InsideScene/SceneManager.h"
+
+
+void PauseSystem::Initialize()
+{
+	pauseUI_ = std::make_unique<PauseUI>();
+	pauseUI_->Initialize();
+}
+
+bool PauseSystem::Update()
+{
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		isPause_ = !isPause_;
+	}
+	if (isPause_) {
+		// ポーズ画面
+		pauseUI_->Update();
+		// 続けるが選ばれて決定したらポーズ解除
+		if (pauseUI_->PauseReleaseRequested()) {
+			isPause_ = false;
+		}
+
+		switch (pauseUI_->ConsumeAction())
+		{
+			
+			case PauseUI::Action::Retry:
+				// リトライ処理
+				SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+				break;
+			case PauseUI::Action::StageSelect:
+				// ステージセレクトへ
+				SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+				break;
+			case PauseUI::Action::Title:
+				// タイトルへ
+				SceneManager::GetInstance()->ChangeScene("TITLE");
+				break;
+		}
+
+		// ポーズ中にもimguiを表示する
+		DrawImgui();
+		// ゲームの更新を行わない
+		return true;
+	}
+	
+	return isPause_;
+}
+
+void PauseSystem::Draw()
+{
+	if (isPause_) {
+		// ポーズ画面
+		pauseUI_->Draw();
+	}
+}
+
+void PauseSystem::DrawImgui()
+{
+	if (isPause_) {
+		pauseUI_->DrawImGui();
+	}
+}
+
+
+============================================================
+File Path: Game/Scene/Pause/PauseSystem.h
+============================================================
+#pragma once
+#include <memory>
+#include "engine/2d/Sprite.h"
+#include "engine/math/MyMath.h"
+#include "PauseUI.h"
+
+class PauseSystem
+{
+
+public:
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	void Initialize();
+
+
+	/// <summary>
+	/// true:ポーズ中 / false:ポーズ解除
+	/// </summary>
+	/// <returns></returns>
+	bool Update();
+
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw();
+
+	/// <summary>
+	/// Pause画面描画
+	/// </summary>
+	void DrawImgui();
+
+public:
+	// Getter / Setter
+	bool GetPause() const { return isPause_; }
+
+
+private:
+
+	// ポーズ中フラグ
+	bool isPause_ = false;
+
+	// ポーズUI
+	std::unique_ptr<PauseUI> pauseUI_;
+};
+
+
+
+============================================================
+File Path: Game/Scene/Pause/PauseUI.cpp
+============================================================
+#include "PauseUI.h"
+#include "Input.h"
+#include "ImGuiManager.h"
+
+
+static float Clamp01(float x) {
+	if (x < 0.0f) return 0.0f;
+	if (x > 1.0f) return 1.0f;
+	return x;
+}
+
+float PauseUI::GetBounceExtra()
+{
+	if (bounceT_ >= bounceDuration_) {
+		return 0.0f;
+	}
+
+	// 60fps想定で進める（dtがあるなら bounceT_ += dt; に置き換え）
+	bounceT_ += 1.0f / 60.0f;
+
+	float t = Clamp01(bounceT_ / bounceDuration_); // 0→1
+	float s = std::sinf(3.1415926f * t);           // 0→1→0
+
+	// 1.10 → 1.15 → 1.10 にしたいので上乗せ最大 +0.05
+	return 0.05f * s;
+}
+
+PauseUI::Action PauseUI::ConsumeAction()
+{
+	PauseUI::Action action = pendingAction_;
+	pendingAction_ = PauseUI::Action::None;
+	return action;
+}
+
+
+
+void PauseUI::Initialize()
+{
+	// 選択インデックス初期化
+	selectedSlot_ = Slot::Continue;
+	// ポーズ解除要求フラグの初期化
+	requestPauseRelease_ = false;
+
+	// スプライト読み込み
+	LoadSprite();
+}
+
+void PauseUI::Update()
+{
+	// 入力処理
+	HandleDirectionInput();
+	// 選択が変わった瞬間だけバウンス開始
+	if (selectedSlot_ != prevSelectedSlot_) {
+		prevSelectedSlot_ = selectedSlot_;
+		bounceT_ = 0.0f; // バウンス開始
+	}
+
+
+	// 決定入力処理
+	HandleDecideInput();
+
+
+	for (const auto& sprite : sprites_) {
+		sprite->Update();
+	}
+	slotUIUp_->Update();
+	slotUIDown_->Update();
+	slotUILeft_->Update();
+	slotUIRight_->Update();
+
+
+	slotUIUp_->SetColor((selectedSlot_ == Slot::Continue) ? selectedSlotColor_ : normalSlotColor_);
+	slotUIRight_->SetColor((selectedSlot_ == Slot::Retry) ? selectedSlotColor_ : normalSlotColor_);
+	slotUIDown_->SetColor((selectedSlot_ == Slot::Title) ? selectedSlotColor_ : normalSlotColor_);
+	slotUILeft_->SetColor((selectedSlot_ == Slot::StageSelect) ? selectedSlotColor_ : normalSlotColor_);
+
+	slotTextUIUp_->Update();
+	slotTextUIDown_->Update();
+	slotTextUILeft_->Update();
+	slotTextUIRight_->Update();
+
+	decideKeyUI_->Update();
+
+	// 方向（外側）ベクトル：上= (0,-1), 右=(1,0), 下=(0,1), 左=(-1,0)
+	ApplySelectedStyle(slotUIUp_.get(), basePosUp_, baseSizeUp_,
+		selectedSlot_ == Slot::Continue, { 0.0f, -1.0f });
+
+	ApplySelectedStyle(slotUIRight_.get(), basePosRight_, baseSizeRight_,
+		selectedSlot_ == Slot::Retry, { 1.0f,  0.0f });
+
+	ApplySelectedStyle(slotUIDown_.get(), basePosDown_, baseSizeDown_,
+		selectedSlot_ == Slot::Title, { 0.0f,  1.0f });
+
+	ApplySelectedStyle(slotUILeft_.get(), basePosLeft_, baseSizeLeft_,
+		selectedSlot_ == Slot::StageSelect, { -1.0f, 0.0f });
+
+
+	// ImGuiの描画
+	DrawImGui();
+}
+
+void PauseUI::Draw()
+{
+	for (const auto& sprite : sprites_) {
+		sprite->Draw();
+	}
+
+	// スロットUI描画
+	slotUIUp_->Draw();
+	slotUIDown_->Draw();
+	slotUILeft_->Draw();
+	slotUIRight_->Draw();
+	// 決定キーUI描画
+	decideKeyUI_->Draw();
+
+	// 選択中のスロットテキスト描画
+	switch (selectedSlot_)
+	{
+	case Slot::Continue:
+		slotTextUIUp_->Draw();
+		break;
+	case Slot::Retry:
+		slotTextUIRight_->Draw();
+		break;
+	case Slot::StageSelect:
+		slotTextUILeft_->Draw();
+		break;
+	case Slot::Title:
+		slotTextUIDown_->Draw();
+		break;
+	default:
+		break;
+	}
+}
+
+void PauseUI::LoadSprite()
+{
+	// 画面を少し暗くする黒いスプライト
+	auto overlaySprite = std::make_unique<Sprite>();
+	overlaySprite->Initialize("resources/PauseUI/PauseBlack.png");
+	overlaySprite->SetPosition({ 0.0f,0.0f });
+	overlaySprite->SetSize({ 1280.0f,720.0f });
+	overlaySprite->SetColor({ 1.0f,1.0f,1.0f,0.55f });
+	sprites_.push_back(std::move(overlaySprite));
+
+	auto circleSlot = std::make_unique<Sprite>();
+	circleSlot->Initialize("resources/PauseUI/PauseUICircleSlot_2.png");
+	circleSlot->SetPosition({ 0.0f, 0.0f });
+	circleSlot->SetSize({ 1280.0f,720.0f });
+	sprites_.push_back(std::move(circleSlot));
+
+	// スロット上
+	slotUIUp_ = std::make_unique<Sprite>();
+	slotUIUp_->Initialize("resources/PauseUI/PauseUISlotItemUP_IconB.png");
+	slotUIUp_->SetPosition({ 0.0f, 0.0f });
+	slotUIUp_->SetSize({ 1280.0f, 720.0f });
+
+
+	// スロット下
+	slotUIDown_ = std::make_unique<Sprite>();
+	slotUIDown_->Initialize("resources/PauseUI/PauseUISlotItemDown_IconB.png");
+	slotUIDown_->SetPosition({ 0.0f, 0.0f });
+	slotUIDown_->SetSize({ 1280.0f, 720.0f });
+	// スロット左
+	slotUILeft_ = std::make_unique<Sprite>();
+	slotUILeft_->Initialize("resources/PauseUI/PauseUISlotItemLeft_IconB.png");
+	slotUILeft_->SetPosition({ 0.0f, 0.0f });
+	slotUILeft_->SetSize({ 1280.0f, 720.0f });
+	// スロット右
+	slotUIRight_ = std::make_unique<Sprite>();
+	slotUIRight_->Initialize("resources/PauseUI/PauseUISlotItemRight_IconB.png");
+	slotUIRight_->SetPosition({ 0.0f, 0.0f });
+	slotUIRight_->SetSize({ 1280.0f, 720.0f });
+
+
+
+	basePosUp_ = slotUIUp_->GetPosition();
+	baseSizeUp_ = slotUIUp_->GetSize();
+
+	basePosRight_ = slotUIRight_->GetPosition();
+	baseSizeRight_ = slotUIRight_->GetSize();
+
+	basePosDown_ = slotUIDown_->GetPosition();
+	baseSizeDown_ = slotUIDown_->GetSize();
+
+	basePosLeft_ = slotUILeft_->GetPosition();
+	baseSizeLeft_ = slotUILeft_->GetSize();
+
+
+	slotTextUIUp_ = std::make_unique<Sprite>();
+	slotTextUIUp_->Initialize("resources/PauseUI/PlayText.png");
+	slotTextUIUp_->SetPosition({ 0.0f, 0.0f });
+	slotTextUIUp_->SetSize({ 1280.0f, 720.0f });
+
+	slotTextUIDown_ = std::make_unique<Sprite>();
+	slotTextUIDown_->Initialize("resources/PauseUI/TitleText.png");
+	slotTextUIDown_->SetPosition({ 0.0f, 0.0f });
+	slotTextUIDown_->SetSize({ 1280.0f, 720.0f });
+
+	slotTextUILeft_ = std::make_unique<Sprite>();
+	slotTextUILeft_->Initialize("resources/PauseUI/SelectText.png");
+	slotTextUILeft_->SetPosition({ 0.0f, 0.0f });
+	slotTextUILeft_->SetSize({ 1280.0f, 720.0f });
+
+	slotTextUIRight_ = std::make_unique<Sprite>();
+	slotTextUIRight_->Initialize("resources/PauseUI/ReTryText.png");
+	slotTextUIRight_->SetPosition({ 0.0f, 0.0f });
+	slotTextUIRight_->SetSize({ 1280.0f, 720.0f });
+
+
+	decideKeyUI_ = std::make_unique<Sprite>();
+	decideKeyUI_->Initialize("resources/PauseUI/SpaceText.png");
+	decideKeyUI_->SetPosition({ 0.0f, 0.0f });
+	decideKeyUI_->SetSize({ 1280.0f, 720.0f });
+
+
+}
+
+void PauseUI::ApplySelectedStyle(Sprite* sp,
+	const Vector2& basePos,
+	const Vector2& baseSize,
+	bool selected,
+	const Vector2& outwardDir)
+{
+	float kScale = 1.0f;
+	if (selected) {
+		kScale = 1.10f + GetBounceExtra();
+	}
+
+	const float kNudge = selected ? 12.0f : 0.0f; // 外側へ押し出し
+
+	// サイズ変更
+	Vector2 size = { baseSize.x * kScale, baseSize.y * kScale };
+
+	// 左上基準の拡大で中心がズレるのを補正（中心固定）
+	Vector2 pos = basePos;
+	pos.x -= (size.x - baseSize.x) * 0.5f;
+	pos.y -= (size.y - baseSize.y) * 0.5f;
+
+	// 外側へ少しずらす（方向ベクトル）
+	pos.x += outwardDir.x * kNudge;
+	pos.y += outwardDir.y * kNudge;
+
+	sp->SetSize(size);
+	sp->SetPosition(pos);
+}
+
+
+void PauseUI::DrawImGui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("Pause UI");
+
+	// スプライトのカラーセット
+
+
+	for (const auto& sprite : sprites_) {
+		Vector4 color = sprite->GetColor();
+		ImGui::DragFloat4("Sprite Color", &color.x, 0.01f, 0.0f, 1.0f);
+		sprite->SetColor(color);
+	}
+
+
+	// 選択中表示
+	const uint32_t idx = static_cast<uint32_t>(selectedSlot_);
+	ImGui::Text("Selected Slot: %u", idx);
+
+	ImGui::Text("%s Continue (W)", (selectedSlot_ == Slot::Continue) ? ">" : " ");
+	ImGui::Text("%s Retry (D)", (selectedSlot_ == Slot::Retry) ? ">" : " ");
+	ImGui::Text("%s Stage Select (A)", (selectedSlot_ == Slot::StageSelect) ? ">" : " ");
+	ImGui::Text("%s Title (S)", (selectedSlot_ == Slot::Title) ? ">" : " ");
+
+	ImGui::Separator();
+	ImGui::Text("Decide: SPACE / ENTER");
+	ImGui::Text("ResumeRequested: %s", requestPauseRelease_ ? "true" : "false");
+
+
+	ImGui::End();
+#endif
+}
+
+bool PauseUI::PauseReleaseRequested()
+{
+	// すでにポーズ解除要求が出ていれば抜ける
+	if (!requestPauseRelease_) {
+		return false;
+	}
+	// ポーズ解除要求フラグをリセット
+	requestPauseRelease_ = false;
+	// ポーズ解除要求を返す
+	return true;
+}
+
+void PauseUI::HandleDecideInput()
+{
+	// スペースキーが押されていなければ抜ける
+	if (!Input::GetInstance()->TriggerKey(DIK_SPACE)) return;
+
+	// 選択中のスロットに応じた処理
+	switch (selectedSlot_)
+	{
+	case Slot::Continue:
+		pendingAction_ = Action::Continue;
+		requestPauseRelease_ = true;
+		break;
+	case Slot::Retry:
+		pendingAction_ = Action::Retry;
+		break;
+	case Slot::StageSelect:
+		pendingAction_ = Action::StageSelect;
+		break;
+	case Slot::Title:
+		pendingAction_ = Action::Title;
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+void PauseUI::HandleDirectionInput()
+{
+	// 入力によって選択スロットを変更
+	if (Input::GetInstance()->TriggerKey(DIK_W)) {
+		selectedSlot_ = Slot::Continue;
+	} else if (Input::GetInstance()->TriggerKey(DIK_D)) {
+		selectedSlot_ = Slot::Retry;
+	} else if (Input::GetInstance()->TriggerKey(DIK_A)) {
+		selectedSlot_ = Slot::StageSelect;
+	} else if (Input::GetInstance()->TriggerKey(DIK_S)) {
+		selectedSlot_ = Slot::Title;
+	}
+}
+
+
+
+============================================================
+File Path: Game/Scene/Pause/PauseUI.h
+============================================================
+#pragma once
+#include <cstdint>
+#include "Sprite.h"
+#include <memory>
+#include <vector>
+#include <MyMath.h>
+class PauseUI
+{
+	enum class Slot : uint32_t {
+		// 上 (W)
+		Continue = 0,
+		// 右 (D)
+		Retry = 1,
+		// 左 (A)
+		StageSelect = 2,
+		// 下 (S)
+		Title = 3,
+		Count
+	};
+	enum class UiAnimState { Idle, Decide };
+public:
+	enum class Action {
+		None,
+		Continue,
+		Retry,
+		StageSelect,
+		Title
+	};
+public:
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw();
+
+
+	/// <summary>
+	/// スプライト読み込み
+	/// </summary>
+	void LoadSprite();
+
+	/// <summary>
+	/// ImGuiの描画
+	/// </summary>
+	void DrawImGui();
+
+	/// <summary>
+	/// ポーズの解除要求
+	/// </summary>
+	bool PauseReleaseRequested();
+
+	/// <summary>
+	/// 決定入力処理
+	/// </summary>
+	void HandleDecideInput();
+
+	/// <summary>
+	/// 方向入力処理
+	/// </summary>
+	void HandleDirectionInput();
+
+	void ApplySelectedStyle(Sprite* sp,
+		const Vector2& basePos,
+		const Vector2& baseSize,
+		bool selected,
+		const Vector2& outwardDir);
+
+	float GetBounceExtra();
+
+
+
+public:	// Getter / Setter
+	/// <summary>
+	/// 選択中のスロット取得
+	/// </summary>
+	Slot GetSelectedSlot() const { return selectedSlot_; }
+
+	Action ConsumeAction();
+
+private:
+	// メニュー項目数
+	Slot selectedSlot_ = Slot::Continue;
+
+	Action pendingAction_ = Action::None;
+
+	// ポーズ解除要求フラグ
+	bool requestPauseRelease_ = false;
+
+	std::vector<std::unique_ptr<Sprite>> sprites_;
+
+	// スロットUI
+	std::unique_ptr<Sprite> slotUIUp_;
+	std::unique_ptr<Sprite> slotUIDown_;
+	std::unique_ptr<Sprite> slotUILeft_;
+	std::unique_ptr<Sprite> slotUIRight_;
+
+	// 選択中のスロットのテキストスプライト
+	std::unique_ptr<Sprite> slotTextUIUp_;
+	std::unique_ptr<Sprite> slotTextUIDown_;
+	std::unique_ptr<Sprite> slotTextUILeft_;
+	std::unique_ptr<Sprite> slotTextUIRight_;
+
+	// Space
+	std::unique_ptr<Sprite> decideKeyUI_;
+
+	
+	// 選択時のスロットのカラー
+	// PauseUI.h
+	const Vector4 normalSlotColor_{ 1.0f, 1.0f, 1.0f, 1.0f };
+	const Vector4 selectedSlotColor_{ 0.05f, 1.0f, 1.0f, 1.0f }; 
+
+	// 基準（非選択）時の位置とサイズを保存しておく
+	Vector2 basePosUp_, basePosRight_, basePosDown_, basePosLeft_;
+	Vector2 baseSizeUp_, baseSizeRight_, baseSizeDown_, baseSizeLeft_;
+
+	UiAnimState uiAnimState_ = UiAnimState::Idle;
+
+	Slot prevSelectedSlot_ = Slot::Continue;
+	// バウンス用
+	float bounceT_ = 1.0f;        // 0→1（1なら終了）
+	float bounceDuration_ = 0.10f; // 秒（0.08〜0.12推奨）
+
+	
 
 };
 
@@ -8184,23 +8236,19 @@ std::string StageSelectGraph::ToJsonString(int indent) const
 	return ToJson().dump(indent);
 }
 
-bool StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
+void StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
 {
+	// JSONファイルに保存する処理
 	const std::string frontFilePath = "resources/StageSelect";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
-
+	// ファイル出力ストリームを開く
 	std::ofstream ofs(fullPath);
-	if (ofs.fail())return false;
-
+	// JSON文字列を書き込む
 	ofs << ToJsonString(2);
-	return true;
 }
 
-bool StageSelectGraph::RemoveNode(uint32_t id)
-{
-	return false;
-}
+
 
 bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
 {
@@ -8257,6 +8305,13 @@ File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.h
 #include <vector>
 #include <cstdint>
 #include <resources/json/json.hpp>
+
+/// <summary>
+/// ステージセレクトグラフ
+/// セレクト画面のマスの管理クラス
+/// </summary>
+
+// マップ上の位置
 struct MapPos
 {
 	uint32_t x;
@@ -8312,15 +8367,18 @@ public:
 	/// <summary>
 	/// ノード追加
 	/// </summary>
-	/// <param name="node">  </param>
+	/// <param name="pos">ノードの位置</param>
+	/// <param name="stageId">ステージのID</param>
+	/// <param name="unlocked">解放状態か</param>
+	/// <returns>ステージIDも返す</returns>
 	uint32_t AddNode(MapPos pos,uint32_t stageId,bool unlocked);
 
 	/// <summary>
 	/// ノード接続
 	/// </summary>
-	/// <param name="fromNodeId"></param>
-	/// <param name="toNodeId"></param>
-	/// <param name="dir"></param>
+	/// <param name="fromNodeId">繋げ元のノード</param>
+	/// <param name="toNodeId">繋げ先のノード</param>
+	/// <param name="dir">どの方向にあるのか</param>
 	void Link(uint32_t fromNodeId, uint32_t toNodeId,Direction dir);
 	
 	/// <summary>
@@ -8334,30 +8392,41 @@ public:
 	/// <summary>
 	/// ノード取得
 	/// </summary>
-	/// <param name="id"></param>
+	/// <param name="id">ステージID</param>
 	/// <returns></returns>
 	const StageNode& GetNode(uint32_t id)const;
 
 	/// <summary>
 	/// jsonファイルからノード情報の読み込み
 	/// </summary>
-	/// <param name="jsonNode"></param>
+	/// <param name="jsonNode">読み込むjsonファイル名</param>
 	void LoadMapNodeFromJson(const std::string& fileName);
 
-
+	/// <summary>
+	/// JSON形式に変換
+	/// </summary>
+	/// <returns></returns>
 	nlohmann::json ToJson() const;
 
+	/// <summary>
+	/// JSON文字列に変換
+	/// </summary>
+	/// <param name="indent"></param>
+	/// <returns></returns>
 	std::string ToJsonString(int indent = 2) const;
 
-	bool SaveToJsonFile(const std::string& fileName) const;
+	/// <summary>
+	/// JSONファイルに保存
+	/// </summary>
+	/// <param name="fileName">保存する時のjsonファイルの名前</param>
+	void SaveToJsonFile(const std::string& fileName) const;
 private:
 	// ノードリスト
 	std::vector<StageNode> nodes_;
 
 	
 public:
-	// --- 編集API（ImGui用） ---
-	bool RemoveNode(uint32_t id);
+	/// --- 編集API（ImGui用） --- ///
 	// ノード情報編集
 	bool SetNodePos(uint32_t id, MapPos pos);
 	bool SetNodeStageId(uint32_t id, uint32_t stageId);
@@ -8713,7 +8782,7 @@ File Path: Game/Scene/StageClearScene.cpp
 ============================================================
 #include "StageClearScene.h"
 #include "Game/Camera/Camera.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
 StageClearScene::StageClearScene()
@@ -8793,9 +8862,13 @@ void StageClearScene::DrawImgui()
 File Path: Game/Scene/StageClearScene.h
 ============================================================
 #pragma once
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include "MyMath.h"
 
+/// <summary>
+/// ステージクリアシーン
+/// ステージをクリアしたときに表示されるシーン
+/// </summary>
 class Object3D;
 class Camera;
 class StageClearScene :
@@ -8842,7 +8915,7 @@ private:
 File Path: Game/Scene/StageSelectScene.cpp
 ============================================================
 #include "StageSelectScene.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #include "Game/Camera/Camera.h"
 #include "engine/3d/Object3D.h"
 #ifdef USE_IMGUI
@@ -8859,6 +8932,7 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 {
+    
 	// カメラの取得
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,20.0f,0.0f };
@@ -8918,6 +8992,11 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 void StageSelectScene::Update()
 {
+    if (Input::GetInstance()->TriggerKey(DIK_1)) {
+        SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+    }
+	
+
 	// 空背景の更新
 	skyBack->Update();
 	// ステージセレクト土台の更新
@@ -9377,9 +9456,15 @@ void StageSelectScene::DrawSelectGraphImGui()
 File Path: Game/Scene/StageSelectScene.h
 ============================================================
 #pragma once
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include <MyMath.h>
 #include "SceneSelectGraph/StageSelectGraph.h"
+
+/// <summary>
+/// ステージセレクトシーン
+/// ステージ選択画面のシーン
+/// </summary>
+
 struct StageStatus {
 
 };
@@ -9424,14 +9509,22 @@ class StageSelectScene :
     void PlayerMove();
 
 private:
+    /// <summary>
+	/// ステージセレクト入力処理
+    /// </summary>
     void HandleSelectInput();
-
+	/// <summary>
+	/// ノード位置をカーソル位置に合わせる
+	/// </summary>
 	void ApplyNodeToCursorTransform();
     
+	/// <summary>
+	/// ステージセレクトグラフ編集ImGui
+	/// </summary>
 	void DrawSelectGraphImGui();
 
 private:
-	// カメラ
+	// カメラ / トランスフォーム
 	Camera* camera = nullptr;
 	Transform cameraTransform;
 
@@ -9511,7 +9604,7 @@ File Path: Game/Scene/TitleScene.cpp
 #include "Game/Camera/camera.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 TitleScene::TitleScene()
 {
 
@@ -9524,7 +9617,7 @@ TitleScene::~TitleScene()
 void TitleScene::Initialize(DirectXCommon* dxCommon)
 {
 	// スプライトの初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon);
+	SpriteCommon::GetInstance().Initialize(dxCommon);
 
 
 	// マルチスレッドでの読み込み
@@ -9689,7 +9782,7 @@ void TitleScene::Finalize()
 	EffectManager::GetInstance()->DeleteEffectGroup("Ring");*/
 
 	// スプライトの終了処理
-	SpriteCommon::GetInstance()->Deletenstance();
+	SpriteCommon::GetInstance().DeleteInstance();
 }
 
 void TitleScene::LoadAudio()
@@ -9724,139 +9817,7 @@ void TitleScene::DrawImgui() {
 
 	ImGui::End();
 
-	/*ImGui::Begin("BackGround");
-
-	ImGui::Text("Soil");
-	ImGui::DragFloat3("Scales", &soilTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotates", &soilTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translates", &soilTransform.translate.x, 0.1f);
-	soil->SetTransform(soilTransform);
-	ImGui::Separator();
-
-	ImGui::Text("Player");
-	ImGui::DragFloat3("Scalep", &playerTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatep", &playerTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatep", &playerTransform.translate.x, 0.1f);
-	playerObject->SetTransform(playerTransform);
-	ImGui::Separator();
-	// 背景
-	ImGui::Text("BackGround3");
-	ImGui::DragFloat3("Scaleb", &titleBackGround3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotateb", &titleBackGround3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translateb", &titleBackGround3Transform.translate.x, 0.1f);
-	titleBackGround3->SetTransform(titleBackGround3Transform);
-
-	ImGui::Separator();
-
-	ImGui::Text("BackGround3_2");
-	ImGui::DragFloat3("Scalec3_2", &titleBackGround3_2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatec3_2", &titleBackGround3_2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatec3_2", &titleBackGround3_2Transform.translate.x, 0.1f);
-	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
-	ImGui::Separator();
-
-	ImGui::Text("BackGround2");
-	ImGui::DragFloat3("Scalec", &titleBackGround2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatec", &titleBackGround2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatec", &titleBackGround2Transform.translate.x, 0.1f);
-	titleBackGround2->SetTransform(titleBackGround2Transform);
-
-	ImGui::Separator();
-
-	ImGui::Text("BackGround2_2");
-	ImGui::DragFloat3("Scaled2_2", &titleBackGround2_2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotated2_2", &titleBackGround2_2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translated2_2", &titleBackGround2_2Transform.translate.x, 0.1f);
-	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
-	ImGui::Separator();
-	ImGui::Text("BackGround2_3");
-	ImGui::DragFloat3("Scaled2_3", &titleBackGround2_3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotated2_3", &titleBackGround2_3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translated2_3", &titleBackGround2_3Transform.translate.x, 0.1f);
-	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
-	ImGui::Separator();
-
-	ImGui::Text("BackGround1");
-	ImGui::DragFloat3("Scaled", &titleBackGround1Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotated", &titleBackGround1Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translated", &titleBackGround1Transform.translate.x, 0.1f);
-	titleBackGround1->SetTransform(titleBackGround1Transform);
-
-	ImGui::Separator();
-
-	ImGui::Text("BackGround1_2");
-	ImGui::DragFloat3("Scale1_2", &titeleBackGround1_2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate1_2", &titeleBackGround1_2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate1_2", &titeleBackGround1_2Transform.translate.x, 0.1f);
-	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
-	ImGui::Separator();
-	ImGui::Text("BackGround1_3");
-	ImGui::DragFloat3("Scale1_3", &titeleBackGround1_3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate1_3", &titeleBackGround1_3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate1_3", &titeleBackGround1_3Transform.translate.x, 0.1f);
-	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
-	ImGui::Separator();
-	ImGui::Text("BackGround1_4");
-	ImGui::DragFloat3("Scale1_4", &titeleBackGround1_4Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate1_4", &titeleBackGround1_4Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate1_4", &titeleBackGround1_4Transform.translate.x, 0.1f);
-	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
-	ImGui::Separator();
-	ImGui::Text("SkyBack");
-	ImGui::DragFloat3("Scalee", &skyBackTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatee", &skyBackTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatee", &skyBackTransform.translate.x, 0.1f);
-	skyBack->SetTransform(skyBackTransform);
-
-
-	ImGui::End();*/
-
-
-	//if (levelData->HasPlayerSpawn()) {
-	//	const auto& playerSpawn = levelData->getPlayerSpawns()[0];
-
-	//	// プレイヤーの位置と回転を Object3D にセット
-	//	playerObject->SetTranslate(playerSpawn.transform.translate);
-	//	playerObject->SetRotate(playerSpawn.transform.rotate);
-
-	//	// ImGui ウィンドウで表示
-	//	ImGui::Begin("PlayerSpawn Info");
-
-	//	const Vector3& pos = playerSpawn.transform.translate;
-	//	const Vector3& rot = playerSpawn.transform.rotate;
-
-	//	ImGui::Text("Translate: X = %.2f, Y = %.2f, Z = %.2f", pos.x, pos.y, pos.z);
-	//	ImGui::Text("Rotate:    X = %.2f, Y = %.2f, Z = %.2f", rot.x, rot.y, rot.z);
-
-	//	ImGui::End();
-	//}
-
-
-
-
-	//ImGui::Begin("Particle");
-
-	//ImGui::Text("Transform");
-	//ImGui::DragFloat3("Scalea", &emitterScale.x, 0.1f);
-	//ImGui::DragFloat3("Rotatea", &emitterRotate.x, 0.1f);
-	//ImGui::DragFloat3("Translatea", &emitterTranslate.x, 1.0f); // ここでtest.xを操作可能に
-
-	//ImGui::End();
-
-	/*ImGui::Begin("effect");
-
-	ImGui::Text("Transform");
-	ImGui::DragFloat3("Scale", &effectTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &effectTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f);
-	effectEmitter->SetTransform(effectTransform);
-
-	ImGui::Text("asdf");
-	ImGui::DragFloat3("CylinderScale", &cylinderTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
-	cylinder->SetTransform(cylinderTransform);
-	ImGui::End();*/
+	
 
 
 #endif // _DEBUG
@@ -9871,13 +9832,11 @@ File Path: Game/Scene/TitleScene.h
 #pragma once
 #include "Audio.h"
 #include "SpriteCommon.h"
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include "Sprite.h"
-#include "InsideScene/SceneManager.h"
+#include "engine/InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
-#include "Game/Particle/EffectManager.h"
-#include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
@@ -9887,8 +9846,10 @@ File Path: Game/Scene/TitleScene.h
 #include "ImGuiManager.h"
 #endif
 
+
 /// <summary>
 /// タイトルシーン
+/// タイトルシーンを管理する
 /// </summary>
 class Camera;
 class Object3D;
@@ -9897,19 +9858,31 @@ class TitleScene :public BaseScene
 public:
 	TitleScene();
 	~TitleScene();
-	// 初期化
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon)override;
-	// 更新
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	void Update()override;
-	// 描画
+	/// <summary>
+	/// 描画処理
+	/// </summary>
 	void Draw()override;
-	// 終了処理
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize()override;
-	// スレッド用の関数
+	/// <summary>
+	///	ロード処理（オーディオ、スプライト）
+	/// </summary>
 	void LoadAudio();
 	void LoadSprite();
-
-	// Imgui一括管理 / 描画関数
+	/// <summary>
+	/// Imgui一括管理 / 描画関数
+	/// </summary>
 	void DrawImgui();
 private:
 
@@ -9930,11 +9903,6 @@ private:
 	// 背景
 	std::unique_ptr<Object3D> backgroundObject;
 
-
-	// effect
-	std::unique_ptr<EffectEmitter>effectEmitter;
-	std::unique_ptr<EffectEmitter>cylinder;
-
 private: // ゲーム要素
 	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
 	Vector3 emitterRotate = { 0.0f, 0.0f, 0.0f };
@@ -9951,7 +9919,7 @@ private: // ゲーム要素
 
 
 
-	/// levelloader
+	/// level loader
 	std::unique_ptr<LevelLoader>levelData;
 
 	std::unique_ptr<Object3D> playerObject;
@@ -9974,563 +9942,6 @@ private: // ゲーム要素
 
 	//std::unique_ptr<SceneTransition> sceneTransition;
 
-};
-
-
-
-============================================================
-File Path: InsideScene/AbstractSceneFactory.cpp
-============================================================
-#include "AbstractSceneFactory.h"
-
-
-============================================================
-File Path: InsideScene/AbstractSceneFactory.h
-============================================================
-#pragma once
-#include "BaseScene.h"
-#include <string>
-// シーン工場クラス
-class AbstractSceneFactory
-{
-public:
-	/// <summary>
-	/// 仮想デストラクタ
-	/// </summary>
-	virtual ~AbstractSceneFactory() = default;
-	/// <summary>
-	/// シーン生成
-	/// </summary>
-	/// <param name="sceneName"></param>
-	/// <returns></returns>
-	virtual BaseScene* CreateScene(const std::string&sceneName) = 0;
-};
-
-
-
-============================================================
-File Path: InsideScene/BaseScene.cpp
-============================================================
-#include "BaseScene.h"
-
-
-============================================================
-File Path: InsideScene/BaseScene.h
-============================================================
-#pragma once
-#include "DirectXCommon.h"
-
-/// <summary>
-/// シーン基底クラス
-/// </summary>
-class SceneManager;
-class BaseScene
-{
-public:
-    /// <summary>
-	/// デストラクタ
-    /// </summary>
-    virtual ~BaseScene() = default;
-    /// <summary>
-	/// 初期化
-    /// </summary>
-    /// <param name="dxCommon"></param>
-    virtual void Initialize(DirectXCommon* dxCommon) = 0;
-    /// <summary>
-	/// 更新
-    /// </summary>
-    virtual void Update() = 0;
-    /// <summary>
-	/// 描画
-    /// </summary>
-    virtual void Draw() = 0;
-    /// <summary>
-	/// 終了処理
-    /// </summary>
-    virtual void Finalize() = 0;
-    // Setter
-	/// <summary>
-	/// シーンマネージャーのセット
-	/// </summary>
-    virtual void SetSceneManager(SceneManager* sceneManager) { this->sceneManager = sceneManager; }
-
-protected:
-	// シーンマネージャー
-    SceneManager* sceneManager = nullptr;
-};
-
-
-
-============================================================
-File Path: InsideScene/Framework.cpp
-============================================================
-#include "Framework.h"
-void Framework::Initialize()
-{
-	//WindowsAPIの初期化
-	winAPI = make_unique<WinAPI>();
-	winAPI->Initialize();
-	// dxCommonの初期化
-	dxCommon = make_unique<DirectXCommon>();
-	dxCommon->Initialize(winAPI.get());
-
-	// 入力処理のクラスポインタ
-	
-	Input::GetInstance()->Initialize(winAPI.get());
-
-	// SRVマネージャーの初期化
-	srvManager = make_unique<SrvManager>();
-	srvManager->Initialize(dxCommon.get());
-	// テクスチャマネージャーの初期化
-	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
-
-
-#ifdef USE_IMGUI
-	// ImGuiの初期化
-	imGui = make_unique<ImGuiManager>();
-	imGui->Initialize(winAPI.get(), dxCommon.get());
-#endif
-
-	// 3Dモデルマネージャの初期化
-	ModelManager::GetInstance()->Initialize(dxCommon.get());
-	// 3Dオブジェクト共通部の初期化
-	Object3DCommon::GetInstance()->Initialize(dxCommon.get());
-
-	// モデル共通部の初期化
-	modelCommon = make_unique<ModelCommon>();
-	modelCommon->Initialize(dxCommon.get());
-
-	// カメラ
-	camera = make_unique<Camera>();
-	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
-	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
-
-	// 全シーンがアクセス可能なカメラに設定
-	mainCamera_ = camera.get();
-
-	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
-
-	// パーティクル
-	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
-	
-	
-
-	/// マップに合わせる
-	/*cameraTransform.translate = { 7.5f,-4.0f,0.0f };
-	camera->SetTranslate(cameraTransform.translate);*/
-
-}
-
-void Framework::Update()
-{
-#pragma region WindowsAPIのメッセージ処理
-	//Windowのメッセージ処理
-	if (winAPI->ProcessMessage()) {
-		//ゲームループを抜ける
-		isEndRequest_ = true;
-		return;
-	}
-#pragma endregion
-
-	Input::GetInstance()->Update();
-	// カメラの更新
-	camera->Update();
-#ifdef USE_IMGUI
-	// カメラの配置回転情報の変更・表示UI
-	ImGui::Begin("Camera Settings");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	ImGui::End();
-
-	// カメラに反映させる
-	/*static bool useDebugCamera = false;
-	ImGui::Checkbox("Use Debug Camera", &useDebugCamera);
-	if (useDebugCamera) {*/
-	/*camera->SetTranslate(cameraTransform.translate);
-	camera->SetRotate(cameraTransform.rotate);*/
-	//}
-#endif 
-
-	SceneManager::GetInstance()->Update(dxCommon.get());
-	
-
-	
-	// パーティクルの更新
-	ParticleManager::GetInstance()->Update();
-
-	// ESCキーで終了
-	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
-	{
-		isEndRequest_ = true;
-	}
-	
-}
-
-
-void Framework::Draw()
-{
-	
-
-
-}
-
-
-void Framework::Finalize()
-{
-	
-
-	SceneManager::GetInstance()->Finalize();
-	SceneManager::Deletenstance();
-	Audio::GetInstance()->DeleteInstance();
-	Object3DCommon::GetInstance()->DeleteInstance();
-	SpriteCommon::GetInstance()->Deletenstance();
-	TextureManager::GetInstance()->DeleteInstance();
-	ModelManager::GetInstance()->Finalize();
-	Input::GetInstance()->DeleteInstance();
-	winAPI->Finalize();
-	mainCamera_ = nullptr;
-	ParticleManager::GetInstance()->DeleteInstance();
-
-}
-
-void Framework::Run()
-{
-	// ゲームの初期化
-	Initialize();
-	// ゲームのメインループ
-	while (true) {
-		// ゲームの更新
-		Update();
-		if (IsEndRequest()) {
-			break;
-		}
-		// ゲームの描画
-		Draw();
-	}
-	// ゲームの終了処理
-	Finalize();
-}
-
-
-
-============================================================
-File Path: InsideScene/Framework.h
-============================================================
-#pragma once
-#include<fstream>
-#include<sstream>
-#include<wrl.h>
-#include "numbers"
-#include "WinAPI.h"
-#include "DirectXCommon.h"
-#include "Sprite.h"
-#include "SpriteCommon.h"
-#include "TextureManager.h"
-#include "Object3D.h"
-#include "Object3DCommon.h"
-#include "ModelManager.h"
-#ifdef USE_IMGUI
-#include "ImGuiManager.h"
-#endif
-#include "Audio.h"
-#include "SceneManager.h"
-#include "Game/Particle/ParticleManager.h"
-#include "Game/Particle/EffectManager.h"
-#include "engine/3d/SkyBox/SkyBox.h"
-#include "AbstractSceneFactory.h"
-#include "D3DResourceLeakChecker.h"
-#include "Input.h"
-#include "engine/2d/RenderTexture.h"
-/// <summary>
-/// フレームワーク基底クラス
-/// </summary>
-class Framework
-{
-
-public:
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	virtual ~Framework() = default;
-public:	// メンバ関数
-	/// <summary>
-	/// 初期化処理
-	/// </summary>
-	virtual void Initialize();
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	virtual void Update();
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	virtual void Draw() = 0;
-	/// <summary>
-	/// 終了処理
-	/// </summary>
-	virtual void Finalize();
-	/// <summary>
-	/// 実行
-	/// </summary>
-	void Run();
-	/// <summary>
-	/// 終了リクエストの有無
-	/// </summary>
-	/// <returns></returns>
-	bool IsEndRequest() { return isEndRequest_; }
-
-protected:
-	// 終了リクエスト
-	bool isEndRequest_ = false;
-protected:// Initialize関連
-	// リークチェッカー
-	//D3DResourceLeakChecker leakCheck;
-	// ウィンドウAPI
-	std::unique_ptr<WinAPI> winAPI;
-	// DirectX共通部
-	std::unique_ptr<DirectXCommon> dxCommon;
-	// ImGui
-#ifdef USE_IMGUI
-	std::unique_ptr<ImGuiManager> imGui;
-#endif
-	// SRVマネージャー
-	std::unique_ptr<SrvManager> srvManager;
-	// モデル共通部
-	std::unique_ptr<ModelCommon> modelCommon;
-	// カメラ
-	std::unique_ptr<Camera> camera;
-
-
-	// レンダーテクスチャ
-	std::unique_ptr<RenderTexture> renderTexture = nullptr;
-
-public:
-	// シーンファクトリー
-	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
-	// 全シーンがアクセス可能なカメラ
-	static Camera* GetMainCamera() { return mainCamera_; }
-private:
-	
-	/// カメラの座標
-	Transform cameraTransform = {
-		{0.0f, 0.0f, -10.0f}, // translate
-		{0.0f, 0.0f, 0.0f}, // rotate
-		{ 1.0f, 1.0f,-10.0f } // scale
-	};
-
-	static inline Camera* mainCamera_ = nullptr;
-	
-};
-
-
-
-============================================================
-File Path: InsideScene/SceneFactory.cpp
-============================================================
-#include "SceneFactory.h"
-#include "Game/Scene/TitleScene.h"
-#include "Game/Scene/GamePlayScene.h"
-#include "Game/Scene/StageSelectScene.h"
-#include "Game/Scene/StageClearScene.h"
-BaseScene* SceneFactory::CreateScene(const std::string& sceneName)
-{
-    // 次のシーン生成
-	BaseScene* scene = nullptr;
-	if (sceneName == "TITLE")
-	{
-		scene = new TitleScene();
-	}
-	else if (sceneName == "STAGESELECT")
-	{
-		scene = new StageSelectScene();
-	}
-	else if (sceneName == "GAMEPLAY")
-	{
-		scene = new GamePlayScene();
-	}
-	else if (sceneName == "STAGECLEAR")
-	{
-		scene = new StageClearScene();
-	}
-	return scene;
-}
-
-
-============================================================
-File Path: InsideScene/SceneFactory.h
-============================================================
-#pragma once
-#include "AbstractSceneFactory.h"
-/// <summary>
-/// シーン工場クラス
-/// </summary>
-class SceneFactory : public AbstractSceneFactory
-{
-public:
-	/// <summary>
-	/// シーン生成
-	/// </summary>
-	/// <param name="sceneName"></param>
-	/// <returns></returns>
-	BaseScene* CreateScene(const std::string& sceneName)override;
-};
-
-
-
-============================================================
-File Path: InsideScene/SceneManager.cpp
-============================================================
-#include "SceneManager.h"
-
-static SceneManager* instance = nullptr;
-
-
-SceneManager* SceneManager::GetInstance()
-{
-	if (instance == nullptr)
-	{
-		instance = new SceneManager();
-	}
-	return instance;
-}
-
-void SceneManager::Deletenstance()
-{
-	if (instance != nullptr)
-	{
-		delete instance;
-		instance = nullptr;
-	}
-}
-
-void SceneManager::Update(DirectXCommon* dxCommon)
-{
-    // 次のシーンが予約されている場合
-    if (nextScene_) {
-        // 今のシーンの終了処理
-        if (scene_) {
-            scene_->Finalize();
-            delete scene_;
-        }
-        // 次のシーンの初期化
-        scene_ = nextScene_;
-        nextScene_ = nullptr;
-        // シーンマネージャーの設定
-        scene_->SetSceneManager(this);
-        scene_->Initialize(dxCommon);
-    }
-    // 実行中シーンを更新
-    if (scene_) {
-        scene_->Update();
-    }
-}
-
-
-void SceneManager::Draw()
-{
-    // 実行中シーンが存在する場合のみ描画
-    if (scene_) {
-        scene_->Draw();
-    }
-}
-
-void SceneManager::Finalize()
-{
-    // 最後のシーンの終了処理
-    // 使えるようなら
-    if (scene_)
-    {
-        scene_->Finalize();
-        delete scene_;
-    }
-}
-
-void SceneManager::ChangeScene(const std::string& sceneName)
-{
-    assert(nextScene_ == nullptr);
-    assert(sceneFactory_);
-
-	// 次のシーン生成
-	nextScene_ = sceneFactory_->CreateScene(sceneName);
-}
-
-
-
-
-
-
-============================================================
-File Path: InsideScene/SceneManager.h
-============================================================
-#pragma once
-#include "BaseScene.h"
-#include "AbstractSceneFactory.h"
-// シーン管理クラス
-// シングルトンクラス
-class SceneManager
-{
-public:
-	/// <summary>
-	/// シングルトンの取得
-	/// </summary>
-	/// <returns></returns>
-	static SceneManager* GetInstance();
-	static void Deletenstance();
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	SceneManager() = default;
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~SceneManager() = default;
-	/// <summary>
-	/// コピーコンストラクタの無効化
-	/// </summary>
-	/// <param name=""></param>
-	SceneManager(SceneManager&) = delete;
-	/// <summary>
-	/// 代入演算子の無効化
-	/// </summary>
-	/// <param name=""></param>
-	/// <returns></returns>
-	SceneManager& operator=(SceneManager&) = delete;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	/// <param name="dxCommon"></param>
-	void Update(DirectXCommon*dxCommon);
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
-	/// <summary>
-	/// 終了処理
-	/// </summary>
-	void Finalize();
-
-public:
-	/// <summary>
-	/// シーンファクトリーのセット
-	/// </summary>
-	/// <param name="sceneFactory"></param>
-	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
-	/// <summary>
-	/// シーン変更
-	/// </summary>
-	/// <param name="sceneName"></param>
-	void ChangeScene(const std::string& sceneName);
-
-private:
-	// 今のシーン
-	BaseScene* scene_ = nullptr;
-	// 次のシーン
-	BaseScene* nextScene_ = nullptr;
-
-	// シーンファクトリー // 借り物
-	AbstractSceneFactory* sceneFactory_ = nullptr;
-	
 };
 
 
@@ -10892,7 +10303,14 @@ public:
 
 	/// <summary>
 	/// 初期化
+	/// RenderTarget リソースを生成し、RTV / SRV を作成する。また、描画に必要なパイプラインと頂点バッファの初期化も行う。
 	/// </summary>
+	/// <param name="dxCommon">DirectX12 のデバイス・コマンド管理を行う共通クラス</param>
+	/// <param name="srvManager">RV のインデックス管理および SRV 作成を行うマネージャ</param>
+	/// <param name="width">レンダーテクスチャの横幅（ピクセル）</param>
+	/// <param name="height">レンダーテクスチャの縦幅（ピクセル）</param>
+	/// <param name="format">SRV として使用する際のテクスチャフォーマット</param>
+	/// <param name="clearColor">レンダーターゲットをクリアする際のクリアカラー</param>
 	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
 	/// <summary>
@@ -10909,10 +10327,20 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
+
+
 	/// <summary>
-	/// レンダーテクスチャリソースの生成
+	///RenderTarget テクスチャリソースを生成
+	/// 指定されたサイズ・フォーマットで 2D テクスチャを作成し、RenderTarget として使用可能な状態で初期化する
 	/// </summary>
+	/// <param name="device">DirectX12 のデバイス</param>
+	/// <param name="width">テクスチャの横幅（ピクセル）</param>
+	/// <param name="height">テクスチャの縦幅（ピクセル）</param>
+	/// <param name="format">フォーマット</param>
+	/// <param name="clearColor">使用するクリアカラー</param>
+	/// <returns>作成された RenderTarget 用 ID3D12Resource</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
 private:
 	/// <summary>
 	/// グラフィックスパイプラインの生成
@@ -10978,7 +10406,7 @@ private:
 	D3D12_RESOURCE_DESC resourceDesc{};
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
-	 
+
 };
 
 
@@ -10989,17 +10417,17 @@ File Path: engine/2d/Sprite.cpp
 #include "Sprite.h"
 #include "SpriteCommon.h"
 #include "TextureManager.h"
-void Sprite::Initialize( std::string textureFilePath)
+void Sprite::Initialize(std::string_view textureFilePath)
 {
-	this->textureFilePath = textureFilePath;
+	this->textureFilePath_ = textureFilePath;
 	CreateVertexResourceData();
 	CreateMaterialResource();
 	CreateTransformationMatrixData();
 	// 単位行列を書き込んでおく
-	TextureManager::GetInstance()->LoadTexture(textureFilePath);
-	textureIndex = TextureManager::GetInstance()->GetSrvIndex(textureFilePath);
+	TextureManager::GetInstance()->LoadTexture(textureFilePath_);
+	textureIndex = TextureManager::GetInstance()->GetSrvIndex(textureFilePath_);
 	transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-	AdjustTextureSizee();
+	AdjustTextureSize();
 }
 
 void Sprite::Update()
@@ -11022,7 +10450,7 @@ void Sprite::Update()
 		bottom = -bottom;
 	}
 
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath_);
 
 	float texleft = textureLeftTop.x / metadata.width;
 	float texright = (textureLeftTop.x + textureSize.x) / metadata.width;
@@ -11085,29 +10513,27 @@ void Sprite::Draw()
 {
 
 	//Spriteの描画準備。Spriteの描画に共通のグラフィックスコマンドを積む
-	SpriteCommon::GetInstance()->DrawSettingCommon();
+	SpriteCommon::GetInstance().DrawSettingCommon();
 
-	// VertexbufferViewを設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	// Vertex bufferViewを設定
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	// IndexBufferViewを設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 	// マテリアルCBufferの場所を設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 	// 座標変換行列CBufferの場所を設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 	// SRVのDescriptorHeapの場所を設定
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath));
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSrvHandleGPU(textureFilePath_));
 	// 描画
-	//spriteCommon->GetDxCommon()->GetCommandList()->DrawInstanced(6, 1, 0, 0);
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(6, 1, 0, 0);
-	//spriteCommon->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	SpriteCommon::GetInstance().GetDxCommon()->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 }
 
 void Sprite::CreateVertexResourceData()
 {
 
 	// VertexResourceを作る
-	vertexResource = SpriteCommon::GetInstance()->CreateSpriteVertexResource();
+	vertexResource = SpriteCommon::GetInstance().CreateSpriteVertexResource();
 	// VertexBufferViewを作成する(値を設定するだけ)
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 6個分のデータを書き込むので6倍
@@ -11116,7 +10542,7 @@ void Sprite::CreateVertexResourceData()
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
 	// IndexResourceを作る
-	indexResource = SpriteCommon::GetInstance()->CreateSpriteIndexResource();
+	indexResource = SpriteCommon::GetInstance().CreateSpriteIndexResource();
 
 	// IndexBufferViewを作成する
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
@@ -11142,7 +10568,7 @@ void Sprite::CreateVertexResourceData()
 
 void Sprite::CreateMaterialResource() {
 	// マテリアルデータを作成する
-	materialResource = SpriteCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Material));
+	materialResource = SpriteCommon::GetInstance().GetDxCommon()->CreateBufferResource(sizeof(Material));
 	// マテリアルリソースにデータを書き込むためのアドレスを取得してmaterialに割り当てる
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));	// マップする
 
@@ -11155,7 +10581,7 @@ void Sprite::CreateMaterialResource() {
 void Sprite::CreateTransformationMatrixData()
 {
 	// 変換行列データを作成する
-	transformationMatrixResource = SpriteCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+	transformationMatrixResource = SpriteCommon::GetInstance().GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	// 変換行列リソースにデータを書き込むためのアドレスを取得してtransformationMatrixに割り当てる
 	transformationMatrix = nullptr; // nullptrを代入しておく
@@ -11166,10 +10592,10 @@ void Sprite::CreateTransformationMatrixData()
 	transformationMatrix->World = MakeIdentity4x4();
 }
 
-void Sprite::AdjustTextureSizee()
+void Sprite::AdjustTextureSize()
 {
 	// テクスチャメタデータを取得
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath_);
 	textureSize = { static_cast<float>(metadata.width),static_cast<float>(metadata.height) };
 	// 画像サイズをテクスチャサイズに合わせる
 	size = textureSize;
@@ -11195,7 +10621,7 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(std::string textureFilePath);
+	void Initialize(std::string_view textureFilePath);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -11273,11 +10699,11 @@ private:	// メンバ関数
 	/// <summary>
 	/// テクスチャサイズ調整
 	/// </summary>
-	void AdjustTextureSizee();
+	void AdjustTextureSize();
 
 	//void DrawSetting();
 private:	// メンバ変数
-	std::string textureFilePath;
+	std::string textureFilePath_;
 	
 	// バッファリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
@@ -11333,15 +10759,13 @@ File Path: engine/2d/SpriteCommon.cpp
 #include "Logger.h"
 #include "MyMath.h"
 SpriteCommon* SpriteCommon::instance = nullptr;
-SpriteCommon* SpriteCommon::GetInstance()
+SpriteCommon& SpriteCommon::GetInstance()
 {
-	if (instance == nullptr) {
-		instance = new SpriteCommon();
-	}
+	static SpriteCommon instance;
 	return instance;
 }
 
-void SpriteCommon::Deletenstance()
+void SpriteCommon::DeleteInstance()
 {
 	if (instance != nullptr) {
 		delete instance;
@@ -11353,10 +10777,10 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon)
 {
 	//引数で受け取ってメンバ変数に記録する
 	dxCommon_ = dxCommon;
-	CreateGraficsPipeLine();
+	CreateGraphicsPipeLine();
 }
 
-void SpriteCommon::CreateRootSignatrue()
+void SpriteCommon::CreateRootSignature()
 {
 #pragma region RootParameter
 	//RootSignature作成
@@ -11374,29 +10798,29 @@ void SpriteCommon::CreateRootSignatrue()
 
 #pragma endregion
 	
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	D3D12_ROOT_PARAMETER rootParamaters[4] = {};
-	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
+	//RootParameter作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
 
-	rootParamaters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
-	rootParamaters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
-	rootParamaters[1].Descriptor.ShaderRegister = 0;//
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
+	rootParameters[1].Descriptor.ShaderRegister = 0;//
 
-	rootParamaters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParamaters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-	rootParamaters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
 
-	rootParamaters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
-	rootParamaters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
-	rootParamaters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
 
 	
 
-	descriptionRootSignature.pParameters = rootParamaters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
+	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);//
 #pragma endregion
 
 
@@ -11448,10 +10872,10 @@ void SpriteCommon::DrawSettingCommon()
 }
 
 
-void SpriteCommon::CreateGraficsPipeLine()
+void SpriteCommon::CreateGraphicsPipeLine()
 {
 	// ルートシグネチャの作成
-	CreateRootSignatrue();
+	CreateRootSignature();
 
 	// 頂点の位置データを表すセマンティクスを設定
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -11576,11 +11000,11 @@ public:
 	/// <summary>
 	/// インスタンスの取得
 	/// </summary>
-	static SpriteCommon* GetInstance();
+	static SpriteCommon& GetInstance();
 	/// <summary>
 	/// インスタンスの削除
 	/// </summary>
-	static void Deletenstance();
+	static void DeleteInstance();
 
 
 public:		// メンバ関数
@@ -11613,12 +11037,12 @@ private:	// メンバ関数
 	/// <summary>
 	/// ルートシグネチャの作成
 	/// </summary>
-	void CreateRootSignatrue();
+	void CreateRootSignature();
 
 	/// <summary>
 	/// グラフィックスパイプラインの生成
 	/// </summary>
-	void CreateGraficsPipeLine();
+	void CreateGraphicsPipeLine();
 	/// <summary>
 	/// PSO
 	/// </summary>
@@ -11891,9 +11315,8 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="modelCommon"></param>
-	/// <param name="directorypath"></param>
-	/// <param name="filename"></param>
+	/// <param name="directory path">モデルのファイル名</param>
+	/// <param name="filename">モデルの名前</param>
 	void Initialize(ModelCommon* modelCommon,const string& directorypath,const string&filename);
 	/// <summary>
 	/// 更新
@@ -12011,14 +11434,13 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon);
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
 	void DrawSettingCommon();
 public:	// Getter/Setter
-	// DirectXCommon
+	// DirectXCommonの取得
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
 private:
 	// 絶対にnew,deleteしない
@@ -12033,14 +11455,12 @@ File Path: engine/3d/ModelManager.cpp
 ============================================================
 #include "ModelManager.h"
 
+using namespace std;
 ModelManager* ModelManager::instance = nullptr;
 
-ModelManager* ModelManager::GetInstance()
+ModelManager& ModelManager::GetInstance()
 {
-	if (instance == nullptr)
-	{
-		instance = new ModelManager();
-	}
+	static ModelManager instance;
 	return instance;
 }
 
@@ -12048,43 +11468,43 @@ void ModelManager::Finalize()
 {
 	models.clear();
 
-	delete modelCommon;
-	modelCommon = nullptr;
-
-	delete instance;
-	instance = nullptr;
+	modelCommon.reset();
 }
 
 void ModelManager::Initialize(DirectXCommon* dxCommon)
 {
-	modelCommon = new ModelCommon();
+	modelCommon = std::make_unique<ModelCommon>();
 	modelCommon->Initialize(dxCommon);
 }
 
-void ModelManager::LoadModel(const string& filePath)
+void ModelManager::LoadModel(string_view filePath)
 {
+	// キー文字列の生成
+	const string key(filePath);
 	// 読み込み済みモデルを検索
-	if (models.contains(filePath))
+	if (models.contains(key))
 	{
 		// 読み込み済みなら早期リターン
 		return;
 	}
 	// モデルの生成とファイル読み込み、初期化
 	unique_ptr<Model>model = make_unique<Model>();
-	model->Initialize(modelCommon, "resources", filePath);
+	model->Initialize(modelCommon.get(), "resources", key);
 
 	// モデルリストに追加
 	//models[filePath] = move(model);
 	models.insert(make_pair(filePath, move(model)));
 }
 
-Model* ModelManager::FindModel(const string& filePath)
+Model* ModelManager::FindModel(string_view filePath)
 {
+	// キー文字列の生成
+	const string key(filePath);
 	// 読み込み済みモデルを検索
-	if (models.contains(filePath))
+	if (models.contains(key))
 	{
 		// 読み込みモデルを戻り値として返す
-		return models.at(filePath).get();
+		return models.at(key).get();
 	}
 	// 読み込み済みでない場合はnullptrを返す
 	return nullptr;
@@ -12103,7 +11523,6 @@ File Path: engine/3d/ModelManager.h
 #include <fstream>
 #include "Model.h"
 #include <map>
-using namespace std;
 /// <summary>
 /// 3Dモデル管理クラス
 /// </summary>
@@ -12113,7 +11532,7 @@ public: // メンバ関数
 	/// <summary>
 	/// シングルトンインスタンスの取得
 	/// </summary>
-	static ModelManager* GetInstance();
+	static ModelManager& GetInstance();
 	/// <summary>
 	/// シングルトンインスタンスの削除
 	/// </summary>
@@ -12122,20 +11541,19 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon);
 	/// <summary>
 	/// モデルファイルの読み込み
 	/// </summary>
-	/// <param name="filePath"></param>
-	void LoadModel(const string& filePath);
+	/// <param name="filePath">読み込むモデルの名前</param>
+	void LoadModel(std::string_view filePath);
 public: // Getter/Setter
 	/// <summary>
 	/// モデルの検索
 	/// </summary>
 	/// <param name="filePath"></param>
 	/// <returns></returns>
-	Model* FindModel(const string& filePath);
+	Model* FindModel(std::string_view filePath);
 
 private: // メンバ変数シングルトン
 	/// <summary>
@@ -12160,9 +11578,9 @@ private: // メンバ変数シングルトン
 	/// </summary>
 	ModelManager& operator=(ModelManager&) = delete;
 private: // メンバ変数
-	ModelCommon* modelCommon = nullptr;
+	std::unique_ptr<ModelCommon> modelCommon = nullptr;
 	// モデルデータのリスト
-	map<string, unique_ptr<Model>> models;
+	std::map<std::string, unique_ptr<Model>> models;
 
 };
 
@@ -12257,7 +11675,7 @@ void Object3D::Create(Model* model)
 void Object3D::SetModel(const std::string& filePath)
 {
 	// モデルを検索してセットする
-	model = ModelManager::GetInstance()->FindModel(filePath);
+	model = ModelManager::GetInstance().FindModel(filePath);
 }
 
 
@@ -12345,8 +11763,6 @@ public:	// メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-
-
 	/// <summary>
 	///  レベルローダーモデル生成
 	/// </summary>
@@ -12718,14 +12134,24 @@ private:	// メンバ変数
 	// 入力要素の定義配列を初期化
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 
-public:
+public:	// シングルトン化
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
 	static Object3DCommon* GetInstance();
 	static void DeleteInstance();
 
 private:
+	/// <summary>
+	/// コンストラクタ / デストラクタ
+	/// </summary>
 	Object3DCommon() = default;
 	~Object3DCommon() = default;
 
+	/// <summary>
+	/// コピーコンストラクタ / コピー代入演算子の禁止
+	/// </summary>
+	/// <param name=""></param>
 	Object3DCommon(const Object3DCommon&) = delete;
 	Object3DCommon& operator=(const Object3DCommon&) = delete;
 
@@ -13153,6 +12579,8 @@ private:
 	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
+	/// <param name="desc">設定対象のD3D12_BLEND_DESC</param>
+	/// <param name="mode">使用するブレンドモード</param>
 	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
 
 	/// <summary>
@@ -13267,13 +12695,10 @@ File Path: engine/Audio/Audio.cpp
 #include <xaudio2.h> 
 #include <cassert>
 Audio* Audio::instance = nullptr;
-Audio* Audio::GetInstance()
+Audio& Audio::GetInstance()
 {
-	if (instance == nullptr)
-	{
-		instance = new Audio();
-	}
-	return instance;
+    static Audio instance;
+    return instance;
 }
 
 void Audio::DeleteInstance()
@@ -13307,7 +12732,7 @@ SoundData Audio::LoadWave(const char* filename)
     assert(strncmp(riff.type, "WAVE", 4) == 0);
 
     // フォーマットチャンクを読み込む
-    FormartChunk fmt;
+    FormatChunk fmt;
     file.read((char*)&fmt, sizeof(ChunkHeader));
     assert(strncmp(fmt.chunk.chunkID, "fmt ", 4) == 0);
     // チャンク本体の読み込み
@@ -13403,7 +12828,7 @@ struct RIFFHeader
 	ChunkHeader chunk;
 	char type[4];
 };
-struct FormartChunk {
+struct FormatChunk {
 	ChunkHeader chunk;
 	WAVEFORMATEX format;
 };
@@ -13421,7 +12846,7 @@ public:
 	/// <summary>
 	/// シングルトンインスタンスの取得
 	/// </summary>
-	static Audio* GetInstance();
+	static Audio& GetInstance();
 	/// <summary>
 	/// シングルトンインスタンスの削除
 	/// </summary>
@@ -13480,6 +12905,531 @@ private:
 	// ↓の型にはRelease()が無いので、ComPtrを使わない
 	IXAudio2MasteringVoice* masterVoice;
 };
+
+
+============================================================
+File Path: engine/InsideScene/AbstractSceneFactory.cpp
+============================================================
+#include "AbstractSceneFactory.h"
+
+
+============================================================
+File Path: engine/InsideScene/AbstractSceneFactory.h
+============================================================
+#pragma once
+#include "BaseScene.h"
+#include <string>
+#include <memory>
+// シーン工場クラス
+class AbstractSceneFactory
+{
+public:
+	/// <summary>
+	/// 仮想デストラクタ
+	/// </summary>
+	virtual ~AbstractSceneFactory() = default;
+	/// <summary>
+	/// シーン生成
+	/// </summary>
+	/// <param name="sceneName"></param>
+	/// <returns></returns>
+	virtual std::unique_ptr<BaseScene> CreateScene(const std::string&sceneName) = 0;
+};
+
+
+
+============================================================
+File Path: engine/InsideScene/BaseScene.cpp
+============================================================
+#include "BaseScene.h"
+
+
+============================================================
+File Path: engine/InsideScene/BaseScene.h
+============================================================
+#pragma once
+#include "DirectXCommon.h"
+
+/// <summary>
+/// シーン基底クラス
+/// </summary>
+class SceneManager;
+class BaseScene
+{
+public:
+    /// <summary>
+	/// デストラクタ
+    /// </summary>
+    virtual ~BaseScene() = default;
+    /// <summary>
+	/// 初期化
+    /// </summary>
+    /// <param name="dxCommon"></param>
+    virtual void Initialize(DirectXCommon* dxCommon) = 0;
+    /// <summary>
+	/// 更新
+    /// </summary>
+    virtual void Update() = 0;
+    /// <summary>
+	/// 描画
+    /// </summary>
+    virtual void Draw() = 0;
+    /// <summary>
+	/// 終了処理
+    /// </summary>
+    virtual void Finalize() = 0;
+    // Setter
+	/// <summary>
+	/// シーンマネージャーのセット
+	/// </summary>
+    virtual void SetSceneManager(SceneManager* sceneManager) { this->sceneManager = sceneManager; }
+
+protected:
+	// シーンマネージャー
+    SceneManager* sceneManager = nullptr;
+};
+
+
+
+============================================================
+File Path: engine/InsideScene/Framework.cpp
+============================================================
+#include "Framework.h"
+void Framework::Initialize()
+{
+	//WindowsAPIの初期化
+	winAPI = make_unique<WinAPI>();
+	winAPI->Initialize();
+	// dxCommonの初期化
+	dxCommon = make_unique<DirectXCommon>();
+	dxCommon->Initialize(winAPI.get());
+
+	// 入力処理のクラスポインタ
+	
+	Input::GetInstance()->Initialize(winAPI.get());
+
+	// SRVマネージャーの初期化
+	srvManager = make_unique<SrvManager>();
+	srvManager->Initialize(dxCommon.get());
+	// テクスチャマネージャーの初期化
+	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
+
+
+#ifdef USE_IMGUI
+	// ImGuiの初期化
+	imGui = make_unique<ImGuiManager>();
+	imGui->Initialize(winAPI.get(), dxCommon.get());
+#endif
+
+	// 3Dモデルマネージャの初期化
+	ModelManager::GetInstance().Initialize(dxCommon.get());
+	// 3Dオブジェクト共通部の初期化
+	Object3DCommon::GetInstance()->Initialize(dxCommon.get());
+
+	// モデル共通部の初期化
+	modelCommon = make_unique<ModelCommon>();
+	modelCommon->Initialize(dxCommon.get());
+
+	// カメラ
+	camera = make_unique<Camera>();
+	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
+	camera->SetTranslate({ 0.0f, 0.0f, -5.0f });
+
+	// 全シーンがアクセス可能なカメラに設定
+	mainCamera_ = camera.get();
+
+	Object3DCommon::GetInstance()->SetDefaultCamera(camera.get());
+
+	// パーティクル
+	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
+	
+	
+
+	/// マップに合わせる
+	/*cameraTransform.translate = { 7.5f,-4.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);*/
+
+}
+
+void Framework::Update()
+{
+#pragma region WindowsAPIのメッセージ処理
+	//Windowのメッセージ処理
+	if (winAPI->ProcessMessage()) {
+		//ゲームループを抜ける
+		isEndRequest_ = true;
+		return;
+	}
+#pragma endregion
+
+	Input::GetInstance()->Update();
+	// カメラの更新
+	camera->Update();
+
+	SceneManager::GetInstance()->Update(dxCommon.get());
+	
+	// パーティクルの更新
+	ParticleManager::GetInstance()->Update();
+	
+}
+
+
+void Framework::Draw()
+{
+	
+}
+
+
+void Framework::Finalize()
+{
+	/// 各種マネージャーの終了処理
+
+	SceneManager::GetInstance()->Finalize();
+	SceneManager::DestroyInstance();
+	Audio::GetInstance().DeleteInstance();
+	Object3DCommon::GetInstance()->DeleteInstance();
+	TextureManager::GetInstance()->DeleteInstance();
+	ModelManager::GetInstance().Finalize();
+	Input::GetInstance()->DeleteInstance();
+	winAPI->Finalize();
+	mainCamera_ = nullptr;
+	ParticleManager::GetInstance()->DeleteInstance();
+
+}
+
+void Framework::Run()
+{
+	// ゲームの初期化
+	Initialize();
+	// ゲームのメインループ
+	while (true) {
+		// ゲームの更新
+		Update();
+		if (IsEndRequest()) {
+			break;
+		}
+		// ゲームの描画
+		Draw();
+	}
+	// ゲームの終了処理
+	Finalize();
+}
+
+
+
+============================================================
+File Path: engine/InsideScene/Framework.h
+============================================================
+#pragma once
+#include<fstream>
+#include<sstream>
+#include<wrl.h>
+#include "numbers"
+#include "WinAPI.h"
+#include "DirectXCommon.h"
+#include "Sprite.h"
+#include "SpriteCommon.h"
+#include "TextureManager.h"
+#include "Object3D.h"
+#include "Object3DCommon.h"
+#include "ModelManager.h"
+#ifdef USE_IMGUI
+#include "ImGuiManager.h"
+#endif
+#include "Audio.h"
+#include "SceneManager.h"
+#include "Game/Particle/ParticleManager.h"
+#include "engine/3d/SkyBox/SkyBox.h"
+#include "AbstractSceneFactory.h"
+#include "D3DResourceLeakChecker.h"
+#include "Input.h"
+#include "engine/2d/RenderTexture.h"
+/// <summary>
+/// フレームワーク基底クラス
+/// </summary>
+class Framework
+{
+
+public:
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	virtual ~Framework() = default;
+public:	// メンバ関数
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	virtual void Initialize();
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	virtual void Update();
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	virtual void Draw() = 0;
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	virtual void Finalize();
+	/// <summary>
+	/// 実行
+	/// </summary>
+	void Run();
+	/// <summary>
+	/// 終了リクエストの有無
+	/// </summary>
+	/// <returns></returns>
+	bool IsEndRequest() { return isEndRequest_; }
+
+protected:
+	// 終了リクエスト
+	bool isEndRequest_ = false;
+protected:// Initialize関連
+	// リークチェッカー
+	//D3DResourceLeakChecker leakCheck;
+	// ウィンドウAPI
+	std::unique_ptr<WinAPI> winAPI;
+	// DirectX共通部
+	std::unique_ptr<DirectXCommon> dxCommon;
+	// ImGui
+#ifdef USE_IMGUI
+	std::unique_ptr<ImGuiManager> imGui;
+#endif
+	// SRVマネージャー
+	std::unique_ptr<SrvManager> srvManager;
+	// モデル共通部
+	std::unique_ptr<ModelCommon> modelCommon;
+	// カメラ
+	std::unique_ptr<Camera> camera;
+
+
+	// レンダーテクスチャ
+	std::unique_ptr<RenderTexture> renderTexture = nullptr;
+
+public:
+	// シーンファクトリー
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+	// 全シーンがアクセス可能なカメラ
+	static Camera* GetMainCamera() { return mainCamera_; }
+private:
+	
+	/// カメラの座標
+	Transform cameraTransform = {
+		{0.0f, 0.0f, -10.0f}, // translate
+		{0.0f, 0.0f, 0.0f}, // rotate
+		{ 1.0f, 1.0f,-10.0f } // scale
+	};
+
+	static inline Camera* mainCamera_ = nullptr;
+	
+};
+
+
+
+============================================================
+File Path: engine/InsideScene/SceneFactory.cpp
+============================================================
+#include "SceneFactory.h"
+#include "Game/Scene/TitleScene.h"
+#include "Game/Scene/GamePlayScene.h"
+#include "Game/Scene/StageSelectScene.h"
+#include "Game/Scene/StageClearScene.h"
+std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneName)
+{
+    // 次のシーン生成
+	if (sceneName == "TITLE") {
+		return std::make_unique<TitleScene>();
+	}
+	else if (sceneName == "GAMEPLAY") {
+		return std::make_unique<GamePlayScene>();
+	}
+	else if (sceneName == "STAGESELECT") {
+		return std::make_unique<StageSelectScene>();
+	}
+	else if (sceneName == "STAGECLEAR") {
+		return std::make_unique<StageClearScene>();
+	}
+	return nullptr;
+}
+
+
+============================================================
+File Path: engine/InsideScene/SceneFactory.h
+============================================================
+#pragma once
+#include "AbstractSceneFactory.h"
+#include <memory>
+/// <summary>
+/// シーン工場クラス
+/// </summary>
+class SceneFactory : public AbstractSceneFactory
+{
+public:
+	/// <summary>
+	/// シーン生成
+	/// </summary>
+	/// <param name="sceneName"></param>
+	/// <returns></returns>
+	std::unique_ptr<BaseScene> CreateScene(const std::string& sceneName)override;
+};
+
+
+
+============================================================
+File Path: engine/InsideScene/SceneManager.cpp
+============================================================
+#include "SceneManager.h"
+
+static SceneManager* instance = nullptr;
+
+
+SceneManager* SceneManager::GetInstance()
+{
+	if (instance == nullptr)
+	{
+		instance = new SceneManager();
+	}
+	return instance;
+}
+
+void SceneManager::DestroyInstance()
+{
+	if (instance != nullptr)
+	{
+		delete instance;
+		instance = nullptr;
+	}
+}
+
+void SceneManager::Update(DirectXCommon* dxCommon)
+{
+    // 次のシーンが予約されている場合
+    if (nextScene_) {
+        // 今のシーンの終了処理
+        if (scene_) {
+            scene_->Finalize();
+			scene_.reset();
+        }
+        // 次のシーンの初期化
+        scene_ = std::move(nextScene_);
+        // シーンマネージャーの設定
+        scene_->SetSceneManager(this);
+        scene_->Initialize(dxCommon);
+    }
+    // 実行中シーンを更新
+    if (scene_) {
+        scene_->Update();
+    }
+}
+
+
+void SceneManager::Draw()
+{
+    // 実行中シーンが存在する場合のみ描画
+    if (scene_) {
+        scene_->Draw();
+    }
+}
+
+void SceneManager::Finalize()
+{
+    // 最後のシーンの終了処理
+    if (scene_)
+    {
+        scene_->Finalize();
+        scene_.reset();
+    }
+}
+
+void SceneManager::ChangeScene(const std::string& sceneName)
+{
+    assert(!nextScene_);
+    assert(sceneFactory_);
+
+	// 次のシーン生成
+	nextScene_ = sceneFactory_->CreateScene(sceneName);
+}
+
+
+
+
+
+
+============================================================
+File Path: engine/InsideScene/SceneManager.h
+============================================================
+#pragma once
+#include "BaseScene.h"
+#include "AbstractSceneFactory.h"
+// シーン管理クラス
+// シングルトンクラス
+class SceneManager
+{
+public:
+	/// <summary>
+	/// シングルトンの取得
+	/// </summary>
+	/// <returns></returns>
+	static SceneManager* GetInstance();
+	static void DestroyInstance();
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	SceneManager() = default;
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~SceneManager() = default;
+	/// <summary>
+	/// コピーコンストラクタの無効化
+	/// </summary>
+	/// <param name=""></param>
+	SceneManager(SceneManager&) = delete;
+	/// <summary>
+	/// 代入演算子の無効化
+	/// </summary>
+	/// <param name=""></param>
+	/// <returns></returns>
+	SceneManager& operator=(SceneManager&) = delete;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="dxCommon"></param>
+	void Update(DirectXCommon*dxCommon);
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw();
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize();
+
+public:
+	/// <summary>
+	/// シーンファクトリーのセット
+	/// </summary>
+	/// <param name="sceneFactory"></param>
+	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
+	/// <summary>
+	/// シーン変更
+	/// </summary>
+	/// <param name="sceneName"></param>
+	void ChangeScene(const std::string& sceneName);
+
+private:
+	// 今のシーン
+	std::unique_ptr<BaseScene> scene_ = nullptr;
+	// 次のシーン
+	std::unique_ptr<BaseScene> nextScene_ = nullptr;
+
+	// シーンファクトリー // 借り物
+	AbstractSceneFactory* sceneFactory_ = nullptr;
+	
+};
+
 
 
 ============================================================
@@ -14290,8 +14240,8 @@ File Path: engine/base/DirectXCommon.h
 #include <chrono>
 #include "WinAPI.h"
 #include <cstdlib>
-#include"../externals/DirectXTex/DirectXTex.h"
-#include"../externals/DirectXTex/d3dx12.h"
+#include"externals/DirectXTex/DirectXTex.h"
+#include"externals/DirectXTex/d3dx12.h"
 
 
 /// <summary>
@@ -14332,8 +14282,9 @@ public:
 	void WaitCommand();
 
 	/// <summary>
-	/// シェーダーのコンパイル
+	/// シェーダーコンパイル関数
 	/// </summary>
+	/// <param name="filePath">読み込むシェーダーの名前</param>
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 		const std::wstring& filePath,
 		const wchar_t* profile);
@@ -14397,7 +14348,7 @@ public:		// Getter,Setter
 
 	/// <summary>
 	/// テクスチャデータの転送
-	/// [[nodiscard]]とは、戻り値が無視されると警告を出す
+	/// [[no discard]]とは、戻り値が無視されると警告を出す
 	/// </summary>
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData
@@ -15402,10 +15353,10 @@ class TextureManager
 	static uint32_t kSRVIndexTop;
 public:		// メンバ関数
 	/// <summary>
-	/// 初期化
+	/// 初期化処理
 	/// </summary>
-	/// <param name="dxCommon"></param>
-	/// <param name="srvManager"></param>
+	/// <param name="dxCommon">デバイスやコマンド管理</param>
+	/// <param name="srvManager">SRVの割り当ておよび管理</param>
 	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
 	/// <summary>
 	/// 終了処理
@@ -15592,13 +15543,13 @@ class WinAPI
 {
 public:
 	/// <summary>
-	/// コンストラクタ
+	/// ウィンドウからのメッセージ処理関数
 	/// </summary>
-	/// <param name="hwnd"></param>
-	/// <param name="msg"></param>
-	/// <param name="wparam"></param>
-	/// <param name="lparam"></param>
-	/// <returns></returns>
+	/// <param name="hwnd">メッセージを受け取ったウィンドウのハンドル</param>
+	/// <param name="msg">送信されたメッセージID</param>
+	/// <param name="wparam">メッセージに付随する追加情報 / WPRAM </param>
+	/// <param name="lparam">メッセージに付随する追加情報 / LPRAM</param>
+	/// <returns>メッセージの処理結果　処理済みなら０</returns>
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	//定数
 	//クライアント領域のサイズ
