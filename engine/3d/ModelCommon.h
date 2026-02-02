@@ -17,14 +17,13 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon);
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
 	void DrawSettingCommon();
 public:	// Getter/Setter
-	// DirectXCommon
+	// DirectXCommonの取得
 	DirectXCommon* GetDxCommon()const { return dxCommon_; }
 private:
 	// 絶対にnew,deleteしない

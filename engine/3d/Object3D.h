@@ -32,8 +32,6 @@ public:	// メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-
-
 	/// <summary>
 	///  レベルローダーモデル生成
 	/// </summary>

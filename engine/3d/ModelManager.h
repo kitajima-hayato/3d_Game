@@ -7,7 +7,6 @@
 #include <fstream>
 #include "Model.h"
 #include <map>
-using namespace std;
 /// <summary>
 /// 3Dモデル管理クラス
 /// </summary>
@@ -17,7 +16,7 @@ public: // メンバ関数
 	/// <summary>
 	/// シングルトンインスタンスの取得
 	/// </summary>
-	static ModelManager* GetInstance();
+	static ModelManager& GetInstance();
 	/// <summary>
 	/// シングルトンインスタンスの削除
 	/// </summary>
@@ -26,20 +25,19 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon);
 	/// <summary>
 	/// モデルファイルの読み込み
 	/// </summary>
-	/// <param name="filePath"></param>
-	void LoadModel(const string& filePath);
+	/// <param name="filePath">読み込むモデルの名前</param>
+	void LoadModel(std::string_view filePath);
 public: // Getter/Setter
 	/// <summary>
 	/// モデルの検索
 	/// </summary>
 	/// <param name="filePath"></param>
 	/// <returns></returns>
-	Model* FindModel(const string& filePath);
+	Model* FindModel(std::string_view filePath);
 
 private: // メンバ変数シングルトン
 	/// <summary>
@@ -64,9 +62,9 @@ private: // メンバ変数シングルトン
 	/// </summary>
 	ModelManager& operator=(ModelManager&) = delete;
 private: // メンバ変数
-	ModelCommon* modelCommon = nullptr;
+	std::unique_ptr<ModelCommon> modelCommon = nullptr;
 	// モデルデータのリスト
-	map<string, unique_ptr<Model>> models;
+	std::map<std::string, unique_ptr<Model>> models;
 
 };
 

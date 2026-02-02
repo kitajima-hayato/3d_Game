@@ -1,13 +1,11 @@
 #pragma once
 #include "Audio.h"
 #include "SpriteCommon.h"
-#include "InsideScene/BaseScene.h"
+#include "engine/InsideScene/BaseScene.h"
 #include "Sprite.h"
-#include "InsideScene/SceneManager.h"
+#include "engine/InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
-#include "Game/Particle/EffectManager.h"
-#include "Game/Particle/EffectEmitter.h"
 #include "Game/Loader/LevelLoader.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
@@ -17,8 +15,10 @@
 #include "ImGuiManager.h"
 #endif
 
+
 /// <summary>
 /// タイトルシーン
+/// タイトルシーンを管理する
 /// </summary>
 class Camera;
 class Object3D;
@@ -27,19 +27,31 @@ class TitleScene :public BaseScene
 public:
 	TitleScene();
 	~TitleScene();
-	// 初期化
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	/// <param name="dxCommon"></param>
 	void Initialize(DirectXCommon* dxCommon)override;
-	// 更新
+	/// <summary>
+	/// 更新処理
+	/// </summary>
 	void Update()override;
-	// 描画
+	/// <summary>
+	/// 描画処理
+	/// </summary>
 	void Draw()override;
-	// 終了処理
+	/// <summary>
+	/// 終了処理
+	/// </summary>
 	void Finalize()override;
-	// スレッド用の関数
+	/// <summary>
+	///	ロード処理（オーディオ、スプライト）
+	/// </summary>
 	void LoadAudio();
 	void LoadSprite();
-
-	// Imgui一括管理 / 描画関数
+	/// <summary>
+	/// Imgui一括管理 / 描画関数
+	/// </summary>
 	void DrawImgui();
 private:
 
@@ -60,11 +72,6 @@ private:
 	// 背景
 	std::unique_ptr<Object3D> backgroundObject;
 
-
-	// effect
-	std::unique_ptr<EffectEmitter>effectEmitter;
-	std::unique_ptr<EffectEmitter>cylinder;
-
 private: // ゲーム要素
 	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
 	Vector3 emitterRotate = { 0.0f, 0.0f, 0.0f };
@@ -81,7 +88,7 @@ private: // ゲーム要素
 
 
 
-	/// levelloader
+	/// level loader
 	std::unique_ptr<LevelLoader>levelData;
 
 	std::unique_ptr<Object3D> playerObject;

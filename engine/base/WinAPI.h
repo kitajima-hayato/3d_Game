@@ -8,13 +8,13 @@ class WinAPI
 {
 public:
 	/// <summary>
-	/// コンストラクタ
+	/// ウィンドウからのメッセージ処理関数
 	/// </summary>
-	/// <param name="hwnd"></param>
-	/// <param name="msg"></param>
-	/// <param name="wparam"></param>
-	/// <param name="lparam"></param>
-	/// <returns></returns>
+	/// <param name="hwnd">メッセージを受け取ったウィンドウのハンドル</param>
+	/// <param name="msg">送信されたメッセージID</param>
+	/// <param name="wparam">メッセージに付随する追加情報 / WPRAM </param>
+	/// <param name="lparam">メッセージに付随する追加情報 / LPRAM</param>
+	/// <returns>メッセージの処理結果　処理済みなら０</returns>
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	//定数
 	//クライアント領域のサイズ

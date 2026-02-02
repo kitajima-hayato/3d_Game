@@ -10,11 +10,11 @@ public:
 	/// <summary>
 	/// インスタンスの取得
 	/// </summary>
-	static SpriteCommon* GetInstance();
+	static SpriteCommon& GetInstance();
 	/// <summary>
 	/// インスタンスの削除
 	/// </summary>
-	static void Deletenstance();
+	static void DeleteInstance();
 
 
 public:		// メンバ関数
@@ -47,12 +47,12 @@ private:	// メンバ関数
 	/// <summary>
 	/// ルートシグネチャの作成
 	/// </summary>
-	void CreateRootSignatrue();
+	void CreateRootSignature();
 
 	/// <summary>
 	/// グラフィックスパイプラインの生成
 	/// </summary>
-	void CreateGraficsPipeLine();
+	void CreateGraphicsPipeLine();
 	/// <summary>
 	/// PSO
 	/// </summary>

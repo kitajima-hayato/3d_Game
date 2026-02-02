@@ -1,5 +1,4 @@
 #include "ParticleEmitter.h"
-#include "EffectEmitter.h"
 
 ParticleEmitter::ParticleEmitter()
     : currentTime(0.0f)

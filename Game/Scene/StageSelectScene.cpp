@@ -1,5 +1,5 @@
 #include "StageSelectScene.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 #include "Game/Camera/Camera.h"
 #include "engine/3d/Object3D.h"
 #ifdef USE_IMGUI
@@ -16,6 +16,7 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 {
+    
 	// カメラの取得
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,20.0f,0.0f };
@@ -75,6 +76,11 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 void StageSelectScene::Update()
 {
+    if (Input::GetInstance()->TriggerKey(DIK_1)) {
+        SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+    }
+	
+
 	// 空背景の更新
 	skyBack->Update();
 	// ステージセレクト土台の更新

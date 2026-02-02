@@ -84,7 +84,7 @@ void Object3D::Create(Model* model)
 void Object3D::SetModel(const std::string& filePath)
 {
 	// モデルを検索してセットする
-	model = ModelManager::GetInstance()->FindModel(filePath);
+	model = ModelManager::GetInstance().FindModel(filePath);
 }
 
 

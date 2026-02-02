@@ -11,7 +11,7 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	static SceneManager* GetInstance();
-	static void Deletenstance();
+	static void DestroyInstance();
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
@@ -60,9 +60,9 @@ public:
 
 private:
 	// 今のシーン
-	BaseScene* scene_ = nullptr;
+	std::unique_ptr<BaseScene> scene_ = nullptr;
 	// 次のシーン
-	BaseScene* nextScene_ = nullptr;
+	std::unique_ptr<BaseScene> nextScene_ = nullptr;
 
 	// シーンファクトリー // 借り物
 	AbstractSceneFactory* sceneFactory_ = nullptr;

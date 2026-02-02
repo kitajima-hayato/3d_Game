@@ -64,14 +64,24 @@ private:	// メンバ変数
 	// 入力要素の定義配列を初期化
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 
-public:
+public:	// シングルトン化
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
 	static Object3DCommon* GetInstance();
 	static void DeleteInstance();
 
 private:
+	/// <summary>
+	/// コンストラクタ / デストラクタ
+	/// </summary>
 	Object3DCommon() = default;
 	~Object3DCommon() = default;
 
+	/// <summary>
+	/// コピーコンストラクタ / コピー代入演算子の禁止
+	/// </summary>
+	/// <param name=""></param>
 	Object3DCommon(const Object3DCommon&) = delete;
 	Object3DCommon& operator=(const Object3DCommon&) = delete;
 

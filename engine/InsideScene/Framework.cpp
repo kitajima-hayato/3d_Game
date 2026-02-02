@@ -26,7 +26,7 @@ void Framework::Initialize()
 #endif
 
 	// 3Dモデルマネージャの初期化
-	ModelManager::GetInstance()->Initialize(dxCommon.get());
+	ModelManager::GetInstance().Initialize(dxCommon.get());
 	// 3Dオブジェクト共通部の初期化
 	Object3DCommon::GetInstance()->Initialize(dxCommon.get());
 
@@ -69,34 +69,11 @@ void Framework::Update()
 	Input::GetInstance()->Update();
 	// カメラの更新
 	camera->Update();
-#ifdef USE_IMGUI
-	// カメラの配置回転情報の変更・表示UI
-	ImGui::Begin("Camera Settings");
-	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.1f);
-	ImGui::End();
-
-	// カメラに反映させる
-	/*static bool useDebugCamera = false;
-	ImGui::Checkbox("Use Debug Camera", &useDebugCamera);
-	if (useDebugCamera) {*/
-	/*camera->SetTranslate(cameraTransform.translate);
-	camera->SetRotate(cameraTransform.rotate);*/
-	//}
-#endif 
 
 	SceneManager::GetInstance()->Update(dxCommon.get());
 	
-
-	
 	// パーティクルの更新
 	ParticleManager::GetInstance()->Update();
-
-	// ESCキーで終了
-	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE))
-	{
-		isEndRequest_ = true;
-	}
 	
 }
 
@@ -104,22 +81,19 @@ void Framework::Update()
 void Framework::Draw()
 {
 	
-
-
 }
 
 
 void Framework::Finalize()
 {
-	
+	/// 各種マネージャーの終了処理
 
 	SceneManager::GetInstance()->Finalize();
-	SceneManager::Deletenstance();
-	Audio::GetInstance()->DeleteInstance();
+	SceneManager::DestroyInstance();
+	Audio::GetInstance().DeleteInstance();
 	Object3DCommon::GetInstance()->DeleteInstance();
-	SpriteCommon::GetInstance()->Deletenstance();
 	TextureManager::GetInstance()->DeleteInstance();
-	ModelManager::GetInstance()->Finalize();
+	ModelManager::GetInstance().Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
 	mainCamera_ = nullptr;

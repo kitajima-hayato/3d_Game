@@ -1,0 +1,155 @@
+#include "GamePlayHUD.h"
+#include "Input.h"
+#include "ImGuiManager.h"
+void GamePlayHUD::Initialize()
+{
+	// ポーズアイコン
+	pauseSprite_ = MakeSprite("resources/KyeUI/Esc.png",
+		{ 30.0f,30.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,1.0f });
+	// コントロールUI
+	// Dキー
+	controlUI_D = MakeSprite("resources/KyeUI/D.png",
+		{ 200.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+	// Aキー
+	controlUI_A = MakeSprite("resources/KyeUI/A.png",
+		{ 100.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+	// Sキー
+	controlUI_S = MakeSprite("resources/KyeUI/S.png",
+		{ 150.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+	// Wキー
+	controlUI_W = MakeSprite("resources/KyeUI/W.png",
+		{ 150.0f,20.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
+
+	UiActive_ = false;
+	uiTimer = 0;
+	
+}
+
+void GamePlayHUD::Update()
+{
+	// UI
+	pauseSprite_->Update();
+	controlUI_D->Update();
+	controlUI_A->Update();
+	controlUI_S->Update();
+	controlUI_W->Update();
+	
+	UpdateControlUI();
+	
+	
+	
+}
+
+void GamePlayHUD::UpdateControlUI()
+{
+	// 押されているキーだけ色を濃くする
+	// D
+	if (Input::GetInstance()->PushKey(DIK_D)) {
+		// 色を濃くする
+		controlUI_D->SetColor(activeColor_);
+		// 少しだけ右にずらす
+		controlUI_D->SetPosition({ 200 + pressedOffset_,70.0f });
+	} else {
+		// 元の薄い色に戻す
+		controlUI_D->SetColor(inactiveColor_);
+		// 元の位置に戻す
+		controlUI_D->SetPosition({ 200.0f,70.0f });
+	}
+	 if (Input::GetInstance()->PushKey(DIK_A)) {
+        controlUI_A->SetColor(activeColor_);
+        controlUI_A->SetPosition({ 100.0f - pressedOffset_, 70.0f });
+    } else {
+        controlUI_A->SetColor(inactiveColor_);
+        controlUI_A->SetPosition({ 100.0f, 70.0f });
+    }
+
+    // S
+    if (Input::GetInstance()->PushKey(DIK_S)) {
+        controlUI_S->SetColor(activeColor_);
+        controlUI_S->SetPosition({ 150.0f, 70.0f + pressedOffset_ });
+    } else {
+        controlUI_S->SetColor(inactiveColor_);
+        controlUI_S->SetPosition({ 150.0f, 70.0f });
+    }
+
+    // W
+    if (Input::GetInstance()->PushKey(DIK_W)) {
+        controlUI_W->SetColor(activeColor_);
+        controlUI_W->SetPosition({ 150.0f, 20.0f - pressedOffset_ });
+    } else {
+        controlUI_W->SetColor(inactiveColor_);
+        controlUI_W->SetPosition({ 150.0f, 20.0f });
+    }
+}
+
+void GamePlayHUD::UpdatePauseIcon()
+{
+}
+
+void GamePlayHUD::Draw(bool isPaused, bool showControls)
+{
+	// ポーズ中はポーズアイコンを表示
+	if (isPaused) {
+		pauseSprite_->Draw();
+	}
+	
+	// 操作系UI表示
+	if (showControls) {
+		controlUI_D->Draw();
+		controlUI_A->Draw();
+		controlUI_S->Draw();
+		controlUI_W->Draw();
+	}
+	pauseSprite_->Draw();
+}
+
+void GamePlayHUD::DrawImGui()
+{
+#ifdef USE_IMGUI
+	ImGui::Begin("GamePlay HUD");
+	ImGui::SeparatorText("Pause Icon");
+	Vector2 pausePos = pauseSprite_->GetPosition();
+	Vector2 pauseSize = pauseSprite_->GetSize();
+	ImGui::DragFloat2("Pause Position", &pausePos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("Pause Size", &pauseSize.x, 1.0f, 0.0f, 500.0f);
+	pauseSprite_->SetPosition(pausePos);
+	pauseSprite_->SetSize(pauseSize);
+	ImGui::SeparatorText("Control UI Positions and Sizes");
+	Vector2 dPos = controlUI_D->GetPosition();
+	Vector2 aPos = controlUI_A->GetPosition();
+	Vector2 sPos = controlUI_S->GetPosition();
+	Vector2 wPos = controlUI_W->GetPosition();
+	Vector2 dSize = controlUI_D->GetSize();
+	Vector2 aSize = controlUI_A->GetSize();
+	Vector2 sSize = controlUI_S->GetSize();
+	Vector2 wSize = controlUI_W->GetSize();
+	ImGui::DragFloat2("D Position", &dPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("D Size", &dSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("A Position", &aPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("A Size", &aSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("S Position", &sPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("S Size", &sSize.x, 1.0f, 0.0f, 500.0f);
+	ImGui::DragFloat2("W Position", &wPos.x, 1.0f, 0.0f, 1280.0f);
+	ImGui::DragFloat2("W Size", &wSize.x, 1.0f, 0.0, 500.0f);
+	controlUI_D->SetPosition(dPos);
+	controlUI_D->SetSize(dSize);
+	controlUI_A->SetPosition(aPos);
+	controlUI_A->SetSize(aSize);
+	controlUI_S->SetPosition(sPos);
+	controlUI_S->SetSize(sSize);
+	controlUI_W->SetPosition(wPos);
+	controlUI_W->SetSize(wSize);
+	ImGui::End();
+#endif
+}
+
+std::unique_ptr<Sprite> GamePlayHUD::MakeSprite(const std::string& path, const Vector2& pos, const Vector2& size, const Vector4 color)
+{
+	// スプライト生成
+	auto sprite = std::make_unique<Sprite>();
+	sprite->Initialize(path);
+	sprite->SetPosition(pos);
+	sprite->SetSize(size);
+	sprite->SetColor(color);
+	return sprite;
+}
