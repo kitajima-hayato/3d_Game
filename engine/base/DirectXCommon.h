@@ -7,8 +7,8 @@
 #include <chrono>
 #include "WinAPI.h"
 #include <cstdlib>
-#include"../externals/DirectXTex/DirectXTex.h"
-#include"../externals/DirectXTex/d3dx12.h"
+#include"externals/DirectXTex/DirectXTex.h"
+#include"externals/DirectXTex/d3dx12.h"
 
 
 /// <summary>
@@ -49,8 +49,9 @@ public:
 	void WaitCommand();
 
 	/// <summary>
-	/// シェーダーのコンパイル
+	/// シェーダーコンパイル関数
 	/// </summary>
+	/// <param name="filePath">読み込むシェーダーの名前</param>
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
 		const std::wstring& filePath,
 		const wchar_t* profile);
@@ -114,7 +115,7 @@ public:		// Getter,Setter
 
 	/// <summary>
 	/// テクスチャデータの転送
-	/// [[nodiscard]]とは、戻り値が無視されると警告を出す
+	/// [[no discard]]とは、戻り値が無視されると警告を出す
 	/// </summary>
 	[[nodiscard]]
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData

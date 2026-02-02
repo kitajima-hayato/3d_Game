@@ -26,7 +26,14 @@ public:
 
 	/// <summary>
 	/// 初期化
+	/// RenderTarget リソースを生成し、RTV / SRV を作成する。また、描画に必要なパイプラインと頂点バッファの初期化も行う。
 	/// </summary>
+	/// <param name="dxCommon">DirectX12 のデバイス・コマンド管理を行う共通クラス</param>
+	/// <param name="srvManager">RV のインデックス管理および SRV 作成を行うマネージャ</param>
+	/// <param name="width">レンダーテクスチャの横幅（ピクセル）</param>
+	/// <param name="height">レンダーテクスチャの縦幅（ピクセル）</param>
+	/// <param name="format">SRV として使用する際のテクスチャフォーマット</param>
+	/// <param name="clearColor">レンダーターゲットをクリアする際のクリアカラー</param>
 	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
 	/// <summary>
@@ -43,10 +50,20 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
+
+
 	/// <summary>
-	/// レンダーテクスチャリソースの生成
+	///RenderTarget テクスチャリソースを生成
+	/// 指定されたサイズ・フォーマットで 2D テクスチャを作成し、RenderTarget として使用可能な状態で初期化する
 	/// </summary>
+	/// <param name="device">DirectX12 のデバイス</param>
+	/// <param name="width">テクスチャの横幅（ピクセル）</param>
+	/// <param name="height">テクスチャの縦幅（ピクセル）</param>
+	/// <param name="format">フォーマット</param>
+	/// <param name="clearColor">使用するクリアカラー</param>
+	/// <returns>作成された RenderTarget 用 ID3D12Resource</returns>
 	Microsoft::WRL::ComPtr<ID3D12Resource> CreateRenderTextureResource(Microsoft::WRL::ComPtr<ID3D12Device>device, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
 private:
 	/// <summary>
 	/// グラフィックスパイプラインの生成
@@ -112,6 +129,6 @@ private:
 	D3D12_RESOURCE_DESC resourceDesc{};
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource;
-	 
+
 };
 

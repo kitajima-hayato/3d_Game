@@ -2,13 +2,10 @@
 #include <xaudio2.h> 
 #include <cassert>
 Audio* Audio::instance = nullptr;
-Audio* Audio::GetInstance()
+Audio& Audio::GetInstance()
 {
-	if (instance == nullptr)
-	{
-		instance = new Audio();
-	}
-	return instance;
+    static Audio instance;
+    return instance;
 }
 
 void Audio::DeleteInstance()
@@ -42,7 +39,7 @@ SoundData Audio::LoadWave(const char* filename)
     assert(strncmp(riff.type, "WAVE", 4) == 0);
 
     // フォーマットチャンクを読み込む
-    FormartChunk fmt;
+    FormatChunk fmt;
     file.read((char*)&fmt, sizeof(ChunkHeader));
     assert(strncmp(fmt.chunk.chunkID, "fmt ", 4) == 0);
     // チャンク本体の読み込み

@@ -2,15 +2,13 @@
 #include "Logger.h"
 #include "MyMath.h"
 SpriteCommon* SpriteCommon::instance = nullptr;
-SpriteCommon* SpriteCommon::GetInstance()
+SpriteCommon& SpriteCommon::GetInstance()
 {
-	if (instance == nullptr) {
-		instance = new SpriteCommon();
-	}
+	static SpriteCommon instance;
 	return instance;
 }
 
-void SpriteCommon::Deletenstance()
+void SpriteCommon::DeleteInstance()
 {
 	if (instance != nullptr) {
 		delete instance;
@@ -22,10 +20,10 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon)
 {
 	//引数で受け取ってメンバ変数に記録する
 	dxCommon_ = dxCommon;
-	CreateGraficsPipeLine();
+	CreateGraphicsPipeLine();
 }
 
-void SpriteCommon::CreateRootSignatrue()
+void SpriteCommon::CreateRootSignature()
 {
 #pragma region RootParameter
 	//RootSignature作成
@@ -43,29 +41,29 @@ void SpriteCommon::CreateRootSignatrue()
 
 #pragma endregion
 	
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	D3D12_ROOT_PARAMETER rootParamaters[4] = {};
-	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
+	//RootParameter作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
 
-	rootParamaters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
-	rootParamaters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
-	rootParamaters[1].Descriptor.ShaderRegister = 0;//
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
+	rootParameters[1].Descriptor.ShaderRegister = 0;//
 
-	rootParamaters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParamaters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
-	rootParamaters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange;//Tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange);//Tableで利用する数
 
-	rootParamaters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
-	rootParamaters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
-	rootParamaters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
 
 	
 
-	descriptionRootSignature.pParameters = rootParamaters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
+	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);//
 #pragma endregion
 
 
@@ -117,10 +115,10 @@ void SpriteCommon::DrawSettingCommon()
 }
 
 
-void SpriteCommon::CreateGraficsPipeLine()
+void SpriteCommon::CreateGraphicsPipeLine()
 {
 	// ルートシグネチャの作成
-	CreateRootSignatrue();
+	CreateRootSignature();
 
 	// 頂点の位置データを表すセマンティクスを設定
 	inputElementDescs[0].SemanticName = "POSITION";

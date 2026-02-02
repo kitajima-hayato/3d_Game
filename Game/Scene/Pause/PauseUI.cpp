@@ -1,5 +1,4 @@
 #include "PauseUI.h"
-#include "InsideScene/SceneManager.h"
 #include "Input.h"
 #include "ImGuiManager.h"
 
@@ -24,6 +23,13 @@ float PauseUI::GetBounceExtra()
 
 	// 1.10 → 1.15 → 1.10 にしたいので上乗せ最大 +0.05
 	return 0.05f * s;
+}
+
+PauseUI::Action PauseUI::ConsumeAction()
+{
+	PauseUI::Action action = pendingAction_;
+	pendingAction_ = PauseUI::Action::None;
+	return action;
 }
 
 
@@ -52,7 +58,7 @@ void PauseUI::Update()
 
 	// 決定入力処理
 	HandleDecideInput();
-	
+
 
 	for (const auto& sprite : sprites_) {
 		sprite->Update();
@@ -98,31 +104,33 @@ void PauseUI::Draw()
 	for (const auto& sprite : sprites_) {
 		sprite->Draw();
 	}
-	// 
-		slotUIUp_->Draw();
-		slotUIDown_->Draw();
-		slotUILeft_->Draw();
-		slotUIRight_->Draw();
 
-		decideKeyUI_->Draw();
+	// スロットUI描画
+	slotUIUp_->Draw();
+	slotUIDown_->Draw();
+	slotUILeft_->Draw();
+	slotUIRight_->Draw();
+	// 決定キーUI描画
+	decideKeyUI_->Draw();
 
-		switch (selectedSlot_)
-		{
-		case Slot::Continue:
-			slotTextUIUp_->Draw();
-			break;
-		case Slot::Retry:
-			slotTextUIRight_->Draw();
-			break;
-		case Slot::StageSelect:
-			slotTextUILeft_->Draw();
-			break;
-		case Slot::Title:
-			slotTextUIDown_->Draw();
-			break;
-		default:
-			break;
-		}
+	// 選択中のスロットテキスト描画
+	switch (selectedSlot_)
+	{
+	case Slot::Continue:
+		slotTextUIUp_->Draw();
+		break;
+	case Slot::Retry:
+		slotTextUIRight_->Draw();
+		break;
+	case Slot::StageSelect:
+		slotTextUILeft_->Draw();
+		break;
+	case Slot::Title:
+		slotTextUIDown_->Draw();
+		break;
+	default:
+		break;
+	}
 }
 
 void PauseUI::LoadSprite()
@@ -164,8 +172,8 @@ void PauseUI::LoadSprite()
 	slotUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotUIRight_->SetSize({ 1280.0f, 720.0f });
 
-	
-	
+
+
 	basePosUp_ = slotUIUp_->GetPosition();
 	baseSizeUp_ = slotUIUp_->GetSize();
 
@@ -244,8 +252,8 @@ void PauseUI::DrawImGui()
 	ImGui::Begin("Pause UI");
 
 	// スプライトのカラーセット
-	
-	
+
+
 	for (const auto& sprite : sprites_) {
 		Vector4 color = sprite->GetColor();
 		ImGui::DragFloat4("Sprite Color", &color.x, 0.01f, 0.0f, 1.0f);
@@ -274,8 +282,8 @@ void PauseUI::DrawImGui()
 bool PauseUI::PauseReleaseRequested()
 {
 	// すでにポーズ解除要求が出ていれば抜ける
-	if (!requestPauseRelease_) { 
-		return false; 
+	if (!requestPauseRelease_) {
+		return false;
 	}
 	// ポーズ解除要求フラグをリセット
 	requestPauseRelease_ = false;
@@ -292,17 +300,17 @@ void PauseUI::HandleDecideInput()
 	switch (selectedSlot_)
 	{
 	case Slot::Continue:
+		pendingAction_ = Action::Continue;
 		requestPauseRelease_ = true;
 		break;
 	case Slot::Retry:
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+		pendingAction_ = Action::Retry;
 		break;
 	case Slot::StageSelect:
-		//SceneManager::GetInstance()->ChangeScene("STAGESELECT");
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+		pendingAction_ = Action::StageSelect;
 		break;
 	case Slot::Title:
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+		pendingAction_ = Action::Title;
 		break;
 
 	default:

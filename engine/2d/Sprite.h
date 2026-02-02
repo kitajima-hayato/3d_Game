@@ -13,7 +13,7 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(std::string textureFilePath);
+	void Initialize(std::string_view textureFilePath);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -91,11 +91,11 @@ private:	// メンバ関数
 	/// <summary>
 	/// テクスチャサイズ調整
 	/// </summary>
-	void AdjustTextureSizee();
+	void AdjustTextureSize();
 
 	//void DrawSetting();
 private:	// メンバ変数
-	std::string textureFilePath;
+	std::string textureFilePath_;
 	
 	// バッファリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;

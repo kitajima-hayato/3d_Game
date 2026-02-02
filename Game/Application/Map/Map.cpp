@@ -34,7 +34,7 @@ void Map::Initialize(const char* filePath)
 	LoadMapData(filePath);
 
 	// マップブロックの生成
-	GenerareMapBlock();
+	GenerateMapBlock();
 
 	// マップデータの変更検知
 	previousMapData_ = mapChipData_;
@@ -116,7 +116,7 @@ void Map::Update()
                     LoadMapData(baseName.c_str());
 
                     // マップブロックも作り直す
-                    GenerareMapBlock();
+                    GenerateMapBlock();
 
                     mapFileMessage = std::string("Loaded: ") + mapFileName;
                 }
@@ -406,7 +406,7 @@ void Map::Finalize()
 	}
 }
 
-void Map::GenerareMapBlock()
+void Map::GenerateMapBlock()
 {
 	const uint32_t h = GetHeight();
 	const uint32_t w = GetWidth();

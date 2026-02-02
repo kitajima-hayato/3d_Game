@@ -107,6 +107,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
+    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
     <ClCompile Include="Game\Application\BackGround.cpp" />
     <ClCompile Include="Game\Collision\CollisionManager.cpp" />
@@ -117,17 +119,15 @@
     <ClCompile Include="Game\Application\Map\CsvLoader.cpp" />
     <ClCompile Include="Game\Application\Block\Block.cpp" />
     <ClCompile Include="Game\Application\ModelList.cpp" />
-    <ClCompile Include="Game\Particle\EffectEmitter.cpp" />
-    <ClCompile Include="Game\Particle\EffectManager.cpp" />
-    <ClCompile Include="InsideScene\AbstractSceneFactory.cpp" />
+    <ClCompile Include="engine\InsideScene\AbstractSceneFactory.cpp" />
     <ClCompile Include="engine\Audio\Audio.cpp" />
-    <ClCompile Include="InsideScene\BaseScene.cpp" />
+    <ClCompile Include="engine\InsideScene\BaseScene.cpp" />
     <ClCompile Include="Game\Camera\Camera.cpp" />
     <ClCompile Include="engine\base\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\base\DirectXCommon.cpp" />
     <ClCompile Include="engine\base\Input.cpp" />
     <ClCompile Include="engine\base\Logger.cpp" />
-    <ClCompile Include="InsideScene\Framework.cpp" />
+    <ClCompile Include="engine\InsideScene\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
@@ -146,8 +146,8 @@
     <ClCompile Include="Game\Scene\MyGame.cpp" />
     <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Game\Particle\ParticleManager.cpp" />
-    <ClCompile Include="InsideScene\SceneFactory.cpp" />
-    <ClCompile Include="InsideScene\SceneManager.cpp" />
+    <ClCompile Include="engine\InsideScene\SceneFactory.cpp" />
+    <ClCompile Include="engine\InsideScene\SceneManager.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="Game\Scene\TitleScene.cpp" />
     <ClCompile Include="Game\Application\StageType.cpp" />
@@ -161,8 +161,12 @@
     <ClCompile Include="Game\Scene\StageSelectScene.cpp" />
     <ClCompile Include="Game\Scene\SceneSelectGraph\StageSelectGraph.cpp" />
     <ClCompile Include="Game\Scene\Pause\PauseUI.cpp" />
+    <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
+    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
+    <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
     <ClInclude Include="Game\Camera\CameraController.h" />
     <ClInclude Include="Game\Application\BackGround.h" />
@@ -175,11 +179,9 @@
     <ClInclude Include="Game\Application\Map\CsvLoader.h" />
     <ClInclude Include="Game\Application\Block\Block.h" />
     <ClInclude Include="Game\Application\ModelList.h" />
-    <ClInclude Include="Game\Particle\EffectEmitter.h" />
-    <ClInclude Include="Game\Particle\EffectManager.h" />
-    <ClInclude Include="InsideScene\AbstractSceneFactory.h" />
+    <ClInclude Include="engine\InsideScene\AbstractSceneFactory.h" />
     <ClInclude Include="engine\Audio\Audio.h" />
-    <ClInclude Include="InsideScene\BaseScene.h" />
+    <ClInclude Include="engine\InsideScene\BaseScene.h" />
     <ClInclude Include="Game\Camera\Camera.h" />
     <ClInclude Include="engine\base\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\base\DirectXCommon.h" />
@@ -197,14 +199,14 @@
     <ClInclude Include="engine\base\StringUtility.h" />
     <ClInclude Include="engine\base\TextureManager.h" />
     <ClInclude Include="engine\base\WinAPI.h" />
-    <ClInclude Include="InsideScene\Framework.h" />
+    <ClInclude Include="engine\InsideScene\Framework.h" />
     <ClInclude Include="Game\Scene\GamePlayScene.h" />
     <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\MyGame.h" />
     <ClInclude Include="Game\Particle\ParticleEmitter.h" />
     <ClInclude Include="Game\Particle\ParticleManager.h" />
-    <ClInclude Include="InsideScene\SceneFactory.h" />
-    <ClInclude Include="InsideScene\SceneManager.h" />
+    <ClInclude Include="engine\InsideScene\SceneFactory.h" />
+    <ClInclude Include="engine\InsideScene\SceneManager.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="Game\Scene\TitleScene.h" />
     <ClInclude Include="Game\Application\StageType.h" />
@@ -219,6 +221,8 @@
     <ClInclude Include="Game\Scene\StageSelectScene.h" />
     <ClInclude Include="Game\Scene\SceneSelectGraph\StageSelectGraph.h" />
     <ClInclude Include="Game\Scene\Pause\PauseUI.h" />
+    <ClInclude Include="Game\Camera\StartCamPhase.h" />
+    <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

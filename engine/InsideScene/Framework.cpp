@@ -26,7 +26,7 @@ void Framework::Initialize()
 #endif
 
 	// 3Dモデルマネージャの初期化
-	ModelManager::GetInstance()->Initialize(dxCommon.get());
+	ModelManager::GetInstance().Initialize(dxCommon.get());
 	// 3Dオブジェクト共通部の初期化
 	Object3DCommon::GetInstance()->Initialize(dxCommon.get());
 
@@ -89,12 +89,11 @@ void Framework::Finalize()
 	/// 各種マネージャーの終了処理
 
 	SceneManager::GetInstance()->Finalize();
-	SceneManager::Deletenstance();
-	Audio::GetInstance()->DeleteInstance();
+	SceneManager::DestroyInstance();
+	Audio::GetInstance().DeleteInstance();
 	Object3DCommon::GetInstance()->DeleteInstance();
-	SpriteCommon::GetInstance()->Deletenstance();
 	TextureManager::GetInstance()->DeleteInstance();
-	ModelManager::GetInstance()->Finalize();
+	ModelManager::GetInstance().Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
 	mainCamera_ = nullptr;

@@ -6,7 +6,7 @@
 #include "Game/Camera/camera.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
-#include "InsideScene/Framework.h"
+#include "engine/InsideScene/Framework.h"
 TitleScene::TitleScene()
 {
 
@@ -19,7 +19,7 @@ TitleScene::~TitleScene()
 void TitleScene::Initialize(DirectXCommon* dxCommon)
 {
 	// スプライトの初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon);
+	SpriteCommon::GetInstance().Initialize(dxCommon);
 
 
 	// マルチスレッドでの読み込み
@@ -129,10 +129,10 @@ void TitleScene::Update()
 	{
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 	}
-	/*else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
+	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
-	}*/
+	}
 }
 
 void TitleScene::Draw()
@@ -184,7 +184,7 @@ void TitleScene::Finalize()
 	EffectManager::GetInstance()->DeleteEffectGroup("Ring");*/
 
 	// スプライトの終了処理
-	SpriteCommon::GetInstance()->Deletenstance();
+	SpriteCommon::GetInstance().DeleteInstance();
 }
 
 void TitleScene::LoadAudio()
@@ -219,139 +219,7 @@ void TitleScene::DrawImgui() {
 
 	ImGui::End();
 
-	/*ImGui::Begin("BackGround");
-
-	ImGui::Text("Soil");
-	ImGui::DragFloat3("Scales", &soilTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotates", &soilTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translates", &soilTransform.translate.x, 0.1f);
-	soil->SetTransform(soilTransform);
-	ImGui::Separator();
-
-	ImGui::Text("Player");
-	ImGui::DragFloat3("Scalep", &playerTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatep", &playerTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatep", &playerTransform.translate.x, 0.1f);
-	playerObject->SetTransform(playerTransform);
-	ImGui::Separator();
-	// 背景
-	ImGui::Text("BackGround3");
-	ImGui::DragFloat3("Scaleb", &titleBackGround3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotateb", &titleBackGround3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translateb", &titleBackGround3Transform.translate.x, 0.1f);
-	titleBackGround3->SetTransform(titleBackGround3Transform);
-
-	ImGui::Separator();
-
-	ImGui::Text("BackGround3_2");
-	ImGui::DragFloat3("Scalec3_2", &titleBackGround3_2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatec3_2", &titleBackGround3_2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatec3_2", &titleBackGround3_2Transform.translate.x, 0.1f);
-	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
-	ImGui::Separator();
-
-	ImGui::Text("BackGround2");
-	ImGui::DragFloat3("Scalec", &titleBackGround2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatec", &titleBackGround2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatec", &titleBackGround2Transform.translate.x, 0.1f);
-	titleBackGround2->SetTransform(titleBackGround2Transform);
-
-	ImGui::Separator();
-
-	ImGui::Text("BackGround2_2");
-	ImGui::DragFloat3("Scaled2_2", &titleBackGround2_2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotated2_2", &titleBackGround2_2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translated2_2", &titleBackGround2_2Transform.translate.x, 0.1f);
-	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
-	ImGui::Separator();
-	ImGui::Text("BackGround2_3");
-	ImGui::DragFloat3("Scaled2_3", &titleBackGround2_3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotated2_3", &titleBackGround2_3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translated2_3", &titleBackGround2_3Transform.translate.x, 0.1f);
-	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
-	ImGui::Separator();
-
-	ImGui::Text("BackGround1");
-	ImGui::DragFloat3("Scaled", &titleBackGround1Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotated", &titleBackGround1Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translated", &titleBackGround1Transform.translate.x, 0.1f);
-	titleBackGround1->SetTransform(titleBackGround1Transform);
-
-	ImGui::Separator();
-
-	ImGui::Text("BackGround1_2");
-	ImGui::DragFloat3("Scale1_2", &titeleBackGround1_2Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate1_2", &titeleBackGround1_2Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate1_2", &titeleBackGround1_2Transform.translate.x, 0.1f);
-	titeleBackGround1_2->SetTransform(titeleBackGround1_2Transform);
-	ImGui::Separator();
-	ImGui::Text("BackGround1_3");
-	ImGui::DragFloat3("Scale1_3", &titeleBackGround1_3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate1_3", &titeleBackGround1_3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate1_3", &titeleBackGround1_3Transform.translate.x, 0.1f);
-	titeleBackGround1_3->SetTransform(titeleBackGround1_3Transform);
-	ImGui::Separator();
-	ImGui::Text("BackGround1_4");
-	ImGui::DragFloat3("Scale1_4", &titeleBackGround1_4Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate1_4", &titeleBackGround1_4Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate1_4", &titeleBackGround1_4Transform.translate.x, 0.1f);
-	titeleBackGround1_4->SetTransform(titeleBackGround1_4Transform);
-	ImGui::Separator();
-	ImGui::Text("SkyBack");
-	ImGui::DragFloat3("Scalee", &skyBackTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotatee", &skyBackTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translatee", &skyBackTransform.translate.x, 0.1f);
-	skyBack->SetTransform(skyBackTransform);
-
-
-	ImGui::End();*/
-
-
-	//if (levelData->HasPlayerSpawn()) {
-	//	const auto& playerSpawn = levelData->getPlayerSpawns()[0];
-
-	//	// プレイヤーの位置と回転を Object3D にセット
-	//	playerObject->SetTranslate(playerSpawn.transform.translate);
-	//	playerObject->SetRotate(playerSpawn.transform.rotate);
-
-	//	// ImGui ウィンドウで表示
-	//	ImGui::Begin("PlayerSpawn Info");
-
-	//	const Vector3& pos = playerSpawn.transform.translate;
-	//	const Vector3& rot = playerSpawn.transform.rotate;
-
-	//	ImGui::Text("Translate: X = %.2f, Y = %.2f, Z = %.2f", pos.x, pos.y, pos.z);
-	//	ImGui::Text("Rotate:    X = %.2f, Y = %.2f, Z = %.2f", rot.x, rot.y, rot.z);
-
-	//	ImGui::End();
-	//}
-
-
-
-
-	//ImGui::Begin("Particle");
-
-	//ImGui::Text("Transform");
-	//ImGui::DragFloat3("Scalea", &emitterScale.x, 0.1f);
-	//ImGui::DragFloat3("Rotatea", &emitterRotate.x, 0.1f);
-	//ImGui::DragFloat3("Translatea", &emitterTranslate.x, 1.0f); // ここでtest.xを操作可能に
-
-	//ImGui::End();
-
-	/*ImGui::Begin("effect");
-
-	ImGui::Text("Transform");
-	ImGui::DragFloat3("Scale", &effectTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &effectTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("Translate", &effectTransform.translate.x, 1.0f);
-	effectEmitter->SetTransform(effectTransform);
-
-	ImGui::Text("asdf");
-	ImGui::DragFloat3("CylinderScale", &cylinderTransform.scale.x, 0.1f);
-	ImGui::DragFloat3("CylinderRotate", &cylinderTransform.rotate.x, 0.1f);
-	ImGui::DragFloat3("CylinderTranslate", &cylinderTransform.translate.x, 1.0f);
-	cylinder->SetTransform(cylinderTransform);
-	ImGui::End();*/
+	
 
 
 #endif // _DEBUG

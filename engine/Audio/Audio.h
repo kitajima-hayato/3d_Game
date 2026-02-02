@@ -22,7 +22,7 @@ struct RIFFHeader
 	ChunkHeader chunk;
 	char type[4];
 };
-struct FormartChunk {
+struct FormatChunk {
 	ChunkHeader chunk;
 	WAVEFORMATEX format;
 };
@@ -40,7 +40,7 @@ public:
 	/// <summary>
 	/// シングルトンインスタンスの取得
 	/// </summary>
-	static Audio* GetInstance();
+	static Audio& GetInstance();
 	/// <summary>
 	/// シングルトンインスタンスの削除
 	/// </summary>

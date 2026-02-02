@@ -41,6 +41,8 @@ private:
 	/// <summary>
 	/// ブレンドモードの設定
 	/// </summary>
+	/// <param name="desc">設定対象のD3D12_BLEND_DESC</param>
+	/// <param name="mode">使用するブレンドモード</param>
 	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
 
 	/// <summary>

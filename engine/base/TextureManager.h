@@ -22,10 +22,10 @@ class TextureManager
 	static uint32_t kSRVIndexTop;
 public:		// メンバ関数
 	/// <summary>
-	/// 初期化
+	/// 初期化処理
 	/// </summary>
-	/// <param name="dxCommon"></param>
-	/// <param name="srvManager"></param>
+	/// <param name="dxCommon">デバイスやコマンド管理</param>
+	/// <param name="srvManager">SRVの割り当ておよび管理</param>
 	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
 	/// <summary>
 	/// 終了処理

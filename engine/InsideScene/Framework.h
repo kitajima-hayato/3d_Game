@@ -17,7 +17,6 @@
 #include "Audio.h"
 #include "SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
-#include "Game/Particle/EffectManager.h"
 #include "engine/3d/SkyBox/SkyBox.h"
 #include "AbstractSceneFactory.h"
 #include "D3DResourceLeakChecker.h"

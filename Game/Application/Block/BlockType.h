@@ -1,5 +1,10 @@
 #pragma once
 
+/// <summary>
+/// ブロックタイプ列挙型
+/// ブロックの種類を定義する
+/// </summary>
+
 enum class BlockType
 {
 	Air = 0,
@@ -19,7 +24,7 @@ enum class BlockType
 
 
 
-// 新しいブロックを追加するときは、下のリストを上から順にチェックすればOKです。
+// 新しいブロックを追加するときは、下のリストを上から順にチェックすればOK
 //
 // BlockType に追加
 //
@@ -27,7 +32,7 @@ enum class BlockType
 //
 //	既存の数値は変えない
 //
-//	ImGui 表示名を追加
+//	Map クラス の ImGui 表示名を追加
 //
 //	blockTypeNames[] に "NewBlockName" を追加
 //
