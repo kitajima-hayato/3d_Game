@@ -56,7 +56,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(const char* filePath);
+	void Initialize(const std::string& mapFilePath);
 
 	/// <summary>
 	/// 更新
@@ -86,7 +86,7 @@ public:
 	/// <summary>
 	/// マップデータの読み込み
 	/// </summary>
-	void LoadMapData(const char* filePath);
+	void LoadMapData(const std::string& mapFilePath);
 
 
 public:	// Setter / Getter

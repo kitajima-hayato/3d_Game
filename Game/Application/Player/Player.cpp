@@ -679,6 +679,14 @@ void Player::ImGui()
 			ImGui::SliderFloat("Gravity", &status_.kGravity, 0.01f, 0.2f);
 			ImGui::SliderFloat("Max Fall Speed", &status_.kMaxFallSpeed, 0.1f, 2.0f);
 			ImGui::SliderFloat("Jump Power", &status_.kJumpPower, 0.1f, 1.0f);
+
+			// Playerのスタッツの変更
+			Vector3 pos = playerModel_->GetTranslate();
+			ImGui::DragFloat3("Player Position", &pos.x, 0.1f);
+			playerModel_->SetTranslate(pos);
+			Vector3 rot = playerModel_->GetRotate();
+			ImGui::DragFloat3("Player Rotation", &rot.x, 0.1f);
+			playerModel_->SetRotate(rot);
 			ImGui::EndTabItem();
 		}
 

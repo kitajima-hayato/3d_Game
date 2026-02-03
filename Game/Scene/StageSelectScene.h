@@ -66,6 +66,25 @@ private:
 	/// </summary>
 	void DrawSelectGraphImGui();
 
+	/// <summary>
+	/// ノードIDからワールド座標を計算
+	/// </summary>
+	/// <param name="nodeId">取得するノード</param>
+	/// <returns>ノードのワールド座標</returns>
+	Vector3 CalcNodeWorldPos(uint32_t nodeId)const;
+
+	/// <summary>
+	/// カーソル移動更新
+	/// </summary>
+	void UpdateCursorMove();
+
+	/// <summary>
+	/// 指定座標からカメラ方向を向くためのヨー角を計算
+	/// </summary>
+	/// <param name="pos"></param>
+	/// <returns></returns>
+	float CalcYawFaceCamera(const Vector3& pos)const;
+
 private:
 	// カメラ / トランスフォーム
 	Camera* camera = nullptr;
@@ -91,6 +110,50 @@ private:
 
 
 private:
+	// ノード移動アニメーション用
+	bool isMoving_ = false;
+	float moveTime_ = 0.0f;
+	float moveDuration_ = 0.18f;
+
+	// 移動前後の座標
+	Vector3 moveStartPos_ = {};
+	Vector3 moveTargetPos_ = {};
+	Vector3 prevFramePos_ = {};
+
+	// カーソルの半径
+	float cursorRadius_ = 2.5f;
+
+	
+	
+
+#ifdef USE_IMGUI
+	// 選択中ノードが変わったか判定用
+	uint32_t prevEditNodeId_ = UINT32_MAX;
+
+
+	// 編集バッファ（毎フレーム上書きされないように保持）
+	int editX_ = 0;
+	int editY_ = 0;
+	int editStageId_ = 0;
+	// デフォルトステージキー
+	char editStageKey_[64] = "1-1";
+	char newStageKey_[64] = "1-1";
+	bool editUnlocked_ = false;
+
+	int editNeighUp_ = -1;
+	int editNeighDown_ = -1;
+	int editNeighLeft_ = -1;
+	int editNeighRight_ = -1;
+
+	// フィルタID
+	int filterStageId_ = -1;     // -1で無効
+	bool filterUnlockedOnly_ = false;
+
+	// JSON
+	bool jsonDirty_ = true;
+	char jsonBuf_[32768] = {};
+	
+	// 編集用ノードID
 	uint32_t editNodeId_ = 0;
 
 	// 追加用入力
@@ -104,32 +167,6 @@ private:
 	int neighborDown_ = -1;
 	int neighborLeft_ = -1;
 	int neighborRight_ = -1;
-	
-
-#ifdef USE_IMGUI
-	// 選択中ノードが変わったか判定用
-	uint32_t prevEditNodeId_ = UINT32_MAX;
-
-
-	// 編集バッファ（毎フレーム上書きされないように保持）
-	int editX_ = 0;
-	int editY_ = 0;
-	int editStageId_ = 0;
-	bool editUnlocked_ = false;
-
-	int editNeighUp_ = -1;
-	int editNeighDown_ = -1;
-	int editNeighLeft_ = -1;
-	int editNeighRight_ = -1;
-
-	// フィルタ
-	int filterStageId_ = -1;     // -1で無効
-	bool filterUnlockedOnly_ = false;
-
-	// JSON
-	bool jsonDirty_ = true;
-	char jsonBuf_[32768] = {};
-
 	
 #endif
 };

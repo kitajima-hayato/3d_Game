@@ -22,16 +22,16 @@ ImVec4 GetBlockColorByType(BlockType blockType) {
 }
 #endif
 
-void Map::Initialize(const char* filePath)
+void Map::Initialize(const std::string& mapFilePath)
 {
 	// マップデータの初期化
 	mapChipData_.mapData.resize(kMapHeight, std::vector<BlockType>(kMapWidth, BlockType::Air));
 
 	// マップ番号の保存
-	mapNumber_ = filePath;
+	mapNumber_ = mapFilePath;
 
 	// マップデータの読み込み
-	LoadMapData(filePath);
+	LoadMapData(mapFilePath);
 
 	// マップブロックの生成
 	GenerateMapBlock();
@@ -463,13 +463,13 @@ void Map::GenerateEnemyLayer()
 }
 
 
-void Map::LoadMapData(const char* filePath)
+void Map::LoadMapData(const std::string& mapFilePath)
 {
 	// CSVファイルからマップデータを読み込む
 	CsvLoader csvLoader;
-	mapChipData_.mapData = csvLoader.LoadMapBlockType(filePath);
+	mapChipData_.mapData = csvLoader.LoadMapBlockType(mapFilePath);
 
-	std::string enemyLayerFilePath = filePath + std::string("_EnemyLayer");
+	std::string enemyLayerFilePath = mapFilePath + std::string("_EnemyLayer");
 	// 敵レイヤーデータの読み込み
 	enemyLayerData_.enemyData = csvLoader.LoadMapEnemyType(enemyLayerFilePath);
 

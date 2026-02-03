@@ -183,5 +183,7 @@ private:
 	std::unique_ptr<StartCamPhase> startCam_;
 
 	Vector3 baseCameraPos_ = {};
+
+	std::string stageKey;
 };
 

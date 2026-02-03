@@ -4,6 +4,7 @@
 #include "Game/Collision/CollisionManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "engine/InsideScene/Framework.h"
+#include "Game/Application/PlayContext.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -28,10 +29,14 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
 
+	const std::string& key = PlayContext::GetInstance().GetSelectedStageKey();
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("1-2");
+
+	// ノードに応じたステージを初期化
+	stageKey = key.empty() ? "1-1" : key.c_str();
+	map->Initialize(stageKey);
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -417,6 +422,8 @@ void GamePlayScene::DrawImgui()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
+	// 読み込んでいるマップデータのキー
+	ImGui::Text("SelectedStage:%s",stageKey);
 	//==============================
 	// Start Camera Intro Tuning UI
 	//==============================
