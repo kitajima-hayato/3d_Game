@@ -112,11 +112,11 @@ void BackGround::Initialize()
 	// 足場　土
 	soil = std::make_unique<Object3D>();
 	soil->Initialize();
-	soil->SetModel("soil.obj");
+	soil->SetModel("Grass.obj");
 	soilTransform = {
-		{ 7.0f,1.0f,1.0f },
+		{ 40.0f,1.0f,2.0f },
 		{ 0.0f,0.0f,0.0f },
-		{ 0.0f,-8.6f,20.0f }
+		{ 0.0f,-8.0f,20.0f }
 	};
 	soil->SetTransform(soilTransform);
 }
@@ -201,6 +201,16 @@ void BackGround::DrawImgui()
 	// scale
 	ImGui::DragFloat3("SkyBack Scale", &skyBackTransform.scale.x, 0.1f);
 	skyBack->SetTransform(skyBackTransform);
+
+	// Grassの位置調整
+	ImGui::DragFloat3("Soil Translate", &soilTransform.translate.x, 0.1f);
+	soil->SetTransform(soilTransform);
+	// rotate
+	ImGui::DragFloat3("Soil Rotate", &soilTransform.rotate.x, 0.1f);
+	soil->SetTransform(soilTransform);
+	// scale
+	ImGui::DragFloat3("Soil Scale", &soilTransform.scale.x, 0.1f);
+	soil->SetTransform(soilTransform);
 	ImGui::End();
 	
 

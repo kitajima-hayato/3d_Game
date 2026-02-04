@@ -104,7 +104,12 @@ private: // ゲーム要素
 	// バックグラウンド
 	 std::unique_ptr<BackGround> background;
 
-	 std::unique_ptr<Sprite> quxSprite_;
+	 // タイトルスプライト
+	 std::unique_ptr<Sprite> titleSprite;
+	 std::unique_ptr<Sprite> pressStartSprite;
+	 // 点滅
+	 const int blinkInterval = 60;
+	 const int blinkDuration = 30;
 
 	 /// カメラ
 	 Camera* camera = nullptr;

@@ -25,6 +25,8 @@ void ModelList::LoadAllModel()
 							   
 	/// StageSelectScene	   
 	ModelManager::GetInstance().LoadModel("SelectBaseGround.obj");
+	ModelManager::GetInstance().LoadModel("Node.obj");
+	ModelManager::GetInstance().LoadModel("RoutePlane.obj");
 							   
 	/// GamePlayScene		   
 	ModelManager::GetInstance().LoadModel("Grass.obj");
