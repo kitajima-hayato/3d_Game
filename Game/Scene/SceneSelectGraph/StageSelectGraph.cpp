@@ -18,6 +18,7 @@ void StageSelectGraph::Initialize()
 	// ノード境界情報の再計算     
 	RecalculateBounds();
 
+	
 }
 
 
@@ -94,7 +95,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 {
 	// JSONファイルからノード情報を読み込む処理
 	// filePathはリソースフォルダからの相対パス
-	const std::string frontFilePath = "resources/StageSelect";
+	const std::string frontFilePath = "resources/WorldSelect";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 

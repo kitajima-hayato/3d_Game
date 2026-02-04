@@ -151,6 +151,8 @@ private:
 	NodeBounds bounds_;
 
 	
+
+	
 public:
 	/// --- 編集API（ImGui用） --- ///
 	// ノード情報編集

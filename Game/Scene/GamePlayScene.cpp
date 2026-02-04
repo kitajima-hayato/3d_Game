@@ -200,7 +200,7 @@ void GamePlayScene::Update()
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
-		sceneManager->ChangeScene("GAMEPLAY");
+		sceneManager->ChangeScene("STAGECLEAR");
 	}
 
 	

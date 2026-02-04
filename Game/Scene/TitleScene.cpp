@@ -80,7 +80,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	// Press Start スプライトの初期化
 	pressStartSprite = std::make_unique<Sprite>();
-	pressStartSprite->Initialize("resources/Title/PushEnter.png");
+	pressStartSprite->Initialize("resources/Title/PushSpace.png");
 	pressStartSprite->SetPosition({ -20.0f,100.0f });
 	pressStartSprite->SetSize({ 1280.0f,720.0f });
 

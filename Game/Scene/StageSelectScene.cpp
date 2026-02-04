@@ -21,6 +21,28 @@ static float WrapAngle0To2Pi(float angle)
 	return angle;
 }
 
+static float WrapAngleMinusPiToPi(float a)
+{
+	const float pi = 3.14159265359f;
+	const float twoPi = 6.28318530718f;
+	while (a <= -pi) a += twoPi;
+	while (a > pi)  a -= twoPi;
+	return a;
+}
+
+static float LerpAngle(float from, float to, float t)
+{
+	float delta = WrapAngleMinusPiToPi(to - from); 
+	return from + delta * t;
+}
+static float DampAngle(float current, float target, float turnSpeedRadPerSec, float dt)
+{
+	// 1-exp(-k*dt) でフレームレート非依存の追従率にする
+	float a = 1.0f - std::exp(-turnSpeedRadPerSec * dt);
+	return LerpAngle(current, target, a);
+}
+
+
 Vector3 StageSelectScene::CalcNodeWorldPos(uint32_t nodeId)const
 {
 	const Vector2 uv = stageSelectGraph->GetNodeUV(nodeId);
@@ -45,7 +67,7 @@ void StageSelectScene::UpdateCursorMove()
 	// 移動中でなければ終了
 	if (!isMoving_)return;
 	// 経過時間を進める
-	const float dt = 1.0f / 120.0f;
+	const float dt = 1.0f / 60.0f;
 	moveTime_ += dt;
 
 	float t = moveTime_ / moveDuration_;
@@ -68,6 +90,28 @@ void StageSelectScene::UpdateCursorMove()
 	Transform transform = playerModel->GetTransform();
 	// 位置更新
 	transform.translate = position;
+
+	// delta から進行方向yaw（Yaw 0が+Z前提）
+	if (distance > 1e-6f)
+	{
+		// 進行方向Yaw
+		float moveYaw = std::atan2f(delta.x, delta.z);
+		const float modelYawOffset = -1.570796326f; // あなたのモデル補正
+		moveYaw = WrapAngle0To2Pi(moveYaw + modelYawOffset);
+
+		// カメラ方向Yaw（位置は position を使う：移動中に徐々に“こっち向き”にしたいので）
+		float camYaw = CalcYawFaceCamera(position);
+
+		// 移動中の “カメラ寄せ” 量：序盤は弱く、終盤で強く
+		float bias = camBiasMove_ + (camBiasEnd_ - camBiasMove_) * ease; // 0..1
+
+		// 進行方向とカメラ方向をブレンドした“狙うYaw”
+		float targetYaw = WrapAngle0To2Pi(LerpAngle(moveYaw, camYaw, bias));
+
+		// 現在YawからターゲットYawへ、回頭速度付きで追従
+		float curYaw = playerModel->GetTransform().rotate.y;
+		transform.rotate.y = WrapAngle0To2Pi(DampAngle(curYaw, targetYaw, yawTurnSpeed_, dt));
+	}
 
 
 	if (distance > 1e-6f && cursorRadius_ > 1e-6f)
@@ -92,16 +136,23 @@ void StageSelectScene::UpdateCursorMove()
 		// 位置を完全に固定（誤差除去）
 		Transform endTr = playerModel->GetTransform();
 		endTr.translate = moveTargetPos_;
-		endTr.rotate.y = CalcYawFaceCamera(moveTargetPos_);
-
-		// 「止まったら正面向いて綺麗に」したいなら転がり成分を消す
-		endTr.rotate.x = 0.0f;
-		endTr.rotate.z = 0.0f;
 
 		playerModel->SetTransform(endTr);
 
 		prevFramePos_ = moveTargetPos_;
 		isMoving_ = false;
+
+		faceStartRx_ = endTr.rotate.x;
+		faceStartRz_ = endTr.rotate.z;
+
+		// 向き補間開始
+		isFacing_ = true;
+		faceTime_ = 0.0f;
+		
+		// 角度を 0..2pi にしているなら補間前に揃えておくと安定しやすい
+		faceStartYaw_ = WrapAngle0To2Pi(endTr.rotate.y);
+		faceTargetYaw_ = WrapAngle0To2Pi(CalcYawFaceCamera(endTr.translate));
+
 	}
 }
 
@@ -129,6 +180,111 @@ float StageSelectScene::CalcYawFaceCamera(const Vector3& pos) const
 
 	return WrapAngle0To2Pi(yaw);
 }
+
+void StageSelectScene::UpdateFaceYaw()
+{
+	if (!isFacing_) return;
+
+	const float dt = 1.0f / 60.0f;
+	faceTime_ += dt;
+
+	float t = faceTime_ / faceDuration_;
+	if (t >= 1.0f) t = 1.0f;
+
+	float ease = EaseOutCubic(t);
+
+	Transform tr = playerModel->GetTransform();
+
+	// yaw補間を反映
+	float yaw = LerpAngle(faceStartYaw_, faceTargetYaw_, ease);
+	tr.rotate.y = WrapAngle0To2Pi(yaw); 
+
+
+
+	// 転がり成分は0へ戻す（好み）
+	tr.rotate.x = faceStartRx_ * (1.0f - ease);
+	tr.rotate.z = faceStartRz_ * (1.0f - ease);
+
+	playerModel->SetTransform(tr);
+
+	if (t >= 1.0f)
+	{
+		Transform end = playerModel->GetTransform();
+		end.rotate.y = faceTargetYaw_;
+		end.rotate.x = 0.0f;
+		end.rotate.z = 0.0f;
+		playerModel->SetTransform(end);
+		isFacing_ = false;
+	}
+}
+
+void StageSelectScene::BuildRoutes()
+{
+	routeModels_.clear();
+	routeTransforms_.clear();
+
+	const uint32_t count = stageSelectGraph->GetNodeCount();
+	if (count == 0) return;
+
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		const StageNode& n = stageSelectGraph->GetNode(i);
+
+		for (int d = 0; d < (int)Direction::count; ++d)
+		{
+			uint32_t to = n.neighbor[d];
+			if (to == StageSelectGraph::INVALID_NODE_ID) continue;
+
+			// 重複生成防止（i->to と to->i を1本にする）
+			if (to < i) continue;
+
+			// 端点（ワールド座標）
+			Vector3 a = CalcNodeWorldPos(i);
+			Vector3 b = CalcNodeWorldPos(to);
+
+			// 少し浮かせる（床に埋まらないように）
+			a.y += 0.05f;
+			b.y += 0.05f;
+
+			Vector3 diff = b - a;
+			diff.y = 0.0f;
+
+			//float len = std::sqrtf(diff.x * diff.x + diff.z * diff.z);
+			//if (len < 1e-6f) continue;
+
+			Vector3 mid = (a + b) * 0.5f;
+
+			// yaw（Yaw 0 が +Z 前提）
+			float yaw = std::atan2f(diff.x, diff.z);
+
+			// ルートモデルが「+Z方向に長い板」ならこのままでOK
+			// もしモデルが +X 方向に伸びてるなら yaw += PI/2 が必要
+			// yaw += 1.570796326f;
+
+			// Object3D作成
+			auto obj = std::make_unique<Object3D>();
+			obj->Initialize();
+			obj->SetModel("RoutePlane.obj"); // ←用意したルート用モデル名
+
+			Transform tr{};
+			tr.translate = mid;
+			tr.translate.y -= 1.0f; // 少し浮かせる
+			tr.rotate = { 0.0f, yaw, 0.0f };
+
+			// 重要：長さ方向のスケールを len に合わせる
+			// どの軸が「長手」かはモデル次第：
+			//  - 板が +Z 方向に長いなら scale.z = len
+			//  - 板が +X 方向に長いなら scale.x = len
+			tr.scale = { 0.5f, 0.5f, 1.0f };   // ←まずはこれで試す
+
+			obj->SetTransform(tr);
+
+			routeTransforms_.push_back(tr);
+			routeModels_.push_back(std::move(obj));
+		}
+	}
+}
+
 
 
 
@@ -193,6 +349,8 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 	stageSelectGraph = std::make_unique<StageSelectGraph>();
 	stageSelectGraph->Initialize();
+
+	BuildRoutes();
 	// ノードの追加
 	startNodeId = 0;
 	currentNodeId = startNodeId;
@@ -208,6 +366,86 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	moveTargetPos_ = pos;
 	prevFramePos_ = pos;
 
+	const uint32_t count = stageSelectGraph->GetNodeCount();
+	nodeModels_.clear();
+	nodeTransforms_.clear();
+	nodeModels_.reserve(count);
+	nodeTransforms_.reserve(count);
+
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		auto obj = std::make_unique<Object3D>();
+		obj->Initialize();
+		obj->SetModel("Node.obj"); // 同じモデル
+
+		Transform tr{};
+		tr.scale = { 1.8f, 1.8f, 1.8f };   // 目印なら少し小さく
+		tr.rotate = { 0.0f, 0.0f, 0.0f };
+		tr.translate = CalcNodeWorldPos(i);
+
+		// ちょい浮かせたいなら
+		tr.translate.y += -1.1f; // 例: 0.3f
+
+		// 「常にカメラ向き」にしたいなら
+		tr.rotate.y = CalcYawFaceCamera(tr.translate);
+
+		obj->SetTransform(tr);
+
+		nodeTransforms_.push_back(tr);
+		nodeModels_.push_back(std::move(obj));
+	}
+	// UI
+	stageSelect_ = std::make_unique<Sprite>();
+	stageSelect_->Initialize("resources/StageSelect/StageSelect.png");
+	stageSelect_->SetPosition({ 0.0f,0.0f });
+	stageSelect_->SetSize({ 1280.0f,720.0f });
+
+	// KeyIconUi　/ 左下に配置
+	keyIcon_W = std::make_unique<Sprite>();
+	keyIcon_W->Initialize("resources/KyeUI/W.png");
+	keyIcon_W->SetPosition({ 55.0f, 615.0f });
+	keyIcon_W->SetSize({ 50.0f, 50.0f });
+	keyIcon_A = std::make_unique<Sprite>();
+	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->SetPosition({ 10.0f, 635.0f });
+	keyIcon_A->SetSize({ 50.0f, 50.0f });
+	keyIcon_S = std::make_unique<Sprite>();
+	keyIcon_S->Initialize("resources/KyeUI/S.png");
+	keyIcon_S->SetPosition({ 55.0f, 660.0f });
+	keyIcon_S->SetSize({ 50.0f, 50.0f });
+	keyIcon_D = std::make_unique<Sprite>();
+	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->SetPosition({ 100.0f, 635.0f });
+	keyIcon_D->SetSize({ 50.0f, 50.0f });
+
+	// esc / enter UI配置
+	keyIcon_Esc = std::make_unique<Sprite>();
+	keyIcon_Esc->Initialize("resources/KyeUI/Esc.png");
+	keyIcon_Esc->SetPosition({ 55.0f, 560.0f });
+	keyIcon_Esc->SetSize({ 50.0f, 50.0f });
+	keyIcon_Enter = std::make_unique<Sprite>();
+	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->SetPosition({ 55.0f, 505.0f });
+	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
+
+	// MoveUI
+	moveUI_ = std::make_unique<Sprite>();
+	moveUI_->Initialize("resources/StageSelect/Move.png");
+	moveUI_->SetPosition(moveUI_Pos_);
+	moveUI_->SetSize({ 125.0f,50.0f });
+	// CheckUI
+	checkUI_ = std::make_unique<Sprite>();
+	checkUI_->Initialize("resources/StageSelect/Check.png");
+	checkUI_->SetPosition(checkUI_Pos_);
+	checkUI_->SetSize({ 125.0f,50.0f });
+	// BackUI
+	backUI_ = std::make_unique<Sprite>();
+	backUI_->Initialize("resources/StageSelect/Back.png");
+	backUI_->SetPosition(backUI_Pos_);
+	backUI_->SetSize({ 125.0f,50.0f });
+	
+
+
 	ApplyNodeToCursorTransform();
 }
 
@@ -221,11 +459,20 @@ void StageSelectScene::Update()
 		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
 	}
 
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		// タイトルシーンへ切り替え
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+
 
 	// 空背景の更新
 	skyBack->Update();
 	// ステージセレクト土台の更新
 	stageSelectBase1->Update();
+	// ノードモデルの更新
+	for (auto& m : nodeModels_) { m->Update(); }
+
+	for (auto& m : routeModels_) { m->Update(); }
 
 	// 入力した方向に移動 
 	HandleSelectInput();
@@ -233,7 +480,10 @@ void StageSelectScene::Update()
 	// カーソル移動更新
 	UpdateCursorMove();
 
-	if (!isMoving_) {
+	// 停止後の向き補間更新
+	UpdateFaceYaw();
+
+	if (!isMoving_&&!isFacing_) {
 		// ステージセレクト入力処理
 		ApplyNodeToCursorTransform();
 	}
@@ -243,6 +493,19 @@ void StageSelectScene::Update()
 
 	// プレイヤーモデルの更新
 	playerModel->Update();
+	// ステージセレクトUIの更新
+	stageSelect_->Update();
+	// KeyUIの更新
+	keyIcon_W->Update();
+	keyIcon_A->Update();
+	keyIcon_S->Update();
+	keyIcon_D->Update();
+	keyIcon_Esc->Update();
+	keyIcon_Enter->Update();
+	// Move / Check / Back UIの更新
+	moveUI_->Update();
+	checkUI_->Update();
+	backUI_->Update();
 
 	// ImGuiの描画
 	DrawImgui();
@@ -256,6 +519,23 @@ void StageSelectScene::Draw()
 	stageSelectBase1->Draw();
 	// プレイヤーモデルの描画
 	playerModel->Draw();
+	// ノードモデルの描画
+	for (auto& m : nodeModels_) { m->Draw(); }
+	for (auto& m : routeModels_) { m->Draw(); }
+	// ステージセレクトUIの描画
+	stageSelect_->Draw();
+	// KeyUIの描画
+	keyIcon_W->Draw();
+	keyIcon_A->Draw();
+	keyIcon_S->Draw();
+	keyIcon_D->Draw();
+	keyIcon_Esc->Draw();
+	keyIcon_Enter->Draw();
+	// Move / Check / Back UIの描画
+	moveUI_->Draw();
+	checkUI_->Draw();
+	backUI_->Draw();
+
 }
 
 void StageSelectScene::Finalize()
@@ -298,6 +578,42 @@ void StageSelectScene::DrawImgui()
 	ImGui::DragFloat3("SkyBackScale", &skyBackTransform.scale.x, 0.1f);
 	skyBack->SetTransform(skyBackTransform);
 
+	// UIKeyIcon配置変更
+	keyIcon_W_Pos = keyIcon_W->GetPosition();
+	keyIcon_A_Pos = keyIcon_A->GetPosition();
+	keyIcon_S_Pos = keyIcon_S->GetPosition();
+	keyIcon_D_Pos = keyIcon_D->GetPosition();
+	keyIcon_Esc_Pos = keyIcon_Esc->GetPosition();
+	keyIcon_Enter_Pos = keyIcon_Enter->GetPosition();
+	ImGui::DragFloat2("KeyIcon_W_Pos", &keyIcon_W_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_A_Pos", &keyIcon_A_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_S_Pos", &keyIcon_S_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_D_Pos", &keyIcon_D_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_Esc_Pos", &keyIcon_Esc_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_Enter_Pos", &keyIcon_Enter_Pos.x, 1.0f);
+
+
+	keyIcon_W->SetPosition(keyIcon_W_Pos);
+	keyIcon_A->SetPosition(keyIcon_A_Pos);
+	keyIcon_S->SetPosition(keyIcon_S_Pos);
+	keyIcon_D->SetPosition(keyIcon_D_Pos);
+	keyIcon_Esc->SetPosition(keyIcon_Esc_Pos);
+	keyIcon_Enter->SetPosition(keyIcon_Enter_Pos);
+
+	// Move / Check / Back UI配置変更
+	moveUI_Pos_ = moveUI_->GetPosition();
+	ImGui::DragFloat2("MoveUI_Pos", &moveUI_Pos_.x, 1.0f);
+	moveUI_->SetPosition(moveUI_Pos_);
+	
+	checkUI_Pos_ = checkUI_->GetPosition();
+	ImGui::DragFloat2("CheckUI_Pos", &checkUI_Pos_.x, 1.0f);
+	checkUI_->SetPosition(checkUI_Pos_);
+
+	backUI_Pos_ = backUI_->GetPosition();
+	ImGui::DragFloat2("BackUI_Pos", &backUI_Pos_.x, 1.0f);
+	backUI_->SetPosition(backUI_Pos_);
+	
+
 	ImGui::End();
 	// ステージセレクトグラフのデバッグ表示
 	DrawSelectGraphImGui();
@@ -316,7 +632,7 @@ void StageSelectScene::PlayerMove()
 void StageSelectScene::HandleSelectInput()
 {
 
-	if (isMoving_)return;
+	if (isMoving_||isFacing_)return;
 
 	// 現在のノードIDを保存
 	uint32_t next = currentNodeId;
@@ -345,6 +661,20 @@ void StageSelectScene::HandleSelectInput()
 	moveStartPos_ = transform.translate;
 	moveTargetPos_ = CalcNodeWorldPos(next);
 	prevFramePos_ = moveStartPos_;
+
+	Vector3 diff = moveTargetPos_ - moveStartPos_;
+	diff.y = 0.0f;
+	float dist = std::sqrtf(diff.x * diff.x + diff.z * diff.z);
+
+	// 速度から所要時間を決める
+	float dur = dist / moveSpeed_;
+
+	// clamp
+	if (dur < moveMinDuration_) dur = moveMinDuration_;
+	if (dur > moveMaxDuration_) dur = moveMaxDuration_;
+
+	moveDuration_ = dur;
+
 }
 
 void StageSelectScene::ApplyNodeToCursorTransform()
@@ -372,10 +702,7 @@ void StageSelectScene::ApplyNodeToCursorTransform()
 	Transform tr = playerModel->GetTransform();
 	tr.translate = CalcNodeWorldPos(currentNodeId);
 
-	tr.rotate.y = CalcYawFaceCamera(tr.translate);
-
-	tr.rotate.x = 0.0f;
-	tr.rotate.z = 0.0f;
+	
 	playerModel->SetTransform(tr);
 }
 
@@ -711,7 +1038,7 @@ void StageSelectScene::DrawSelectGraphImGui()
 				);
 
 				editNodeId_ = newId;
-				prevEditNodeId_ = UINT32_MAX; // 次フレームでロード
+				prevEditNodeId_ = UINT32_MAX; 
 				jsonDirty_ = true;
 			}
 

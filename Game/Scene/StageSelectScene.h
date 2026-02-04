@@ -2,6 +2,7 @@
 #include "engine/InsideScene/BaseScene.h"
 #include <MyMath.h>
 #include "SceneSelectGraph/StageSelectGraph.h"
+#include "Sprite.h"
 
 /// <summary>
 /// ステージセレクトシーン
@@ -85,6 +86,16 @@ private:
 	/// <returns></returns>
 	float CalcYawFaceCamera(const Vector3& pos)const;
 
+	/// <summary>
+	/// カメラ方向を向く更新
+	/// </summary>
+	void UpdateFaceYaw();
+
+	/// <summary>
+	/// ルートモデルの構築
+	/// </summary>
+	void BuildRoutes();
+
 private:
 	// カメラ / トランスフォーム
 	Camera* camera = nullptr;
@@ -108,6 +119,42 @@ private:
     uint32_t currentNodeId = 0;
 	uint32_t startNodeId = 0;
 
+	// ノードモデル群
+	std::vector<std::unique_ptr<Object3D>>nodeModels_;
+	std::vector<Transform>nodeTransforms_;
+
+	std::vector<std::unique_ptr<Object3D>> routeModels_;
+	std::vector<Transform> routeTransforms_;
+
+	// stages electUI
+	std::unique_ptr<Sprite>stageSelect_;
+
+	// kyeUI
+	std::unique_ptr<Sprite> keyIcon_W;
+	Vector2 keyIcon_W_Pos = { 1100.0f,650.0f };
+	std::unique_ptr<Sprite> keyIcon_A;
+	Vector2 keyIcon_A_Pos = { 1020.0f,680.0f };
+	std::unique_ptr<Sprite> keyIcon_S;
+	Vector2 keyIcon_S_Pos = { 1100.0f,710.0f };
+	std::unique_ptr<Sprite> keyIcon_D;
+	Vector2 keyIcon_D_Pos = { 1180.0f,680.0f };
+
+	// esc
+	std::unique_ptr<Sprite> keyIcon_Esc;
+	Vector2 keyIcon_Esc_Pos = { 100.0f,650.0f };
+	// enter
+	std::unique_ptr<Sprite> keyIcon_Enter;
+	Vector2 keyIcon_Enter_Pos = { 200.0f,650.0f };
+
+	// MoveUI
+	std::unique_ptr<Sprite>moveUI_;
+	Vector2 moveUI_Pos_ = { 160.0f,635.0f };
+	// CheckUI
+	std::unique_ptr<Sprite>checkUI_;
+	Vector2 checkUI_Pos_ = { 160.0f, 505.0f };
+	// BackUI
+	std::unique_ptr<Sprite>backUI_;
+	Vector2 backUI_Pos_ = { 160.0f, 560.0f };
 
 private:
 	// ノード移動アニメーション用
@@ -124,7 +171,27 @@ private:
 	float cursorRadius_ = 2.5f;
 
 	
+	// 停止後の「カメラ方向を向く」補間用
+	bool  isFacing_ = false;
+	float faceTime_ = 0.0f;
+	float faceDuration_ = 0.18f;   
+	float faceStartYaw_ = 0.0f;
+	float faceTargetYaw_ = 0.0f;
+
+	float faceStartRx_ = 0.0f;
+	float faceStartRz_ = 0.0f;
+
+	float moveSpeed_ = 18.0f;      // ワールド単位/秒（好みで調整）
+	float moveMinDuration_ = 0.18f;
+	float moveMaxDuration_ = 0.55f;
+
+	// --- 回頭（Yaw）制御 ---
+	float yawTurnSpeed_ = 15.0f;   // [rad/sec] 回頭の速さ（大きいほどクイック）
+	float camBiasMove_ = 1.0f;   // 移動中にどれだけカメラ方向へ寄せるか(0..1)
+	float camBiasEnd_ = 0.8f;   // 移動の終盤でカメラ方向へ寄せる量(0..1)
+
 	
+
 
 #ifdef USE_IMGUI
 	// 選択中ノードが変わったか判定用
