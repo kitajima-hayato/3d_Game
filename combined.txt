@@ -27,6 +27,8 @@
 └── └── └── └── Map.h
 └── └── ├── ModelList.cpp
 └── └── ├── ModelList.h
+└── └── ├── PlayContext.cpp
+└── └── ├── PlayContext.h
 └── └── ├── Player/
 └── └── └── ├── Player.cpp
 └── └── └── └── Player.h
@@ -311,6 +313,7 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Scene\Pause\PauseUI.cpp" />
     <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
     <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
+    <ClCompile Include="Game\Application\PlayContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
@@ -371,6 +374,7 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Scene\Pause\PauseUI.h" />
     <ClInclude Include="Game\Camera\StartCamPhase.h" />
     <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
+    <ClInclude Include="Game\Application\PlayContext.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -569,6 +573,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
     <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
     <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
+    <ClCompile Include="Game\Application\PlayContext.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -738,6 +743,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
     <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
+    <ClInclude Include="Game\Application\PlayContext.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -931,11 +937,11 @@ void BackGround::Initialize()
 	// 足場　土
 	soil = std::make_unique<Object3D>();
 	soil->Initialize();
-	soil->SetModel("soil.obj");
+	soil->SetModel("Grass.obj");
 	soilTransform = {
-		{ 7.0f,1.0f,1.0f },
+		{ 40.0f,1.0f,2.0f },
 		{ 0.0f,0.0f,0.0f },
-		{ 0.0f,-8.6f,20.0f }
+		{ 0.0f,-8.0f,20.0f }
 	};
 	soil->SetTransform(soilTransform);
 }
@@ -1020,6 +1026,16 @@ void BackGround::DrawImgui()
 	// scale
 	ImGui::DragFloat3("SkyBack Scale", &skyBackTransform.scale.x, 0.1f);
 	skyBack->SetTransform(skyBackTransform);
+
+	// Grassの位置調整
+	ImGui::DragFloat3("Soil Translate", &soilTransform.translate.x, 0.1f);
+	soil->SetTransform(soilTransform);
+	// rotate
+	ImGui::DragFloat3("Soil Rotate", &soilTransform.rotate.x, 0.1f);
+	soil->SetTransform(soilTransform);
+	// scale
+	ImGui::DragFloat3("Soil Scale", &soilTransform.scale.x, 0.1f);
+	soil->SetTransform(soilTransform);
 	ImGui::End();
 	
 
@@ -1864,6 +1880,7 @@ std::vector<std::vector<BlockType>> CsvLoader::LoadMapBlockType(const std::strin
 	std::ifstream file(frontFilePath + filePath + extensionCsv_);
 	// ファイルが開けなかった場合のエラーチェック
 	if (!file.is_open()) {
+		// マップデータが存在しないもしくは開けなかった場合のエラー処理
 		throw std::runtime_error("CSVファイルが開けません: " + filePath);
 	}
 	// 1行ずつ読み込む
@@ -2048,16 +2065,16 @@ ImVec4 GetBlockColorByType(BlockType blockType) {
 }
 #endif
 
-void Map::Initialize(const char* filePath)
+void Map::Initialize(const std::string& mapFilePath)
 {
 	// マップデータの初期化
 	mapChipData_.mapData.resize(kMapHeight, std::vector<BlockType>(kMapWidth, BlockType::Air));
 
 	// マップ番号の保存
-	mapNumber_ = filePath;
+	mapNumber_ = mapFilePath;
 
 	// マップデータの読み込み
-	LoadMapData(filePath);
+	LoadMapData(mapFilePath);
 
 	// マップブロックの生成
 	GenerateMapBlock();
@@ -2489,13 +2506,13 @@ void Map::GenerateEnemyLayer()
 }
 
 
-void Map::LoadMapData(const char* filePath)
+void Map::LoadMapData(const std::string& mapFilePath)
 {
 	// CSVファイルからマップデータを読み込む
 	CsvLoader csvLoader;
-	mapChipData_.mapData = csvLoader.LoadMapBlockType(filePath);
+	mapChipData_.mapData = csvLoader.LoadMapBlockType(mapFilePath);
 
-	std::string enemyLayerFilePath = filePath + std::string("_EnemyLayer");
+	std::string enemyLayerFilePath = mapFilePath + std::string("_EnemyLayer");
 	// 敵レイヤーデータの読み込み
 	enemyLayerData_.enemyData = csvLoader.LoadMapEnemyType(enemyLayerFilePath);
 
@@ -2662,7 +2679,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(const char* filePath);
+	void Initialize(const std::string& mapFilePath);
 
 	/// <summary>
 	/// 更新
@@ -2692,7 +2709,7 @@ public:
 	/// <summary>
 	/// マップデータの読み込み
 	/// </summary>
-	void LoadMapData(const char* filePath);
+	void LoadMapData(const std::string& mapFilePath);
 
 
 public:	// Setter / Getter
@@ -2826,6 +2843,8 @@ void ModelList::LoadAllModel()
 							   
 	/// StageSelectScene	   
 	ModelManager::GetInstance().LoadModel("SelectBaseGround.obj");
+	ModelManager::GetInstance().LoadModel("Node.obj");
+	ModelManager::GetInstance().LoadModel("RoutePlane.obj");
 							   
 	/// GamePlayScene		   
 	ModelManager::GetInstance().LoadModel("Grass.obj");
@@ -2853,6 +2872,66 @@ class ModelList
 
 public:
 	void LoadAllModel();
+};
+
+
+
+============================================================
+File Path: Game/Application/PlayContext.cpp
+============================================================
+#include "PlayContext.h"
+
+
+============================================================
+File Path: Game/Application/PlayContext.h
+============================================================
+#pragma once
+#include <cstdint>
+#include <string>
+
+/// <summary>
+/// プレイコンテキスト
+/// </summary>
+class PlayContext
+{
+public:
+	// プレイ中のステージID取得
+	static PlayContext& GetInstance() {
+		static PlayContext instance;
+		return instance;
+	}
+	/// <summary>
+	/// 選択中のステージID取得
+	/// </summary>
+	/// <param name="id">ステージの名前</param>
+	void SetSelectedStageId(uint32_t id) { selectedStageId_ = id; }
+
+	/// <summary>
+	/// 選択中のステージ設定
+	/// </summary>
+	/// <param name="id">セットするステージid</param>
+	/// <param name="key">セットするステージキー</param>
+	void SetSelectedStage(uint32_t id,const std::string& key){
+		selectedStageId_ = id;
+		selectedStageKey_ = key;
+	}
+
+	/// <summary>
+	/// 選択中のステージID取得
+	/// </summary>
+	/// <returns>選択中のステージIDを返す</returns>
+	uint32_t GetSelectedStageId()const { return selectedStageId_; }
+
+	/// <summary>
+	/// 選択中のステージキー取得
+	/// </summary>
+	/// <returns>選択中のステージキーを返す</returns>
+	const std::string& GetSelectedStageKey()const { return selectedStageKey_; }
+private:
+	// ステージID
+	uint32_t selectedStageId_ = 0;
+	// デフォルトステージキー
+	std::string selectedStageKey_ = "1-1";
 };
 
 
@@ -3541,6 +3620,14 @@ void Player::ImGui()
 			ImGui::SliderFloat("Gravity", &status_.kGravity, 0.01f, 0.2f);
 			ImGui::SliderFloat("Max Fall Speed", &status_.kMaxFallSpeed, 0.1f, 2.0f);
 			ImGui::SliderFloat("Jump Power", &status_.kJumpPower, 0.1f, 1.0f);
+
+			// Playerのスタッツの変更
+			Vector3 pos = playerModel_->GetTranslate();
+			ImGui::DragFloat3("Player Position", &pos.x, 0.1f);
+			playerModel_->SetTranslate(pos);
+			Vector3 rot = playerModel_->GetRotate();
+			ImGui::DragFloat3("Player Rotation", &rot.x, 0.1f);
+			playerModel_->SetRotate(rot);
 			ImGui::EndTabItem();
 		}
 
@@ -5528,6 +5615,9 @@ File Path: Game/Particle/ParticleManager.cpp
 #include <TextureManager.h>
 #include "WinAPI.h"
 #include <numbers>
+
+using namespace Engine;
+
 ParticleManager* ParticleManager::instance = nullptr;
 ParticleManager* ParticleManager::GetInstance()
 {
@@ -6423,7 +6513,7 @@ public:
 	/// <param name="dxCommon"></param>
 	/// <param name="srvManager"></param>
 	/// <param name="camera"></param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
 
 
 	/// <summary>
@@ -6530,7 +6620,7 @@ public:
 
 private:
 	// DirectXCommon
-	DirectXCommon* dxCommon;
+	Engine::DirectXCommon* dxCommon;
 	// SRVマネージャー
 	SrvManager* srvManager;
 	// 頂点データ
@@ -6627,9 +6717,13 @@ File Path: Game/Scene/GamePlayScene.cpp
 #include "Game/Collision/CollisionManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "engine/InsideScene/Framework.h"
+#include "Game/Application/PlayContext.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
+
+using Engine::DirectXCommon;
+
 GamePlayScene::GamePlayScene()
 {
 }
@@ -6651,10 +6745,14 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	// カメラクラスの生成
 	camera = Framework::GetMainCamera();
 
+	const std::string& key = PlayContext::GetInstance().GetSelectedStageKey();
 
 	// マップ
 	map = std::make_unique<Map>();
-	map->Initialize("1-2");
+
+	// ノードに応じたステージを初期化
+	stageKey = key.empty() ? "1-1" : key.c_str();
+	map->Initialize(stageKey);
 
 
 	collision_ = std::make_unique<CollisionManager>();
@@ -6818,7 +6916,7 @@ void GamePlayScene::Update()
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
-		sceneManager->ChangeScene("GAMEPLAY");
+		sceneManager->ChangeScene("STAGECLEAR");
 	}
 
 	
@@ -7040,6 +7138,8 @@ void GamePlayScene::DrawImgui()
 {
 #ifdef USE_IMGUI
 	ImGui::Begin("Camera Settings / GamePlayScene");
+	// 読み込んでいるマップデータのキー
+	ImGui::Text("SelectedStage:%s",stageKey);
 	//==============================
 	// Start Camera Intro Tuning UI
 	//==============================
@@ -7082,6 +7182,7 @@ File Path: Game/Scene/GamePlayScene.h
 #include "Game/Application/UI/GamePlayHUD.h"
 #include "Game/Camera/StartCamPhase.h"
 #include "Game/Application/UI/DamageFeedBack.h"
+#include "engine/base/DirectXCommon.h"
 /// <summary>
 /// ゲームプレイシーン
 /// ゲームプレイ中のシーンを管理する
@@ -7110,7 +7211,7 @@ public:
 	/// 初期化処理
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon)override;
+	void Initialize(Engine::DirectXCommon* dxCommon) override;
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -7253,6 +7354,8 @@ private:
 	std::unique_ptr<StartCamPhase> startCam_;
 
 	Vector3 baseCameraPos_ = {};
+
+	std::string stageKey;
 };
 
 
@@ -7273,6 +7376,9 @@ File Path: Game/Scene/MyGame.cpp
 #include "Game/Application/ModelList.h"
 #include "engine/InsideScene/Framework.h"
 #include "engine/InsideScene/SceneManager.h"
+
+using namespace Engine;
+
 void MyGame::Initialize()
 {
 	Framework::Initialize();
@@ -8022,17 +8128,13 @@ StageSelectGraph::~StageSelectGraph()
 void StageSelectGraph::Initialize()
 {
 	//// ノードの追加
-	//uint32_t nodeA = AddNode({ 0,0 }, 1, true);
-	//uint32_t nodeB = AddNode({ 1,0 }, 2, false);
-	//uint32_t nodeC = AddNode({ 1,1 }, 3, false);
-	//uint32_t nodeD = AddNode({ 2,0 }, 4, false);
-	//// ノードの接続
-	//Link(nodeA, nodeB, Direction::Right);
-	//Link(nodeB, nodeC, Direction::Up);
-	//Link(nodeB, nodeD, Direction::Down);
+	
+	// ノード情報をJSONファイルから読み込み
+	LoadMapNodeFromJson("World_1");
+	// ノード境界情報の再計算     
+	RecalculateBounds();
 
-	LoadMapNodeFromJson("StageSelectNodes");
-
+	
 }
 
 
@@ -8040,13 +8142,14 @@ void StageSelectGraph::Finalize()
 {
 }
 
-uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, bool unlocked)
+uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, const std::string& stageKey, bool unlocked)
 {
 	// 新しいノードを作成
 	StageNode newNode{};
 	newNode.id = static_cast<uint32_t>(nodes_.size());
 	newNode.position = pos;
 	newNode.stageId = stageId;
+	newNode.stageKey = stageKey;
 	newNode.unlocked = unlocked;
 
 	// 全方向の隣接ノードを無効に設定
@@ -8054,8 +8157,12 @@ uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, bool unlocked)
 		newNode.neighbor[i] = INVALID_NODE_ID;
 	}
 	nodes_.push_back(newNode);
+	// ノード境界情報の再計算
+	RecalculateBounds();
+	// 追加したノードのIDを返す
 	return newNode.id;
 }
+
 
 
 
@@ -8086,9 +8193,9 @@ uint32_t StageSelectGraph::Move(uint32_t currentNodeId, Direction dir) const
 		return currentNodeId;
 	}
 	// ロックされていたら移動できない
-	if (!nodes_[nextNodeId].unlocked) {
+	/*if (!nodes_[nextNodeId].unlocked) {
 		return currentNodeId;
-	}
+	}*/
 
 	return nextNodeId;
 }
@@ -8104,7 +8211,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 {
 	// JSONファイルからノード情報を読み込む処理
 	// filePathはリソースフォルダからの相対パス
-	const std::string frontFilePath = "resources/StageSelect";
+	const std::string frontFilePath = "resources/WorldSelect";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 
@@ -8129,6 +8236,8 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 	// ノード情報の確認
 	assert(deserialized.contains("nodes"));
 	assert(deserialized["nodes"].is_array());
+	
+
 
 	// 既存ノード情報のクリア
 	nodes_.clear();
@@ -8144,6 +8253,8 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 
 		assert(jsonNode.contains("stage_id"));
 		assert(jsonNode["stage_id"].is_number_integer());
+		assert(jsonNode.contains("stage_key"));
+		assert(jsonNode["stage_key"].is_string());
 		assert(jsonNode.contains("unlocked"));
 		assert(jsonNode["unlocked"].is_boolean());
 
@@ -8153,9 +8264,11 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 		pos.y = jsonNode["position"]["y"].get<uint32_t>();
 		uint32_t stageId = jsonNode["stage_id"].get<uint32_t>();
 		bool unlocked = jsonNode["unlocked"].get<bool>();
+		std::string stageKey = jsonNode["stage_key"].get<std::string>();
+
 
 		// ノードの追加
-		AddNode(pos, stageId, unlocked);
+		AddNode(pos, stageId, stageKey, unlocked);
 	}
 
 	// -------- 2パス目：neighbors 設定 --------
@@ -8215,6 +8328,7 @@ nlohmann::json StageSelectGraph::ToJson() const
 		nlohmann::json jn;
 		jn["position"] = { {"x",n.position.x},{"y",n.position.y} };
 		jn["stage_id"] = n.stageId;
+		jn["stage_key"] = n.stageKey;
 		jn["unlocked"] = n.unlocked;
 
 		nlohmann::json neigh = nlohmann::json::object();
@@ -8248,6 +8362,43 @@ void StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
 	ofs << ToJsonString(2);
 }
 
+Vector2 StageSelectGraph::GetNodeUV(uint32_t nodeId) const
+{
+	// ノードIDの範囲チェック
+	const StageNode& node = nodes_.at(nodeId);
+	// 範囲計算
+	const float rangeX = (bounds_.max.x > bounds_.min.x) ? static_cast<float>(bounds_.max.x - bounds_.min.x) : 1.0f;
+	const float rangeY = (bounds_.max.y > bounds_.min.y) ? static_cast<float>(bounds_.max.y - bounds_.min.y) : 1.0f;
+	// UV座標計算
+	const float u = (static_cast<float>(node.position.x - bounds_.min.x)) / rangeX;
+	const float v = (static_cast<float>(node.position.y - bounds_.min.y)) / rangeY;
+	// 返却
+	return Vector2{ u,v };
+}
+
+void StageSelectGraph::RecalculateBounds()
+{
+	// ノードの境界情報を再計算する処理
+	// ノードが存在しない場合は初期化して終了
+	if (nodes_.empty()) {
+		bounds_ = {};
+		return;
+	}
+
+	// 最小・最大座標を初期化
+	bounds_.min = nodes_[0].position;
+	bounds_.max = nodes_[0].position;
+
+	// 全ノードを走査して最小・最大座標を更新
+	for (const auto& n : nodes_) {
+		if (n.position.x < bounds_.min.x) bounds_.min.x = n.position.x;
+		if (n.position.y < bounds_.min.y) bounds_.min.y = n.position.y;
+		if (n.position.x > bounds_.max.x) bounds_.max.x = n.position.x;
+		if (n.position.y > bounds_.max.y) bounds_.max.y = n.position.y;
+	}
+
+}
+
 
 
 bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
@@ -8256,6 +8407,8 @@ bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
 	if (id >= nodes_.size()) return false;
 	// 座標の設定
 	nodes_[id].position = pos;
+	// ノード境界情報の再計算
+	RecalculateBounds();
 	return true;
 }
 
@@ -8266,6 +8419,13 @@ bool StageSelectGraph::SetNodeStageId(uint32_t id, uint32_t stageId)
 	if (id >= nodes_.size()) return false;
 	// ステージIDの設定
 	nodes_[id].stageId = stageId;
+	return true;
+}
+
+bool StageSelectGraph::SetNodeStageKey(uint32_t id, const std::string& stageKey)
+{
+	if (id >= nodes_.size()) return false;
+	nodes_[id].stageKey = stageKey;
 	return true;
 }
 
@@ -8305,6 +8465,7 @@ File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.h
 #include <vector>
 #include <cstdint>
 #include <resources/json/json.hpp>
+#include <string>
 
 /// <summary>
 /// ステージセレクトグラフ
@@ -8316,6 +8477,11 @@ struct MapPos
 {
 	uint32_t x;
 	uint32_t y;
+};
+
+struct NodeBounds {
+	MapPos min;
+	MapPos max;
 };
 
 enum class Direction
@@ -8334,10 +8500,11 @@ struct StageNode {
 	MapPos position;
 	// ステージID
 	uint32_t stageId;
+	std::string stageKey;
 	// アンロック状態
 	bool unlocked;
 	// 隣接ノードID配列 / 読み方はネイバー
-	uint32_t neighbor[(uint32_t)Direction::count];
+	int32_t neighbor[(uint32_t)Direction::count];
 };
 
 /// <summary>
@@ -8345,7 +8512,6 @@ struct StageNode {
 /// </summary>
 class StageSelectGraph
 {
-	
 public:
 	// 無効なノードID
 	static const uint32_t INVALID_NODE_ID = UINT32_MAX;
@@ -8371,7 +8537,7 @@ public:
 	/// <param name="stageId">ステージのID</param>
 	/// <param name="unlocked">解放状態か</param>
 	/// <returns>ステージIDも返す</returns>
-	uint32_t AddNode(MapPos pos,uint32_t stageId,bool unlocked);
+	uint32_t AddNode(MapPos pos,uint32_t stageId,const std::string& stageKey,bool unlocked);
 
 	/// <summary>
 	/// ノード接続
@@ -8420,9 +8586,33 @@ public:
 	/// </summary>
 	/// <param name="fileName">保存する時のjsonファイルの名前</param>
 	void SaveToJsonFile(const std::string& fileName) const;
+
+	/// <summary>
+	/// ノードの境界情報を取得
+	/// </summary>
+	/// <returns></returns>
+	NodeBounds GetBounds()const { return bounds_; }
+
+	/// <summary>
+	/// ノードのUV座標を取得
+	/// </summary>
+	/// <param name="nodeId">ノードの座標</param>
+	/// <returns>変換後の座標</returns>
+	Vector2 GetNodeUV(uint32_t nodeId) const;
+private:
+	/// <summary>
+	/// ノードの境界情報を再計算
+	/// </summary>
+	void RecalculateBounds();
+
 private:
 	// ノードリスト
 	std::vector<StageNode> nodes_;
+
+	// ノードの境界情報
+	NodeBounds bounds_;
+
+	
 
 	
 public:
@@ -8430,6 +8620,7 @@ public:
 	// ノード情報編集
 	bool SetNodePos(uint32_t id, MapPos pos);
 	bool SetNodeStageId(uint32_t id, uint32_t stageId);
+	bool SetNodeStageKey(uint32_t id, const std::string& stageKey);
 	bool SetNodeUnlocked(uint32_t id, bool unlocked);
 	// 隣接ノード編集 / 追加・削除
 	bool SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid);
@@ -8785,6 +8976,8 @@ File Path: Game/Scene/StageClearScene.cpp
 #include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include <SpriteCommon.h>
+using Engine::DirectXCommon;
 StageClearScene::StageClearScene()
 {
 }
@@ -8795,9 +8988,11 @@ StageClearScene::~StageClearScene()
 
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
+	SpriteCommon::GetInstance().Initialize(dxCommon);
+
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
-	cameraTransform.translate = { 0.0f,0.0f,-10.0f };
+	cameraTransform.translate = { 0.0f,-5.0f,4.0f };
 	cameraTransform.rotate = { 0.0f,0.0f,0.0f };
 	camera->SetTranslate(cameraTransform.translate);
 	camera->SetRotate(cameraTransform.rotate);
@@ -8805,32 +9000,168 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 	// @todo: お祝い感のあるパーティクルを降らせる
 
 
+	backGround_ = std::make_unique<BackGround>();
+	backGround_->Initialize();
+
+	// スプライトの初期化
+	clearTextSprite = std::make_unique<Sprite>();
+	clearTextSprite->Initialize("resources/ClearScene/StageClear.png");
+
+	clearTextPos = { 0.0f,0.0f }; 
+	clearTextSprite->SetPosition(clearTextPos);
+	clearTextSprite->SetSize({ 1280.0f,720.0f });
+
+	// playerObject_の初期化
+	playerObject_ = std::make_unique<Object3D>();
+	playerObject_->Initialize();
+	playerTransform_ = {
+		{ 1.0f,1.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
+		{ 5.0f,-7.0f,20.0f }
+	};
+	playerObject_->SetTransform(playerTransform_);
+	playerObject_->SetModel("Player.obj");
+
+
+	// OneMore / Select / Title UI
+	oneMore_ = std::make_unique<Sprite>();
+	oneMore_->Initialize("resources/ClearScene/ClearUI_OneMore.png");
+	oneMore_->SetPosition({ 250.0f,570.0f });
+	oneMore_->SetSize(oneMoreBaseSize_);
+
+	select_ = std::make_unique<Sprite>();
+	select_->Initialize("resources/ClearScene/ClearUI_Select.png");
+	select_->SetPosition({ 550.0f,570.0f });
+	select_->SetSize(selectBaseSize_);
+
+	title_ = std::make_unique<Sprite>();
+	title_->Initialize("resources/ClearScene/ClearUI_Title.png");
+	title_->SetPosition({ 850.0f,570.0f });
+	title_->SetSize(titleBaseSize_);
+
+	// KeyIconUi　/ 左下に配置
+
+	keyIcon_A = std::make_unique<Sprite>();
+	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->SetPosition({ 30.0f, 635.0f });
+	keyIcon_A->SetSize({ 50.0f, 50.0f });
+
+	keyIcon_D = std::make_unique<Sprite>();
+	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->SetPosition({ 80.0f, 635.0f });
+	keyIcon_D->SetSize({ 50.0f, 50.0f });
+
+	keyIcon_Enter = std::make_unique<Sprite>();
+	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->SetPosition({ 55.0f, 565.0f });
+	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 }
 
 void StageClearScene::Update()
 {
 	// カメラの更新
 	camera->Update();
+	if(Input::GetInstance()->TriggerKey(DIK_A) || Input::GetInstance()->TriggerKey(DIK_LEFT)) {
+		int idx = static_cast<int>(selectedItem_);
+		idx = (idx - 1 + static_cast<int>(ClearMenuItem::Count)) % static_cast<int>(ClearMenuItem::Count);
+		selectedItem_ = static_cast<ClearMenuItem>(idx);
+	}
+	// 右へ（D or →）
+	else if (Input::GetInstance()->TriggerKey(DIK_D) || Input::GetInstance()->TriggerKey(DIK_RIGHT)) {
+		int idx = static_cast<int>(selectedItem_);
+		idx = (idx + 1) % static_cast<int>(ClearMenuItem::Count);
+		selectedItem_ = static_cast<ClearMenuItem>(idx);
+	}
 
-	// タイトルへ戻る (1)
-	if (Input::GetInstance()->TriggerKey(DIK_1)) {
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+	// ========= 決定（Enter / Space） =========
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN) ) {
+		switch (selectedItem_) {
+		case ClearMenuItem::OneMore:
+			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");     // もう一回 = 今のステージをやり直すなら GAMEPLAY
+			break;
+		case ClearMenuItem::Select:
+			SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+			break;
+		case ClearMenuItem::Title:
+			SceneManager::GetInstance()->ChangeScene("TITLE");
+			break;
+		default:
+			break;
+		}
+		return; // シーン遷移したら以降の更新を止めたい場合
 	}
-	// ステージセレクトへ戻る (2)
-	else if (Input::GetInstance()->TriggerKey(DIK_2)) {
-		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	oneMore_->SetSize(oneMoreBaseSize_);
+	select_->SetSize(selectBaseSize_);
+	title_->SetSize(titleBaseSize_);
+	
+	// 回転させる
+	Vector3 rotate = playerObject_->GetRotate();
+	rotate.z += -0.1f;
+	playerObject_->SetRotate(rotate);
+
+	// 選択中だけ少し大きく
+	auto Scale = [](const Vector2& v, float s) { return Vector2{ v.x * s, v.y * s }; };
+
+	switch (selectedItem_) {
+	case ClearMenuItem::OneMore:
+		oneMore_->SetSize(Scale(oneMoreBaseSize_, selectScale_));
+		break;
+	case ClearMenuItem::Select:
+		select_->SetSize(Scale(selectBaseSize_, selectScale_));
+		break;
+	case ClearMenuItem::Title:
+		title_->SetSize(Scale(titleBaseSize_, selectScale_));
+		break;
+	default:
+		break;
 	}
-	// ゲームプレイへ戻る (3)
-	else if (Input::GetInstance()->TriggerKey(DIK_3)) {
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
-	}
+	//// タイトルへ戻る (1)
+	//if (Input::GetInstance()->TriggerKey(DIK_1)) {
+	//	SceneManager::GetInstance()->ChangeScene("TITLE");
+	//}
+	//// ステージセレクトへ戻る (2)
+	//else if (Input::GetInstance()->TriggerKey(DIK_2)) {
+	//	SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	//}
+	//// ゲームプレイへ戻る (3)
+	//else if (Input::GetInstance()->TriggerKey(DIK_3)) {
+	//	SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	//}
+
+	playerObject_->Update();
+
+	backGround_->Update();
+
+	clearTextSprite->Update();
+
+
+	keyIcon_A->Update();
+
+	keyIcon_D->Update();
+	keyIcon_Enter->Update();
+
+	
+	oneMore_->Update();
+	select_->Update();
+	title_->Update();
+
 	// ImGuiの描画
 	DrawImgui();
 }
 
 void StageClearScene::Draw()
 {
+	backGround_->Draw();
+	playerObject_->Draw();
+	clearTextSprite->Draw();
 
+	keyIcon_A->Draw();
+
+	keyIcon_D->Draw();
+	keyIcon_Enter->Draw();
+	oneMore_->Draw();
+	select_->Draw();
+	title_->Draw();
 }
 
 void StageClearScene::Finalize()
@@ -8853,6 +9184,10 @@ void StageClearScene::DrawImgui()
 	camera->SetTranslate(cameraTransform.translate);
 	camera->SetRotate(cameraTransform.rotate);
 
+	ImGui::Separator();
+	
+	
+
 	ImGui::End();
 #endif
 }
@@ -8864,7 +9199,10 @@ File Path: Game/Scene/StageClearScene.h
 #pragma once
 #include "engine/InsideScene/BaseScene.h"
 #include "MyMath.h"
-
+#include "Game/Application/BackGround.h"
+#include <memory>
+#include "MyMath.h"
+#include "Sprite.h"
 /// <summary>
 /// ステージクリアシーン
 /// ステージをクリアしたときに表示されるシーン
@@ -8874,6 +9212,13 @@ class Camera;
 class StageClearScene :
     public BaseScene
 {
+	enum class ClearMenuItem {
+		OneMore = 0,
+		Select,
+		Title,
+		Count
+	};
+
 public:
 	StageClearScene();
 	~StageClearScene();
@@ -8881,7 +9226,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon)override;
+	void Initialize(Engine::DirectXCommon* dxCommon)override;
 
 	/// <summary>
 	/// 更新処理
@@ -8907,6 +9252,42 @@ private:
 	/// カメラ
 	Camera* camera = nullptr;
 	Transform cameraTransform;
+	// 背景
+	std::unique_ptr<BackGround> backGround_;
+	// プレイヤーオブジェクト
+	std::unique_ptr<Object3D>playerObject_;
+	Transform playerTransform_;
+
+
+	// クリアテキスト
+	std::unique_ptr<Sprite> clearTextSprite;
+	Vector2 clearTextPos = {};
+
+	// OneMore / Select / Title UI
+
+	std::unique_ptr<Sprite> oneMore_;
+	Vector2 oneMorePos;
+	std::unique_ptr<Sprite> select_;
+	Vector2 selectPos;
+	std::unique_ptr<Sprite> title_;
+	Vector2 titlePos;
+	// 選択しているアイテム
+	ClearMenuItem selectedItem_ = ClearMenuItem::OneMore;
+	// 選択時の拡縮編集用Vector2
+	Vector2 oneMoreBaseSize_ = { 200.0f, 90.0f };
+	Vector2 selectBaseSize_ = { 200.0f, 90.0f };
+	Vector2 titleBaseSize_ = { 200.0f, 90.0f };
+	// 選択時に８％程大きくする
+	float selectScale_ = 1.08f;
+
+
+	// kyeUI
+	std::unique_ptr<Sprite> keyIcon_A;
+	std::unique_ptr<Sprite> keyIcon_D;
+
+	// enter
+	std::unique_ptr<Sprite> keyIcon_Enter;
+	Vector2 keyIcon_Enter_Pos = { 200.0f,650.0f };
 };
 
 
@@ -8918,9 +9299,293 @@ File Path: Game/Scene/StageSelectScene.cpp
 #include "engine/InsideScene/Framework.h"
 #include "Game/Camera/Camera.h"
 #include "engine/3d/Object3D.h"
+#include "Game/Application/PlayContext.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
+
+using namespace Engine;
+
+static float EaseOutCubic(float t)
+{
+	float inv = 1.0f - t;
+	return 1.0f - inv * inv * inv;
+}
+
+static float WrapAngle0To2Pi(float angle)
+{
+	const float twoPi = 6.28318530718f;
+	while (angle < 0.0f) angle += twoPi;
+	while (angle >= twoPi) angle -= twoPi;
+	return angle;
+}
+
+static float WrapAngleMinusPiToPi(float a)
+{
+	const float pi = 3.14159265359f;
+	const float twoPi = 6.28318530718f;
+	while (a <= -pi) a += twoPi;
+	while (a > pi)  a -= twoPi;
+	return a;
+}
+
+static float LerpAngle(float from, float to, float t)
+{
+	float delta = WrapAngleMinusPiToPi(to - from); 
+	return from + delta * t;
+}
+static float DampAngle(float current, float target, float turnSpeedRadPerSec, float dt)
+{
+	// 1-exp(-k*dt) でフレームレート非依存の追従率にする
+	float a = 1.0f - std::exp(-turnSpeedRadPerSec * dt);
+	return LerpAngle(current, target, a);
+}
+
+
+Vector3 StageSelectScene::CalcNodeWorldPos(uint32_t nodeId)const
+{
+	const Vector2 uv = stageSelectGraph->GetNodeUV(nodeId);
+
+	const float mapWidth = 40.0f;
+	const float mapHeight = 20.0f;
+
+	Vector3 origin = stageSelectBase1Transform.translate;
+	origin.y = 1.0f;
+
+	Vector3 t = origin;
+	t.x += (uv.x - 0.5f) * mapWidth;
+
+	// 上下反転済みの式（あなたが直したやつ）
+	t.z += (0.5f - uv.y) * mapHeight;
+
+	return t;
+}
+
+void StageSelectScene::UpdateCursorMove()
+{
+	// 移動中でなければ終了
+	if (!isMoving_)return;
+	// 経過時間を進める
+	const float dt = 1.0f / 60.0f;
+	moveTime_ += dt;
+
+	float t = moveTime_ / moveDuration_;
+	if (t >= 1.0f) t = 1.0f;
+
+	float ease = EaseOutCubic(t);
+
+	// 位置の保管
+	Vector3 position;
+	position = moveStartPos_ + (moveTargetPos_ - moveStartPos_) * ease;
+
+	// プレイヤー回転
+	Vector3 delta = position - prevFramePos_;
+	delta.y = 0.0f;
+
+	// 移動距離に応じた回転量
+	const float distance = std::sqrtf(delta.x * delta.x + delta.z * delta.z);
+	
+	// プレイヤートランスフォーム取得
+	Transform transform = playerModel->GetTransform();
+	// 位置更新
+	transform.translate = position;
+
+	// delta から進行方向yaw（Yaw 0が+Z前提）
+	if (distance > 1e-6f)
+	{
+		// 進行方向Yaw
+		float moveYaw = std::atan2f(delta.x, delta.z);
+		const float modelYawOffset = -1.570796326f; // あなたのモデル補正
+		moveYaw = WrapAngle0To2Pi(moveYaw + modelYawOffset);
+
+		// カメラ方向Yaw（位置は position を使う：移動中に徐々に“こっち向き”にしたいので）
+		float camYaw = CalcYawFaceCamera(position);
+
+		// 移動中の “カメラ寄せ” 量：序盤は弱く、終盤で強く
+		float bias = camBiasMove_ + (camBiasEnd_ - camBiasMove_) * ease; // 0..1
+
+		// 進行方向とカメラ方向をブレンドした“狙うYaw”
+		float targetYaw = WrapAngle0To2Pi(LerpAngle(moveYaw, camYaw, bias));
+
+		// 現在YawからターゲットYawへ、回頭速度付きで追従
+		float curYaw = playerModel->GetTransform().rotate.y;
+		transform.rotate.y = WrapAngle0To2Pi(DampAngle(curYaw, targetYaw, yawTurnSpeed_, dt));
+	}
+
+
+	if (distance > 1e-6f && cursorRadius_ > 1e-6f)
+	{
+		const float angle = distance / cursorRadius_;
+
+		const float invDist = 1.0f / distance;
+		const float nx = delta.x * invDist;
+		const float nz = delta.z * invDist;
+
+		// 回転軸 = ( +nz, 0, -nx ) 相当を Eulerで近似
+		transform.rotate.x += angle * nz;
+		transform.rotate.z += angle * -nx;
+	}
+	// プレイヤー位置更新
+	playerModel->SetTransform(transform);
+
+	prevFramePos_ = position;
+
+	if (t >= 1.0f)
+	{
+		// 位置を完全に固定（誤差除去）
+		Transform endTr = playerModel->GetTransform();
+		endTr.translate = moveTargetPos_;
+
+		playerModel->SetTransform(endTr);
+
+		prevFramePos_ = moveTargetPos_;
+		isMoving_ = false;
+
+		faceStartRx_ = endTr.rotate.x;
+		faceStartRz_ = endTr.rotate.z;
+
+		// 向き補間開始
+		isFacing_ = true;
+		faceTime_ = 0.0f;
+		
+		// 角度を 0..2pi にしているなら補間前に揃えておくと安定しやすい
+		faceStartYaw_ = WrapAngle0To2Pi(endTr.rotate.y);
+		faceTargetYaw_ = WrapAngle0To2Pi(CalcYawFaceCamera(endTr.translate));
+
+	}
+}
+
+float StageSelectScene::CalcYawFaceCamera(const Vector3& pos) const
+{
+	// カメラ位置（あなたは cameraTransform を持ってるのでそれを使う）
+	Vector3 camPos = cameraTransform.translate;
+
+	Vector3 d = camPos - pos;
+	d.y = 0.0f;
+
+	const float len = std::sqrtf(d.x * d.x + d.z * d.z);
+	if (len < 1e-6f) return 0.0f;
+
+	d.x /= len;
+	d.z /= len;
+
+	// yaw 0 が「+Z向き」の系なら atan2(x,z) が定番
+	float yaw = std::atan2f(d.x, d.z);
+
+	// もしモデルの正面が「右(+X)」基準なら、オフセットが必要
+	// 右向きが正面 → yawに +90deg(=π/2) などを足して調整
+	const float modelYawOffset = -1.570796326f; // 必要なら 1.570796f を試す
+	yaw += modelYawOffset;
+
+	return WrapAngle0To2Pi(yaw);
+}
+
+void StageSelectScene::UpdateFaceYaw()
+{
+	if (!isFacing_) return;
+
+	const float dt = 1.0f / 60.0f;
+	faceTime_ += dt;
+
+	float t = faceTime_ / faceDuration_;
+	if (t >= 1.0f) t = 1.0f;
+
+	float ease = EaseOutCubic(t);
+
+	Transform tr = playerModel->GetTransform();
+
+	// yaw補間を反映
+	float yaw = LerpAngle(faceStartYaw_, faceTargetYaw_, ease);
+	tr.rotate.y = WrapAngle0To2Pi(yaw); 
+
+
+
+	// 転がり成分は0へ戻す（好み）
+	tr.rotate.x = faceStartRx_ * (1.0f - ease);
+	tr.rotate.z = faceStartRz_ * (1.0f - ease);
+
+	playerModel->SetTransform(tr);
+
+	if (t >= 1.0f)
+	{
+		Transform end = playerModel->GetTransform();
+		end.rotate.y = faceTargetYaw_;
+		end.rotate.x = 0.0f;
+		end.rotate.z = 0.0f;
+		playerModel->SetTransform(end);
+		isFacing_ = false;
+	}
+}
+
+void StageSelectScene::BuildRoutes()
+{
+	routeModels_.clear();
+	routeTransforms_.clear();
+
+	const uint32_t count = stageSelectGraph->GetNodeCount();
+	if (count == 0) return;
+
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		const StageNode& n = stageSelectGraph->GetNode(i);
+
+		for (int d = 0; d < (int)Direction::count; ++d)
+		{
+			uint32_t to = n.neighbor[d];
+			if (to == StageSelectGraph::INVALID_NODE_ID) continue;
+
+			// 重複生成防止（i->to と to->i を1本にする）
+			if (to < i) continue;
+
+			// 端点（ワールド座標）
+			Vector3 a = CalcNodeWorldPos(i);
+			Vector3 b = CalcNodeWorldPos(to);
+
+			// 少し浮かせる（床に埋まらないように）
+			a.y += 0.05f;
+			b.y += 0.05f;
+
+			Vector3 diff = b - a;
+			diff.y = 0.0f;
+
+			//float len = std::sqrtf(diff.x * diff.x + diff.z * diff.z);
+			//if (len < 1e-6f) continue;
+
+			Vector3 mid = (a + b) * 0.5f;
+
+			// yaw（Yaw 0 が +Z 前提）
+			float yaw = std::atan2f(diff.x, diff.z);
+
+			// ルートモデルが「+Z方向に長い板」ならこのままでOK
+			// もしモデルが +X 方向に伸びてるなら yaw += PI/2 が必要
+			// yaw += 1.570796326f;
+
+			// Object3D作成
+			auto obj = std::make_unique<Object3D>();
+			obj->Initialize();
+			obj->SetModel("RoutePlane.obj"); // ←用意したルート用モデル名
+
+			Transform tr{};
+			tr.translate = mid;
+			tr.translate.y -= 1.0f; // 少し浮かせる
+			tr.rotate = { 0.0f, yaw, 0.0f };
+
+			// 重要：長さ方向のスケールを len に合わせる
+			// どの軸が「長手」かはモデル次第：
+			//  - 板が +Z 方向に長いなら scale.z = len
+			//  - 板が +X 方向に長いなら scale.x = len
+			tr.scale = { 0.5f, 0.5f, 1.0f };   // ←まずはこれで試す
+
+			obj->SetTransform(tr);
+
+			routeTransforms_.push_back(tr);
+			routeModels_.push_back(std::move(obj));
+		}
+	}
+}
+
+
+
 
 StageSelectScene::StageSelectScene()
 {
@@ -8932,7 +9597,7 @@ StageSelectScene::~StageSelectScene()
 
 void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 {
-    
+
 	// カメラの取得
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,20.0f,0.0f };
@@ -8945,7 +9610,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	playerModel->SetModel("Player.obj");
 	playerTransform = {
 		// scale
-		{1.5f,1.5f,1.5f},
+		{2.5f,2.5f,2.5f},
 		// rotate
 		{0.0f,0.0f,0.0f},
 		// translate
@@ -8983,36 +9648,163 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 	stageSelectGraph = std::make_unique<StageSelectGraph>();
 	stageSelectGraph->Initialize();
+
+	BuildRoutes();
 	// ノードの追加
 	startNodeId = 0;
 	currentNodeId = startNodeId;
+
+	Vector3 pos = CalcNodeWorldPos(currentNodeId);
+	Transform transform = playerModel->GetTransform();
+	transform.translate = pos;
+	playerModel->SetTransform(transform);
+
+	isMoving_ = false;
+	moveTime_ = 0.0f;
+	moveStartPos_ = pos;
+	moveTargetPos_ = pos;
+	prevFramePos_ = pos;
+
+	const uint32_t count = stageSelectGraph->GetNodeCount();
+	nodeModels_.clear();
+	nodeTransforms_.clear();
+	nodeModels_.reserve(count);
+	nodeTransforms_.reserve(count);
+
+	for (uint32_t i = 0; i < count; ++i)
+	{
+		auto obj = std::make_unique<Object3D>();
+		obj->Initialize();
+		obj->SetModel("Node.obj"); // 同じモデル
+
+		Transform tr{};
+		tr.scale = { 1.8f, 1.8f, 1.8f };   // 目印なら少し小さく
+		tr.rotate = { 0.0f, 0.0f, 0.0f };
+		tr.translate = CalcNodeWorldPos(i);
+
+		// ちょい浮かせたいなら
+		tr.translate.y += -1.1f; // 例: 0.3f
+
+		// 「常にカメラ向き」にしたいなら
+		tr.rotate.y = CalcYawFaceCamera(tr.translate);
+
+		obj->SetTransform(tr);
+
+		nodeTransforms_.push_back(tr);
+		nodeModels_.push_back(std::move(obj));
+	}
+	// UI
+	stageSelect_ = std::make_unique<Sprite>();
+	stageSelect_->Initialize("resources/StageSelect/StageSelect.png");
+	stageSelect_->SetPosition({ 0.0f,0.0f });
+	stageSelect_->SetSize({ 1280.0f,720.0f });
+
+	// KeyIconUi　/ 左下に配置
+	keyIcon_W = std::make_unique<Sprite>();
+	keyIcon_W->Initialize("resources/KyeUI/W.png");
+	keyIcon_W->SetPosition({ 55.0f, 615.0f });
+	keyIcon_W->SetSize({ 50.0f, 50.0f });
+	keyIcon_A = std::make_unique<Sprite>();
+	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->SetPosition({ 10.0f, 635.0f });
+	keyIcon_A->SetSize({ 50.0f, 50.0f });
+	keyIcon_S = std::make_unique<Sprite>();
+	keyIcon_S->Initialize("resources/KyeUI/S.png");
+	keyIcon_S->SetPosition({ 55.0f, 660.0f });
+	keyIcon_S->SetSize({ 50.0f, 50.0f });
+	keyIcon_D = std::make_unique<Sprite>();
+	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->SetPosition({ 100.0f, 635.0f });
+	keyIcon_D->SetSize({ 50.0f, 50.0f });
+
+	// esc / enter UI配置
+	keyIcon_Esc = std::make_unique<Sprite>();
+	keyIcon_Esc->Initialize("resources/KyeUI/Esc.png");
+	keyIcon_Esc->SetPosition({ 55.0f, 560.0f });
+	keyIcon_Esc->SetSize({ 50.0f, 50.0f });
+	keyIcon_Enter = std::make_unique<Sprite>();
+	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->SetPosition({ 55.0f, 505.0f });
+	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
+
+	// MoveUI
+	moveUI_ = std::make_unique<Sprite>();
+	moveUI_->Initialize("resources/StageSelect/Move.png");
+	moveUI_->SetPosition(moveUI_Pos_);
+	moveUI_->SetSize({ 125.0f,50.0f });
+	// CheckUI
+	checkUI_ = std::make_unique<Sprite>();
+	checkUI_->Initialize("resources/StageSelect/Check.png");
+	checkUI_->SetPosition(checkUI_Pos_);
+	checkUI_->SetSize({ 125.0f,50.0f });
+	// BackUI
+	backUI_ = std::make_unique<Sprite>();
+	backUI_->Initialize("resources/StageSelect/Back.png");
+	backUI_->SetPosition(backUI_Pos_);
+	backUI_->SetSize({ 125.0f,50.0f });
+	
+
 
 	ApplyNodeToCursorTransform();
 }
 
 void StageSelectScene::Update()
 {
-    if (Input::GetInstance()->TriggerKey(DIK_1)) {
-        SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
-    }
-	
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
+		const StageNode& node = stageSelectGraph->GetNode(currentNodeId);
+		PlayContext::GetInstance().SetSelectedStage(node.stageId, node.stageKey);
+
+		// ステージシーンへ切り替え
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
+		// タイトルシーンへ切り替え
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+
 
 	// 空背景の更新
 	skyBack->Update();
 	// ステージセレクト土台の更新
 	stageSelectBase1->Update();
+	// ノードモデルの更新
+	for (auto& m : nodeModels_) { m->Update(); }
 
-	// ステージセレクト入力処理
-	ApplyNodeToCursorTransform();
+	for (auto& m : routeModels_) { m->Update(); }
 
 	// 入力した方向に移動 
 	HandleSelectInput();
+
+	// カーソル移動更新
+	UpdateCursorMove();
+
+	// 停止後の向き補間更新
+	UpdateFaceYaw();
+
+	if (!isMoving_&&!isFacing_) {
+		// ステージセレクト入力処理
+		ApplyNodeToCursorTransform();
+	}
 
 	// プレイヤー移動処理
 	PlayerMove();
 
 	// プレイヤーモデルの更新
 	playerModel->Update();
+	// ステージセレクトUIの更新
+	stageSelect_->Update();
+	// KeyUIの更新
+	keyIcon_W->Update();
+	keyIcon_A->Update();
+	keyIcon_S->Update();
+	keyIcon_D->Update();
+	keyIcon_Esc->Update();
+	keyIcon_Enter->Update();
+	// Move / Check / Back UIの更新
+	moveUI_->Update();
+	checkUI_->Update();
+	backUI_->Update();
 
 	// ImGuiの描画
 	DrawImgui();
@@ -9026,6 +9818,23 @@ void StageSelectScene::Draw()
 	stageSelectBase1->Draw();
 	// プレイヤーモデルの描画
 	playerModel->Draw();
+	// ノードモデルの描画
+	for (auto& m : nodeModels_) { m->Draw(); }
+	for (auto& m : routeModels_) { m->Draw(); }
+	// ステージセレクトUIの描画
+	stageSelect_->Draw();
+	// KeyUIの描画
+	keyIcon_W->Draw();
+	keyIcon_A->Draw();
+	keyIcon_S->Draw();
+	keyIcon_D->Draw();
+	keyIcon_Esc->Draw();
+	keyIcon_Enter->Draw();
+	// Move / Check / Back UIの描画
+	moveUI_->Draw();
+	checkUI_->Draw();
+	backUI_->Draw();
+
 }
 
 void StageSelectScene::Finalize()
@@ -9068,6 +9877,42 @@ void StageSelectScene::DrawImgui()
 	ImGui::DragFloat3("SkyBackScale", &skyBackTransform.scale.x, 0.1f);
 	skyBack->SetTransform(skyBackTransform);
 
+	// UIKeyIcon配置変更
+	keyIcon_W_Pos = keyIcon_W->GetPosition();
+	keyIcon_A_Pos = keyIcon_A->GetPosition();
+	keyIcon_S_Pos = keyIcon_S->GetPosition();
+	keyIcon_D_Pos = keyIcon_D->GetPosition();
+	keyIcon_Esc_Pos = keyIcon_Esc->GetPosition();
+	keyIcon_Enter_Pos = keyIcon_Enter->GetPosition();
+	ImGui::DragFloat2("KeyIcon_W_Pos", &keyIcon_W_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_A_Pos", &keyIcon_A_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_S_Pos", &keyIcon_S_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_D_Pos", &keyIcon_D_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_Esc_Pos", &keyIcon_Esc_Pos.x, 1.0f);
+	ImGui::DragFloat2("KeyIcon_Enter_Pos", &keyIcon_Enter_Pos.x, 1.0f);
+
+
+	keyIcon_W->SetPosition(keyIcon_W_Pos);
+	keyIcon_A->SetPosition(keyIcon_A_Pos);
+	keyIcon_S->SetPosition(keyIcon_S_Pos);
+	keyIcon_D->SetPosition(keyIcon_D_Pos);
+	keyIcon_Esc->SetPosition(keyIcon_Esc_Pos);
+	keyIcon_Enter->SetPosition(keyIcon_Enter_Pos);
+
+	// Move / Check / Back UI配置変更
+	moveUI_Pos_ = moveUI_->GetPosition();
+	ImGui::DragFloat2("MoveUI_Pos", &moveUI_Pos_.x, 1.0f);
+	moveUI_->SetPosition(moveUI_Pos_);
+	
+	checkUI_Pos_ = checkUI_->GetPosition();
+	ImGui::DragFloat2("CheckUI_Pos", &checkUI_Pos_.x, 1.0f);
+	checkUI_->SetPosition(checkUI_Pos_);
+
+	backUI_Pos_ = backUI_->GetPosition();
+	ImGui::DragFloat2("BackUI_Pos", &backUI_Pos_.x, 1.0f);
+	backUI_->SetPosition(backUI_Pos_);
+	
+
 	ImGui::End();
 	// ステージセレクトグラフのデバッグ表示
 	DrawSelectGraphImGui();
@@ -9079,375 +9924,454 @@ void StageSelectScene::PlayerMove()
 	// プレイヤーの座標取得
 	Transform transform = playerModel->GetTransform();
 
-	if (Input::GetInstance()->PushKey(DIK_W)) {
-		transform.translate.z += 0.5f;
-	}
 
 	playerModel->SetTransform(transform);
 }
 
 void StageSelectScene::HandleSelectInput()
 {
+
+	if (isMoving_||isFacing_)return;
+
+	// 現在のノードIDを保存
+	uint32_t next = currentNodeId;
+
+	// 入力した方向に移動できるノードがあれば移動
 	if (Input::GetInstance()->TriggerKey(DIK_W)) {
-		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Up);
+		next = stageSelectGraph->Move(currentNodeId, Direction::Up);
 	} else if (Input::GetInstance()->TriggerKey(DIK_S)) {
-		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Down);
+		next = stageSelectGraph->Move(currentNodeId, Direction::Down);
 	} else if (Input::GetInstance()->TriggerKey(DIK_A)) {
-		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Left);
+		next = stageSelectGraph->Move(currentNodeId, Direction::Left);
 	} else if (Input::GetInstance()->TriggerKey(DIK_D)) {
-		currentNodeId = stageSelectGraph->Move(currentNodeId, Direction::Right);
+		next = stageSelectGraph->Move(currentNodeId, Direction::Right);
 	}
+	// ノードが変わらなければ何もしない
+	if (next == currentNodeId)return;
+
+	currentNodeId = next;
+
+	// 移動開始
+	isMoving_ = true;
+	moveTime_ = 0.0f;
+
+	// ノード更新
+	Transform transform = playerModel->GetTransform();
+	moveStartPos_ = transform.translate;
+	moveTargetPos_ = CalcNodeWorldPos(next);
+	prevFramePos_ = moveStartPos_;
+
+	Vector3 diff = moveTargetPos_ - moveStartPos_;
+	diff.y = 0.0f;
+	float dist = std::sqrtf(diff.x * diff.x + diff.z * diff.z);
+
+	// 速度から所要時間を決める
+	float dur = dist / moveSpeed_;
+
+	// clamp
+	if (dur < moveMinDuration_) dur = moveMinDuration_;
+	if (dur > moveMaxDuration_) dur = moveMaxDuration_;
+
+	moveDuration_ = dur;
+
 }
 
 void StageSelectScene::ApplyNodeToCursorTransform()
 {
-	const StageNode& node = stageSelectGraph->GetNode(currentNodeId);
-	MapPos pos = node.position;
-	Vector3 translate = playerModel->GetTransform().translate;
-	translate.x += static_cast<float>(pos.x);
-	translate.y;
-	translate.z += static_cast<float>(pos.y);
-	playerModel->SetTranslate(translate);
+	//const StageNode& node = stageSelectGraph->GetNode(currentNodeId);
+
+	//// 正規化座標に変換（Graph側で bounds を見て計算）
+	//const Vector2 uv = stageSelectGraph->GetNodeUV(currentNodeId);
+
+
+	//// マップの表示範囲（ワールド単位）
+	//const float mapWidth = 30.0f;  // 横幅
+	//const float mapHeight = 20.0f;  // 縦幅
+
+	//// マップの基準（中心）位置
+	//Vector3 origin = stageSelectBase1Transform.translate;
+	//origin.y = 1.0f; // カーソル高さ
+
+	//// ノード位置をワールド座標に変換
+	//Vector3 t = origin;
+	//t.x += (uv.x - 0.5f) * mapWidth;
+	//t.z += (0.5f - uv.y) * mapHeight;
+
+	// 絶対座標でセット
+	Transform tr = playerModel->GetTransform();
+	tr.translate = CalcNodeWorldPos(currentNodeId);
 
 	
+	playerModel->SetTransform(tr);
 }
+
 
 void StageSelectScene::DrawSelectGraphImGui()
 {
 #ifdef USE_IMGUI
-    // Graph が無い場合は何もしない
-    if (!stageSelectGraph)
-    {
-        ImGui::Begin("StageSelect Graph");
-        ImGui::TextDisabled("stageSelectGraph is null.");
-        ImGui::End();
-        return;
-    }
+	// Graph が無い場合は何もしない
+	if (!stageSelectGraph)
+	{
+		ImGui::Begin("StageSelect Graph");
+		ImGui::TextDisabled("stageSelectGraph is null.");
+		ImGui::End();
+		return;
+	}
 
-    const uint32_t count = stageSelectGraph->GetNodeCount();
+	const uint32_t count = stageSelectGraph->GetNodeCount();
 
-    // 選択IDの補正
-    if (count == 0)
-    {
-        editNodeId_ = 0;
-        prevEditNodeId_ = UINT32_MAX; // 次にノードができたらロードされるように
-    } else if (editNodeId_ >= count)
-    {
-        editNodeId_ = count - 1;
-    }
+	// 選択IDの補正
+	if (count == 0)
+	{
+		editNodeId_ = 0;
+		prevEditNodeId_ = UINT32_MAX;
+	} else if (editNodeId_ >= count)
+	{
+		editNodeId_ = count - 1;
+	}
 
-    // 選択が変わったときだけ編集バッファへロード（★途中編集できない問題の解消点）
-    auto toUi = [&](uint32_t id)->int {
-        return (id == StageSelectGraph::INVALID_NODE_ID) ? -1 : (int)id;
-        };
+	// 選択が変わったときだけ編集バッファへロード
+	auto toUi = [&](uint32_t id)->int {
+		return (id == StageSelectGraph::INVALID_NODE_ID) ? -1 : (int)id;
+		};
 
-    if (count > 0 && editNodeId_ != prevEditNodeId_)
-    {
-        prevEditNodeId_ = editNodeId_;
-        const StageNode& n = stageSelectGraph->GetNode(editNodeId_);
+	if (count > 0 && editNodeId_ != prevEditNodeId_)
+	{
+		prevEditNodeId_ = editNodeId_;
+		const StageNode& n = stageSelectGraph->GetNode(editNodeId_);
 
-        editX_ = (int)n.position.x;
-        editY_ = (int)n.position.y;
-        editStageId_ = (int)n.stageId;
-        editUnlocked_ = n.unlocked;
+		editX_ = (int)n.position.x;
+		editY_ = (int)n.position.y;
+		editStageId_ = (int)n.stageId;
+		strncpy_s(editStageKey_, sizeof(editStageKey_), n.stageKey.c_str(), _TRUNCATE);
+		editUnlocked_ = n.unlocked;
 
-        editNeighUp_ = toUi(n.neighbor[(int)Direction::Up]);
-        editNeighDown_ = toUi(n.neighbor[(int)Direction::Down]);
-        editNeighLeft_ = toUi(n.neighbor[(int)Direction::Left]);
-        editNeighRight_ = toUi(n.neighbor[(int)Direction::Right]);
+		editNeighUp_ = toUi(n.neighbor[(int)Direction::Up]);
+		editNeighDown_ = toUi(n.neighbor[(int)Direction::Down]);
+		editNeighLeft_ = toUi(n.neighbor[(int)Direction::Left]);
+		editNeighRight_ = toUi(n.neighbor[(int)Direction::Right]);
 
-        jsonDirty_ = true;
-    }
+		jsonDirty_ = true;
+	}
 
-    auto toId = [&](int v)->uint32_t {
-        return (v < 0) ? StageSelectGraph::INVALID_NODE_ID : (uint32_t)v;
-        };
+	auto toId = [&](int v)->uint32_t {
+		return (v < 0) ? StageSelectGraph::INVALID_NODE_ID : (uint32_t)v;
+		};
 
-    auto validateNeighbor = [&](int v)->int {
-        if (v < 0) return 0;                 // none
-        if ((uint32_t)v >= count) return 2;  // invalid
-        return 1;                            // ok
-        };
+	auto validateNeighbor = [&](int v)->int {
+		if (v < 0) return 0;                 // none
+		if ((uint32_t)v >= count) return 2;  // invalid
+		return 1;                            // ok
+		};
 
-    // ========= UI =========
-    ImGui::Begin("StageSelect Graph", nullptr, ImGuiWindowFlags_NoCollapse);
+	// ========= UI =========
+	ImGui::Begin("StageSelect Graph", nullptr, ImGuiWindowFlags_NoCollapse);
 
-    ImGui::Text("Nodes: %u", count);
-    ImGui::SameLine();
-    ImGui::TextDisabled("Selected: %u", (count > 0) ? editNodeId_ : 0);
-    ImGui::Separator();
+	ImGui::Text("Nodes: %u", count);
+	ImGui::SameLine();
+	ImGui::TextDisabled("Selected: %u", (count > 0) ? editNodeId_ : 0);
+	ImGui::Separator();
 
-    // ---- Tabs ----
-    if (ImGui::BeginTabBar("GraphTabs"))
-    {
-        // ======================
-        // List tab
-        // ======================
-        if (ImGui::BeginTabItem("List"))
-        {
-            ImGui::Checkbox("Unlocked only", &filterUnlockedOnly_);
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(140.0f);
-            ImGui::InputInt("Filter StageId", &filterStageId_);
-            ImGui::SameLine();
-            if (ImGui::Button("Clear"))
-            {
-                filterUnlockedOnly_ = false;
-                filterStageId_ = -1;
-            }
+	// ---- Tabs ----
+	if (ImGui::BeginTabBar("GraphTabs"))
+	{
+		// ======================
+		// List tab
+		// ======================
+		if (ImGui::BeginTabItem("List"))
+		{
+			ImGui::Checkbox("Unlocked only", &filterUnlockedOnly_);
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(140.0f);
+			ImGui::InputInt("Filter StageId", &filterStageId_);
+			ImGui::SameLine();
+			if (ImGui::Button("Clear"))
+			{
+				filterUnlockedOnly_ = false;
+				filterStageId_ = -1;
+			}
 
-            ImGui::Separator();
+			ImGui::Separator();
 
-            ImGui::BeginChild("NodeList", ImVec2(0, 0), true);
+			ImGui::BeginChild("NodeList", ImVec2(0, 0), true);
 
-            if (ImGui::BeginTable("nodes_table", 6,
-                ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY |
-                ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
-            {
-                ImGui::TableSetupColumn("Index", ImGuiTableColumnFlags_WidthFixed, 60);
-                ImGui::TableSetupColumn("StageId", ImGuiTableColumnFlags_WidthFixed, 70);
-                ImGui::TableSetupColumn("Unlocked", ImGuiTableColumnFlags_WidthFixed, 80);
-                ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 60);
-                ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 60);
-                ImGui::TableSetupColumn("Neigh", ImGuiTableColumnFlags_WidthFixed, 70);
-                ImGui::TableHeadersRow();
+			if (ImGui::BeginTable("nodes_table", 6,
+				ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollY |
+				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+			{
+				ImGui::TableSetupColumn("Index", ImGuiTableColumnFlags_WidthFixed, 60);
+				ImGui::TableSetupColumn("StageId", ImGuiTableColumnFlags_WidthFixed, 70);
+				ImGui::TableSetupColumn("Unlocked", ImGuiTableColumnFlags_WidthFixed, 80);
+				ImGui::TableSetupColumn("X", ImGuiTableColumnFlags_WidthFixed, 60);
+				ImGui::TableSetupColumn("Y", ImGuiTableColumnFlags_WidthFixed, 60);
+				ImGui::TableSetupColumn("Neigh", ImGuiTableColumnFlags_WidthFixed, 70);
+				ImGui::TableHeadersRow();
 
-                for (uint32_t i = 0; i < count; ++i)
-                {
-                    const StageNode& n = stageSelectGraph->GetNode(i);
+				for (uint32_t i = 0; i < count; ++i)
+				{
+					const StageNode& n = stageSelectGraph->GetNode(i);
 
-                    if (filterUnlockedOnly_ && !n.unlocked) continue;
-                    if (filterStageId_ >= 0 && (int)n.stageId != filterStageId_) continue;
+					if (filterUnlockedOnly_ && !n.unlocked) continue;
+					if (filterStageId_ >= 0 && (int)n.stageId != filterStageId_) continue;
 
-                    int neighCount = 0;
-                    for (int d = 0; d < (int)Direction::count; ++d)
-                        if (n.neighbor[d] != StageSelectGraph::INVALID_NODE_ID) neighCount++;
+					int neighCount = 0;
+					for (int d = 0; d < (int)Direction::count; ++d)
+						if (n.neighbor[d] != StageSelectGraph::INVALID_NODE_ID) neighCount++;
 
-                    ImGui::TableNextRow();
+					ImGui::TableNextRow();
 
-                    ImGui::TableNextColumn();
-                    bool selected = (editNodeId_ == i);
+					ImGui::TableNextColumn();
+					bool selected = (editNodeId_ == i);
 
-                    ImGui::PushID((int)i);
-                    if (!n.unlocked) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
-                    if (ImGui::Selectable("##row", selected, ImGuiSelectableFlags_SpanAllColumns))
-                    {
-                        editNodeId_ = i;     // 次フレームでバッファがロードされる
-                    }
-                    if (!n.unlocked) ImGui::PopStyleColor();
-                    ImGui::PopID();
+					ImGui::PushID((int)i);
+					if (!n.unlocked) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 160, 160, 255));
+					if (ImGui::Selectable("##row", selected, ImGuiSelectableFlags_SpanAllColumns))
+					{
+						editNodeId_ = i;
+					}
+					if (!n.unlocked) ImGui::PopStyleColor();
+					ImGui::PopID();
 
-                    ImGui::SameLine();
-                    ImGui::Text("%u", i);
+					ImGui::SameLine();
+					ImGui::Text("%u", i);
 
-                    ImGui::TableNextColumn(); ImGui::Text("%u", n.stageId);
-                    ImGui::TableNextColumn(); ImGui::TextUnformatted(n.unlocked ? "Yes" : "No");
-                    ImGui::TableNextColumn(); ImGui::Text("%u", n.position.x);
-                    ImGui::TableNextColumn(); ImGui::Text("%u", n.position.y);
-                    ImGui::TableNextColumn(); ImGui::Text("%d", neighCount);
-                }
+					ImGui::TableNextColumn(); ImGui::Text("%u", n.stageId);
+					ImGui::TableNextColumn(); ImGui::TextUnformatted(n.unlocked ? "Yes" : "No");
+					ImGui::TableNextColumn(); ImGui::Text("%u", n.position.x);
+					ImGui::TableNextColumn(); ImGui::Text("%u", n.position.y);
+					ImGui::TableNextColumn(); ImGui::Text("%d", neighCount);
+				}
 
-                ImGui::EndTable();
-            }
+				ImGui::EndTable();
+			}
 
-            ImGui::EndChild();
-            ImGui::EndTabItem();
-        }
+			ImGui::EndChild();
+			ImGui::EndTabItem();
+		}
 
-        // ======================
-        // Node tab
-        // ======================
-        if (ImGui::BeginTabItem("Node"))
-        {
-            if (count == 0)
-            {
-                ImGui::TextDisabled("No nodes.");
-            } else
-            {
-                ImGui::Text("Editing node: %u", editNodeId_);
-                ImGui::Separator();
+		// ======================
+		// Node tab
+		// ======================
+		if (ImGui::BeginTabItem("Node"))
+		{
+			if (count == 0)
+			{
+				ImGui::TextDisabled("No nodes.");
+			} else
+			{
+				ImGui::Text("Editing node: %u", editNodeId_);
+				ImGui::Separator();
 
-                ImGui::SetNextItemWidth(200.0f);
-                ImGui::InputInt("StageId", &editStageId_);
-                ImGui::Checkbox("Unlocked", &editUnlocked_);
+				ImGui::SetNextItemWidth(200.0f);
+				ImGui::InputInt("StageId", &editStageId_);
+				ImGui::SetNextItemWidth(200.0f);
+				ImGui::InputText("StageKey", editStageKey_, sizeof(editStageKey_));
+				ImGui::Checkbox("Unlocked", &editUnlocked_);
 
-                ImGui::Separator();
+				ImGui::Separator();
 
-                ImGui::SetNextItemWidth(120.0f);
-                ImGui::InputInt("PosX", &editX_);
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(120.0f);
-                ImGui::InputInt("PosY", &editY_);
+				ImGui::SetNextItemWidth(120.0f);
+				ImGui::InputInt("PosX", &editX_);
+				ImGui::SameLine();
+				ImGui::SetNextItemWidth(120.0f);
+				ImGui::InputInt("PosY", &editY_);
 
-                if (ImGui::Button("Apply Node"))
-                {
-                    stageSelectGraph->SetNodeStageId(editNodeId_, (uint32_t)(std::max)(editStageId_, 0));
-                    stageSelectGraph->SetNodeUnlocked(editNodeId_, editUnlocked_);
-                    stageSelectGraph->SetNodePos(editNodeId_, {
-                        (uint32_t)(std::max)(editX_, 0),
-                        (uint32_t)(std::max)(editY_, 0)
-                        });
+				if (ImGui::Button("Apply Node"))
+				{
+					stageSelectGraph->SetNodeStageId(editNodeId_, (uint32_t)(std::max)(editStageId_, 0));
+					stageSelectGraph->SetNodeStageKey(editNodeId_, std::string(editStageKey_));
 
-                    jsonDirty_ = true;
-                }
+					stageSelectGraph->SetNodeUnlocked(editNodeId_, editUnlocked_);
+					stageSelectGraph->SetNodePos(editNodeId_, {
+						(uint32_t)(std::max)(editX_, 0),
+						(uint32_t)(std::max)(editY_, 0)
+						});
 
-                ImGui::SameLine();
-                if (ImGui::Button("Reload From Graph"))
-                {
-                    prevEditNodeId_ = UINT32_MAX; // 次フレームで再ロード
-                }
-            }
+					jsonDirty_ = true;
+				}
 
-            ImGui::EndTabItem();
-        }
+				ImGui::SameLine();
+				if (ImGui::Button("Reload From Graph"))
+				{
+					prevEditNodeId_ = UINT32_MAX; // 次フレームで再ロード
+				}
+			}
 
-        // ======================
-        // Neighbors tab
-        // ======================
-        if (ImGui::BeginTabItem("Neighbors"))
-        {
-            if (count == 0)
-            {
-                ImGui::TextDisabled("No nodes.");
-            } else
-            {
-                ImGui::Text("Editing node: %u", editNodeId_);
-                ImGui::TextDisabled("Use -1 for none. Valid range: 0..%u", (count > 0) ? (count - 1) : 0);
-                ImGui::Separator();
+			ImGui::EndTabItem();
+		}
 
-                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Up", &editNeighUp_);
-                {
-                    int s = validateNeighbor(editNeighUp_);
-                    ImGui::SameLine();
-                    if (s == 0) ImGui::TextDisabled("none");
-                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
-                    else ImGui::Text("ok");
-                }
+		// ======================
+		// Neighbors tab
+		// ======================
+		if (ImGui::BeginTabItem("Neighbors"))
+		{
+			if (count == 0)
+			{
+				ImGui::TextDisabled("No nodes.");
+			} else
+			{
+				ImGui::Text("Editing node: %u", editNodeId_);
+				ImGui::TextDisabled("Use -1 for none. Valid range: 0..%u", (count > 0) ? (count - 1) : 0);
+				ImGui::Separator();
 
-                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Down", &editNeighDown_);
-                {
-                    int s = validateNeighbor(editNeighDown_);
-                    ImGui::SameLine();
-                    if (s == 0) ImGui::TextDisabled("none");
-                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
-                    else ImGui::Text("ok");
-                }
+				ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Up", &editNeighUp_);
+				{
+					int s = validateNeighbor(editNeighUp_);
+					ImGui::SameLine();
+					if (s == 0) ImGui::TextDisabled("none");
+					else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+					else ImGui::Text("ok");
+				}
 
-                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Left", &editNeighLeft_);
-                {
-                    int s = validateNeighbor(editNeighLeft_);
-                    ImGui::SameLine();
-                    if (s == 0) ImGui::TextDisabled("none");
-                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
-                    else ImGui::Text("ok");
-                }
+				ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Down", &editNeighDown_);
+				{
+					int s = validateNeighbor(editNeighDown_);
+					ImGui::SameLine();
+					if (s == 0) ImGui::TextDisabled("none");
+					else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+					else ImGui::Text("ok");
+				}
 
-                ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Right", &editNeighRight_);
-                {
-                    int s = validateNeighbor(editNeighRight_);
-                    ImGui::SameLine();
-                    if (s == 0) ImGui::TextDisabled("none");
-                    else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
-                    else ImGui::Text("ok");
-                }
+				ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Left", &editNeighLeft_);
+				{
+					int s = validateNeighbor(editNeighLeft_);
+					ImGui::SameLine();
+					if (s == 0) ImGui::TextDisabled("none");
+					else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+					else ImGui::Text("ok");
+				}
 
-                if (ImGui::Button("Apply Neighbors"))
-                {
-                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Up, toId(editNeighUp_));
-                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Down, toId(editNeighDown_));
-                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Left, toId(editNeighLeft_));
-                    stageSelectGraph->SetNeighbor(editNodeId_, Direction::Right, toId(editNeighRight_));
-                    jsonDirty_ = true;
-                }
+				ImGui::SetNextItemWidth(140.0f); ImGui::InputInt("Right", &editNeighRight_);
+				{
+					int s = validateNeighbor(editNeighRight_);
+					ImGui::SameLine();
+					if (s == 0) ImGui::TextDisabled("none");
+					else if (s == 2) ImGui::TextColored(ImVec4(1, 0.2f, 0.2f, 1), "invalid");
+					else ImGui::Text("ok");
+				}
 
-                ImGui::SameLine();
-                if (ImGui::Button("Jump To Up") && editNeighUp_ >= 0 && (uint32_t)editNeighUp_ < count)    editNodeId_ = (uint32_t)editNeighUp_;
-                ImGui::SameLine();
-                if (ImGui::Button("Jump To Down") && editNeighDown_ >= 0 && (uint32_t)editNeighDown_ < count) editNodeId_ = (uint32_t)editNeighDown_;
+				if (ImGui::Button("Apply Neighbors"))
+				{
+					stageSelectGraph->SetNeighbor(editNodeId_, Direction::Up, toId(editNeighUp_));
+					stageSelectGraph->SetNeighbor(editNodeId_, Direction::Down, toId(editNeighDown_));
+					stageSelectGraph->SetNeighbor(editNodeId_, Direction::Left, toId(editNeighLeft_));
+					stageSelectGraph->SetNeighbor(editNodeId_, Direction::Right, toId(editNeighRight_));
+					jsonDirty_ = true;
+				}
 
-                if (ImGui::Button("Jump To Left") && editNeighLeft_ >= 0 && (uint32_t)editNeighLeft_ < count) editNodeId_ = (uint32_t)editNeighLeft_;
-                ImGui::SameLine();
-                if (ImGui::Button("Jump To Right") && editNeighRight_ >= 0 && (uint32_t)editNeighRight_ < count) editNodeId_ = (uint32_t)editNeighRight_;
-            }
+				ImGui::SameLine();
+				if (ImGui::Button("Jump To Up") && editNeighUp_ >= 0 && (uint32_t)editNeighUp_ < count)    editNodeId_ = (uint32_t)editNeighUp_;
+				ImGui::SameLine();
+				if (ImGui::Button("Jump To Down") && editNeighDown_ >= 0 && (uint32_t)editNeighDown_ < count) editNodeId_ = (uint32_t)editNeighDown_;
 
-            ImGui::EndTabItem();
-        }
+				if (ImGui::Button("Jump To Left") && editNeighLeft_ >= 0 && (uint32_t)editNeighLeft_ < count) editNodeId_ = (uint32_t)editNeighLeft_;
+				ImGui::SameLine();
+				if (ImGui::Button("Jump To Right") && editNeighRight_ >= 0 && (uint32_t)editNeighRight_ < count) editNodeId_ = (uint32_t)editNeighRight_;
+			}
 
-        // ======================
-        // JSON tab
-        // ======================
-        if (ImGui::BeginTabItem("JSON"))
-        {
-            ImGui::TextDisabled("Graph JSON preview (read-only).");
+			ImGui::EndTabItem();
+		}
 
-            if (ImGui::Button("Refresh"))
-            {
-                jsonDirty_ = true;
-            }
-            ImGui::SameLine();
+		// ======================
+		// JSON tab
+		// ======================
+		if (ImGui::BeginTabItem("JSON"))
+		{
+			ImGui::TextDisabled("Graph JSON preview (read-only).");
 
-            static char saveName[128] = "StageSelectNodes";
-            ImGui::SetNextItemWidth(220.0f);
-            ImGui::InputText("Save BaseName", saveName, sizeof(saveName));
-            ImGui::SameLine();
-            if (ImGui::Button("Save JSON"))
-            {
-                stageSelectGraph->SaveToJsonFile(saveName);
-            }
+			if (ImGui::Button("Refresh"))
+			{
+				jsonDirty_ = true;
+			}
+			ImGui::SameLine();
 
-            ImGui::Separator();
+			static char saveName[128] = "StageSelectNodes";
+			ImGui::SetNextItemWidth(220.0f);
+			ImGui::InputText("Save BaseName", saveName, sizeof(saveName));
+			ImGui::SameLine();
+			if (ImGui::Button("Save JSON"))
+			{
+				stageSelectGraph->SaveToJsonFile(saveName);
+			}
 
-            if (jsonDirty_)
-            {
-                std::string s = stageSelectGraph->ToJsonString(2);
-                strncpy_s(jsonBuf_, sizeof(jsonBuf_), s.c_str(), _TRUNCATE);
-                jsonDirty_ = false;
-            }
+			ImGui::Separator();
 
-            ImGui::InputTextMultiline("##json",
-                jsonBuf_, sizeof(jsonBuf_),
-                ImVec2(-1.0f, -1.0f),
-                ImGuiInputTextFlags_ReadOnly);
+			if (jsonDirty_)
+			{
+				std::string s = stageSelectGraph->ToJsonString(2);
+				strncpy_s(jsonBuf_, sizeof(jsonBuf_), s.c_str(), _TRUNCATE);
+				jsonDirty_ = false;
+			}
 
-            ImGui::EndTabItem();
-        }
+			ImGui::InputTextMultiline("##json",
+				jsonBuf_, sizeof(jsonBuf_),
+				ImVec2(-1.0f, -1.0f),
+				ImGuiInputTextFlags_ReadOnly);
 
-        // ======================
-        // Ops tab
-        // ======================
-        if (ImGui::BeginTabItem("Ops"))
-        {
-            ImGui::Text("Add Node");
-            ImGui::SetNextItemWidth(90.0f);  ImGui::InputInt("New X", &newX_);
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(90.0f);  ImGui::InputInt("New Y", &newY_);
-            ImGui::SameLine();
-            ImGui::SetNextItemWidth(120.0f); ImGui::InputInt("New StageId", &newStageId_);
-            ImGui::SameLine();
-            ImGui::Checkbox("New Unlocked", &newUnlocked_);
+			ImGui::EndTabItem();
+		}
 
-            if (ImGui::Button("Add"))
-            {
-                uint32_t newId = stageSelectGraph->AddNode(
-                    { (uint32_t)(std::max)(newX_, 0), (uint32_t)(std::max)(newY_, 0) },
-                    (uint32_t)(std::max)(newStageId_, 0),
-                    newUnlocked_
-                );
-                editNodeId_ = newId;
-                prevEditNodeId_ = UINT32_MAX; // 次フレームでロード
-                jsonDirty_ = true;
-            }
+		// ======================
+		// Ops tab
+		// ======================
+		if (ImGui::BeginTabItem("Ops"))
+		{
+			ImGui::Text("Add Node");
+			ImGui::SetNextItemWidth(90.0f);  ImGui::InputInt("New X", &newX_);
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(90.0f);  ImGui::InputInt("New Y", &newY_);
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(120.0f); ImGui::InputInt("New StageId", &newStageId_);
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(120.0f); ImGui::InputText("New StageKey", newStageKey_, sizeof(newStageKey_));
+			ImGui::SameLine();
+			ImGui::Checkbox("New Unlocked", &newUnlocked_);
 
-            ImGui::Separator();
-            ImGui::TextDisabled("Tips: Edit values here, then press Apply in each tab.");
+			if (ImGui::Button("Add"))
+			{
+				uint32_t newId = stageSelectGraph->AddNode(
+					{ (uint32_t)(std::max)(newX_, 0), (uint32_t)(std::max)(newY_, 0) },
+					(uint32_t)(std::max)(newStageId_, 0),
+					std::string(newStageKey_),
+					newUnlocked_
+				);
 
-            ImGui::EndTabItem();
-        }
+				editNodeId_ = newId;
+				prevEditNodeId_ = UINT32_MAX; 
+				jsonDirty_ = true;
+			}
 
-        ImGui::EndTabBar();
-    }
+			ImGui::Separator();
+			ImGui::TextDisabled("Tips: Edit values here, then press Apply in each tab.");
 
-    ImGui::End();
+			ImGui::EndTabItem();
+		}
+
+
+
+		if (ImGui::BeginTabItem("Cheack")) {
+
+			ImGui::Text("CurrentNodeId: %u", currentNodeId);
+
+			const StageNode& cn = stageSelectGraph->GetNode(currentNodeId);
+			ImGui::Text("Pos: (%u, %u)", cn.position.x, cn.position.y);
+
+			auto showTo = [&](Direction dir, const char* name) {
+				uint32_t to = cn.neighbor[(int)dir];
+				ImGui::Text("%s -> %u", name, to);
+				};
+			showTo(Direction::Up, "Up");
+			showTo(Direction::Down, "Down");
+			showTo(Direction::Left, "Left");
+			showTo(Direction::Right, "Right");
+
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
+	}
+
+	ImGui::End();
 #endif
 }
 
@@ -9459,15 +10383,14 @@ File Path: Game/Scene/StageSelectScene.h
 #include "engine/InsideScene/BaseScene.h"
 #include <MyMath.h>
 #include "SceneSelectGraph/StageSelectGraph.h"
+#include "Sprite.h"
 
 /// <summary>
 /// ステージセレクトシーン
 /// ステージ選択画面のシーン
 /// </summary>
 
-struct StageStatus {
 
-};
 class Object3D;
 class Camera;
 class StageSelectScene :
@@ -9481,7 +10404,7 @@ class StageSelectScene :
     /// <summary>
     /// 初期化処理
     /// </summary>
-    void Initialize(DirectXCommon* dxCommon)override;
+    void Initialize(Engine::DirectXCommon* dxCommon)override;
 
     /// <summary>
     /// 更新処理
@@ -9523,6 +10446,35 @@ private:
 	/// </summary>
 	void DrawSelectGraphImGui();
 
+	/// <summary>
+	/// ノードIDからワールド座標を計算
+	/// </summary>
+	/// <param name="nodeId">取得するノード</param>
+	/// <returns>ノードのワールド座標</returns>
+	Vector3 CalcNodeWorldPos(uint32_t nodeId)const;
+
+	/// <summary>
+	/// カーソル移動更新
+	/// </summary>
+	void UpdateCursorMove();
+
+	/// <summary>
+	/// 指定座標からカメラ方向を向くためのヨー角を計算
+	/// </summary>
+	/// <param name="pos"></param>
+	/// <returns></returns>
+	float CalcYawFaceCamera(const Vector3& pos)const;
+
+	/// <summary>
+	/// カメラ方向を向く更新
+	/// </summary>
+	void UpdateFaceYaw();
+
+	/// <summary>
+	/// ルートモデルの構築
+	/// </summary>
+	void BuildRoutes();
+
 private:
 	// カメラ / トランスフォーム
 	Camera* camera = nullptr;
@@ -9546,8 +10498,108 @@ private:
     uint32_t currentNodeId = 0;
 	uint32_t startNodeId = 0;
 
+	// ノードモデル群
+	std::vector<std::unique_ptr<Object3D>>nodeModels_;
+	std::vector<Transform>nodeTransforms_;
+
+	std::vector<std::unique_ptr<Object3D>> routeModels_;
+	std::vector<Transform> routeTransforms_;
+
+	// stages electUI
+	std::unique_ptr<Sprite>stageSelect_;
+
+	// kyeUI
+	std::unique_ptr<Sprite> keyIcon_W;
+	Vector2 keyIcon_W_Pos = { 1100.0f,650.0f };
+	std::unique_ptr<Sprite> keyIcon_A;
+	Vector2 keyIcon_A_Pos = { 1020.0f,680.0f };
+	std::unique_ptr<Sprite> keyIcon_S;
+	Vector2 keyIcon_S_Pos = { 1100.0f,710.0f };
+	std::unique_ptr<Sprite> keyIcon_D;
+	Vector2 keyIcon_D_Pos = { 1180.0f,680.0f };
+
+	// esc
+	std::unique_ptr<Sprite> keyIcon_Esc;
+	Vector2 keyIcon_Esc_Pos = { 100.0f,650.0f };
+	// enter
+	std::unique_ptr<Sprite> keyIcon_Enter;
+	Vector2 keyIcon_Enter_Pos = { 200.0f,650.0f };
+
+	// MoveUI
+	std::unique_ptr<Sprite>moveUI_;
+	Vector2 moveUI_Pos_ = { 160.0f,635.0f };
+	// CheckUI
+	std::unique_ptr<Sprite>checkUI_;
+	Vector2 checkUI_Pos_ = { 160.0f, 505.0f };
+	// BackUI
+	std::unique_ptr<Sprite>backUI_;
+	Vector2 backUI_Pos_ = { 160.0f, 560.0f };
 
 private:
+	// ノード移動アニメーション用
+	bool isMoving_ = false;
+	float moveTime_ = 0.0f;
+	float moveDuration_ = 0.18f;
+
+	// 移動前後の座標
+	Vector3 moveStartPos_ = {};
+	Vector3 moveTargetPos_ = {};
+	Vector3 prevFramePos_ = {};
+
+	// カーソルの半径
+	float cursorRadius_ = 2.5f;
+
+	
+	// 停止後の「カメラ方向を向く」補間用
+	bool  isFacing_ = false;
+	float faceTime_ = 0.0f;
+	float faceDuration_ = 0.18f;   
+	float faceStartYaw_ = 0.0f;
+	float faceTargetYaw_ = 0.0f;
+
+	float faceStartRx_ = 0.0f;
+	float faceStartRz_ = 0.0f;
+
+	float moveSpeed_ = 18.0f;      // ワールド単位/秒（好みで調整）
+	float moveMinDuration_ = 0.18f;
+	float moveMaxDuration_ = 0.55f;
+
+	// --- 回頭（Yaw）制御 ---
+	float yawTurnSpeed_ = 15.0f;   // [rad/sec] 回頭の速さ（大きいほどクイック）
+	float camBiasMove_ = 1.0f;   // 移動中にどれだけカメラ方向へ寄せるか(0..1)
+	float camBiasEnd_ = 0.8f;   // 移動の終盤でカメラ方向へ寄せる量(0..1)
+
+	
+
+
+#ifdef USE_IMGUI
+	// 選択中ノードが変わったか判定用
+	uint32_t prevEditNodeId_ = UINT32_MAX;
+
+
+	// 編集バッファ（毎フレーム上書きされないように保持）
+	int editX_ = 0;
+	int editY_ = 0;
+	int editStageId_ = 0;
+	// デフォルトステージキー
+	char editStageKey_[64] = "1-1";
+	char newStageKey_[64] = "1-1";
+	bool editUnlocked_ = false;
+
+	int editNeighUp_ = -1;
+	int editNeighDown_ = -1;
+	int editNeighLeft_ = -1;
+	int editNeighRight_ = -1;
+
+	// フィルタID
+	int filterStageId_ = -1;     // -1で無効
+	bool filterUnlockedOnly_ = false;
+
+	// JSON
+	bool jsonDirty_ = true;
+	char jsonBuf_[32768] = {};
+	
+	// 編集用ノードID
 	uint32_t editNodeId_ = 0;
 
 	// 追加用入力
@@ -9561,32 +10613,6 @@ private:
 	int neighborDown_ = -1;
 	int neighborLeft_ = -1;
 	int neighborRight_ = -1;
-	
-
-#ifdef USE_IMGUI
-	// 選択中ノードが変わったか判定用
-	uint32_t prevEditNodeId_ = UINT32_MAX;
-
-
-	// 編集バッファ（毎フレーム上書きされないように保持）
-	int editX_ = 0;
-	int editY_ = 0;
-	int editStageId_ = 0;
-	bool editUnlocked_ = false;
-
-	int editNeighUp_ = -1;
-	int editNeighDown_ = -1;
-	int editNeighLeft_ = -1;
-	int editNeighRight_ = -1;
-
-	// フィルタ
-	int filterStageId_ = -1;     // -1で無効
-	bool filterUnlockedOnly_ = false;
-
-	// JSON
-	bool jsonDirty_ = true;
-	char jsonBuf_[32768] = {};
-
 	
 #endif
 };
@@ -9605,6 +10631,7 @@ File Path: Game/Scene/TitleScene.cpp
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
 #include "engine/InsideScene/Framework.h"
+using Engine::DirectXCommon;
 TitleScene::TitleScene()
 {
 
@@ -9656,18 +10683,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	playerObject->SetTransform(playerTransform);
 
 
-	titleLogo = std::make_unique<Object3D>();
-	titleLogo->Initialize();
-	titleLogo->SetModel("title.obj");
-	titleLogoTransform = {
-		{ 1.0f,1.0f,1.0f },
-		{ 1.6f,3.2f,0.0f },
-		{ 7.4f,-3.1f,10.1f }
-	};
-
-	titleLogo->SetTransform(titleLogoTransform);
-
-
+	
 
 
 	//sceneTransition = std::make_unique<SceneTransition>();
@@ -9681,6 +10697,18 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	camera->SetTranslate({7.5f,-4.0f,0.0f});
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 
+	// タイトルスプライトの初期化
+	titleSprite = std::make_unique<Sprite>();
+	titleSprite->Initialize("resources/Title/Title.png");
+	titleSprite->SetPosition({ 0.0f,0.0f });
+	titleSprite->SetSize({ 1280.0f,720.0f });
+
+	// Press Start スプライトの初期化
+	pressStartSprite = std::make_unique<Sprite>();
+	pressStartSprite->Initialize("resources/Title/PushSpace.png");
+	pressStartSprite->SetPosition({ -20.0f,100.0f });
+	pressStartSprite->SetSize({ 1280.0f,720.0f });
+
 }
 
 void TitleScene::Update()
@@ -9690,8 +10718,7 @@ void TitleScene::Update()
 
 	background->Update();
 
-	object3D->Update();
-	titleLogo->Update();
+	
 
 	//sceneTransition->Update();
 
@@ -9700,12 +10727,7 @@ void TitleScene::Update()
 #endif
 
 
-	if (isStart) {
-		// object3dをひだりから右に
-		speed.x += 0.07f;
-		object3D->SetTranslate(speed);
-
-	}
+	
 	// エミッタの位置を更新（プレイヤーに追従させるなど）
 	Transform transform;
 	transform.translate = { 1.0f, -5.0f, 15.0f };
@@ -9713,6 +10735,23 @@ void TitleScene::Update()
 	//particleEmitter->Update();
 	//particleEmitter2->Update();
 
+
+	titleSprite->Update();
+	pressStartSprite->Update();
+	// 点滅させる
+
+	static int blinkTimer;
+	blinkTimer++;
+	if (blinkTimer > blinkDuration) {
+		pressStartSprite->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (blinkTimer > blinkInterval) {
+		pressStartSprite->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+		blinkTimer = 0;
+	}
+
+
+	
 
 
 	// プレイヤーを回転
@@ -9731,6 +10770,7 @@ void TitleScene::Update()
 	{
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
 	}
+
 }
 
 void TitleScene::Draw()
@@ -9761,13 +10801,16 @@ void TitleScene::Draw()
 
 	//EffectManager::GetInstance()->DrawRing();
 	//EffectManager::GetInstance()->DrawCylinder();
-	titleLogo->Draw();
+	
 
 
 	//sceneTransition->Draw();
 
 
 #pragma endregion
+
+	titleSprite->Draw();
+	pressStartSprite->Draw();
 
 }
 
@@ -9862,7 +10905,7 @@ public:
 	/// 初期化処理
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon)override;
+	void Initialize(Engine::DirectXCommon* dxCommon)override;
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -9935,7 +10978,12 @@ private: // ゲーム要素
 	// バックグラウンド
 	 std::unique_ptr<BackGround> background;
 
-	 std::unique_ptr<Sprite> quxSprite_;
+	 // タイトルスプライト
+	 std::unique_ptr<Sprite> titleSprite;
+	 std::unique_ptr<Sprite> pressStartSprite;
+	 // 点滅
+	 const int blinkInterval = 60;
+	 const int blinkDuration = 30;
 
 	 /// カメラ
 	 Camera* camera = nullptr;
@@ -9953,6 +11001,9 @@ File Path: engine/2d/RenderTexture.cpp
 #include "engine/base/DirectXCommon.h"
 #include "engine/base/SrvManager.h"
 #include <map>
+
+using namespace Engine;
+
 RenderTexture::RenderTexture()
 {
 }
@@ -10280,10 +11331,11 @@ File Path: engine/2d/RenderTexture.h
 #include <wrl.h>
 #include "engine/math/MyMath.h"
 #include "engine/base/Logger.h"
-#include "engine/base/DirectXCommon.h"
 #include "engine/base/SrvManager.h"
 
-class DirectXCommon;
+namespace Engine {
+	class DirectXCommon;
+}
 class SrvManager;
 /// <summary>
 /// レンダーテクスチャクラス
@@ -10311,7 +11363,7 @@ public:
 	/// <param name="height">レンダーテクスチャの縦幅（ピクセル）</param>
 	/// <param name="format">SRV として使用する際のテクスチャフォーマット</param>
 	/// <param name="clearColor">レンダーターゲットをクリアする際のクリアカラー</param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
 	/// <summary>
 	/// レンダーテクスチャの開始
@@ -10362,7 +11414,7 @@ public: // Getter, Setter
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const;
 private: // メンバ変数
 	/// DirectXCommonポインタ
-	DirectXCommon* dxCommon_ = nullptr;
+	Engine::DirectXCommon* dxCommon_ = nullptr;
 	/// SrvManagerポインタ
 	SrvManager* srvManager_ = nullptr;
 
@@ -10758,6 +11810,9 @@ File Path: engine/2d/SpriteCommon.cpp
 #include "SpriteCommon.h"
 #include "Logger.h"
 #include "MyMath.h"
+
+using namespace Engine;
+
 SpriteCommon* SpriteCommon::instance = nullptr;
 SpriteCommon& SpriteCommon::GetInstance()
 {
@@ -11012,7 +12067,7 @@ public:		// メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// 共通描画設定
@@ -11022,7 +12077,7 @@ public:		//	Getter,Setter
 	/// <summary>
 	/// DirectXCommon取得関数
 	/// </summary>
-	DirectXCommon* GetDxCommon()const { return dxCommon_; }
+	Engine::DirectXCommon* GetDxCommon()const { return dxCommon_; }
 
 public:	// Spriteクラスに向けたラッパー関数(wrapper function)
 	/// <summary>
@@ -11073,7 +12128,7 @@ private:	// シングルトン用メンバ変数と関数
 
 private:	// メンバ変数
 	// 絶対にnew,deleteしない
-	DirectXCommon* dxCommon_;
+	Engine::DirectXCommon* dxCommon_;
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	// 入力レイアウトの記述を設定
@@ -11395,7 +12450,7 @@ File Path: engine/3d/ModelCommon.cpp
 ============================================================
 #include "ModelCommon.h"
 
-
+using namespace Engine;
 
 ModelCommon::ModelCommon()
 {
@@ -11434,17 +12489,17 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
 	void DrawSettingCommon();
 public:	// Getter/Setter
 	// DirectXCommonの取得
-	DirectXCommon* GetDxCommon()const { return dxCommon_; }
+	Engine::DirectXCommon* GetDxCommon()const { return dxCommon_; }
 private:
 	// 絶対にnew,deleteしない
-	DirectXCommon* dxCommon_;
+	Engine::DirectXCommon* dxCommon_;
 
 };
 
@@ -11456,6 +12511,7 @@ File Path: engine/3d/ModelManager.cpp
 #include "ModelManager.h"
 
 using namespace std;
+using namespace Engine;
 ModelManager* ModelManager::instance = nullptr;
 
 ModelManager& ModelManager::GetInstance()
@@ -11541,7 +12597,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 	/// <summary>
 	/// モデルファイルの読み込み
 	/// </summary>
@@ -11597,6 +12653,7 @@ File Path: engine/3d/Object3D.cpp
 #include "MakeMatrix.h"
 #include "ModelManager.h"
 using namespace std;
+using namespace Engine;
 void Object3D::Initialize()
 {
 
@@ -11865,6 +12922,9 @@ File Path: engine/3d/Object3DCommon.cpp
 ============================================================
 #include "Object3DCommon.h"
 #include "Logger.h"
+
+using namespace Engine;
+
 Object3DCommon* Object3DCommon::instance = nullptr;
 
 
@@ -11907,38 +12967,38 @@ void Object3DCommon::CreateRootSignature()
 
 	#pragma endregion
 
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	D3D12_ROOT_PARAMETER rootParamaters[6] = {};
-	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
+	//RootParameter作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
+	D3D12_ROOT_PARAMETER rootParameters[6] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
 
-	rootParamaters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
-	rootParamaters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
-	rootParamaters[1].Descriptor.ShaderRegister = 0;//
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
+	rootParameters[1].Descriptor.ShaderRegister = 0;//
 
-	rootParamaters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParamaters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[2].DescriptorTable.pDescriptorRanges = &descriptorRange;//Tableの中身の配列を指定
-	rootParamaters[2].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[2].DescriptorTable.pDescriptorRanges = &descriptorRange;//Tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
 
-	rootParamaters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
-	rootParamaters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
-	rootParamaters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
 
 	// 環境マップ
-	rootParamaters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParamaters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[4].DescriptorTable.pDescriptorRanges = &descriptorRangeSkyBox;//Tableの中身の配列を指定
-	rootParamaters[4].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[4].DescriptorTable.pDescriptorRanges = &descriptorRangeSkyBox;//Tableの中身の配列を指定
+	rootParameters[4].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
 
 	//カメラ
-	rootParamaters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParamaters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParamaters[5].Descriptor.ShaderRegister = 2;
+	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[5].Descriptor.ShaderRegister = 2;
 	
-	descriptionRootSignature.pParameters = rootParamaters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
+	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);//
 #pragma endregion
 
 
@@ -12080,7 +13140,7 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
@@ -12089,7 +13149,7 @@ public:	// Getter/Setter
 	/// <summary>
 	/// DirectXCommonの取得
 	/// </summary>
-	DirectXCommon* GetDxCommon()const { return dxCommon_; }
+	Engine::DirectXCommon* GetDxCommon()const { return dxCommon_; }
 	/// <summary>
 	/// デフォルトカメラの設定
 	/// </summary>
@@ -12112,7 +13172,7 @@ private:	// メンバ変数
 	// カメラ
 	Camera* defaultCamera = nullptr;
 	// 絶対にnew,deleteしない
-	DirectXCommon* dxCommon_;
+	Engine::DirectXCommon* dxCommon_;
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	// 入力レイアウトの記述を設定
@@ -12168,6 +13228,8 @@ File Path: engine/3d/SkyBox/SkyBox.cpp
 #include "MakeMatrix.h"
 #include "TextureManager.h"
 #include "Object3DCommon.h"
+
+using namespace Engine;
 
 void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 {
@@ -12596,7 +13658,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager);
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -12613,7 +13675,7 @@ private:
 
 	// Initialize
 	/// DxCommonのポインタ
-	DirectXCommon* dxCommon = nullptr;
+	Engine::DirectXCommon* dxCommon = nullptr;
 	/// SRVマネージャーのポインタ
 	SrvManager* srvManager = nullptr;
 
@@ -12965,7 +14027,7 @@ public:
 	/// 初期化
     /// </summary>
     /// <param name="dxCommon"></param>
-    virtual void Initialize(DirectXCommon* dxCommon) = 0;
+    virtual void Initialize(Engine::DirectXCommon* dxCommon) = 0;
     /// <summary>
 	/// 更新
     /// </summary>
@@ -12995,6 +14057,9 @@ protected:
 File Path: engine/InsideScene/Framework.cpp
 ============================================================
 #include "Framework.h"
+
+using namespace Engine;
+
 void Framework::Initialize()
 {
 	//WindowsAPIの初期化
@@ -13191,7 +14256,7 @@ protected:// Initialize関連
 	// ウィンドウAPI
 	std::unique_ptr<WinAPI> winAPI;
 	// DirectX共通部
-	std::unique_ptr<DirectXCommon> dxCommon;
+	std::unique_ptr<Engine::DirectXCommon> dxCommon;
 	// ImGui
 #ifdef USE_IMGUI
 	std::unique_ptr<ImGuiManager> imGui;
@@ -13280,6 +14345,8 @@ public:
 File Path: engine/InsideScene/SceneManager.cpp
 ============================================================
 #include "SceneManager.h"
+
+using namespace Engine;
 
 static SceneManager* instance = nullptr;
 
@@ -13397,7 +14464,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Update(DirectXCommon*dxCommon);
+	void Update(Engine::DirectXCommon*dxCommon);
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -13500,7 +14567,7 @@ File Path: engine/base/DirectXCommon.cpp
 
 using namespace Microsoft::WRL;
 using namespace Logger;
-
+using namespace Engine;
 
 
 
@@ -13691,7 +14758,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateDepthBuffer(Microsof
 	resourceDesc.Height = height;									// Textureの高さ
 	resourceDesc.MipLevels = 1;										// mipmapの数
 	resourceDesc.DepthOrArraySize = 1;								//奥行き or 配列Textureの配列数
-	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Depthstencilとして利用可能なフォーマット
+	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Depth stencilとして利用可能なフォーマット
 	resourceDesc.SampleDesc.Count = 1;								//サンプリングカウント。1固定。
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	//2次元
@@ -14252,272 +15319,275 @@ File Path: engine/base/DirectXCommon.h
 /// シングルトンクラス
 /// </remarks>
 
-// DirectX基盤
-class DirectXCommon
-{
-public:
+// nameSpace
+namespace Engine {
+
+	// DirectX基盤
+	class DirectXCommon
+	{
+	public:
 
 
-	/// <summary>
-	/// コンストラクタ
-	/// <summary>
-	DirectXCommon();
-	/// <summary>
-	///初期化
-	/// <summary>
-	void Initialize(WinAPI* winAPI);
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	void PreDraw();
+		/// <summary>
+		/// コンストラクタ
+		/// <summary>
+		DirectXCommon();
+		/// <summary>
+		///初期化
+		/// <summary>
+		void Initialize(WinAPI* winAPI);
+		/// <summary>
+		/// 描画前処理
+		/// </summary>
+		void PreDraw();
 
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	void PostDraw();
+		/// <summary>
+		/// 描画後処理
+		/// </summary>
+		void PostDraw();
 
-	/// <summary>
-	/// コマンドの実行
-	/// </summary>
-	void WaitCommand();
+		/// <summary>
+		/// コマンドの実行
+		/// </summary>
+		void WaitCommand();
 
-	/// <summary>
-	/// シェーダーコンパイル関数
-	/// </summary>
-	/// <param name="filePath">読み込むシェーダーの名前</param>
-	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
-		const std::wstring& filePath,
-		const wchar_t* profile);
+		/// <summary>
+		/// シェーダーコンパイル関数
+		/// </summary>
+		/// <param name="filePath">読み込むシェーダーの名前</param>
+		Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(
+			const std::wstring& filePath,
+			const wchar_t* profile);
 
-	/// <summary>
-	/// バッファリソースの生成
-	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12Resource>
-		CreateBufferResource(size_t sizeInBytes);
+		/// <summary>
+		/// バッファリソースの生成
+		/// </summary>
+		Microsoft::WRL::ComPtr<ID3D12Resource>
+			CreateBufferResource(size_t sizeInBytes);
 
-	/// <summary>
-	/// テクスチャリソースの生成
-	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource(const DirectX::TexMetadata& metadata);
+		/// <summary>
+		/// テクスチャリソースの生成
+		/// </summary>
+		Microsoft::WRL::ComPtr<ID3D12Resource>CreateTextureResource(const DirectX::TexMetadata& metadata);
 
-	/// <summary>
-	/// ディスクリプターヒープ作成関数
-	/// </summary>
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>  CreateDescriptorHeap(
-		D3D12_DESCRIPTOR_HEAP_TYPE heapType,
-		UINT numDescriptors,
-		bool shaderVisible);
-public:		// Getter,Setter
-	/// <summary>
-	/// デバイス取得関数
-	/// </summary>
-	ID3D12Device* GetDevice() const { return device.Get(); }
-	ID3D12GraphicsCommandList* GetCommandList()const { return commandList.Get(); }
-	/// <summary>
-	/// DxcUtils取得関数
-	/// </summary>
-	Microsoft::WRL::ComPtr <IDxcUtils>
-		GetDxcUtils()const { return dxcUtils; }
+		/// <summary>
+		/// ディスクリプターヒープ作成関数
+		/// </summary>
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>  CreateDescriptorHeap(
+			D3D12_DESCRIPTOR_HEAP_TYPE heapType,
+			UINT numDescriptors,
+			bool shaderVisible);
+	public:		// Getter,Setter
+		/// <summary>
+		/// デバイス取得関数
+		/// </summary>
+		ID3D12Device* GetDevice() const { return device.Get(); }
+		ID3D12GraphicsCommandList* GetCommandList()const { return commandList.Get(); }
+		/// <summary>
+		/// DxcUtils取得関数
+		/// </summary>
+		Microsoft::WRL::ComPtr <IDxcUtils>
+			GetDxcUtils()const { return dxcUtils; }
 
-	/// <summary>
-	/// DxcCompiler取得関数
-	/// </summary>
-	Microsoft::WRL::ComPtr<IDxcCompiler3>
-		GetDxcCompiler()const { return dxcCompiler; }
+		/// <summary>
+		/// DxcCompiler取得関数
+		/// </summary>
+		Microsoft::WRL::ComPtr<IDxcCompiler3>
+			GetDxcCompiler()const { return dxcCompiler; }
 
-	/// <summary>
-	/// インクルードハンドラ取得関数
-	/// </summary>
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler>
-		GetIncludeHandler()const { return includeHandler; }
+		/// <summary>
+		/// インクルードハンドラ取得関数
+		/// </summary>
+		Microsoft::WRL::ComPtr<IDxcIncludeHandler>
+			GetIncludeHandler()const { return includeHandler; }
 
-	/// <summary>
-	/// srvDescriptorHeap取得関数
-	/// </summary>
-	/*Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>
-		GetSrvDescriptorHeap()const { return srvDescriptorHeap; }*/
+		/// <summary>
+		/// srvDescriptorHeap取得関数
+		/// </summary>
+		/*Microsoft::WRL::ComPtr <ID3D12DescriptorHeap>
+			GetSrvDescriptorHeap()const { return srvDescriptorHeap; }*/
 
-	/// <summary>
-	/// 指定番号のCPUディスクリプタハンドルを取得する
-	/// </summary>
-	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	/// <summary>
-	/// 指定番号のGPUディスクリプタハンドルを取得する
-	/// </summary>
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+			/// <summary>
+			/// 指定番号のCPUディスクリプタハンドルを取得する
+			/// </summary>
+		static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+		/// <summary>
+		/// 指定番号のGPUディスクリプタハンドルを取得する
+		/// </summary>
+		static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
-	/// <summary>
-	/// テクスチャデータの転送
-	/// [[no discard]]とは、戻り値が無視されると警告を出す
-	/// </summary>
-	[[nodiscard]]
-	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData
-	(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+		/// <summary>
+		/// テクスチャデータの転送
+		/// [[no discard]]とは、戻り値が無視されると警告を出す
+		/// </summary>
+		[[nodiscard]]
+		Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData
+		(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
-	/// <summary>
-	/// SRVの指定番号のCPUディスクリプタハンドルを取得する
-	/// </summary>
-	//D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// SRVの指定番号のCPUディスクリプタハンドルを取得する
+		/// </summary>
+		//D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
 
-	/// <summary>
-	/// SRVの指定番号のGPUディスクリプタハンドルを取得する
-	/// </summary>
-	//D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// SRVの指定番号のGPUディスクリプタハンドルを取得する
+		/// </summary>
+		//D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
 
-	/// <summary>
-	/// バックバッファの数を取得
-	/// </summary>
-	size_t GetBackBufferCount() const { return backBufferIndex; }
+		/// <summary>
+		/// バックバッファの数を取得
+		/// </summary>
+		size_t GetBackBufferCount() const { return backBufferIndex; }
 
-	/// <summary>
-	/// RTVのディスクリプタサイズを取得
-	/// </summary>
-	uint32_t GetDescriptorSizeRTV() const { return descriptorSizeRTV; }
+		/// <summary>
+		/// RTVのディスクリプタサイズを取得
+		/// </summary>
+		uint32_t GetDescriptorSizeRTV() const { return descriptorSizeRTV; }
 
-	/// <summary>
-	/// バックバッファのインデックスを取得
-	/// </summary>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(); }
+		/// <summary>
+		/// バックバッファのインデックスを取得
+		/// </summary>
+		D3D12_CPU_DESCRIPTOR_HANDLE GetDSVHandle()const { return dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(); }
 
-private:	// 内部処理専用関数
-	/// <summary>
-	/// コマンド関連の初期化
-	/// </summary>
-	void InitCommand();
+	private:	// 内部処理専用関数
+		/// <summary>
+		/// コマンド関連の初期化
+		/// </summary>
+		void InitCommand();
 
-	/// <summary>
-	/// デバイスの初期化
-	/// </summary>
-	void InitDevice();
+		/// <summary>
+		/// デバイスの初期化
+		/// </summary>
+		void InitDevice();
 
-	/// <summary>
-	/// SwapChainの生成
-	/// </summary>
-	void CreateSwapChain();
+		/// <summary>
+		/// SwapChainの生成
+		/// </summary>
+		void CreateSwapChain();
 
-	/// <summary>
-	/// 深度バッファの生成
-	/// </summary>
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthBuffer(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
+		/// <summary>
+		/// 深度バッファの生成
+		/// </summary>
+		Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthBuffer(Microsoft::WRL::ComPtr<ID3D12Device> device, int32_t width, int32_t height);
 
-	/// <summary>
-	/// 各種ディスクリプターヒープの生成
-	/// </summary>
-	void CreateDescriptorHeaps();
+		/// <summary>
+		/// 各種ディスクリプターヒープの生成
+		/// </summary>
+		void CreateDescriptorHeaps();
 
-	/// <summary>
-	/// レンダーターゲットビューの初期化
-	/// </summary>
-	void InitRenderTargetView();
+		/// <summary>
+		/// レンダーターゲットビューの初期化
+		/// </summary>
+		void InitRenderTargetView();
 
-	/// <summary>
-	/// 深度ステンシルビューの初期化
-	/// </summary>
-	void InitDepthStencilView();
+		/// <summary>
+		/// 深度ステンシルビューの初期化
+		/// </summary>
+		void InitDepthStencilView();
 
-	/// <summary>
-	/// フェンスの生成
-	/// </summary>
-	void InitFence();
+		/// <summary>
+		/// フェンスの生成
+		/// </summary>
+		void InitFence();
 
-	/// <summary>
-	/// ビューポート矩形の初期化
-	/// </summary>
-	void InitViewportRect();
+		/// <summary>
+		/// ビューポート矩形の初期化
+		/// </summary>
+		void InitViewportRect();
 
-	/// <summary>
-	/// シザリング矩形の初期化
-	/// </summary>
-	void InitScissorRect();
+		/// <summary>
+		/// シザリング矩形の初期化
+		/// </summary>
+		void InitScissorRect();
 
-	/// <summary>
-	/// DXCコンパイラの生成
-	/// </summary>
-	void CreateDXCCompiler();
+		/// <summary>
+		/// DXCコンパイラの生成
+		/// </summary>
+		void CreateDXCCompiler();
 
-	/// <summary>
-	/// ImGuiの初期化
-	/// </summary>
-	void InitImGui();
+		/// <summary>
+		/// ImGuiの初期化
+		/// </summary>
+		void InitImGui();
 
-	/// <summary>
-	/// シェーダーコンパイル関数
-	/// </summary>
-	static std::wstring ConvertString(const std::string& str);
-	static std::string ConvertString(const std::wstring& str);
+		/// <summary>
+		/// シェーダーコンパイル関数
+		/// </summary>
+		static std::wstring ConvertString(const std::string& str);
+		static std::string ConvertString(const std::wstring& str);
 
-	/// <summary>
-	/// FPS固定初期化
-	/// </summary>
-	void InitializeFixFPS();
+		/// <summary>
+		/// FPS固定初期化
+		/// </summary>
+		void InitializeFixFPS();
 
-	/// <summary>
-	/// FPS固定更新
-	/// </summary>
-	void UpdateFixFPS();
-
-
-private:
-	// WindowsAPI
-	WinAPI* winAPI_ = nullptr;
-
-private:	// メンバ変数
-	// DirectX12デバイス
-	Microsoft::WRL::ComPtr<ID3D12Device> device;
-	// DXGIファクトリ
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
-	// コマンドアロケーター
-	Microsoft::WRL::ComPtr <ID3D12CommandAllocator> commandAllocator;
-	// コマンドリスト
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
-	// コマンドキュー
-	Microsoft::WRL::ComPtr <ID3D12CommandQueue> commandQueue;
-	// スワップチェインの生成
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	// スワップチェイン
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain;
-	// スワップチェインリソース
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
-	// リソースの生成
-	Microsoft::WRL::ComPtr <ID3D12Resource> resource;
-	// RTVの設定
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-	// 各ディスクリプターヒープのメンバ変数
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
-	// RTVディスクリプタサイズ
-	uint32_t descriptorSizeRTV;
-
-	// 生成の成果物、フェンス
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
-	//ビューポート矩形の設定保存用メンバ変数
-	D3D12_VIEWPORT viewport{};
-	// dxcCompilerを初期化
-	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils = nullptr;
-	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
-	// インクルードハンドラ
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
-	// TransitionBarrier の設定
-	D3D12_RESOURCE_BARRIER barrier{};
-	// RTVを2つ作るのでディスクリプタを2つ用意
-	std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> rtvHandles;
-	// FenceのSignalを待つためのイベントを作成する
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	// シザリング矩形の設定
-	D3D12_RECT scissorRect{};
-	// 初期値0でFenceを作成
-	uint64_t fenceValue = 0;
-	// ここから書き込むバックバッファのインデックスを取得
-	UINT backBufferIndex = 2;
-	// 深度リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource;
-	// 記録時間(FPS固定用)
-	std::chrono::steady_clock::time_point reference_;
+		/// <summary>
+		/// FPS固定更新
+		/// </summary>
+		void UpdateFixFPS();
 
 
-};
+	private:
+		// WindowsAPI
+		WinAPI* winAPI_ = nullptr;
+
+	private:	// メンバ変数
+		// DirectX12デバイス
+		Microsoft::WRL::ComPtr<ID3D12Device> device;
+		// DXGIファクトリ
+		Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
+		// コマンドアロケーター
+		Microsoft::WRL::ComPtr <ID3D12CommandAllocator> commandAllocator;
+		// コマンドリスト
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
+		// コマンドキュー
+		Microsoft::WRL::ComPtr <ID3D12CommandQueue> commandQueue;
+		// スワップチェインの生成
+		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+		// スワップチェイン
+		Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain;
+		// スワップチェインリソース
+		std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
+		// リソースの生成
+		Microsoft::WRL::ComPtr <ID3D12Resource> resource;
+		// RTVの設定
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+		// 各ディスクリプターヒープのメンバ変数
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
+		// RTVディスクリプタサイズ
+		uint32_t descriptorSizeRTV;
+
+		// 生成の成果物、フェンス
+		Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
+		//ビューポート矩形の設定保存用メンバ変数
+		D3D12_VIEWPORT viewport{};
+		// dxcCompilerを初期化
+		Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils = nullptr;
+		Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
+		// インクルードハンドラ
+		Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
+		// TransitionBarrier の設定
+		D3D12_RESOURCE_BARRIER barrier{};
+		// RTVを2つ作るのでディスクリプタを2つ用意
+		std::array<D3D12_CPU_DESCRIPTOR_HANDLE, 2> rtvHandles;
+		// FenceのSignalを待つためのイベントを作成する
+		HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+		// シザリング矩形の設定
+		D3D12_RECT scissorRect{};
+		// 初期値0でFenceを作成
+		uint64_t fenceValue = 0;
+		// ここから書き込むバックバッファのインデックスを取得
+		UINT backBufferIndex = 2;
+		// 深度リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> depthStencilResource;
+		// 記録時間(FPS固定用)
+		std::chrono::steady_clock::time_point reference_;
 
 
+	};
+
+}// namespace Engine
 
 ============================================================
 File Path: engine/base/ImGuiManager.cpp
@@ -14525,6 +15595,8 @@ File Path: engine/base/ImGuiManager.cpp
 #include "ImGuiManager.h"
 #include "externals/imgui/imgui_impl_win32.h"
 #include "externals/imgui/imgui_impl_dx12.h"
+
+using namespace Engine;
 
 #ifdef USE_IMGUI
 void ImGuiManager::Initialize(WinAPI* winAPI, DirectXCommon* dxCommon)
@@ -14630,7 +15702,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WinAPI*winAPI,DirectXCommon*dxCommon);
+	void Initialize(WinAPI*winAPI, Engine::DirectXCommon*dxCommon);
 
 	/// <summary>
 	/// 終了処理
@@ -14653,7 +15725,7 @@ public:
 	void Draw();
 #endif
 private:
-	DirectXCommon* dxCommon_ = nullptr;
+	Engine::DirectXCommon* dxCommon_ = nullptr;
 	
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	
@@ -14867,6 +15939,9 @@ namespace Logger {
 File Path: engine/base/SrvManager.cpp
 ============================================================
 #include "SrvManager.h"
+
+using namespace Engine;
+
 const uint32_t SrvManager::kMaxSRVCount = 512;
 
 void SrvManager::Initialize(DirectXCommon* dxCommon)
@@ -14988,7 +16063,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 	/// <summary>
 	/// アロケーター
 	/// </summary>
@@ -15008,7 +16083,7 @@ public:
 	/// <param name="srvIndex"></param>
 	/// <param name="pResource"></param>
 	/// <param name="numElements"></param>
-	/// <param name="structureByteStrude"></param>
+	/// <param name="structureByteStrode"></param>
 	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStrude);
 	/// <summary>
 	/// 描画前処理
@@ -15041,7 +16116,7 @@ public:// Getter,Setter
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetSRVHeap()const;
 private:
 	// 絶対にnewしない
-	DirectXCommon* dxCommon;
+	Engine::DirectXCommon* dxCommon;
 	// SRVのディスクリプタサイズ
 	uint32_t descriptorSize;
 	// SRVのディスクリプタヒープ
@@ -15124,6 +16199,9 @@ File Path: engine/base/TextureManager.cpp
 #include "DirectXCommon.h"
 #include "StringUtility.h"
 #include "DirectXCommon.h"
+
+using namespace Engine;
+
 TextureManager* TextureManager::instance = nullptr;
 // ImGuiで0を使用しているため１から開始
 uint32_t TextureManager::kSRVIndexTop = 1;
@@ -15148,10 +16226,10 @@ const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& fileP
 
 {
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 
 	// テクスチャが見つからない場合はエラー
-	assert(it != textureDatas.end());
+	assert(it != textureDates.end());
 
 	// 見つかったテクスチャデータのメタデータを返す
 	return it->second.metadata;
@@ -15161,42 +16239,22 @@ const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& fileP
 uint32_t TextureManager::GetSrvIndex(const std::string& filePath)
 {
 	// テクスチャが存在するか確認
-	auto it = textureDatas.find(filePath);
-	if (it == textureDatas.end()) {
+	auto it = textureDates.find(filePath);
+	if (it == textureDates.end()) {
 		// なかったらエラーメッセージ
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
-	//if (it != textureDatas.end()) {
-	//	// 読み込み済みなら要素番号を返す
-	//	uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), it));
-	//	return textureIndex;
-	//}
-	//assert(0);
 	return it->second.srvIndex;
 }
 
-//D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
-//{
-//	// テクスチャが存在するか確認
-//	auto it = textureDatas.find(filePath);
-//	if (it == textureDatas.end()) {
-//		// なかったらエラーメッセージ
-//		
-//		throw std::runtime_error("Texture not found for filePath: " + filePath);
-//	}
-//
-//	// テクスチャデータの参照を取得
-//	TextureData& textureData = it->second;
-//	return textureData.srvHandleGPU;
-//}
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
 {
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 
 	// テクスチャが見つからない場合は例外を投げる
-	if (it == textureDatas.end()) {
+	if (it == textureDates.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
 	// 見つかったテクスチャデータのGPUハンドルを返す
@@ -15206,9 +16264,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::GetTextureResource(const std::string& filePath)
 {
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 	// テクスチャが見つからない場合は例外を投げる
-	if (it == textureDatas.end()) {
+	if (it == textureDates.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
 	// 見つかったテクスチャデータのリソースを返す
@@ -15219,9 +16277,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGpuDescriptorHandle(const std::st
 {
 
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 	// テクスチャが見つからない場合は例外を投げる
-	if (it == textureDatas.end()) {
+	if (it == textureDates.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
 	// 見つかったテクスチャデータのGPUハンドルを返す
@@ -15236,19 +16294,19 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 	this->dxCommon = dxCommon;
 	this->srvManager = srvManager;
 	// テクスチャの最大枚数を取得/SRVの最大数を取得
-	textureDatas.reserve(SrvManager::kMaxSRVCount);
+	textureDates.reserve(SrvManager::kMaxSRVCount);
 }
 
 void TextureManager::Finalize()
 {
 	// テクスチャデータのクリア
-	textureDatas.clear();
+	textureDates.clear();
 }
 
 void TextureManager::LoadTexture(const std::string& filePath)
 {
 	// 読み込み済みのテクスチャかどうかをチェック
-	if (textureDatas.contains(filePath)) {
+	if (textureDates.contains(filePath)) {
 		// 読み込み済みなら何もしない
 		return;
 	}
@@ -15294,7 +16352,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	dxCommon->WaitCommand();
 
 	// テクスチャデータの要素数番号をSRVのインデックスとする
-	uint32_t srvIndex = static_cast<uint32_t>(textureDatas.size()) + kSRVIndexTop;
+	uint32_t srvIndex = static_cast<uint32_t>(textureDates.size()) + kSRVIndexTop;
 
 	// SRV確保
 	textureData.srvIndex = srvManager->Allocate();
@@ -15321,8 +16379,8 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	// SRVを作成
 	dxCommon->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 
-	// textureDatasに追加
-	textureDatas.emplace(filePath, std::move(textureData));
+	// textureDatesに追加
+	textureDates.emplace(filePath, std::move(textureData));
 
 }
 
@@ -15357,7 +16415,7 @@ public:		// メンバ関数
 	/// </summary>
 	/// <param name="dxCommon">デバイスやコマンド管理</param>
 	/// <param name="srvManager">SRVの割り当ておよび管理</param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager);
 	/// <summary>
 	/// 終了処理
 	/// </summary>
@@ -15422,10 +16480,10 @@ private:	// シングルトン
 	TextureManager& operator=(TextureManager&) = delete;
 
 private:	// メンバ変数
-	DirectXCommon* dxCommon = nullptr;
+	Engine::DirectXCommon* dxCommon = nullptr;
 
 	// テクスチャデータ
-	std::unordered_map<std::string, TextureData> textureDatas;	// 
+	std::unordered_map<std::string, TextureData> textureDates;	// 
 	// SRVマネージャー
 	SrvManager* srvManager = nullptr;
 
@@ -15921,6 +16979,89 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	result.m[3][0] = (left + right) / (left - right); result.m[3][1] = (top + bottom) / (bottom - top); result.m[3][2] = nearClip / (nearClip - farClip); result.m[3][3] = 1;
 	return result;
 }
+
+//Quaternion LookAtQuaternion(const Vector3& from, const Vector3& to, const Vector3& up) {
+//	// from から to への方向ベクトルを計算
+//	Vector3 forward = Normalize(to - from);
+//
+//	// right ベクトルを計算（up と forward の外積）
+//	Vector3 right = Normalize(Cross(up, forward));
+//
+//	// 新しい up ベクトルを計算
+//	Vector3 newUp = Cross(forward, right);
+//
+//	// LookAt 行列を設定
+//	Matrix4x4 lookAtMatrix;
+//	lookAtMatrix.m[0][0] = right.x;
+//	lookAtMatrix.m[0][1] = right.y;
+//	lookAtMatrix.m[0][2] = right.z;
+//	lookAtMatrix.m[0][3] = 0.0f;
+//
+//	lookAtMatrix.m[1][0] = newUp.x;
+//	lookAtMatrix.m[1][1] = newUp.y;
+//	lookAtMatrix.m[1][2] = newUp.z;
+//	lookAtMatrix.m[1][3] = 0.0f;
+//
+//	lookAtMatrix.m[2][0] = forward.x;
+//	lookAtMatrix.m[2][1] = forward.y;
+//	lookAtMatrix.m[2][2] = forward.z;
+//	lookAtMatrix.m[2][3] = 0.0f;
+//
+//	lookAtMatrix.m[3][0] = 0.0f;
+//	lookAtMatrix.m[3][1] = 0.0f;
+//	lookAtMatrix.m[3][2] = 0.0f;
+//	lookAtMatrix.m[3][3] = 1.0f;
+//
+//	// 行列をクォータニオンに変換
+//	return MatrixToQuaternion(lookAtMatrix);
+//}
+//Quaternion Slerp(Quaternion q1, Quaternion q2, float t)
+//{
+//	// クォータニオンの内積を計算
+//	float dot = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
+//
+//	// ドット積が負の場合、逆の方向に補間するために q2 を反転
+//	if (dot < 0.0f) {
+//		q2.x = -q2.x;
+//		q2.y = -q2.y;
+//		q2.z = -q2.z;
+//		q2.w = -q2.w;
+//		dot = -dot;
+//	}
+//
+//	// 補間係数を使った係数の計算
+//	const float threshold = 0.9995f;
+//	if (dot > threshold) {
+//		// ドット積が閾値を超えた場合、線形補間を実行（角度が小さいため）
+//		Quaternion result = {
+//			q1.x + t * (q2.x - q1.x),
+//			q1.y + t * (q2.y - q1.y),
+//			q1.z + t * (q2.z - q1.z),
+//			q1.w + t * (q2.w - q1.w)
+//		};
+//		return Normalize(result); // 結果を正規化
+//	}
+//
+//	// 角度の計算
+//	float theta_0 = std::acos(dot);        // θ0 = q1 と q2 間の角度
+//	float theta = theta_0 * t;             // θ = t に対応する角度
+//
+//	// 係数の計算
+//	float sin_theta = std::sin(theta);
+//	float sin_theta_0 = std::sin(theta_0);
+//
+//	float s1 = std::cos(theta) - dot * sin_theta / sin_theta_0;
+//	float s2 = sin_theta / sin_theta_0;
+//
+//	// 補間結果の計算
+//	Quaternion result = {
+//		s1 * q1.x + s2 * q2.x,
+//		s1 * q1.y + s2 * q2.y,
+//		s1 * q1.z + s2 * q2.z,
+//		s1 * q1.w + s2 * q2.w
+//	};
+//	return result;
+//}
 
 ============================================================
 File Path: engine/math/MakeMatrix.h
