@@ -69,7 +69,7 @@ protected:// Initialize関連
 	// ウィンドウAPI
 	std::unique_ptr<WinAPI> winAPI;
 	// DirectX共通部
-	std::unique_ptr<DirectXCommon> dxCommon;
+	std::unique_ptr<Engine::DirectXCommon> dxCommon;
 	// ImGui
 #ifdef USE_IMGUI
 	std::unique_ptr<ImGuiManager> imGui;

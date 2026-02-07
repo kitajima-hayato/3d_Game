@@ -4,7 +4,7 @@
 #include "Input.h"
 #include "ImGuiManager.h"
 #include <SpriteCommon.h>
-#
+using Engine::DirectXCommon;
 StageClearScene::StageClearScene()
 {
 }

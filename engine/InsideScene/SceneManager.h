@@ -36,7 +36,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Update(DirectXCommon*dxCommon);
+	void Update(Engine::DirectXCommon*dxCommon);
 	/// <summary>
 	/// 描画
 	/// </summary>

@@ -8,6 +8,9 @@
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
+
+using Engine::DirectXCommon;
+
 GamePlayScene::GamePlayScene()
 {
 }

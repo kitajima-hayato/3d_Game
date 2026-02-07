@@ -97,7 +97,7 @@ public:
 	/// <param name="dxCommon"></param>
 	/// <param name="srvManager"></param>
 	/// <param name="camera"></param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager, Camera* camera);
 
 
 	/// <summary>
@@ -204,7 +204,7 @@ public:
 
 private:
 	// DirectXCommon
-	DirectXCommon* dxCommon;
+	Engine::DirectXCommon* dxCommon;
 	// SRVマネージャー
 	SrvManager* srvManager;
 	// 頂点データ

@@ -2,6 +2,9 @@
 #include "DirectXCommon.h"
 #include "StringUtility.h"
 #include "DirectXCommon.h"
+
+using namespace Engine;
+
 TextureManager* TextureManager::instance = nullptr;
 // ImGuiで0を使用しているため１から開始
 uint32_t TextureManager::kSRVIndexTop = 1;
@@ -26,10 +29,10 @@ const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& fileP
 
 {
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 
 	// テクスチャが見つからない場合はエラー
-	assert(it != textureDatas.end());
+	assert(it != textureDates.end());
 
 	// 見つかったテクスチャデータのメタデータを返す
 	return it->second.metadata;
@@ -39,42 +42,22 @@ const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& fileP
 uint32_t TextureManager::GetSrvIndex(const std::string& filePath)
 {
 	// テクスチャが存在するか確認
-	auto it = textureDatas.find(filePath);
-	if (it == textureDatas.end()) {
+	auto it = textureDates.find(filePath);
+	if (it == textureDates.end()) {
 		// なかったらエラーメッセージ
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
-	//if (it != textureDatas.end()) {
-	//	// 読み込み済みなら要素番号を返す
-	//	uint32_t textureIndex = static_cast<uint32_t>(std::distance(textureDatas.begin(), it));
-	//	return textureIndex;
-	//}
-	//assert(0);
 	return it->second.srvIndex;
 }
 
-//D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
-//{
-//	// テクスチャが存在するか確認
-//	auto it = textureDatas.find(filePath);
-//	if (it == textureDatas.end()) {
-//		// なかったらエラーメッセージ
-//		
-//		throw std::runtime_error("Texture not found for filePath: " + filePath);
-//	}
-//
-//	// テクスチャデータの参照を取得
-//	TextureData& textureData = it->second;
-//	return textureData.srvHandleGPU;
-//}
 
 D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& filePath)
 {
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 
 	// テクスチャが見つからない場合は例外を投げる
-	if (it == textureDatas.end()) {
+	if (it == textureDates.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
 	// 見つかったテクスチャデータのGPUハンドルを返す
@@ -84,9 +67,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSrvHandleGPU(const std::string& f
 Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::GetTextureResource(const std::string& filePath)
 {
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 	// テクスチャが見つからない場合は例外を投げる
-	if (it == textureDatas.end()) {
+	if (it == textureDates.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
 	// 見つかったテクスチャデータのリソースを返す
@@ -97,9 +80,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGpuDescriptorHandle(const std::st
 {
 
 	// テクスチャデータを検索
-	auto it = textureDatas.find(filePath);
+	auto it = textureDates.find(filePath);
 	// テクスチャが見つからない場合は例外を投げる
-	if (it == textureDatas.end()) {
+	if (it == textureDates.end()) {
 		throw std::runtime_error("Texture not found for filePath: " + filePath);
 	}
 	// 見つかったテクスチャデータのGPUハンドルを返す
@@ -114,19 +97,19 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 	this->dxCommon = dxCommon;
 	this->srvManager = srvManager;
 	// テクスチャの最大枚数を取得/SRVの最大数を取得
-	textureDatas.reserve(SrvManager::kMaxSRVCount);
+	textureDates.reserve(SrvManager::kMaxSRVCount);
 }
 
 void TextureManager::Finalize()
 {
 	// テクスチャデータのクリア
-	textureDatas.clear();
+	textureDates.clear();
 }
 
 void TextureManager::LoadTexture(const std::string& filePath)
 {
 	// 読み込み済みのテクスチャかどうかをチェック
-	if (textureDatas.contains(filePath)) {
+	if (textureDates.contains(filePath)) {
 		// 読み込み済みなら何もしない
 		return;
 	}
@@ -172,7 +155,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	dxCommon->WaitCommand();
 
 	// テクスチャデータの要素数番号をSRVのインデックスとする
-	uint32_t srvIndex = static_cast<uint32_t>(textureDatas.size()) + kSRVIndexTop;
+	uint32_t srvIndex = static_cast<uint32_t>(textureDates.size()) + kSRVIndexTop;
 
 	// SRV確保
 	textureData.srvIndex = srvManager->Allocate();
@@ -199,7 +182,7 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	// SRVを作成
 	dxCommon->GetDevice()->CreateShaderResourceView(textureData.resource.Get(), &srvDesc, textureData.srvHandleCPU);
 
-	// textureDatasに追加
-	textureDatas.emplace(filePath, std::move(textureData));
+	// textureDatesに追加
+	textureDates.emplace(filePath, std::move(textureData));
 
 }

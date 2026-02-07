@@ -1,4 +1,7 @@
 #include "SrvManager.h"
+
+using namespace Engine;
+
 const uint32_t SrvManager::kMaxSRVCount = 512;
 
 void SrvManager::Initialize(DirectXCommon* dxCommon)

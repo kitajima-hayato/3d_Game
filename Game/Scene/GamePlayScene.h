@@ -12,6 +12,7 @@
 #include "Game/Application/UI/GamePlayHUD.h"
 #include "Game/Camera/StartCamPhase.h"
 #include "Game/Application/UI/DamageFeedBack.h"
+#include "engine/base/DirectXCommon.h"
 /// <summary>
 /// ゲームプレイシーン
 /// ゲームプレイ中のシーンを管理する
@@ -40,7 +41,7 @@ public:
 	/// 初期化処理
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon)override;
+	void Initialize(Engine::DirectXCommon* dxCommon) override;
 	/// <summary>
 	/// 更新処理
 	/// </summary>

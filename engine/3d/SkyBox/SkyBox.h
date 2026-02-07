@@ -58,7 +58,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager);
 	/// <summary>
 	/// 更新処理
 	/// </summary>
@@ -75,7 +75,7 @@ private:
 
 	// Initialize
 	/// DxCommonのポインタ
-	DirectXCommon* dxCommon = nullptr;
+	Engine::DirectXCommon* dxCommon = nullptr;
 	/// SRVマネージャーのポインタ
 	SrvManager* srvManager = nullptr;
 

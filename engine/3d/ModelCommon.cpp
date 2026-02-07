@@ -1,6 +1,6 @@
 #include "ModelCommon.h"
 
-
+using namespace Engine;
 
 ModelCommon::ModelCommon()
 {

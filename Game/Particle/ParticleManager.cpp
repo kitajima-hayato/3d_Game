@@ -4,6 +4,9 @@
 #include <TextureManager.h>
 #include "WinAPI.h"
 #include <numbers>
+
+using namespace Engine;
+
 ParticleManager* ParticleManager::instance = nullptr;
 ParticleManager* ParticleManager::GetInstance()
 {

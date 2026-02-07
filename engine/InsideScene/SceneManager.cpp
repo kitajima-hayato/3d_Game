@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 
+using namespace Engine;
+
 static SceneManager* instance = nullptr;
 
 

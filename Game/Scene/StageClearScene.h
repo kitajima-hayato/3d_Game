@@ -28,7 +28,7 @@ public:
 	/// <summary>
 	/// 初期化処理
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon)override;
+	void Initialize(Engine::DirectXCommon* dxCommon)override;
 
 	/// <summary>
 	/// 更新処理

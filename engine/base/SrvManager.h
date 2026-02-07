@@ -17,7 +17,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 	/// <summary>
 	/// アロケーター
 	/// </summary>
@@ -37,7 +37,7 @@ public:
 	/// <param name="srvIndex"></param>
 	/// <param name="pResource"></param>
 	/// <param name="numElements"></param>
-	/// <param name="structureByteStrude"></param>
+	/// <param name="structureByteStrode"></param>
 	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, UINT numElements, UINT structureByteStrude);
 	/// <summary>
 	/// 描画前処理
@@ -70,7 +70,7 @@ public:// Getter,Setter
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetSRVHeap()const;
 private:
 	// 絶対にnewしない
-	DirectXCommon* dxCommon;
+	Engine::DirectXCommon* dxCommon;
 	// SRVのディスクリプタサイズ
 	uint32_t descriptorSize;
 	// SRVのディスクリプタヒープ
