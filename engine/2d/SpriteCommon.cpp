@@ -1,6 +1,9 @@
 #include "SpriteCommon.h"
 #include "Logger.h"
 #include "MyMath.h"
+
+using namespace Engine;
+
 SpriteCommon* SpriteCommon::instance = nullptr;
 SpriteCommon& SpriteCommon::GetInstance()
 {

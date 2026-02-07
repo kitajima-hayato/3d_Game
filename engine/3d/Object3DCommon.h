@@ -10,7 +10,7 @@ public:	// メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
@@ -19,7 +19,7 @@ public:	// Getter/Setter
 	/// <summary>
 	/// DirectXCommonの取得
 	/// </summary>
-	DirectXCommon* GetDxCommon()const { return dxCommon_; }
+	Engine::DirectXCommon* GetDxCommon()const { return dxCommon_; }
 	/// <summary>
 	/// デフォルトカメラの設定
 	/// </summary>
@@ -42,7 +42,7 @@ private:	// メンバ変数
 	// カメラ
 	Camera* defaultCamera = nullptr;
 	// 絶対にnew,deleteしない
-	DirectXCommon* dxCommon_;
+	Engine::DirectXCommon* dxCommon_;
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	// 入力レイアウトの記述を設定

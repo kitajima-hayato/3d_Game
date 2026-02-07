@@ -9,9 +9,7 @@
 /// ステージ選択画面のシーン
 /// </summary>
 
-struct StageStatus {
 
-};
 class Object3D;
 class Camera;
 class StageSelectScene :
@@ -25,7 +23,7 @@ class StageSelectScene :
     /// <summary>
     /// 初期化処理
     /// </summary>
-    void Initialize(DirectXCommon* dxCommon)override;
+    void Initialize(Engine::DirectXCommon* dxCommon)override;
 
     /// <summary>
     /// 更新処理

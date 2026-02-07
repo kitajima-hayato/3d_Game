@@ -7,6 +7,7 @@
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
 #include "engine/InsideScene/Framework.h"
+using Engine::DirectXCommon;
 TitleScene::TitleScene()
 {
 

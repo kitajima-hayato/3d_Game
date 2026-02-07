@@ -7,6 +7,8 @@
 #include "engine/base/ImGuiManager.h"
 #endif
 
+using namespace Engine;
+
 static float EaseOutCubic(float t)
 {
 	float inv = 1.0f - t;

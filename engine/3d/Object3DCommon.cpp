@@ -1,5 +1,8 @@
 #include "Object3DCommon.h"
 #include "Logger.h"
+
+using namespace Engine;
+
 Object3DCommon* Object3DCommon::instance = nullptr;
 
 
@@ -42,38 +45,38 @@ void Object3DCommon::CreateRootSignature()
 
 	#pragma endregion
 
-	//RootParamater作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
-	D3D12_ROOT_PARAMETER rootParamaters[6] = {};
-	rootParamaters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
-	rootParamaters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
+	//RootParameter作成。複数設定できるので配列。今回は結果が１つだけなので長さ１の配列
+	D3D12_ROOT_PARAMETER rootParameters[6] = {};
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号０とバインド
 
-	rootParamaters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
-	rootParamaters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
-	rootParamaters[1].Descriptor.ShaderRegister = 0;//
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//
+	rootParameters[1].Descriptor.ShaderRegister = 0;//
 
-	rootParamaters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParamaters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[2].DescriptorTable.pDescriptorRanges = &descriptorRange;//Tableの中身の配列を指定
-	rootParamaters[2].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[2].DescriptorTable.pDescriptorRanges = &descriptorRange;//Tableの中身の配列を指定
+	rootParameters[2].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
 
-	rootParamaters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
-	rootParamaters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
-	rootParamaters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;	//CBVで使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;	//PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1;//レジスタ番号１を使う
 
 	// 環境マップ
-	rootParamaters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
-	rootParamaters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
-	rootParamaters[4].DescriptorTable.pDescriptorRanges = &descriptorRangeSkyBox;//Tableの中身の配列を指定
-	rootParamaters[4].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;//DescriptorTableを使う
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
+	rootParameters[4].DescriptorTable.pDescriptorRanges = &descriptorRangeSkyBox;//Tableの中身の配列を指定
+	rootParameters[4].DescriptorTable.NumDescriptorRanges = 1;//Tableで利用する数
 
 	//カメラ
-	rootParamaters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
-	rootParamaters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-	rootParamaters[5].Descriptor.ShaderRegister = 2;
+	rootParameters[5].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+	rootParameters[5].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
+	rootParameters[5].Descriptor.ShaderRegister = 2;
 	
-	descriptionRootSignature.pParameters = rootParamaters;//ルートパラメータ配列へのポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParamaters);//
+	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
+	descriptionRootSignature.NumParameters = _countof(rootParameters);//
 #pragma endregion
 
 

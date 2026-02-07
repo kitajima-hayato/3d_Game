@@ -18,7 +18,7 @@
 
 using namespace Microsoft::WRL;
 using namespace Logger;
-
+using namespace Engine;
 
 
 
@@ -209,7 +209,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateDepthBuffer(Microsof
 	resourceDesc.Height = height;									// Textureの高さ
 	resourceDesc.MipLevels = 1;										// mipmapの数
 	resourceDesc.DepthOrArraySize = 1;								//奥行き or 配列Textureの配列数
-	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Depthstencilとして利用可能なフォーマット
+	resourceDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;			// Depth stencilとして利用可能なフォーマット
 	resourceDesc.SampleDesc.Count = 1;								//サンプリングカウント。1固定。
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	//2次元

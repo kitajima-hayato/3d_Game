@@ -16,7 +16,7 @@ public:
 	/// 初期化
     /// </summary>
     /// <param name="dxCommon"></param>
-    virtual void Initialize(DirectXCommon* dxCommon) = 0;
+    virtual void Initialize(Engine::DirectXCommon* dxCommon) = 0;
     /// <summary>
 	/// 更新
     /// </summary>

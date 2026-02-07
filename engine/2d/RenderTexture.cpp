@@ -2,6 +2,9 @@
 #include "engine/base/DirectXCommon.h"
 #include "engine/base/SrvManager.h"
 #include <map>
+
+using namespace Engine;
+
 RenderTexture::RenderTexture()
 {
 }

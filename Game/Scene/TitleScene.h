@@ -31,7 +31,7 @@ public:
 	/// 初期化処理
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon)override;
+	void Initialize(Engine::DirectXCommon* dxCommon)override;
 	/// <summary>
 	/// 更新処理
 	/// </summary>

@@ -1,6 +1,7 @@
 #include "ModelManager.h"
 
 using namespace std;
+using namespace Engine;
 ModelManager* ModelManager::instance = nullptr;
 
 ModelManager& ModelManager::GetInstance()
