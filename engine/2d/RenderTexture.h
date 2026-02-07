@@ -3,10 +3,11 @@
 #include <wrl.h>
 #include "engine/math/MyMath.h"
 #include "engine/base/Logger.h"
-#include "engine/base/DirectXCommon.h"
 #include "engine/base/SrvManager.h"
 
-class DirectXCommon;
+namespace Engine {
+	class DirectXCommon;
+}
 class SrvManager;
 /// <summary>
 /// レンダーテクスチャクラス
@@ -34,7 +35,7 @@ public:
 	/// <param name="height">レンダーテクスチャの縦幅（ピクセル）</param>
 	/// <param name="format">SRV として使用する際のテクスチャフォーマット</param>
 	/// <param name="clearColor">レンダーターゲットをクリアする際のクリアカラー</param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager, uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
 	/// <summary>
 	/// レンダーテクスチャの開始
@@ -85,7 +86,7 @@ public: // Getter, Setter
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() const;
 private: // メンバ変数
 	/// DirectXCommonポインタ
-	DirectXCommon* dxCommon_ = nullptr;
+	Engine::DirectXCommon* dxCommon_ = nullptr;
 	/// SrvManagerポインタ
 	SrvManager* srvManager_ = nullptr;
 

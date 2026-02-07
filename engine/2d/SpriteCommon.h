@@ -22,7 +22,7 @@ public:		// メンバ関数
 	/// 初期化
 	/// </summary>
 	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(Engine::DirectXCommon* dxCommon);
 
 	/// <summary>
 	/// 共通描画設定
@@ -32,7 +32,7 @@ public:		//	Getter,Setter
 	/// <summary>
 	/// DirectXCommon取得関数
 	/// </summary>
-	DirectXCommon* GetDxCommon()const { return dxCommon_; }
+	Engine::DirectXCommon* GetDxCommon()const { return dxCommon_; }
 
 public:	// Spriteクラスに向けたラッパー関数(wrapper function)
 	/// <summary>
@@ -83,7 +83,7 @@ private:	// シングルトン用メンバ変数と関数
 
 private:	// メンバ変数
 	// 絶対にnew,deleteしない
-	DirectXCommon* dxCommon_;
+	Engine::DirectXCommon* dxCommon_;
 	// RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	// 入力レイアウトの記述を設定

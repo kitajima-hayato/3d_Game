@@ -6,6 +6,7 @@
 #include "MakeMatrix.h"
 #include "ModelManager.h"
 using namespace std;
+using namespace Engine;
 void Object3D::Initialize()
 {
 

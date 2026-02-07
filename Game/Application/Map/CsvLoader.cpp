@@ -47,6 +47,7 @@ std::vector<std::vector<BlockType>> CsvLoader::LoadMapBlockType(const std::strin
 	std::ifstream file(frontFilePath + filePath + extensionCsv_);
 	// ファイルが開けなかった場合のエラーチェック
 	if (!file.is_open()) {
+		// マップデータが存在しないもしくは開けなかった場合のエラー処理
 		throw std::runtime_error("CSVファイルが開けません: " + filePath);
 	}
 	// 1行ずつ読み込む

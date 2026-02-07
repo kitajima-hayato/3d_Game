@@ -22,7 +22,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WinAPI*winAPI,DirectXCommon*dxCommon);
+	void Initialize(WinAPI*winAPI, Engine::DirectXCommon*dxCommon);
 
 	/// <summary>
 	/// 終了処理
@@ -45,7 +45,7 @@ public:
 	void Draw();
 #endif
 private:
-	DirectXCommon* dxCommon_ = nullptr;
+	Engine::DirectXCommon* dxCommon_ = nullptr;
 	
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	

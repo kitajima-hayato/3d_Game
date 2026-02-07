@@ -11,6 +11,9 @@
 #include "Game/Application/ModelList.h"
 #include "engine/InsideScene/Framework.h"
 #include "engine/InsideScene/SceneManager.h"
+
+using namespace Engine;
+
 void MyGame::Initialize()
 {
 	Framework::Initialize();

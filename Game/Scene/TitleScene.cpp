@@ -7,6 +7,7 @@
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleEmitter.h"
 #include "engine/InsideScene/Framework.h"
+using Engine::DirectXCommon;
 TitleScene::TitleScene()
 {
 
@@ -58,18 +59,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	playerObject->SetTransform(playerTransform);
 
 
-	titleLogo = std::make_unique<Object3D>();
-	titleLogo->Initialize();
-	titleLogo->SetModel("title.obj");
-	titleLogoTransform = {
-		{ 1.0f,1.0f,1.0f },
-		{ 1.6f,3.2f,0.0f },
-		{ 7.4f,-3.1f,10.1f }
-	};
-
-	titleLogo->SetTransform(titleLogoTransform);
-
-
+	
 
 
 	//sceneTransition = std::make_unique<SceneTransition>();
@@ -83,6 +73,18 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	camera->SetTranslate({7.5f,-4.0f,0.0f});
 	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
 
+	// タイトルスプライトの初期化
+	titleSprite = std::make_unique<Sprite>();
+	titleSprite->Initialize("resources/Title/Title.png");
+	titleSprite->SetPosition({ 0.0f,0.0f });
+	titleSprite->SetSize({ 1280.0f,720.0f });
+
+	// Press Start スプライトの初期化
+	pressStartSprite = std::make_unique<Sprite>();
+	pressStartSprite->Initialize("resources/Title/PushSpace.png");
+	pressStartSprite->SetPosition({ -20.0f,100.0f });
+	pressStartSprite->SetSize({ 1280.0f,720.0f });
+
 }
 
 void TitleScene::Update()
@@ -92,8 +94,7 @@ void TitleScene::Update()
 
 	background->Update();
 
-	object3D->Update();
-	titleLogo->Update();
+	
 
 	//sceneTransition->Update();
 
@@ -102,12 +103,7 @@ void TitleScene::Update()
 #endif
 
 
-	if (isStart) {
-		// object3dをひだりから右に
-		speed.x += 0.07f;
-		object3D->SetTranslate(speed);
-
-	}
+	
 	// エミッタの位置を更新（プレイヤーに追従させるなど）
 	Transform transform;
 	transform.translate = { 1.0f, -5.0f, 15.0f };
@@ -115,6 +111,23 @@ void TitleScene::Update()
 	//particleEmitter->Update();
 	//particleEmitter2->Update();
 
+
+	titleSprite->Update();
+	pressStartSprite->Update();
+	// 点滅させる
+
+	static int blinkTimer;
+	blinkTimer++;
+	if (blinkTimer > blinkDuration) {
+		pressStartSprite->SetColor({ 1.0f,1.0f,1.0f,1.0f });
+	}
+	if (blinkTimer > blinkInterval) {
+		pressStartSprite->SetColor({ 1.0f,1.0f,1.0f,0.0f });
+		blinkTimer = 0;
+	}
+
+
+	
 
 
 	// プレイヤーを回転
@@ -133,6 +146,7 @@ void TitleScene::Update()
 	{
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
 	}
+
 }
 
 void TitleScene::Draw()
@@ -163,13 +177,16 @@ void TitleScene::Draw()
 
 	//EffectManager::GetInstance()->DrawRing();
 	//EffectManager::GetInstance()->DrawCylinder();
-	titleLogo->Draw();
+	
 
 
 	//sceneTransition->Draw();
 
 
 #pragma endregion
+
+	titleSprite->Draw();
+	pressStartSprite->Draw();
 
 }
 

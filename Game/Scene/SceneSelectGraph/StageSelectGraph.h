@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <resources/json/json.hpp>
+#include <string>
 
 /// <summary>
 /// ステージセレクトグラフ
@@ -14,6 +15,11 @@ struct MapPos
 {
 	uint32_t x;
 	uint32_t y;
+};
+
+struct NodeBounds {
+	MapPos min;
+	MapPos max;
 };
 
 enum class Direction
@@ -32,10 +38,11 @@ struct StageNode {
 	MapPos position;
 	// ステージID
 	uint32_t stageId;
+	std::string stageKey;
 	// アンロック状態
 	bool unlocked;
 	// 隣接ノードID配列 / 読み方はネイバー
-	uint32_t neighbor[(uint32_t)Direction::count];
+	int32_t neighbor[(uint32_t)Direction::count];
 };
 
 /// <summary>
@@ -43,7 +50,6 @@ struct StageNode {
 /// </summary>
 class StageSelectGraph
 {
-	
 public:
 	// 無効なノードID
 	static const uint32_t INVALID_NODE_ID = UINT32_MAX;
@@ -69,7 +75,7 @@ public:
 	/// <param name="stageId">ステージのID</param>
 	/// <param name="unlocked">解放状態か</param>
 	/// <returns>ステージIDも返す</returns>
-	uint32_t AddNode(MapPos pos,uint32_t stageId,bool unlocked);
+	uint32_t AddNode(MapPos pos,uint32_t stageId,const std::string& stageKey,bool unlocked);
 
 	/// <summary>
 	/// ノード接続
@@ -118,9 +124,33 @@ public:
 	/// </summary>
 	/// <param name="fileName">保存する時のjsonファイルの名前</param>
 	void SaveToJsonFile(const std::string& fileName) const;
+
+	/// <summary>
+	/// ノードの境界情報を取得
+	/// </summary>
+	/// <returns></returns>
+	NodeBounds GetBounds()const { return bounds_; }
+
+	/// <summary>
+	/// ノードのUV座標を取得
+	/// </summary>
+	/// <param name="nodeId">ノードの座標</param>
+	/// <returns>変換後の座標</returns>
+	Vector2 GetNodeUV(uint32_t nodeId) const;
+private:
+	/// <summary>
+	/// ノードの境界情報を再計算
+	/// </summary>
+	void RecalculateBounds();
+
 private:
 	// ノードリスト
 	std::vector<StageNode> nodes_;
+
+	// ノードの境界情報
+	NodeBounds bounds_;
+
+	
 
 	
 public:
@@ -128,6 +158,7 @@ public:
 	// ノード情報編集
 	bool SetNodePos(uint32_t id, MapPos pos);
 	bool SetNodeStageId(uint32_t id, uint32_t stageId);
+	bool SetNodeStageKey(uint32_t id, const std::string& stageKey);
 	bool SetNodeUnlocked(uint32_t id, bool unlocked);
 	// 隣接ノード編集 / 追加・削除
 	bool SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid);

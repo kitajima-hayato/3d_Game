@@ -3,6 +3,8 @@
 #include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
+#include <SpriteCommon.h>
+using Engine::DirectXCommon;
 StageClearScene::StageClearScene()
 {
 }
@@ -13,9 +15,11 @@ StageClearScene::~StageClearScene()
 
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
+	SpriteCommon::GetInstance().Initialize(dxCommon);
+
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
-	cameraTransform.translate = { 0.0f,0.0f,-10.0f };
+	cameraTransform.translate = { 0.0f,-5.0f,4.0f };
 	cameraTransform.rotate = { 0.0f,0.0f,0.0f };
 	camera->SetTranslate(cameraTransform.translate);
 	camera->SetRotate(cameraTransform.rotate);
@@ -23,32 +27,168 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 	// @todo: お祝い感のあるパーティクルを降らせる
 
 
+	backGround_ = std::make_unique<BackGround>();
+	backGround_->Initialize();
+
+	// スプライトの初期化
+	clearTextSprite = std::make_unique<Sprite>();
+	clearTextSprite->Initialize("resources/ClearScene/StageClear.png");
+
+	clearTextPos = { 0.0f,0.0f }; 
+	clearTextSprite->SetPosition(clearTextPos);
+	clearTextSprite->SetSize({ 1280.0f,720.0f });
+
+	// playerObject_の初期化
+	playerObject_ = std::make_unique<Object3D>();
+	playerObject_->Initialize();
+	playerTransform_ = {
+		{ 1.0f,1.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
+		{ 5.0f,-7.0f,20.0f }
+	};
+	playerObject_->SetTransform(playerTransform_);
+	playerObject_->SetModel("Player.obj");
+
+
+	// OneMore / Select / Title UI
+	oneMore_ = std::make_unique<Sprite>();
+	oneMore_->Initialize("resources/ClearScene/ClearUI_OneMore.png");
+	oneMore_->SetPosition({ 250.0f,570.0f });
+	oneMore_->SetSize(oneMoreBaseSize_);
+
+	select_ = std::make_unique<Sprite>();
+	select_->Initialize("resources/ClearScene/ClearUI_Select.png");
+	select_->SetPosition({ 550.0f,570.0f });
+	select_->SetSize(selectBaseSize_);
+
+	title_ = std::make_unique<Sprite>();
+	title_->Initialize("resources/ClearScene/ClearUI_Title.png");
+	title_->SetPosition({ 850.0f,570.0f });
+	title_->SetSize(titleBaseSize_);
+
+	// KeyIconUi　/ 左下に配置
+
+	keyIcon_A = std::make_unique<Sprite>();
+	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->SetPosition({ 30.0f, 635.0f });
+	keyIcon_A->SetSize({ 50.0f, 50.0f });
+
+	keyIcon_D = std::make_unique<Sprite>();
+	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->SetPosition({ 80.0f, 635.0f });
+	keyIcon_D->SetSize({ 50.0f, 50.0f });
+
+	keyIcon_Enter = std::make_unique<Sprite>();
+	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->SetPosition({ 55.0f, 565.0f });
+	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 }
 
 void StageClearScene::Update()
 {
 	// カメラの更新
 	camera->Update();
+	if(Input::GetInstance()->TriggerKey(DIK_A) || Input::GetInstance()->TriggerKey(DIK_LEFT)) {
+		int idx = static_cast<int>(selectedItem_);
+		idx = (idx - 1 + static_cast<int>(ClearMenuItem::Count)) % static_cast<int>(ClearMenuItem::Count);
+		selectedItem_ = static_cast<ClearMenuItem>(idx);
+	}
+	// 右へ（D or →）
+	else if (Input::GetInstance()->TriggerKey(DIK_D) || Input::GetInstance()->TriggerKey(DIK_RIGHT)) {
+		int idx = static_cast<int>(selectedItem_);
+		idx = (idx + 1) % static_cast<int>(ClearMenuItem::Count);
+		selectedItem_ = static_cast<ClearMenuItem>(idx);
+	}
 
-	// タイトルへ戻る (1)
-	if (Input::GetInstance()->TriggerKey(DIK_1)) {
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+	// ========= 決定（Enter / Space） =========
+	if (Input::GetInstance()->TriggerKey(DIK_RETURN) ) {
+		switch (selectedItem_) {
+		case ClearMenuItem::OneMore:
+			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");     // もう一回 = 今のステージをやり直すなら GAMEPLAY
+			break;
+		case ClearMenuItem::Select:
+			SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+			break;
+		case ClearMenuItem::Title:
+			SceneManager::GetInstance()->ChangeScene("TITLE");
+			break;
+		default:
+			break;
+		}
+		return; // シーン遷移したら以降の更新を止めたい場合
 	}
-	// ステージセレクトへ戻る (2)
-	else if (Input::GetInstance()->TriggerKey(DIK_2)) {
-		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	oneMore_->SetSize(oneMoreBaseSize_);
+	select_->SetSize(selectBaseSize_);
+	title_->SetSize(titleBaseSize_);
+	
+	// 回転させる
+	Vector3 rotate = playerObject_->GetRotate();
+	rotate.z += -0.1f;
+	playerObject_->SetRotate(rotate);
+
+	// 選択中だけ少し大きく
+	auto Scale = [](const Vector2& v, float s) { return Vector2{ v.x * s, v.y * s }; };
+
+	switch (selectedItem_) {
+	case ClearMenuItem::OneMore:
+		oneMore_->SetSize(Scale(oneMoreBaseSize_, selectScale_));
+		break;
+	case ClearMenuItem::Select:
+		select_->SetSize(Scale(selectBaseSize_, selectScale_));
+		break;
+	case ClearMenuItem::Title:
+		title_->SetSize(Scale(titleBaseSize_, selectScale_));
+		break;
+	default:
+		break;
 	}
-	// ゲームプレイへ戻る (3)
-	else if (Input::GetInstance()->TriggerKey(DIK_3)) {
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
-	}
+	//// タイトルへ戻る (1)
+	//if (Input::GetInstance()->TriggerKey(DIK_1)) {
+	//	SceneManager::GetInstance()->ChangeScene("TITLE");
+	//}
+	//// ステージセレクトへ戻る (2)
+	//else if (Input::GetInstance()->TriggerKey(DIK_2)) {
+	//	SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	//}
+	//// ゲームプレイへ戻る (3)
+	//else if (Input::GetInstance()->TriggerKey(DIK_3)) {
+	//	SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	//}
+
+	playerObject_->Update();
+
+	backGround_->Update();
+
+	clearTextSprite->Update();
+
+
+	keyIcon_A->Update();
+
+	keyIcon_D->Update();
+	keyIcon_Enter->Update();
+
+	
+	oneMore_->Update();
+	select_->Update();
+	title_->Update();
+
 	// ImGuiの描画
 	DrawImgui();
 }
 
 void StageClearScene::Draw()
 {
+	backGround_->Draw();
+	playerObject_->Draw();
+	clearTextSprite->Draw();
 
+	keyIcon_A->Draw();
+
+	keyIcon_D->Draw();
+	keyIcon_Enter->Draw();
+	oneMore_->Draw();
+	select_->Draw();
+	title_->Draw();
 }
 
 void StageClearScene::Finalize()
@@ -70,6 +210,10 @@ void StageClearScene::DrawImgui()
 	ImGui::DragFloat3("CameraRot", &cameraTransform.rotate.x, 0.01f);
 	camera->SetTranslate(cameraTransform.translate);
 	camera->SetRotate(cameraTransform.rotate);
+
+	ImGui::Separator();
+	
+	
 
 	ImGui::End();
 #endif

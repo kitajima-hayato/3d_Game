@@ -12,17 +12,13 @@ StageSelectGraph::~StageSelectGraph()
 void StageSelectGraph::Initialize()
 {
 	//// ノードの追加
-	//uint32_t nodeA = AddNode({ 0,0 }, 1, true);
-	//uint32_t nodeB = AddNode({ 1,0 }, 2, false);
-	//uint32_t nodeC = AddNode({ 1,1 }, 3, false);
-	//uint32_t nodeD = AddNode({ 2,0 }, 4, false);
-	//// ノードの接続
-	//Link(nodeA, nodeB, Direction::Right);
-	//Link(nodeB, nodeC, Direction::Up);
-	//Link(nodeB, nodeD, Direction::Down);
+	
+	// ノード情報をJSONファイルから読み込み
+	LoadMapNodeFromJson("World_1");
+	// ノード境界情報の再計算     
+	RecalculateBounds();
 
-	LoadMapNodeFromJson("StageSelectNodes");
-
+	
 }
 
 
@@ -30,13 +26,14 @@ void StageSelectGraph::Finalize()
 {
 }
 
-uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, bool unlocked)
+uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, const std::string& stageKey, bool unlocked)
 {
 	// 新しいノードを作成
 	StageNode newNode{};
 	newNode.id = static_cast<uint32_t>(nodes_.size());
 	newNode.position = pos;
 	newNode.stageId = stageId;
+	newNode.stageKey = stageKey;
 	newNode.unlocked = unlocked;
 
 	// 全方向の隣接ノードを無効に設定
@@ -44,8 +41,12 @@ uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, bool unlocked)
 		newNode.neighbor[i] = INVALID_NODE_ID;
 	}
 	nodes_.push_back(newNode);
+	// ノード境界情報の再計算
+	RecalculateBounds();
+	// 追加したノードのIDを返す
 	return newNode.id;
 }
+
 
 
 
@@ -76,9 +77,9 @@ uint32_t StageSelectGraph::Move(uint32_t currentNodeId, Direction dir) const
 		return currentNodeId;
 	}
 	// ロックされていたら移動できない
-	if (!nodes_[nextNodeId].unlocked) {
+	/*if (!nodes_[nextNodeId].unlocked) {
 		return currentNodeId;
-	}
+	}*/
 
 	return nextNodeId;
 }
@@ -94,7 +95,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 {
 	// JSONファイルからノード情報を読み込む処理
 	// filePathはリソースフォルダからの相対パス
-	const std::string frontFilePath = "resources/StageSelect";
+	const std::string frontFilePath = "resources/WorldSelect";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 
@@ -119,6 +120,8 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 	// ノード情報の確認
 	assert(deserialized.contains("nodes"));
 	assert(deserialized["nodes"].is_array());
+	
+
 
 	// 既存ノード情報のクリア
 	nodes_.clear();
@@ -134,6 +137,8 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 
 		assert(jsonNode.contains("stage_id"));
 		assert(jsonNode["stage_id"].is_number_integer());
+		assert(jsonNode.contains("stage_key"));
+		assert(jsonNode["stage_key"].is_string());
 		assert(jsonNode.contains("unlocked"));
 		assert(jsonNode["unlocked"].is_boolean());
 
@@ -143,9 +148,11 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 		pos.y = jsonNode["position"]["y"].get<uint32_t>();
 		uint32_t stageId = jsonNode["stage_id"].get<uint32_t>();
 		bool unlocked = jsonNode["unlocked"].get<bool>();
+		std::string stageKey = jsonNode["stage_key"].get<std::string>();
+
 
 		// ノードの追加
-		AddNode(pos, stageId, unlocked);
+		AddNode(pos, stageId, stageKey, unlocked);
 	}
 
 	// -------- 2パス目：neighbors 設定 --------
@@ -205,6 +212,7 @@ nlohmann::json StageSelectGraph::ToJson() const
 		nlohmann::json jn;
 		jn["position"] = { {"x",n.position.x},{"y",n.position.y} };
 		jn["stage_id"] = n.stageId;
+		jn["stage_key"] = n.stageKey;
 		jn["unlocked"] = n.unlocked;
 
 		nlohmann::json neigh = nlohmann::json::object();
@@ -238,6 +246,43 @@ void StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
 	ofs << ToJsonString(2);
 }
 
+Vector2 StageSelectGraph::GetNodeUV(uint32_t nodeId) const
+{
+	// ノードIDの範囲チェック
+	const StageNode& node = nodes_.at(nodeId);
+	// 範囲計算
+	const float rangeX = (bounds_.max.x > bounds_.min.x) ? static_cast<float>(bounds_.max.x - bounds_.min.x) : 1.0f;
+	const float rangeY = (bounds_.max.y > bounds_.min.y) ? static_cast<float>(bounds_.max.y - bounds_.min.y) : 1.0f;
+	// UV座標計算
+	const float u = (static_cast<float>(node.position.x - bounds_.min.x)) / rangeX;
+	const float v = (static_cast<float>(node.position.y - bounds_.min.y)) / rangeY;
+	// 返却
+	return Vector2{ u,v };
+}
+
+void StageSelectGraph::RecalculateBounds()
+{
+	// ノードの境界情報を再計算する処理
+	// ノードが存在しない場合は初期化して終了
+	if (nodes_.empty()) {
+		bounds_ = {};
+		return;
+	}
+
+	// 最小・最大座標を初期化
+	bounds_.min = nodes_[0].position;
+	bounds_.max = nodes_[0].position;
+
+	// 全ノードを走査して最小・最大座標を更新
+	for (const auto& n : nodes_) {
+		if (n.position.x < bounds_.min.x) bounds_.min.x = n.position.x;
+		if (n.position.y < bounds_.min.y) bounds_.min.y = n.position.y;
+		if (n.position.x > bounds_.max.x) bounds_.max.x = n.position.x;
+		if (n.position.y > bounds_.max.y) bounds_.max.y = n.position.y;
+	}
+
+}
+
 
 
 bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
@@ -246,6 +291,8 @@ bool StageSelectGraph::SetNodePos(uint32_t id, MapPos pos)
 	if (id >= nodes_.size()) return false;
 	// 座標の設定
 	nodes_[id].position = pos;
+	// ノード境界情報の再計算
+	RecalculateBounds();
 	return true;
 }
 
@@ -256,6 +303,13 @@ bool StageSelectGraph::SetNodeStageId(uint32_t id, uint32_t stageId)
 	if (id >= nodes_.size()) return false;
 	// ステージIDの設定
 	nodes_[id].stageId = stageId;
+	return true;
+}
+
+bool StageSelectGraph::SetNodeStageKey(uint32_t id, const std::string& stageKey)
+{
+	if (id >= nodes_.size()) return false;
+	nodes_[id].stageKey = stageKey;
 	return true;
 }
 

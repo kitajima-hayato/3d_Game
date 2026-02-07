@@ -1,4 +1,7 @@
 #include "Framework.h"
+
+using namespace Engine;
+
 void Framework::Initialize()
 {
 	//WindowsAPIの初期化

@@ -169,6 +169,7 @@
     <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
     <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
     <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
+    <ClCompile Include="Game\Application\PlayContext.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -338,6 +339,7 @@
     <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
     <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
+    <ClInclude Include="Game\Application\PlayContext.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

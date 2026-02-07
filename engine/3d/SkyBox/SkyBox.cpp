@@ -4,6 +4,8 @@
 #include "TextureManager.h"
 #include "Object3DCommon.h"
 
+using namespace Engine;
+
 void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 {
 	this->dxCommon = dxCommon;

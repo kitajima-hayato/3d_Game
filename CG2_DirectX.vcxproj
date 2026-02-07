@@ -163,6 +163,7 @@
     <ClCompile Include="Game\Scene\Pause\PauseUI.cpp" />
     <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
     <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
+    <ClCompile Include="Game\Application\PlayContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Game\Scene\Pause\PauseUI.h" />
     <ClInclude Include="Game\Camera\StartCamPhase.h" />
     <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
+    <ClInclude Include="Game\Application\PlayContext.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

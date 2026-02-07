@@ -26,7 +26,7 @@ public:		// メンバ関数
 	/// </summary>
 	/// <param name="dxCommon">デバイスやコマンド管理</param>
 	/// <param name="srvManager">SRVの割り当ておよび管理</param>
-	void Initialize(DirectXCommon* dxCommon, SrvManager* srvManager);
+	void Initialize(Engine::DirectXCommon* dxCommon, SrvManager* srvManager);
 	/// <summary>
 	/// 終了処理
 	/// </summary>
@@ -91,10 +91,10 @@ private:	// シングルトン
 	TextureManager& operator=(TextureManager&) = delete;
 
 private:	// メンバ変数
-	DirectXCommon* dxCommon = nullptr;
+	Engine::DirectXCommon* dxCommon = nullptr;
 
 	// テクスチャデータ
-	std::unordered_map<std::string, TextureData> textureDatas;	// 
+	std::unordered_map<std::string, TextureData> textureDates;	// 
 	// SRVマネージャー
 	SrvManager* srvManager = nullptr;
 
