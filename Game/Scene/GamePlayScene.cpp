@@ -5,6 +5,7 @@
 #include "Game/Particle/ParticleManager.h"
 #include "engine/InsideScene/Framework.h"
 #include "Game/Application/PlayContext.h"
+#include "Game/Particle/ModelParticleManager.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -92,7 +93,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	damageFeedBack_->Bind(player.get(), camera, &cameraTransform);
 	damageFeedBack_->Initialize();
 
-
+	ModelParticleManager::GetInstance().Initialize();
 }
 
 
@@ -200,6 +201,7 @@ void GamePlayScene::Update()
 	gamePlayHUD_->Update();
 
 
+	ModelParticleManager::GetInstance().Update();
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
@@ -236,6 +238,7 @@ void GamePlayScene::Draw()
 	}
 
 	ParticleManager::GetInstance()->Draw();
+	ModelParticleManager::GetInstance().Draw();
 
 	///////////////////
 	// スプライトの描画 //

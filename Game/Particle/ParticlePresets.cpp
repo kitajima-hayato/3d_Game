@@ -1,0 +1,128 @@
+#include "ParticlePresets.h"
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& position)
+{
+	// パーティクルシステムの生成
+	auto particleSystem = ParticleSystem::Create("Explosion", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(50.0f);
+	// メイン設定 / ループ再生の有無、寿命など
+	particleSystem->SetLoop(false);
+	particleSystem->GetMainModule().duration = 0.5f;
+	particleSystem->GetMainModule().startLifetime = 1.0f;
+
+	// 爆発タイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Explosion);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& position)
+{
+	auto particleSystem = ParticleSystem::Create("Smoke", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(100.0f);
+	// メイン設定 / ループ再生の有無、寿命など
+	particleSystem->SetLoop(true);
+	particleSystem->GetMainModule().duration = 0.2f;
+	particleSystem->GetMainModule().startLifetime = 0.5f;
+
+	// 煙タイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Smoke);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& position)
+{
+	auto particleSystem = ParticleSystem::Create("Sparks", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(100.0f);
+	// メイン設定 / ループ再生の有無、寿命など
+	particleSystem->SetLoop(false);
+	particleSystem->GetMainModule().duration = 0.2f;
+	particleSystem->GetMainModule().startLifetime = 0.5f;
+
+	// スパークタイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Spark);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3& position)
+{
+	auto particleSystem = ParticleSystem::Create("TitleEffect", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(5.0f);
+	// メイン設定 / ループ再生の有無
+	particleSystem->SetLoop(true);
+
+	// タイトルシーンエフェクトタイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Default);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3& position)
+{
+	auto ps = ParticleSystem::Create("MagicCircle", "resources/Particle/circle.png");
+	ps->SetTranslate(position);
+	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
+
+	// 魔法陣パラメータ設定
+	ParticleSystem::MagicCircleParams params;
+	params.radius = 5.0f;
+	params.particleCount = 32;
+	params.rotationSpeed = 1.0f;
+	params.multiLayer = false;
+	ps->SetMagicCircleParams(params);
+
+	ps->SetLoop(true);
+	ps->SetEmissionRate(10.0f);  // ゆっくり追加
+
+	return ps;
+}
+
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const Vector3& position)
+{
+	auto ps = ParticleSystem::Create("ComplexMagicCircle", "resources/Particle/circle.png");
+	ps->SetTranslate(position);
+	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
+
+	// 多重円の設定
+	ParticleSystem::MagicCircleParams params;
+	params.radius = 6.0f;
+	params.particleCount = 40;
+	params.rotationSpeed = 0.5f;
+	params.multiLayer = true;  // ← 多重円
+	ps->SetMagicCircleParams(params);
+
+	ps->SetLoop(true);
+	ps->SetEmissionRate(5.0f);
+
+	return ps;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateSummonCircle(const Vector3& position)
+{
+	auto ps = ParticleSystem::Create("SummonCircle", "resources/Particle/circle.png");
+	ps->SetTranslate(position);
+	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
+
+	ParticleSystem::MagicCircleParams params;
+	params.radius = 4.0f;
+	params.particleCount = 24;
+	params.rotationSpeed = 2.0f;  // 速く回転
+	params.multiLayer = true;
+	ps->SetMagicCircleParams(params);
+
+	ps->SetLoop(false);
+	ps->GetMainModule().duration = 2.0f;  // 2秒間だけ
+
+	return ps;
+}

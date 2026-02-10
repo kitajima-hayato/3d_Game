@@ -6,7 +6,7 @@
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Scene/Pause/PauseSystem.h"
 #include "Game/Application/UI/GamePlayHUD.h"
@@ -168,7 +168,7 @@ private:
 	bool wasEnemyHit_ = false;
 	
 
-	std::unique_ptr<ParticleEmitter>testParticle_;
+	std::unique_ptr<ParticleSystem>testParticle_;
 
 	
 

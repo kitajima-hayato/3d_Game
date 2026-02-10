@@ -1,5 +1,6 @@
 #include "Framework.h"
-
+#include "engine/InsideScene/SceneManager.h"
+#include "Game/Particle/ModelParticleManager.h"
 using namespace Engine;
 
 void Framework::Initialize()
