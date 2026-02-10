@@ -55,10 +55,14 @@
 └── └── ├── LevelLoader.cpp
 └── └── └── LevelLoader.h
 └── ├── Particle/
-└── └── ├── ParticleEmitter.cpp
-└── └── ├── ParticleEmitter.h
+└── └── ├── ModelParticleManager.cpp
+└── └── ├── ModelParticleManager.h
 └── └── ├── ParticleManager.cpp
-└── └── └── ParticleManager.h
+└── └── ├── ParticleManager.h
+└── └── ├── ParticlePresets.cpp
+└── └── ├── ParticlePresets.h
+└── └── ├── ParticleSystem.cpp
+└── └── └── ParticleSystem.h
 └── └── Scene/
 └──     ├── GamePlayScene.cpp
 └──     ├── GamePlayScene.h
@@ -294,7 +298,7 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="engine\base\TextureManager.cpp" />
     <ClCompile Include="engine\base\WinAPI.cpp" />
     <ClCompile Include="Game\Scene\MyGame.cpp" />
-    <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Game\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Game\Particle\ParticleManager.cpp" />
     <ClCompile Include="engine\InsideScene\SceneFactory.cpp" />
     <ClCompile Include="engine\InsideScene\SceneManager.cpp" />
@@ -314,6 +318,8 @@ File Path: CG2_DirectX.vcxproj
     <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
     <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
     <ClCompile Include="Game\Application\PlayContext.cpp" />
+    <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
+    <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
@@ -354,7 +360,7 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Scene\GamePlayScene.h" />
     <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\MyGame.h" />
-    <ClInclude Include="Game\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Game\Particle\ParticleSystem.h" />
     <ClInclude Include="Game\Particle\ParticleManager.h" />
     <ClInclude Include="engine\InsideScene\SceneFactory.h" />
     <ClInclude Include="engine\InsideScene\SceneManager.h" />
@@ -375,6 +381,8 @@ File Path: CG2_DirectX.vcxproj
     <ClInclude Include="Game\Camera\StartCamPhase.h" />
     <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
     <ClInclude Include="Game\Application\PlayContext.h" />
+    <ClInclude Include="Game\Particle\ParticlePresets.h" />
+    <ClInclude Include="Game\Particle\ModelParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -446,7 +454,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Particle\ParticleEmitter.cpp">
+    <ClCompile Include="Game\Particle\ParticleSystem.cpp">
       <Filter>Game\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Game\Particle\ParticleManager.cpp">
@@ -574,6 +582,8 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
     <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
     <ClCompile Include="Game\Application\PlayContext.cpp" />
+    <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
+    <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -610,7 +620,7 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="engine\base\DirectXCommon.h">
       <Filter>engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Particle\ParticleEmitter.h">
+    <ClInclude Include="Game\Particle\ParticleSystem.h">
       <Filter>Game\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\ParticleManager.h">
@@ -744,6 +754,8 @@ File Path: CG2_DirectX.vcxproj.filters
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
     <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
     <ClInclude Include="Game\Application\PlayContext.h" />
+    <ClInclude Include="Game\Particle\ParticlePresets.h" />
+    <ClInclude Include="Game\Particle\ModelParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -831,7 +843,7 @@ void BackGround::Initialize()
 {
 	titleBackGround3 = std::make_unique<Object3D>();
 	titleBackGround3->Initialize();
-	titleBackGround3->SetModel("Back3Reverse.obj");
+	titleBackGround3->SetModel("Back3.obj");
 	titleBackGround3Transform = {
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
@@ -866,11 +878,11 @@ void BackGround::Initialize()
 
 	titleBackGround2_2 = std::make_unique<Object3D>();
 	titleBackGround2_2->Initialize();
-	titleBackGround2_2->SetModel("Back2Reverse.obj");
+	titleBackGround2_2->SetModel("back2.obj");
 	titleBackGround2_2Transform = {
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
-		{ 180.0f,-4.0f,150.0f }
+		{ 170.0f,-4.0f,150.0f }
 	};
 	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
 	titleBackGround2_3 = std::make_unique<Object3D>();
@@ -1013,8 +1025,29 @@ void BackGround::DrawImgui()
 	ImGui::DragFloat3("titleBackGround3_2 Translate", &titleBackGround3_2Transform.translate.x, 0.1f);
 	ImGui::DragFloat3("titleBackGround3_2 Rotate", &titleBackGround3_2Transform.rotate.x, 0.1f);
 	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+
+	
+
+	//背景2 srt
+	titleBackGround2Transform = titleBackGround2->GetTransform();
 	ImGui::DragFloat3("titleBackGround2 Translate", &titleBackGround2Transform.translate.x, 0.1f);
 	titleBackGround2->SetTransform(titleBackGround2Transform);
+
+	titleBackGround2_2Transform = titleBackGround2_2->GetTransform();
+	ImGui::DragFloat3("titleBackGround2_2 Translate", &titleBackGround2_2Transform.translate.x, 0.1f);
+	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
+	
+	titleBackGround2_3Transform = titleBackGround2_3->GetTransform();
+	ImGui::DragFloat3("titleBackGround2_3 Translate", &titleBackGround2_3Transform.translate.x, 0.1f);
+	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
+	// 背景1 srt
+	Transform backGround1Transform = titleBackGround1->GetTransform();
+	ImGui::DragFloat3("titleBackGround1 Scale", &backGround1Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround1 Rotate", &backGround1Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround1 Translate", &backGround1Transform.translate.x, 0.1f);
+	titleBackGround1->SetTransform(backGround1Transform);
+		
+
 
 
 	// スカイバック　
@@ -1155,7 +1188,7 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 		blockModel->SetModel("soil.obj");
 		break;
 	case BlockType::breakBlock:
-		blockModel->SetModel("BreakBlock.obj");
+		blockModel->SetModel("breakBlock.obj");
 		break;
 	case BlockType::moveBlock:
 		blockModel->SetModel("moveBlock.obj");
@@ -2084,7 +2117,7 @@ void Map::Initialize(const std::string& mapFilePath)
 
 	ParticleManager::GetInstance()->CreateParticleGroup(
         "BreakParticle", "resources/BackSky.png");
-	breakParticleEmitter_ = std::make_unique<ParticleEmitter>();
+	breakParticleEmitter_ = std::make_unique<ParticleSystem>();
 	breakParticleEmitter_->SetParticleName("BreakParticle");
 	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
     
@@ -2605,11 +2638,13 @@ void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
             // 生存フラグ方式（演出を挟むなら Kill のみにしてもOK）
             blockArray_[yIndex][xIndex]->SetBroken();
 
+			// 破壊位置の取得
 			Vector3 breakPos = GetMapChipPositionByIndex(xIndex, yIndex);
             // 破壊時にパーティクルの発生
-           
-			breakParticleEmitter_->SetTranslate(breakPos);
-
+           ModelParticleManager::GetInstance().EmitBlockDebris(
+                breakPos,
+                Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+			   4);
 			// 該当のBreakBlockをAirに変更
             mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
         }
@@ -2627,7 +2662,8 @@ File Path: Game/Application/Map/Map.h
 #include "Game/Application/Block/Block.h"
 #include "Game/Application/Block/BlockType.h"
 #include "Game/Application/Enemy/EnemyType.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
+#include "Game/Particle/ModelParticleManager.h"
 #include <cstdint>
 #include <string>
 #include "Game/Application/Map/CsvLoader.h"
@@ -2808,7 +2844,7 @@ private:
 
 
 	// 破壊可能ブロックのパーティクルエフェクト用
-	std::unique_ptr<ParticleEmitter> breakParticleEmitter_;
+	std::unique_ptr<ParticleSystem> breakParticleEmitter_;
 
 };
 
@@ -2826,7 +2862,7 @@ void ModelList::LoadAllModel()
 							   
 							   
 	/// TitleScene			   
-	// プレイヤー				
+	// プレイヤー
 	ModelManager::GetInstance().LoadModel("Player.obj");
 	// レインボープレーン		 
 	ModelManager::GetInstance().LoadModel("RainbowPlane.obj");
@@ -2834,9 +2870,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance().LoadModel("title.obj");
 	// タイトル背景			   
 	ModelManager::GetInstance().LoadModel("Back3.obj");
-	ModelManager::GetInstance().LoadModel("Back3Reverse.obj");
 	ModelManager::GetInstance().LoadModel("back2.obj");
-	ModelManager::GetInstance().LoadModel("Back2Reverse.obj");
 	ModelManager::GetInstance().LoadModel("back1.obj");
 	ModelManager::GetInstance().LoadModel("BackSky.obj");
 	ModelManager::GetInstance().LoadModel("soil.obj");
@@ -2851,7 +2885,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance().LoadModel("SceneChange.obj");
 	ModelManager::GetInstance().LoadModel("nullBlock.obj");
 	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
-	ModelManager::GetInstance().LoadModel("BreakBlock.obj");
+	ModelManager::GetInstance().LoadModel("breakBlock.obj");
 	ModelManager::GetInstance().LoadModel("moveBlock.obj");
 	ModelManager::GetInstance().LoadModel("sand.obj");
 	ModelManager::GetInstance().LoadModel("Unbreakable.obj");
@@ -5459,151 +5493,196 @@ private:
 
 
 ============================================================
-File Path: Game/Particle/ParticleEmitter.cpp
+File Path: Game/Particle/ModelParticleManager.cpp
 ============================================================
-#include "ParticleEmitter.h"
+#include "ModelParticleManager.h"
+#include <random>
+#include "Object3D.h"
 
-ParticleEmitter::ParticleEmitter()
-    : currentTime(0.0f)
-{
-    emitter.transform.translate = { 0.0f, 0.0f, 0.0f };
-    emitter.count = 1;
-    emitter.frequency = 1.0f;
-    emitter.frequencyTime = 0.0f;
-}
+// シングルトンインスタンスの初期化
 
-ParticleEmitter::~ParticleEmitter()
+ModelParticleManager& ModelParticleManager::GetInstance()
 {
-   
+	static ModelParticleManager instance;
+	return instance;
 }
 
 
-void ParticleEmitter::Update()
+void ModelParticleManager::Initialize()
 {
-    // 時刻を進める
-    currentTime += kDeltaTime;
-    
+	// 破片用のモデルを読み込む 
+	modelName_ = "breakBlock.obj";
 
-    // 発生頻度より大きいなら発生
-    if (currentTime >= emitter.frequency)
-    {
-        Emit();
-        // カレントタイムをリセット
-        currentTime = 0.0f;
-    }
 }
 
-
-
-void ParticleEmitter::Emit()
+void ModelParticleManager::EmitBlockDebris(const Vector3& position, const Vector4& color, uint32_t count)
 {
-    // パーティクルを発生させる
-    ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
-    //ParticleManager::GetInstance()->EffectEmit(particleName, emitter.transform.translate, emitter.count);
+	std::random_device rnd;
+	std::mt19937 randomEngine(rnd());
+	std::uniform_real_distribution<float> distSpeed(1.0f, 3.0f);
+	std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distRotation(-5.0f, 5.0f);
+
+	for (uint32_t i = 0; i < count; ++i) {
+		ModelParticle particle;
+
+		particle.modelObject = std::make_unique<Object3D>();
+		particle.modelObject->Initialize();
+		particle.modelObject->SetModel(modelName_);
+
+
+		float angle = distAngle(randomEngine);
+		float speed = distSpeed(randomEngine);
+
+		// 放射状に飛び散る
+		particle.velocity = {
+			std::cos(angle) * speed,
+			distSpeed(randomEngine),  // 上向き
+			std::sin(angle) * speed
+		};
+
+		// 3D回転速度（ランダム）
+		particle.angularVelocity = {
+			distRotation(randomEngine),
+			distRotation(randomEngine),
+			distRotation(randomEngine)
+		};
+
+		Transform transform;
+		transform.scale = { 0.3f, 0.3f, 0.3f };
+		transform.rotate = { 0.0f, 0.0f, 0.0f };
+		transform.translate = position;
+		particle.modelObject->SetTransform(transform);
+
+		particle.lifeTime = 3.0f;
+		particle.currentTime = 0.0f;
+		particle.gravity = -15.0f;
+
+		particles_.push_back(std::move(particle));
+	}
 }
 
-void ParticleEmitter::BreakEmit()
+void ModelParticleManager::Update()
 {
-	ParticleManager::GetInstance()->Emit(particleName, emitter.transform.translate, emitter.count);
+	const float kDeltaTime = 1.0f / 60.0f;
+
+	for (auto it = particles_.begin(); it != particles_.end();) {
+		if (it->currentTime >= it->lifeTime) {
+			it = particles_.erase(it);
+			continue;
+		}
+
+		Transform transform = it->modelObject->GetTransform();
+
+		// 位置更新
+		transform.translate += it->velocity * kDeltaTime;
+
+		// 重力を適用
+		it->velocity.y += it->gravity * kDeltaTime;
+
+		// 3D回転を適用
+		transform.rotate.x += it->angularVelocity.x * kDeltaTime;
+		transform.rotate.y += it->angularVelocity.y * kDeltaTime;
+		transform.rotate.z += it->angularVelocity.z * kDeltaTime;
+
+		it->modelObject->SetTransform(transform);
+
+		it->modelObject->Update();
+
+		it->currentTime += kDeltaTime;
+		++it;
+	}
 }
 
+void ModelParticleManager::Draw()
+{
+	// 全てのパーティクルを描画
+	for (const auto& particle : particles_) {
+		if (particle.modelObject) {
+			particle.modelObject->Draw();
+		}
+	}
+}
 
 
 ============================================================
-File Path: Game/Particle/ParticleEmitter.h
+File Path: Game/Particle/ModelParticleManager.h
 ============================================================
 #pragma once
-#include "ParticleManager.h"
-using namespace std;
+#include "MyMath.h"
+#include <memory>
+#include <vector>
+#include "engine/3d/Object3D.h"
+
+
+struct ModelParticle {
+	std::unique_ptr<Object3D> modelObject; // モデルオブジェクト
+	Transform transform;		// 変換情報
+	Vector3 velocity;			// 速度
+	Vector4 color;				// 色
+	Vector3 angularVelocity;	// 角速度
+	float lifeTime;				// 寿命
+	float currentTime;			// 経過時間
+	float gravity;				// 重力影響度
+};
+
 /// <summary>
-/// パーティクルエミッタクラス
+/// モデルパーティクルマネージャークラス
 /// </summary>
-class ParticleEmitter
+class ModelParticleManager 
 {
 public:
-    /// <summary>
-	/// コンストラクタ・デストラクタ
-    /// </summary>
-    ParticleEmitter();
-    ~ParticleEmitter();
-    /// <summary>
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	static ModelParticleManager& GetInstance();
+
+
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+
+
+	/// <summary>
+	/// ブロックの破片パーティクルを発生させる
+	/// </summary>
+	/// <param name="position">発生位置</param>
+	/// <param name="color">破片の色</param>
+	/// <param name="count">何個出すか</param>
+	void EmitBlockDebris(const Vector3& position, const Vector4& color, uint32_t count = 10);
+
+	/// <summary>
 	/// 更新
-    /// </summary>
-    void Update();
-    /// <summary>
-	/// パーティクル発生
-    /// </summary>
-    void Emit();
+	/// </summary>
+	void Update();
 
 	/// <summary>
-	/// 破壊可能ブロックのパーティクル発生
+	/// 描画
 	/// </summary>
-	void BreakEmit();
-
-	// Getter / Setter
-	/// <summary>
-	/// エミッタのTransform設定・取得
-	/// </summary>
-	/// <param name="transform"></param>
-    void SetTransform(const Transform& transform) { emitter.transform = transform; }
-	Transform GetTransform()const { return emitter.transform; }
-
-	/// <summary>
-	/// Particleの発生位置設定・取得
-	/// </summary>
-	/// <param name="translate"></param>
-	void SetTranslate(const Vector3& translate) { emitter.transform.translate = translate; }
-	Vector3 GetTranslate()const { return emitter.transform.translate; }
-
-	/// <summary>
-	/// Particleの回転設定・取得
-	/// </summary>
-	/// <param name="rotate"></param>
-	void SetRotate(const Vector3& rotate) { emitter.transform.rotate = rotate; }
-	Vector3 GetRotate()const { return emitter.transform.rotate; }
-
-	/// <summary>
-	/// Particleのスケール設定・取得
-	/// </summary>
-	/// <param name="scale"></param>
-	void SetScale(const Vector3& scale) { emitter.transform.scale = scale; }
-	Vector3 GetScale()const { return emitter.transform.scale; }
-
-	/// <summary>
-	/// 発生させるパーティクルの数設定・取得
-	/// </summary>
-	/// <param name="name"></param>
-	void SetParticleName(const string& name) { particleName = name; }
+	void Draw();
 
 private:
-    // パーティクル構造体
-    struct Emitter {
-        Transform transform;	// エミッタのTransform
-        uint32_t count;			// 生成するパーティクルの数
-        float frequency;		// 生成する頻度
-        float frequencyTime;	// 生成する時間
-    };
-    
-    // カレントタイム
-    float currentTime;
-    // フレームごとの時間間隔（例: 60FPSの場合）
-	const float kDeltaTime = 1.0f / 60.0f;
-    // パーティクル発生間隔
-    const float emitInterval = 1.0f;
-    
-	// 描画上限数 / インスタンス数
-    const uint32_t kNumMaxInstance = 100;
-    // パーティクルのリスト
-	std::list<Particle> particles;
-	// Emitter
-	Emitter emitter;
-
-    // パーティクルネーム
-    string particleName;
-
+	// シングルトンパターン
+	static ModelParticleManager* instance;
+	// コンストラクタ
+	ModelParticleManager() = default;
+	// デストラクタ
+	~ModelParticleManager() = default;
+	// コピーコンストラクタ禁止
+	ModelParticleManager(const ModelParticleManager&) = delete;
+	// 代入演算子禁止
+	ModelParticleManager& operator=(const ModelParticleManager&) = delete;
 private:
-    Vector3 test;
+	// パーティクルリスト
+	std::vector<ModelParticle> particles_;
+
+	// モデルの名前
+	std::string modelName_ = "breakBlock.obj";
 };
+
 
 
 ============================================================
@@ -5859,6 +5938,8 @@ void ParticleManager::SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode)
 		break;
 	}
 }
+
+
 
 void ParticleManager::InitializeVertexData()
 {
@@ -6171,7 +6252,160 @@ Particle ParticleManager::MakePrimitiveEffect(std::mt19937& randomEngine, const 
 #pragma endregion
 }
 
+Particle ParticleManager::MakeExplosionParticle(std::mt19937& randomEngine, const Vector3& position)
+{
+	Particle particle;
 
+	// ランダムな方向ベクトルを生成（球面上のランダムな点）
+	std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distSpeed(2.0f, 5.0f);   // 速い速度
+	std::uniform_real_distribution<float> distColor(0.8f, 1.0f);   // 明るい色
+	std::uniform_real_distribution<float> distLifetime(0.5f, 1.5f); // 短命
+
+	// 球面座標からランダムな方向を計算
+	float theta = distAngle(randomEngine);  // 水平角度
+	float phi = distAngle(randomEngine);    // 垂直角度
+	float speed = distSpeed(randomEngine);
+
+	// 放射状の速度ベクトル（中心から外側へ）
+	particle.velocity = {
+		std::sin(phi) * std::cos(theta) * speed,  // X方向
+		std::sin(phi) * std::sin(theta) * speed,  // Y方向
+		std::cos(phi) * speed                      // Z方向
+	};
+
+	particle.transform.scale = { 0.5f, 0.5f, 0.5f };
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	particle.transform.translate = position;
+
+	// 爆発らしい色（赤・オレンジ・黄色）
+	particle.color = {
+		1.0f,                        // 赤は最大
+		distColor(randomEngine),     // 緑はランダム
+		distColor(randomEngine) * 0.3f, // 青は少なめ
+		1.0f
+	};
+
+	particle.lifeTime = distLifetime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+
+Particle ParticleManager::MakeSmokeParticle(std::mt19937& randomEngine, const Vector3& position)
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float> distPosition(-0.5f, 0.5f);
+	std::uniform_real_distribution<float> distUpSpeed(1.0f, 2.0f);    // 上昇速度
+	std::uniform_real_distribution<float> distSideSpeed(-0.3f, 0.3f); // 横の揺れ
+	std::uniform_real_distribution<float> distLifetime(2.0f, 4.0f);   // 長寿命
+
+	// 主に上方向に移動
+	particle.velocity = {
+		distSideSpeed(randomEngine),  // わずかに横にずれる
+		distUpSpeed(randomEngine),    // 上に昇る
+		distSideSpeed(randomEngine)   // わずかに横にずれる
+	};
+
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };  // 大きめ
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	particle.transform.translate = position + Vector3{
+		distPosition(randomEngine),
+		distPosition(randomEngine),
+		0.0f
+	};
+
+	// 煙らしい色（グレー）
+	float gray = 0.5f + distPosition(randomEngine) * 0.2f;
+	particle.color = { gray, gray, gray, 1.0f };
+
+	particle.lifeTime = distLifetime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+
+
+Particle ParticleManager::MakeSparkParticle(std::mt19937& randomEngine, const Vector3& position)
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distSpeed(5.0f, 10.0f);  // 非常に速い
+	std::uniform_real_distribution<float> distLifetime(0.2f, 0.5f); // 非常に短命
+
+	float angle = distAngle(randomEngine);
+	float speed = distSpeed(randomEngine);
+
+	// 主に横方向に飛び散る
+	particle.velocity = {
+		std::cos(angle) * speed,
+		std::sin(angle) * speed * 0.5f,  // 少し上向き
+		0.0f
+	};
+
+	particle.transform.scale = { 0.3f, 0.3f, 0.3f };  // 小さい
+	particle.transform.rotate = { 0.0f, 0.0f, angle };
+	particle.transform.translate = position;
+
+	// スパークらしい色（明るい黄色・白）
+	particle.color = { 1.0f, 1.0f, 0.8f, 1.0f };
+
+	particle.lifeTime = distLifetime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+Particle ParticleManager::MakeMagicCircleParticle(
+	std::mt19937& randomEngine,
+	const Vector3& position,
+	float angle,      // 円周上の角度
+	float radius)     // 半径
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float> distHeight(-0.1f, 0.1f);
+	std::uniform_real_distribution<float> distColor(0.7f, 1.0f);
+
+	// 円周上の位置を計算
+	float x = std::cos(angle) * radius;
+	float z = std::sin(angle) * radius;
+
+	particle.transform.scale = { 0.3f, 0.3f, 0.3f };
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+
+	// 地面に平行に配置（Y軸はほぼ固定）
+	particle.transform.translate = {
+		position.x + x,
+		position.y + distHeight(randomEngine),  // 少しだけ高さにばらつき
+		position.z + z
+	};
+
+	// ゆっくり回転（円周に沿って移動）
+	float rotationSpeed = 0.5f;  // 回転速度
+	particle.velocity = {
+		-std::sin(angle) * rotationSpeed,  // 円周方向の速度
+		0.0f,                              // Y軸方向には動かない
+		std::cos(angle) * rotationSpeed
+	};
+
+	// 魔法陣らしい色（青・紫・シアン）
+	particle.color = {
+		distColor(randomEngine) * 0.3f,  // 赤は少なめ
+		distColor(randomEngine) * 0.5f,  // 緑も少なめ
+		distColor(randomEngine),         // 青は強め
+		1.0f
+	};
+
+	particle.lifeTime = 5.0f;  // 長く表示
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
 
 void ParticleManager::CreateRingVertex()
 {
@@ -6410,6 +6644,87 @@ void ParticleManager::DrawCylinder()
 
 }
 
+void ParticleManager::EnsureParticleGroup(const std::string& name, const std::string& textureFilePath)
+{
+	if (!HasParticleGroup(name))
+	{
+		CreateParticleGroup(name, textureFilePath);
+	}
+}
+
+Particle ParticleManager::MakeParticleByType(std::mt19937& randomEngine, const Vector3& position, EffectType type)
+{
+	switch (type)
+	{
+		case EffectType::Explosion:
+			return MakeExplosionParticle(randomEngine, position);
+		case EffectType::Smoke:
+			return MakeSmokeParticle(randomEngine, position);
+		case EffectType::Spark:
+			return MakeSparkParticle(randomEngine, position);
+		case EffectType::Default:
+			default:
+				return MakeParticle(randomEngine, position);
+	}
+}
+
+void ParticleManager::EmitWithEffectType(const std::string& name, const Vector3& position, uint32_t count, EffectType effectType)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end());
+
+	ParticleGroup& group = it->second;
+	for (uint32_t i = 0; i < count; ++i) {
+		Particle newParticle = MakeParticleByType(randomEngine, position, effectType);
+		group.particles.push_back(newParticle);
+	}
+}
+
+void ParticleManager::EmitMagicCircle(const std::string& name, const Vector3& position, uint32_t count, float radius)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end());
+
+	ParticleGroup& group = it->second;
+
+	// 円周を均等に分割
+	float angleStep = (2.0f * std::numbers::pi_v<float>) / count;
+
+	for (uint32_t i = 0; i < count; ++i) {
+		float angle = angleStep * i;
+		Particle newParticle = MakeMagicCircleParticle(randomEngine, position, angle, radius);
+		group.particles.push_back(newParticle);
+	}
+}
+
+
+void ParticleManager::EmitComplexMagicCircle(
+	const std::string& name,
+	const Vector3& position)
+{
+	// 内側の円（小さい、速く回転）
+	EmitMagicCircle(name, position, 20, 2.0f);
+
+	// 中間の円（中くらい、中速回転）
+	EmitMagicCircle(name, position, 30, 4.0f);
+
+	// 外側の円（大きい、ゆっくり回転）
+	EmitMagicCircle(name, position, 40, 6.0f);
+
+	// 中心に光る点
+	Particle centerParticle;
+	centerParticle.transform.scale = { 1.0f, 1.0f, 1.0f };
+	centerParticle.transform.translate = position;
+	centerParticle.velocity = { 0.0f, 0.0f, 0.0f };
+	centerParticle.color = { 0.5f, 0.7f, 1.0f, 1.0f };
+	centerParticle.lifeTime = 5.0f;
+	centerParticle.currentTime = 0.0f;
+
+	auto it = particleGroups.find(name);
+	if (it != particleGroups.end()) {
+		it->second.particles.push_back(centerParticle);
+	}
+}
 
 ============================================================
 File Path: Game/Particle/ParticleManager.h
@@ -6440,7 +6755,15 @@ public:
 		UINT kNumInstance;					// インスタンス数
 		ParticleForGPU* instancingData;		// インスタンシングデータを書き込むためのポインタ
 		uint32_t textureSrvIndex;               // テクスチャインデックス
-		
+	};
+
+	// エフェクトタイプ列挙型
+	enum class EffectType {
+		Default,		// 通常エフェクト
+		Explosion,		// 爆発
+		Smoke,			// 煙
+		Spark,			// 火花
+		MagicCircle,	// 魔法陣
 	};
 
 	/// <summary>
@@ -6503,7 +6826,14 @@ private:
 	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
 
 
-
+	/// <summary>
+	/// タイプ別パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine"></param>
+	/// <param name="position"></param>
+	/// <param name="type"></param>
+	/// <returns></returns>
+	Particle MakeParticleByType(std::mt19937& randomEngine, const Vector3& position, EffectType type);
 
 
 public:
@@ -6575,6 +6905,42 @@ public:
 	/// プリミティブエフェクト生成
 	/// </summary>
 	Particle MakePrimitiveEffect(std::mt19937& randomEngine, const Vector3& translate);
+
+	/// <summary>
+	/// 爆発パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeExplosionParticle(std::mt19937& randomEngine, const Vector3& position);
+
+	/// <summary>
+	/// 煙パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeSmokeParticle(std::mt19937& randomEngine, const Vector3& position);
+	
+	/// <summary>
+	/// 火花パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeSparkParticle(std::mt19937& randomEngine, const Vector3& position);
+
+	/// <summary>
+	/// 魔法陣パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <param name="angle">角度</param>
+	/// <param name="radius">半径</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeMagicCircleParticle(std::mt19937& randomEngine,const Vector3& position,float angle,float radius);
+
+
 	/// <summary>
 	/// Ringエフェクト
 	/// </summary>
@@ -6587,6 +6953,8 @@ public:
 	/// <param name="position"></param>
 	/// <returns></returns>
 	Particle MakeCylinderEffect(const Vector3& position);
+
+	
 
 	/// <summary>
 	/// Ring
@@ -6617,6 +6985,43 @@ public:
 	/// <param name="cameraPtr_"></param>
 	void SetCamera(Camera* cameraPtr_) { camera = cameraPtr_; }
 
+	/// <summary>
+	/// パーティクルグループが存在するか
+	/// </summary>
+	/// <param name="name">存在を確認するグループの名前</param>
+	/// <returns>存在すればtrue / 存在しなければfalse</returns>
+	bool HasParticleGroup(const std::string& name) const { return particleGroups.contains(name); }
+
+	/// <summary>
+	/// パーティクルグループが存在しなければ作成する
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="textureFilePath"></param>
+	void EnsureParticleGroup(const std::string& name, const std::string& textureFilePath);
+	
+	/// <summary>
+	/// エフェクトの発生(特殊エフェクト)
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	/// <param name="count"></param>
+	/// <param name="effectType"></param>
+	void EmitWithEffectType(const std::string& name, const Vector3& position, uint32_t count, EffectType effectType);
+
+	/// <summary>
+	/// 魔法陣エフェクトの発生
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	/// <param name="radius"></param>
+	void EmitMagicCircle(const std::string& name, const Vector3& position,uint32_t count, float radius);
+
+	/// <summary>
+	/// 複雑な魔法陣エフェクトの発生
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	void EmitComplexMagicCircle(const std::string& name,const Vector3& position);
 
 private:
 	// DirectXCommon
@@ -6701,11 +7106,571 @@ private:
 
 	// UV座標変更
 	Vector2 uvOffset = { 0.0f, 0.0f };
-	Vector2 uvScrollSpeed = { 0.1f, 0.0f };  // 水平方向に流す場合
+	Vector2 uvScrollSpeed = { 0.0f, 0.0f };  // 水平方向に流す場合
 
 
 };
 
+
+
+============================================================
+File Path: Game/Particle/ParticlePresets.cpp
+============================================================
+#include "ParticlePresets.h"
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& position)
+{
+	// パーティクルシステムの生成
+	auto particleSystem = ParticleSystem::Create("Explosion", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(50.0f);
+	// メイン設定 / ループ再生の有無、寿命など
+	particleSystem->SetLoop(false);
+	particleSystem->GetMainModule().duration = 0.5f;
+	particleSystem->GetMainModule().startLifetime = 1.0f;
+
+	// 爆発タイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Explosion);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& position)
+{
+	auto particleSystem = ParticleSystem::Create("Smoke", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(100.0f);
+	// メイン設定 / ループ再生の有無、寿命など
+	particleSystem->SetLoop(true);
+	particleSystem->GetMainModule().duration = 0.2f;
+	particleSystem->GetMainModule().startLifetime = 0.5f;
+
+	// 煙タイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Smoke);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& position)
+{
+	auto particleSystem = ParticleSystem::Create("Sparks", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(100.0f);
+	// メイン設定 / ループ再生の有無、寿命など
+	particleSystem->SetLoop(false);
+	particleSystem->GetMainModule().duration = 0.2f;
+	particleSystem->GetMainModule().startLifetime = 0.5f;
+
+	// スパークタイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Spark);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3& position)
+{
+	auto particleSystem = ParticleSystem::Create("TitleEffect", "resources/Particle/circle.png");
+	// 位置の設定
+	particleSystem->SetTranslate(position);
+	// エミッション設定 / 描画される粒子の数
+	particleSystem->SetEmissionRate(5.0f);
+	// メイン設定 / ループ再生の有無
+	particleSystem->SetLoop(true);
+
+	// タイトルシーンエフェクトタイプを設定
+	particleSystem->SetEffectType(ParticleManager::EffectType::Default);
+	return particleSystem;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3& position)
+{
+	auto ps = ParticleSystem::Create("MagicCircle", "resources/Particle/circle.png");
+	ps->SetTranslate(position);
+	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
+
+	// 魔法陣パラメータ設定
+	ParticleSystem::MagicCircleParams params;
+	params.radius = 5.0f;
+	params.particleCount = 32;
+	params.rotationSpeed = 1.0f;
+	params.multiLayer = false;
+	ps->SetMagicCircleParams(params);
+
+	ps->SetLoop(true);
+	ps->SetEmissionRate(10.0f);  // ゆっくり追加
+
+	return ps;
+}
+
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const Vector3& position)
+{
+	auto ps = ParticleSystem::Create("ComplexMagicCircle", "resources/Particle/circle.png");
+	ps->SetTranslate(position);
+	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
+
+	// 多重円の設定
+	ParticleSystem::MagicCircleParams params;
+	params.radius = 6.0f;
+	params.particleCount = 40;
+	params.rotationSpeed = 0.5f;
+	params.multiLayer = true;  // ← 多重円
+	ps->SetMagicCircleParams(params);
+
+	ps->SetLoop(true);
+	ps->SetEmissionRate(5.0f);
+
+	return ps;
+}
+
+std::unique_ptr<ParticleSystem> ParticlePresets::CreateSummonCircle(const Vector3& position)
+{
+	auto ps = ParticleSystem::Create("SummonCircle", "resources/Particle/circle.png");
+	ps->SetTranslate(position);
+	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
+
+	ParticleSystem::MagicCircleParams params;
+	params.radius = 4.0f;
+	params.particleCount = 24;
+	params.rotationSpeed = 2.0f;  // 速く回転
+	params.multiLayer = true;
+	ps->SetMagicCircleParams(params);
+
+	ps->SetLoop(false);
+	ps->GetMainModule().duration = 2.0f;  // 2秒間だけ
+
+	return ps;
+}
+
+
+============================================================
+File Path: Game/Particle/ParticlePresets.h
+============================================================
+#pragma once
+#include "ParticleSystem.h"
+#include <functional>
+#include <memory>
+
+class ParticlePresets
+{
+public:
+	/// <summary>
+	/// プリセット設定構造体
+	/// </summary>
+	struct PresetConfig {
+		std::string name;
+		std::string texturePath;
+		std::function<void(ParticleSystem&)> configure;
+	};
+
+	/// <summary>
+	/// 爆発エフェクト
+	/// </summary>
+	static std::unique_ptr<ParticleSystem> CreateExplosion(const Vector3& position = { 0.0f,0.0f,0.0f });
+
+	/// <summary>
+	/// 煙エフェクト
+	/// </summary>
+	static std::unique_ptr<ParticleSystem> CreateSmoke(const Vector3& position = { 0.0f,0.0f,0.0f });
+
+	/// <summary>
+	/// スパークエフェクト
+	/// </summary>
+	static std::unique_ptr<ParticleSystem> CreateSparks(const Vector3& position = { 0.0f,0.0f,0.0f });
+
+	/// <summary>
+	/// タイトルシーンエフェクト
+	/// </summary>
+	static std::unique_ptr<ParticleSystem> CreateTitleEffect(const Vector3& position = { 0.0f,0.0f,0.0f });
+
+	/// <summary>
+	/// 魔法陣エフェクト
+	/// </summary>
+	static std::unique_ptr<ParticleSystem> CreateMagicCircle(const Vector3& position = { 0.0f,0.0f,0.0f });
+
+	/// <summary>
+	/// 複雑な魔法陣（多重円）
+	/// </summary>
+	static std::unique_ptr<ParticleSystem> CreateComplexMagicCircle(const Vector3& position = { 0, 0, 0 });
+
+	/// <summary>
+    /// 召喚魔法陣（下から上へエネルギーが上がる）
+    /// </summary>
+	static std::unique_ptr<ParticleSystem> CreateSummonCircle(const Vector3& position = { 0, 0, 0 });
+};
+
+
+
+============================================================
+File Path: Game/Particle/ParticleSystem.cpp
+============================================================
+#include "ParticleSystem.h"
+
+ParticleSystem::ParticleSystem()
+    : currentTime(0.0f)
+	, emissionTimer(0.0f)
+	, state(State::Stopped)
+{
+	// SRT 初期化
+	transform.translate = { 0.0f, 0.0f, 0.0f };
+	transform.rotate = { 0.0f, 0.0f, 0.0f };
+	transform.scale = { 1.0f, 1.0f, 1.0f };
+
+	// エミッターデータ初期化
+	emitterData.count = 1;
+	emitterData.frequency = 1.0f;
+
+	// エミッションモジュール初期化
+	emission.enabled = true;
+	emission.rateOverTime = 10.0f; // 1秒あたり10個発
+
+	// メインモジュール初期化
+	main.duration = 5.0f;         // 再生時間5秒
+	main.loop = true;            // ループ再生
+	main.startLifetime = 1.0f;   // パーティクルの寿命3秒
+	main.startSpeed = { 0.0f, 0.0f, 0.0f }; 
+	main.startColor = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白色
+}
+
+ParticleSystem::~ParticleSystem()
+{
+   
+}
+
+std::unique_ptr<ParticleSystem> ParticleSystem::Create(
+	const std::string& particleName, 
+	const std::string& texturePath)
+{
+	// パーティクルグループの自動生成
+	auto manager = ParticleManager::GetInstance();
+	if (!manager->HasParticleGroup(particleName)) {
+		manager->CreateParticleGroup(particleName, texturePath);
+	}
+	// パーティクルシステムの生成
+	auto particleSystem = std::make_unique<ParticleSystem>();
+	particleSystem->SetParticleName(particleName);
+
+	return particleSystem;
+}
+
+void ParticleSystem::PlayOneShot(const std::string& particleName, const Transform& transform, uint32_t count)
+{
+	ParticleManager::GetInstance()->Emit(particleName, transform.translate, count);
+}
+
+void ParticleSystem::Play()
+{
+	// 再生状態に設定
+	state = State::Playing;
+	currentTime = 0.0f;
+	emissionTimer = 0.0f;
+}
+
+void ParticleSystem::Stop()
+{
+	// 停止状態に設定
+	state = State::Stopped;
+	currentTime = 0.0f;
+	emissionTimer = 0.0f;
+}
+
+void ParticleSystem::Pause()
+{
+	// 一時停止状態に設定
+	state = State::Paused;
+}
+
+
+void ParticleSystem::Update()
+{
+	// 停止中または一時停止中は更新しない
+	if (state != State::Playing) return;
+
+	// パーティクルの名前が設定されていない場合は更新しない
+	if (particleName.empty()) return;
+
+	// エミッションが無効なら更新しない
+	if (!emission.enabled) return;
+
+	// 経過時間を加算
+	currentTime += kDeltaTime;
+	emissionTimer += kDeltaTime;
+
+	// ループしない場合、再生時間を超えたら停止
+	if (!main.loop && currentTime >= main.duration) {
+		Stop();
+		return;
+	}
+
+	// エミッション頻度に基づいて発生
+	if (emissionTimer >= emitterData.frequency) {
+		EmitInternal();
+		emissionTimer = 0.0f; // タイマーリセット
+	}
+}
+
+
+
+void ParticleSystem::Emit(uint32_t count)
+{
+    // パーティクルを発生させる
+	ParticleManager::GetInstance()->Emit(particleName, transform.translate, count);
+}
+
+
+
+void ParticleSystem::EmitInternal()
+{
+	if (effectType == ParticleManager::EffectType::MagicCircle) {
+		if (magicCircleParams.multiLayer) {
+			// 複雑な魔法陣
+			ParticleManager::GetInstance()->EmitComplexMagicCircle(
+				particleName,
+				transform.translate
+			);
+		} else {
+			// シンプルな魔法陣
+			ParticleManager::GetInstance()->EmitMagicCircle(
+				particleName,
+				transform.translate,
+				magicCircleParams.particleCount,
+				magicCircleParams.radius
+			);
+		}
+	} else {
+		// 通常のエフェクト
+		ParticleManager::GetInstance()->EmitWithEffectType(
+			particleName,
+			transform.translate,
+			emitterData.count,
+			effectType
+		);
+	}
+}
+
+
+
+============================================================
+File Path: Game/Particle/ParticleSystem.h
+============================================================
+#pragma once
+#include "ParticleManager.h"
+using namespace std;
+/// <summary>
+/// パーティクルエミッタクラス
+/// </summary>
+class ParticleSystem
+{
+public:
+	// パーティクルシステムの状態
+	enum class State {
+		Playing, // 再生中
+		Stopped, // 停止中
+		Paused	 // 一時停止中
+	};
+
+	// エミッション設定
+	struct EmissionModule {
+		bool enabled;        // エミッションの有効・無効
+		float rateOverTime; // 時間あたりの発生率
+	};
+
+	// メイン設定
+	struct MainModule {
+		float duration;      // 再生時間
+		bool loop;          // ループ再生の有無
+		float startLifetime; // パーティクルの寿命
+		Vector3 startSpeed;  // パーティクルの初速度
+		Vector4 startColor;  // パーティクルの初期色
+	};
+
+	/// <summary>
+	/// 魔法陣パラメータ
+	/// </summary>
+	struct MagicCircleParams {
+		float radius = 5.0f;        // 半径
+		uint32_t particleCount = 32; // 円周上のパーティクル数
+		float rotationSpeed = 1.0f;  // 回転速度
+		bool multiLayer = false;     // 多重円かどうか
+	};
+
+	/// <summary>
+	/// コンストラクタ・デストラクタ
+	/// </summary>
+	ParticleSystem();
+	~ParticleSystem();
+
+	/// <summary>
+	/// パーティクルシステム生成
+	/// </summary>
+	/// <param name="particleName">パーティクルの名前</param>
+	/// <param name="texturePath">使用する画像ファイルの名前</param>
+	/// <returns></returns>
+	static std::unique_ptr<ParticleSystem>Create(const std::string& particleName, const std::string& texturePath);
+	/// <summary>
+	/// ワンショット再生
+	/// </summary>
+	/// <param name="particleName">パーティクルの名前</param>
+	/// <param name="transform">発生させる場所</param>
+	/// <param name="count">発生させる数</param>
+	static void PlayOneShot(const std::string& particleName, const Transform& transform, uint32_t count = 10);
+
+	/// <summary>
+	/// 再生
+	/// </summary>
+	void Play();
+
+	/// <summary>
+	/// 停止
+	/// </summary>
+	void Stop();
+
+	/// <summary>
+	/// 一時停止
+	/// </summary>
+	void Pause();
+
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+	/// <summary>
+	/// パーティクル発生
+	/// </summary>
+	void Emit(uint32_t count);
+
+	
+
+
+public:	// Getter / Setter
+
+
+	/// <summary>
+	/// Particleの発生位置設定・取得
+	/// </summary>
+	/// <param name="translate"></param>
+	void SetTranslate(const Vector3& translate) { this->transform.translate = translate; }
+	Vector3 GetTranslate()const { return transform.translate; }
+
+	/// <summary>
+	/// Particleの回転設定・取得
+	/// </summary>
+	/// <param name="rotate"></param>
+	void SetRotate(const Vector3& rotate) { this->transform.rotate = rotate; }
+	Vector3 GetRotate()const { return transform.rotate; }
+
+	/// <summary>
+	/// Particleのスケール設定・取得
+	/// </summary>
+	/// <param name="scale"></param>
+	void SetScale(const Vector3& scale) { this->transform.scale = scale; }
+	Vector3 GetScale()const { return transform.scale; }
+
+	/// <summary>
+	/// エミッタのTransform設定・取得
+	/// </summary>
+	/// <param name="transform">セットするTransform</param>
+	void SetTransform(const Transform& transform) { this->transform = transform; }
+	Transform GetTransform()const { return transform; }
+
+	/// <summary>
+	/// パーティクルシステムの状態取得
+	/// </summary>
+	/// <returns>状態</returns>
+	bool IsPlaying()const { return state == State::Playing; }
+	bool IsStopped()const { return state == State::Stopped; }
+	bool IsPaused()const { return state == State::Paused; }
+
+	/// <summary>
+	/// エミッションレート設定・取得（１秒当たりの発生数）
+	/// </summary>
+	/// <param name="rate"></param>
+	void SetEmissionRate(float rate) {
+		emission.rateOverTime = rate;
+		emitterData.frequency = 1.0f / rate;
+	};
+	float GetEmissionRate()const {
+		return emission.rateOverTime;
+	}
+
+	/// <summary>
+	/// ループ設定・取得
+	/// </summary>
+	/// <param name="loop">ループさせるかのフラグ</param>
+	void SetLoop(bool loop) { main.loop = loop; }
+	bool GetLoop()const { return main.loop; }
+
+	/// <summary>
+	/// 発生させるパーティクルの名前の設定・取得
+	/// </summary>
+	/// <param name="name"></param>
+	void SetParticleName(const string& name) { particleName = name; }
+	std::string GetParticleName()const { return particleName; }
+
+
+	/// <summary>
+	/// エフェクトタイプの設定・取得
+	/// </summary>
+	/// <param name="type">エフェクトのタイプ</param>
+	void SetEffectType(ParticleManager::EffectType type) {
+		// エフェクトタイプの設定
+		effectType = type;
+	}
+	ParticleManager::EffectType GetEffectType()const { return effectType; }
+
+	/// <summary>
+	/// 魔法陣パラメータ設定
+	/// </summary>
+	/// <param name="params"></param>
+	void SetMagicCircleParams(const MagicCircleParams& params) { magicCircleParams = params; }
+
+
+public:	// モジュールへのアクセス
+	EmissionModule& GetEmissionModule() { return emission; }
+	MainModule& GetMainModule() { return main; }
+
+private:
+	/// <summary>
+	/// パーティクル発生内部処理
+	/// </summary>
+	void EmitInternal();
+
+private:
+	// パーティクルネーム
+	std::string particleName;
+
+	// トランスフォーム
+	Transform transform;
+
+	// 状態
+	State state = State::Stopped;
+
+	// タイマー
+	float currentTime = 0.0f;
+	float emissionTimer = 0.0f;
+
+	// モジュール
+	EmissionModule emission;
+	MainModule main;
+
+	// エミッターデータ（内部用）
+	struct EmitterData {
+		uint32_t count = 1;
+		float frequency = 1.0f;
+	}emitterData;
+
+	// １フレームの時間
+	const float kDeltaTime = 1.0f / 60.0f;
+
+	ParticleManager::EffectType effectType = ParticleManager::EffectType::Default;
+
+	MagicCircleParams magicCircleParams;
+
+};
 
 
 ============================================================
@@ -6718,6 +7683,7 @@ File Path: Game/Scene/GamePlayScene.cpp
 #include "Game/Particle/ParticleManager.h"
 #include "engine/InsideScene/Framework.h"
 #include "Game/Application/PlayContext.h"
+#include "Game/Particle/ModelParticleManager.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -6805,7 +7771,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 	damageFeedBack_->Bind(player.get(), camera, &cameraTransform);
 	damageFeedBack_->Initialize();
 
-
+	ModelParticleManager::GetInstance().Initialize();
 }
 
 
@@ -6913,6 +7879,7 @@ void GamePlayScene::Update()
 	gamePlayHUD_->Update();
 
 
+	ModelParticleManager::GetInstance().Update();
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
@@ -6949,6 +7916,7 @@ void GamePlayScene::Draw()
 	}
 
 	ParticleManager::GetInstance()->Draw();
+	ModelParticleManager::GetInstance().Draw();
 
 	///////////////////
 	// スプライトの描画 //
@@ -7176,7 +8144,7 @@ File Path: Game/Scene/GamePlayScene.h
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Scene/Pause/PauseSystem.h"
 #include "Game/Application/UI/GamePlayHUD.h"
@@ -7338,7 +8306,7 @@ private:
 	bool wasEnemyHit_ = false;
 	
 
-	std::unique_ptr<ParticleEmitter>testParticle_;
+	std::unique_ptr<ParticleSystem>testParticle_;
 
 	
 
@@ -7375,7 +8343,7 @@ File Path: Game/Scene/MyGame.cpp
 #include "MyMath.h"
 #include "Game/Application/ModelList.h"
 #include "engine/InsideScene/Framework.h"
-#include "engine/InsideScene/SceneManager.h"
+#include "Game/Particle/ModelParticleManager.h"
 
 using namespace Engine;
 
@@ -10629,8 +11597,10 @@ File Path: Game/Scene/TitleScene.cpp
 #include "engine/3d/ModelManager.h"
 #include "Game/Camera/camera.h"
 #include "Game/Particle/ParticleManager.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ModelParticleManager.h"
+#include "Game/Particle/ParticleSystem.h"
 #include "engine/InsideScene/Framework.h"
+#include "Game/Particle/ParticlePresets.h"
 using Engine::DirectXCommon;
 TitleScene::TitleScene()
 {
@@ -10652,14 +11622,17 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	LoadSprite();
 
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
-	particleEmitter = make_unique<ParticleEmitter>();
-	particleEmitter->SetParticleName("Particle");
+	particleEmitter = ParticlePresets::CreateSmoke({ 1.0f,-7.0f,20.0f });
+	particleEmitter->Pause();
 
-	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/back1.png");
-	particleEmitter2 = make_unique<ParticleEmitter>();
-	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
-	particleEmitter2->SetParticleName("neo");
+	
+	particleEmitter2 = ParticlePresets::CreateSparks({ 1.0f,-7.0f,20.0f });
+	particleEmitter2->Pause();
+
+
+	presetEffect = ParticlePresets::CreateSummonCircle({5.0f,-7.0f,20.0f});
+	presetEffect->Play();
+
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
@@ -10725,15 +11698,10 @@ void TitleScene::Update()
 #ifdef USE_IMGUI
 	DrawImgui();
 #endif
+	particleEmitter->Update();
+	particleEmitter2->Update();
+	presetEffect->Update();
 
-
-	
-	// エミッタの位置を更新（プレイヤーに追従させるなど）
-	Transform transform;
-	transform.translate = { 1.0f, -5.0f, 15.0f };
-	particleEmitter->SetTransform(transform);
-	//particleEmitter->Update();
-	//particleEmitter2->Update();
 
 
 	titleSprite->Update();
@@ -10750,16 +11718,10 @@ void TitleScene::Update()
 		blinkTimer = 0;
 	}
 
-
-	
-
-
 	// プレイヤーを回転
 	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
 	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
-
-
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -10769,6 +11731,18 @@ void TitleScene::Update()
 	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_0))
+	{
+		particleEmitter->Stop();
+		particleEmitter2->Stop();
+		presetEffect->Stop();
+	} else if (Input::GetInstance()->TriggerKey(DIK_9))
+	{
+		particleEmitter->Play();
+		particleEmitter2->Play();
+		presetEffect->Play();
 	}
 
 }
@@ -10794,14 +11768,11 @@ void TitleScene::Draw()
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
-	//particleEmitter->Emit();
-	//particleEmitter2->Emit();
+	ModelParticleManager::GetInstance().Draw();
+
 	// エフェクトの描画
 
 
-	//EffectManager::GetInstance()->DrawRing();
-	//EffectManager::GetInstance()->DrawCylinder();
-	
 
 
 	//sceneTransition->Draw();
@@ -10820,9 +11791,7 @@ void TitleScene::Finalize()
 
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
-	/*ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
-	EffectManager::GetInstance()->DeleteEffectGroup("Cylinder");
-	EffectManager::GetInstance()->DeleteEffectGroup("Ring");*/
+	
 
 	// スプライトの終了処理
 	SpriteCommon::GetInstance().DeleteInstance();
@@ -10879,7 +11848,7 @@ File Path: Game/Scene/TitleScene.h
 #include "Sprite.h"
 #include "engine/InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
 #include "Game/Loader/LevelLoader.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
@@ -10938,8 +11907,10 @@ private:
 	std::unique_ptr<Sprite> sprite_;
 
 	// パーティクルエミッター
-	std::unique_ptr<ParticleEmitter> particleEmitter;
-	std::unique_ptr<ParticleEmitter> particleEmitter2;
+	std::unique_ptr<ParticleSystem> particleEmitter;
+	std::unique_ptr<ParticleSystem> particleEmitter2;
+
+	std::unique_ptr<ParticleSystem> presetEffect;
 
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;
@@ -12598,6 +13569,7 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize(Engine::DirectXCommon* dxCommon);
+
 	/// <summary>
 	/// モデルファイルの読み込み
 	/// </summary>
@@ -14057,7 +15029,8 @@ protected:
 File Path: engine/InsideScene/Framework.cpp
 ============================================================
 #include "Framework.h"
-
+#include "engine/InsideScene/SceneManager.h"
+#include "Game/Particle/ModelParticleManager.h"
 using namespace Engine;
 
 void Framework::Initialize()
