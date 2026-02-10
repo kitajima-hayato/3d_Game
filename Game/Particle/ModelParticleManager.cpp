@@ -52,7 +52,7 @@ void ModelParticleManager::EmitBlockDebris(const Vector3& position, const Vector
 		};
 
 		Transform transform;
-		transform.scale = { 0.3f, 0.3f, 0.3f };
+		transform.scale = { 0.2f, 0.2f, 0.2f };
 		transform.rotate = { 0.0f, 0.0f, 0.0f };
 		transform.translate = position;
 		particle.modelObject->SetTransform(transform);
