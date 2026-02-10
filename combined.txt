@@ -2644,7 +2644,7 @@ void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
            ModelParticleManager::GetInstance().EmitBlockDebris(
                 breakPos,
                 Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-			   4);
+			   15);
 			// 該当のBreakBlockをAirに変更
             mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
         }
@@ -5549,7 +5549,7 @@ void ModelParticleManager::EmitBlockDebris(const Vector3& position, const Vector
 		};
 
 		Transform transform;
-		transform.scale = { 0.3f, 0.3f, 0.3f };
+		transform.scale = { 0.2f, 0.2f, 0.2f };
 		transform.rotate = { 0.0f, 0.0f, 0.0f };
 		transform.translate = position;
 		particle.modelObject->SetTransform(transform);
