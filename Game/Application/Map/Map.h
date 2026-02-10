@@ -4,7 +4,8 @@
 #include "Game/Application/Block/Block.h"
 #include "Game/Application/Block/BlockType.h"
 #include "Game/Application/Enemy/EnemyType.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
+#include "Game/Particle/ModelParticleManager.h"
 #include <cstdint>
 #include <string>
 #include "Game/Application/Map/CsvLoader.h"
@@ -185,6 +186,6 @@ private:
 
 
 	// 破壊可能ブロックのパーティクルエフェクト用
-	std::unique_ptr<ParticleEmitter> breakParticleEmitter_;
+	std::unique_ptr<ParticleSystem> breakParticleEmitter_;
 
 };

@@ -6,7 +6,7 @@ void BackGround::Initialize()
 {
 	titleBackGround3 = std::make_unique<Object3D>();
 	titleBackGround3->Initialize();
-	titleBackGround3->SetModel("Back3Reverse.obj");
+	titleBackGround3->SetModel("Back3.obj");
 	titleBackGround3Transform = {
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
@@ -41,11 +41,11 @@ void BackGround::Initialize()
 
 	titleBackGround2_2 = std::make_unique<Object3D>();
 	titleBackGround2_2->Initialize();
-	titleBackGround2_2->SetModel("Back2Reverse.obj");
+	titleBackGround2_2->SetModel("back2.obj");
 	titleBackGround2_2Transform = {
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
-		{ 180.0f,-4.0f,150.0f }
+		{ 170.0f,-4.0f,150.0f }
 	};
 	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
 	titleBackGround2_3 = std::make_unique<Object3D>();
@@ -188,8 +188,29 @@ void BackGround::DrawImgui()
 	ImGui::DragFloat3("titleBackGround3_2 Translate", &titleBackGround3_2Transform.translate.x, 0.1f);
 	ImGui::DragFloat3("titleBackGround3_2 Rotate", &titleBackGround3_2Transform.rotate.x, 0.1f);
 	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+
+	
+
+	//背景2 srt
+	titleBackGround2Transform = titleBackGround2->GetTransform();
 	ImGui::DragFloat3("titleBackGround2 Translate", &titleBackGround2Transform.translate.x, 0.1f);
 	titleBackGround2->SetTransform(titleBackGround2Transform);
+
+	titleBackGround2_2Transform = titleBackGround2_2->GetTransform();
+	ImGui::DragFloat3("titleBackGround2_2 Translate", &titleBackGround2_2Transform.translate.x, 0.1f);
+	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
+	
+	titleBackGround2_3Transform = titleBackGround2_3->GetTransform();
+	ImGui::DragFloat3("titleBackGround2_3 Translate", &titleBackGround2_3Transform.translate.x, 0.1f);
+	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
+	// 背景1 srt
+	Transform backGround1Transform = titleBackGround1->GetTransform();
+	ImGui::DragFloat3("titleBackGround1 Scale", &backGround1Transform.scale.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround1 Rotate", &backGround1Transform.rotate.x, 0.1f);
+	ImGui::DragFloat3("titleBackGround1 Translate", &backGround1Transform.translate.x, 0.1f);
+	titleBackGround1->SetTransform(backGround1Transform);
+		
+
 
 
 	// スカイバック　

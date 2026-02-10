@@ -144,7 +144,7 @@
     <ClCompile Include="engine\base\TextureManager.cpp" />
     <ClCompile Include="engine\base\WinAPI.cpp" />
     <ClCompile Include="Game\Scene\MyGame.cpp" />
-    <ClCompile Include="Game\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Game\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Game\Particle\ParticleManager.cpp" />
     <ClCompile Include="engine\InsideScene\SceneFactory.cpp" />
     <ClCompile Include="engine\InsideScene\SceneManager.cpp" />
@@ -164,6 +164,8 @@
     <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
     <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
     <ClCompile Include="Game\Application\PlayContext.cpp" />
+    <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
+    <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
@@ -204,7 +206,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene.h" />
     <ClInclude Include="engine\base\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\MyGame.h" />
-    <ClInclude Include="Game\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Game\Particle\ParticleSystem.h" />
     <ClInclude Include="Game\Particle\ParticleManager.h" />
     <ClInclude Include="engine\InsideScene\SceneFactory.h" />
     <ClInclude Include="engine\InsideScene\SceneManager.h" />
@@ -225,6 +227,8 @@
     <ClInclude Include="Game\Camera\StartCamPhase.h" />
     <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
     <ClInclude Include="Game\Application\PlayContext.h" />
+    <ClInclude Include="Game\Particle\ParticlePresets.h" />
+    <ClInclude Include="Game\Particle\ModelParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

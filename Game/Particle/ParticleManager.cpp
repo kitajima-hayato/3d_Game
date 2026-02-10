@@ -249,6 +249,8 @@ void ParticleManager::SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode)
 	}
 }
 
+
+
 void ParticleManager::InitializeVertexData()
 {
 
@@ -560,7 +562,160 @@ Particle ParticleManager::MakePrimitiveEffect(std::mt19937& randomEngine, const 
 #pragma endregion
 }
 
+Particle ParticleManager::MakeExplosionParticle(std::mt19937& randomEngine, const Vector3& position)
+{
+	Particle particle;
 
+	// ランダムな方向ベクトルを生成（球面上のランダムな点）
+	std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distSpeed(2.0f, 5.0f);   // 速い速度
+	std::uniform_real_distribution<float> distColor(0.8f, 1.0f);   // 明るい色
+	std::uniform_real_distribution<float> distLifetime(0.5f, 1.5f); // 短命
+
+	// 球面座標からランダムな方向を計算
+	float theta = distAngle(randomEngine);  // 水平角度
+	float phi = distAngle(randomEngine);    // 垂直角度
+	float speed = distSpeed(randomEngine);
+
+	// 放射状の速度ベクトル（中心から外側へ）
+	particle.velocity = {
+		std::sin(phi) * std::cos(theta) * speed,  // X方向
+		std::sin(phi) * std::sin(theta) * speed,  // Y方向
+		std::cos(phi) * speed                      // Z方向
+	};
+
+	particle.transform.scale = { 0.5f, 0.5f, 0.5f };
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	particle.transform.translate = position;
+
+	// 爆発らしい色（赤・オレンジ・黄色）
+	particle.color = {
+		1.0f,                        // 赤は最大
+		distColor(randomEngine),     // 緑はランダム
+		distColor(randomEngine) * 0.3f, // 青は少なめ
+		1.0f
+	};
+
+	particle.lifeTime = distLifetime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+
+Particle ParticleManager::MakeSmokeParticle(std::mt19937& randomEngine, const Vector3& position)
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float> distPosition(-0.5f, 0.5f);
+	std::uniform_real_distribution<float> distUpSpeed(1.0f, 2.0f);    // 上昇速度
+	std::uniform_real_distribution<float> distSideSpeed(-0.3f, 0.3f); // 横の揺れ
+	std::uniform_real_distribution<float> distLifetime(2.0f, 4.0f);   // 長寿命
+
+	// 主に上方向に移動
+	particle.velocity = {
+		distSideSpeed(randomEngine),  // わずかに横にずれる
+		distUpSpeed(randomEngine),    // 上に昇る
+		distSideSpeed(randomEngine)   // わずかに横にずれる
+	};
+
+	particle.transform.scale = { 1.0f, 1.0f, 1.0f };  // 大きめ
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+	particle.transform.translate = position + Vector3{
+		distPosition(randomEngine),
+		distPosition(randomEngine),
+		0.0f
+	};
+
+	// 煙らしい色（グレー）
+	float gray = 0.5f + distPosition(randomEngine) * 0.2f;
+	particle.color = { gray, gray, gray, 1.0f };
+
+	particle.lifeTime = distLifetime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+
+
+Particle ParticleManager::MakeSparkParticle(std::mt19937& randomEngine, const Vector3& position)
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * std::numbers::pi_v<float>);
+	std::uniform_real_distribution<float> distSpeed(5.0f, 10.0f);  // 非常に速い
+	std::uniform_real_distribution<float> distLifetime(0.2f, 0.5f); // 非常に短命
+
+	float angle = distAngle(randomEngine);
+	float speed = distSpeed(randomEngine);
+
+	// 主に横方向に飛び散る
+	particle.velocity = {
+		std::cos(angle) * speed,
+		std::sin(angle) * speed * 0.5f,  // 少し上向き
+		0.0f
+	};
+
+	particle.transform.scale = { 0.3f, 0.3f, 0.3f };  // 小さい
+	particle.transform.rotate = { 0.0f, 0.0f, angle };
+	particle.transform.translate = position;
+
+	// スパークらしい色（明るい黄色・白）
+	particle.color = { 1.0f, 1.0f, 0.8f, 1.0f };
+
+	particle.lifeTime = distLifetime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+Particle ParticleManager::MakeMagicCircleParticle(
+	std::mt19937& randomEngine,
+	const Vector3& position,
+	float angle,      // 円周上の角度
+	float radius)     // 半径
+{
+	Particle particle;
+
+	std::uniform_real_distribution<float> distHeight(-0.1f, 0.1f);
+	std::uniform_real_distribution<float> distColor(0.7f, 1.0f);
+
+	// 円周上の位置を計算
+	float x = std::cos(angle) * radius;
+	float z = std::sin(angle) * radius;
+
+	particle.transform.scale = { 0.3f, 0.3f, 0.3f };
+	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
+
+	// 地面に平行に配置（Y軸はほぼ固定）
+	particle.transform.translate = {
+		position.x + x,
+		position.y + distHeight(randomEngine),  // 少しだけ高さにばらつき
+		position.z + z
+	};
+
+	// ゆっくり回転（円周に沿って移動）
+	float rotationSpeed = 0.5f;  // 回転速度
+	particle.velocity = {
+		-std::sin(angle) * rotationSpeed,  // 円周方向の速度
+		0.0f,                              // Y軸方向には動かない
+		std::cos(angle) * rotationSpeed
+	};
+
+	// 魔法陣らしい色（青・紫・シアン）
+	particle.color = {
+		distColor(randomEngine) * 0.3f,  // 赤は少なめ
+		distColor(randomEngine) * 0.5f,  // 緑も少なめ
+		distColor(randomEngine),         // 青は強め
+		1.0f
+	};
+
+	particle.lifeTime = 5.0f;  // 長く表示
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
 
 void ParticleManager::CreateRingVertex()
 {
@@ -797,4 +952,86 @@ void ParticleManager::DrawCylinder()
 	cmdList->DrawInstanced(ringVertexCount, 1, 0, 0);
 
 
+}
+
+void ParticleManager::EnsureParticleGroup(const std::string& name, const std::string& textureFilePath)
+{
+	if (!HasParticleGroup(name))
+	{
+		CreateParticleGroup(name, textureFilePath);
+	}
+}
+
+Particle ParticleManager::MakeParticleByType(std::mt19937& randomEngine, const Vector3& position, EffectType type)
+{
+	switch (type)
+	{
+		case EffectType::Explosion:
+			return MakeExplosionParticle(randomEngine, position);
+		case EffectType::Smoke:
+			return MakeSmokeParticle(randomEngine, position);
+		case EffectType::Spark:
+			return MakeSparkParticle(randomEngine, position);
+		case EffectType::Default:
+			default:
+				return MakeParticle(randomEngine, position);
+	}
+}
+
+void ParticleManager::EmitWithEffectType(const std::string& name, const Vector3& position, uint32_t count, EffectType effectType)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end());
+
+	ParticleGroup& group = it->second;
+	for (uint32_t i = 0; i < count; ++i) {
+		Particle newParticle = MakeParticleByType(randomEngine, position, effectType);
+		group.particles.push_back(newParticle);
+	}
+}
+
+void ParticleManager::EmitMagicCircle(const std::string& name, const Vector3& position, uint32_t count, float radius)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end());
+
+	ParticleGroup& group = it->second;
+
+	// 円周を均等に分割
+	float angleStep = (2.0f * std::numbers::pi_v<float>) / count;
+
+	for (uint32_t i = 0; i < count; ++i) {
+		float angle = angleStep * i;
+		Particle newParticle = MakeMagicCircleParticle(randomEngine, position, angle, radius);
+		group.particles.push_back(newParticle);
+	}
+}
+
+
+void ParticleManager::EmitComplexMagicCircle(
+	const std::string& name,
+	const Vector3& position)
+{
+	// 内側の円（小さい、速く回転）
+	EmitMagicCircle(name, position, 20, 2.0f);
+
+	// 中間の円（中くらい、中速回転）
+	EmitMagicCircle(name, position, 30, 4.0f);
+
+	// 外側の円（大きい、ゆっくり回転）
+	EmitMagicCircle(name, position, 40, 6.0f);
+
+	// 中心に光る点
+	Particle centerParticle;
+	centerParticle.transform.scale = { 1.0f, 1.0f, 1.0f };
+	centerParticle.transform.translate = position;
+	centerParticle.velocity = { 0.0f, 0.0f, 0.0f };
+	centerParticle.color = { 0.5f, 0.7f, 1.0f, 1.0f };
+	centerParticle.lifeTime = 5.0f;
+	centerParticle.currentTime = 0.0f;
+
+	auto it = particleGroups.find(name);
+	if (it != particleGroups.end()) {
+		it->second.particles.push_back(centerParticle);
+	}
 }
