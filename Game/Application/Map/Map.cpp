@@ -41,7 +41,7 @@ void Map::Initialize(const std::string& mapFilePath)
 
 	ParticleManager::GetInstance()->CreateParticleGroup(
         "BreakParticle", "resources/BackSky.png");
-	breakParticleEmitter_ = std::make_unique<ParticleEmitter>();
+	breakParticleEmitter_ = std::make_unique<ParticleSystem>();
 	breakParticleEmitter_->SetParticleName("BreakParticle");
 	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
     

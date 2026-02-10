@@ -5,8 +5,9 @@
 #include "engine/3d/ModelManager.h"
 #include "Game/Camera/camera.h"
 #include "Game/Particle/ParticleManager.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
 #include "engine/InsideScene/Framework.h"
+#include "Game/Particle/ParticlePresets.h"
 using Engine::DirectXCommon;
 TitleScene::TitleScene()
 {
@@ -28,14 +29,17 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	LoadSprite();
 
 	// パーティクルグループを作成
-	ParticleManager::GetInstance()->CreateParticleGroup("Particle", "resources/monsterball.png");
-	particleEmitter = make_unique<ParticleEmitter>();
-	particleEmitter->SetParticleName("Particle");
+	particleEmitter = ParticlePresets::CreateSmoke({ 1.0f,-7.0f,20.0f });
+	particleEmitter->Pause();
 
-	ParticleManager::GetInstance()->CreateParticleGroup("neo", "resources/back1.png");
-	particleEmitter2 = make_unique<ParticleEmitter>();
-	particleEmitter2->SetTransform({ { 0.0f,0.0f,0.0f },{ 0.0f,0.0f,0.0f },{ 5.0f,0.0f,20.0f } });
-	particleEmitter2->SetParticleName("neo");
+	
+	particleEmitter2 = ParticlePresets::CreateSparks({ 1.0f,-7.0f,20.0f });
+	particleEmitter2->Pause();
+
+
+	presetEffect = ParticlePresets::CreateSummonCircle({5.0f,-7.0f,20.0f});
+	presetEffect->Play();
+
 
 	object3D = make_unique<Object3D>();
 	object3D->Initialize();
@@ -101,15 +105,10 @@ void TitleScene::Update()
 #ifdef USE_IMGUI
 	DrawImgui();
 #endif
+	particleEmitter->Update();
+	particleEmitter2->Update();
+	presetEffect->Update();
 
-
-	
-	// エミッタの位置を更新（プレイヤーに追従させるなど）
-	Transform transform;
-	transform.translate = { 1.0f, -5.0f, 15.0f };
-	particleEmitter->SetTransform(transform);
-	//particleEmitter->Update();
-	//particleEmitter2->Update();
 
 
 	titleSprite->Update();
@@ -126,16 +125,10 @@ void TitleScene::Update()
 		blinkTimer = 0;
 	}
 
-
-	
-
-
 	// プレイヤーを回転
 	playerTransform.rotate.z -= 0.05f; // 回転速度は調整可能
 	playerObject->SetTransform(playerTransform);
 	playerObject->Update();
-
-
 
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
@@ -145,6 +138,18 @@ void TitleScene::Update()
 	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
 		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	}
+
+	if (Input::GetInstance()->TriggerKey(DIK_0))
+	{
+		particleEmitter->Stop();
+		particleEmitter2->Stop();
+		presetEffect->Stop();
+	} else if (Input::GetInstance()->TriggerKey(DIK_9))
+	{
+		particleEmitter->Play();
+		particleEmitter2->Play();
+		presetEffect->Play();
 	}
 
 }
@@ -170,14 +175,10 @@ void TitleScene::Draw()
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
-	//particleEmitter->Emit();
-	//particleEmitter2->Emit();
+
 	// エフェクトの描画
 
 
-	//EffectManager::GetInstance()->DrawRing();
-	//EffectManager::GetInstance()->DrawCylinder();
-	
 
 
 	//sceneTransition->Draw();
@@ -196,9 +197,7 @@ void TitleScene::Finalize()
 
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
-	/*ParticleManager::GetInstance()->DeleteParticleGroup("Particle");
-	EffectManager::GetInstance()->DeleteEffectGroup("Cylinder");
-	EffectManager::GetInstance()->DeleteEffectGroup("Ring");*/
+	
 
 	// スプライトの終了処理
 	SpriteCommon::GetInstance().DeleteInstance();

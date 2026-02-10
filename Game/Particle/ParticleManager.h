@@ -24,7 +24,15 @@ public:
 		UINT kNumInstance;					// インスタンス数
 		ParticleForGPU* instancingData;		// インスタンシングデータを書き込むためのポインタ
 		uint32_t textureSrvIndex;               // テクスチャインデックス
-		
+	};
+
+	// エフェクトタイプ列挙型
+	enum class EffectType {
+		Default,		// 通常エフェクト
+		Explosion,		// 爆発
+		Smoke,			// 煙
+		Spark,			// 火花
+		MagicCircle,	// 魔法陣
 	};
 
 	/// <summary>
@@ -87,7 +95,14 @@ private:
 	void SetBlendMode(D3D12_BLEND_DESC& desc, BlendMode mode);
 
 
-
+	/// <summary>
+	/// タイプ別パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine"></param>
+	/// <param name="position"></param>
+	/// <param name="type"></param>
+	/// <returns></returns>
+	Particle MakeParticleByType(std::mt19937& randomEngine, const Vector3& position, EffectType type);
 
 
 public:
@@ -159,6 +174,42 @@ public:
 	/// プリミティブエフェクト生成
 	/// </summary>
 	Particle MakePrimitiveEffect(std::mt19937& randomEngine, const Vector3& translate);
+
+	/// <summary>
+	/// 爆発パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeExplosionParticle(std::mt19937& randomEngine, const Vector3& position);
+
+	/// <summary>
+	/// 煙パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeSmokeParticle(std::mt19937& randomEngine, const Vector3& position);
+	
+	/// <summary>
+	/// 火花パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeSparkParticle(std::mt19937& randomEngine, const Vector3& position);
+
+	/// <summary>
+	/// 魔法陣パーティクル生成
+	/// </summary>
+	/// <param name="randomEngine">ランダムエンジン</param>
+	/// <param name="position">発生位置</param>
+	/// <param name="angle">角度</param>
+	/// <param name="radius">半径</param>
+	/// <returns>パーティクルを返す</returns>
+	Particle MakeMagicCircleParticle(std::mt19937& randomEngine,const Vector3& position,float angle,float radius);
+
+
 	/// <summary>
 	/// Ringエフェクト
 	/// </summary>
@@ -171,6 +222,8 @@ public:
 	/// <param name="position"></param>
 	/// <returns></returns>
 	Particle MakeCylinderEffect(const Vector3& position);
+
+	
 
 	/// <summary>
 	/// Ring
@@ -201,6 +254,43 @@ public:
 	/// <param name="cameraPtr_"></param>
 	void SetCamera(Camera* cameraPtr_) { camera = cameraPtr_; }
 
+	/// <summary>
+	/// パーティクルグループが存在するか
+	/// </summary>
+	/// <param name="name">存在を確認するグループの名前</param>
+	/// <returns>存在すればtrue / 存在しなければfalse</returns>
+	bool HasParticleGroup(const std::string& name) const { return particleGroups.contains(name); }
+
+	/// <summary>
+	/// パーティクルグループが存在しなければ作成する
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="textureFilePath"></param>
+	void EnsureParticleGroup(const std::string& name, const std::string& textureFilePath);
+	
+	/// <summary>
+	/// エフェクトの発生(特殊エフェクト)
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	/// <param name="count"></param>
+	/// <param name="effectType"></param>
+	void EmitWithEffectType(const std::string& name, const Vector3& position, uint32_t count, EffectType effectType);
+
+	/// <summary>
+	/// 魔法陣エフェクトの発生
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	/// <param name="radius"></param>
+	void EmitMagicCircle(const std::string& name, const Vector3& position,uint32_t count, float radius);
+
+	/// <summary>
+	/// 複雑な魔法陣エフェクトの発生
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="position"></param>
+	void EmitComplexMagicCircle(const std::string& name,const Vector3& position);
 
 private:
 	// DirectXCommon
@@ -285,7 +375,7 @@ private:
 
 	// UV座標変更
 	Vector2 uvOffset = { 0.0f, 0.0f };
-	Vector2 uvScrollSpeed = { 0.1f, 0.0f };  // 水平方向に流す場合
+	Vector2 uvScrollSpeed = { 0.0f, 0.0f };  // 水平方向に流す場合
 
 
 };

@@ -42,7 +42,7 @@
     <ClCompile Include="engine\base\DirectXCommon.cpp">
       <Filter>engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Particle\ParticleEmitter.cpp">
+    <ClCompile Include="Game\Particle\ParticleSystem.cpp">
       <Filter>Game\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Game\Particle\ParticleManager.cpp">
@@ -170,6 +170,8 @@
     <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
     <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
     <ClCompile Include="Game\Application\PlayContext.cpp" />
+    <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
+    <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -206,7 +208,7 @@
     <ClInclude Include="engine\base\DirectXCommon.h">
       <Filter>engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Particle\ParticleEmitter.h">
+    <ClInclude Include="Game\Particle\ParticleSystem.h">
       <Filter>Game\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Game\Particle\ParticleManager.h">
@@ -340,6 +342,8 @@
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
     <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
     <ClInclude Include="Game\Application\PlayContext.h" />
+    <ClInclude Include="Game\Particle\ParticlePresets.h" />
+    <ClInclude Include="Game\Particle\ModelParticleManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

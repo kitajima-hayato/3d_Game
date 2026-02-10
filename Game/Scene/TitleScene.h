@@ -5,7 +5,7 @@
 #include "Sprite.h"
 #include "engine/InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
-#include "Game/Particle/ParticleEmitter.h"
+#include "Game/Particle/ParticleSystem.h"
 #include "Game/Loader/LevelLoader.h"
 #include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
@@ -64,8 +64,10 @@ private:
 	std::unique_ptr<Sprite> sprite_;
 
 	// パーティクルエミッター
-	std::unique_ptr<ParticleEmitter> particleEmitter;
-	std::unique_ptr<ParticleEmitter> particleEmitter2;
+	std::unique_ptr<ParticleSystem> particleEmitter;
+	std::unique_ptr<ParticleSystem> particleEmitter2;
+
+	std::unique_ptr<ParticleSystem> presetEffect;
 
 	// リングエフェクト
 	std::unique_ptr<Object3D> object3D;
