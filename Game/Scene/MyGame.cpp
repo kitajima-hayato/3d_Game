@@ -10,7 +10,7 @@
 #include "MyMath.h"
 #include "Game/Application/ModelList.h"
 #include "engine/InsideScene/Framework.h"
-#include "engine/InsideScene/SceneManager.h"
+#include "Game/Particle/ModelParticleManager.h"
 
 using namespace Engine;
 

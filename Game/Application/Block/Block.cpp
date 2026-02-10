@@ -33,7 +33,7 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 		blockModel->SetModel("soil.obj");
 		break;
 	case BlockType::breakBlock:
-		blockModel->SetModel("BreakBlock.obj");
+		blockModel->SetModel("breakBlock.obj");
 		break;
 	case BlockType::moveBlock:
 		blockModel->SetModel("moveBlock.obj");

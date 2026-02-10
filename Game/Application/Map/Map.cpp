@@ -562,11 +562,13 @@ void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
             // 生存フラグ方式（演出を挟むなら Kill のみにしてもOK）
             blockArray_[yIndex][xIndex]->SetBroken();
 
+			// 破壊位置の取得
 			Vector3 breakPos = GetMapChipPositionByIndex(xIndex, yIndex);
             // 破壊時にパーティクルの発生
-           
-			breakParticleEmitter_->SetTranslate(breakPos);
-
+           ModelParticleManager::GetInstance().EmitBlockDebris(
+                breakPos,
+                Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+			   4);
 			// 該当のBreakBlockをAirに変更
             mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
         }

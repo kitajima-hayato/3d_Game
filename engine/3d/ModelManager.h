@@ -26,6 +26,7 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize(Engine::DirectXCommon* dxCommon);
+
 	/// <summary>
 	/// モデルファイルの読み込み
 	/// </summary>

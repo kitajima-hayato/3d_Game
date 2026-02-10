@@ -8,7 +8,7 @@ void ModelList::LoadAllModel()
 							   
 							   
 	/// TitleScene			   
-	// プレイヤー				
+	// プレイヤー
 	ModelManager::GetInstance().LoadModel("Player.obj");
 	// レインボープレーン		 
 	ModelManager::GetInstance().LoadModel("RainbowPlane.obj");
@@ -31,7 +31,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance().LoadModel("SceneChange.obj");
 	ModelManager::GetInstance().LoadModel("nullBlock.obj");
 	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
-	ModelManager::GetInstance().LoadModel("BreakBlock.obj");
+	ModelManager::GetInstance().LoadModel("breakBlock.obj");
 	ModelManager::GetInstance().LoadModel("moveBlock.obj");
 	ModelManager::GetInstance().LoadModel("sand.obj");
 	ModelManager::GetInstance().LoadModel("Unbreakable.obj");

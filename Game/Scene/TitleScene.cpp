@@ -5,6 +5,7 @@
 #include "engine/3d/ModelManager.h"
 #include "Game/Camera/camera.h"
 #include "Game/Particle/ParticleManager.h"
+#include "Game/Particle/ModelParticleManager.h"
 #include "Game/Particle/ParticleSystem.h"
 #include "engine/InsideScene/Framework.h"
 #include "Game/Particle/ParticlePresets.h"
@@ -175,6 +176,7 @@ void TitleScene::Draw()
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
+	ModelParticleManager::GetInstance().Draw();
 
 	// エフェクトの描画
 

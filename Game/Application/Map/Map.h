@@ -5,6 +5,7 @@
 #include "Game/Application/Block/BlockType.h"
 #include "Game/Application/Enemy/EnemyType.h"
 #include "Game/Particle/ParticleSystem.h"
+#include "Game/Particle/ModelParticleManager.h"
 #include <cstdint>
 #include <string>
 #include "Game/Application/Map/CsvLoader.h"
