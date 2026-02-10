@@ -568,7 +568,7 @@ void Map::BreakBlock(uint32_t xIndex, uint32_t yIndex)
            ModelParticleManager::GetInstance().EmitBlockDebris(
                 breakPos,
                 Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-			   4);
+			   15);
 			// 該当のBreakBlockをAirに変更
             mapChipData_.mapData[yIndex][xIndex] = BlockType::Air;
         }
