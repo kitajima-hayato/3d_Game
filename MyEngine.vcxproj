@@ -13,8 +13,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{ea3995fc-4f43-4035-9f99-2e0e860d9b4a}</ProjectGuid>
-    <RootNamespace>CG2DirectX</RootNamespace>
+    <ProjectGuid>{26572032-4A93-4273-8278-E5D02B30B209}</ProjectGuid>
+    <RootNamespace>MyEngine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

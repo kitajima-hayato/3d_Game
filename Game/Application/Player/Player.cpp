@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <algorithm>
 #include "Input.h"
+#include "Game/Particle/ParticlePresets.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -117,6 +118,54 @@ void Player::PlayerTurn()
 
 }
 
+void Player::UpdateDashEffect()
+{
+	// 現在のダッシュ状態を取得
+	const bool movingRight = Input::GetInstance()->PushKey(DIK_D) && !Input::GetInstance()->PushKey(DIK_A);
+	const bool movingLeft = Input::GetInstance()->PushKey(DIK_A) && !Input::GetInstance()->PushKey(DIK_D);
+	// ダッシュ状態の判定
+	const bool dashActiveRight = isDash_ && (dashDirection_ == +1) && movingRight;
+	const bool dashActiveLeft = isDash_ && (dashDirection_ == -1) && movingLeft;
+	const bool dashActive = dashActiveRight || dashActiveLeft;
+
+	Vector3 playerPos = playerModel_->GetTranslate();
+
+	// ダッシュ開始時の衝撃波エフェクト
+	if (!wasDashing_ && dashActive) {
+		dashStartEffect_->SetTranslate(playerPos);
+		// 発生
+		dashStartEffect_->Play();
+	}
+
+	// ダッシュ中の継続エフェクト
+	if (dashActive) {
+		// 足元の位置を計算
+		Vector3 smokePos = playerPos;
+		// 発生位置を足元らへんに
+		smokePos.y -= particleSpawnPosOffset_;
+
+		// 進行方向とは逆方向に
+		if (dashDirection_ == +1) {
+			smokePos.x -= particleSpawnPosOffset_;
+		} else if (dashDirection_ == -1) {
+			smokePos.x += particleSpawnPosOffset_;
+		}
+
+		// エフェクトの位置更新
+		dashSmokeEffect_->SetTranslate(smokePos);
+
+		// 発生
+		if (!wasDashing_) {
+			dashSmokeEffect_->Play();
+		}
+	} else {
+		// ダッシュしていないときは煙のエフェクトを停止
+		dashSmokeEffect_->Stop();
+	}
+	// 前フレームの状態を保持
+	wasDashing_ = dashActive;
+}
+
 
 
 void Player::Initialize(Vector3 position)
@@ -128,6 +177,23 @@ void Player::Initialize(Vector3 position)
 	playerModel_->SetModel("Player.obj");
 	// 死ぬ高さの設定
 	SetDeathHeight(-1.0f);
+
+	// ダッシュエフェクトの初期化
+	// 足元の煙エフェクト
+	dashSmokeEffect_ = ParticlePresets::CreateSmoke(position);
+	// 初期は停止
+	dashSmokeEffect_->Pause();
+	dashSmokeEffect_->SetEmissionRate(30.0f);
+	dashSmokeEffect_->SetLoop(true);
+
+	// ダッシュ開始時の衝撃波
+	dashStartEffect_ = ParticlePresets::CreateSparks(position);
+	dashStartEffect_->Pause();
+	// 一気に
+	dashStartEffect_->SetEmissionRate(50.0f);
+	// 一度の発生のためループはしない
+	dashStartEffect_->SetLoop(false);
+
 }
 
 
@@ -135,6 +201,8 @@ void Player::Update()
 {
 	// プレイヤーの挙動更新
 	UpdateBehavior();
+	// ダッシュエフェクトの更新
+	UpdateDashEffect();
 	// プレイヤーの回転
 	PlayerTurn();
 	// エネミーにヒットしたら
@@ -145,6 +213,10 @@ void Player::Update()
 #endif 
 	// モデルの更新
 	playerModel_->Update();
+
+	// パーティクルシステムの更新
+	if (dashSmokeEffect_)dashSmokeEffect_->Update();
+	if (dashStartEffect_)dashStartEffect_->Update();
 }
 
 
@@ -197,7 +269,7 @@ void Player::UpdateBehavior()
 
 void Player::Move()
 {
-
+	// 操作ロック中：入力は無視して速度減衰のみ行う
 	if (!controlEnabled_) {
 		// 走り続け防止（キー押しっぱなし解除直後の事故対策）
 		velocity_.x *= (1.0f - status_.kAttenuation);
@@ -276,13 +348,17 @@ void Player::Move()
 	// ------------------------
 	Vector3 acceleration{};
 
+	// 左右のどちらの方向にダッシュしているか判別
 	const bool dashActiveRight = isDash_ && (dashDirection_ == +1) && movingRight;
 	const bool dashActiveLeft = isDash_ && (dashDirection_ == -1) && movingLeft;
+	// どちらに向いているかを持つ
 	const bool dashActive = dashActiveRight || dashActiveLeft;
+
 
 	// ダッシュ中だけ少し速くする
 	float dashScale = dashActive ? status_.kDashSpeedScale : 1.0f;
 	float maxSpeed = status_.kMaxSpeed * dashScale;
+
 
 	// 横方向速度更新
 	if (movingRight) {
@@ -341,7 +417,7 @@ void Player::Jump()
 	// 地面にいる場合
 	if (onGround_) {
 		// ジャンプキーが押されたら
-		if (Input::GetInstance()->PushKey(DIK_SPACE)|| Input::GetInstance()->PushKey(DIK_W)) {
+		if (Input::GetInstance()->PushKey(DIK_SPACE) || Input::GetInstance()->PushKey(DIK_W)) {
 			// ジャンプ処理
 			velocity_.y = status_.kJumpPower;
 		}
@@ -512,10 +588,10 @@ void Player::PlayerCollisionMove(const CollisionMapInfo& info)
 }
 
 void Player::CollisionMapInfoDirection(
-	CollisionMapInfo& collisionInfo, 
-	CollisionType type, 
-	const std::array<Corner, 2>& checkCorners, 
-	const Vector3& offset, 
+	CollisionMapInfo& collisionInfo,
+	CollisionType type,
+	const std::array<Corner, 2>& checkCorners,
+	const Vector3& offset,
 	std::function<bool(const CollisionMapInfo&)> moveCondition)
 {
 	// 移動量が0なら処理しない
@@ -658,7 +734,15 @@ void Player::DebugPlayerReset()
 
 void Player::Finalize()
 {
-
+	// パーティクルエフェクトの解放
+	if (dashSmokeEffect_) {
+		dashSmokeEffect_->Stop();
+		dashSmokeEffect_.reset();
+	}
+	if (dashStartEffect_) {
+		dashStartEffect_->Stop();
+		dashSmokeEffect_.reset();
+	}
 }
 
 void Player::ImGui()
