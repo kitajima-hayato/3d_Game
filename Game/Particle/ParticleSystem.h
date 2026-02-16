@@ -130,10 +130,12 @@ public:	// Getter / Setter
 	/// <summary>
 	/// エミッションレート設定・取得（１秒当たりの発生数）
 	/// </summary>
-	/// <param name="rate"></param>
+	/// <param name="rate">どのくらいの頻度にするか</param>
 	void SetEmissionRate(float rate) {
 		emission.rateOverTime = rate;
 		emitterData.frequency = 1.0f / rate;
+		emitterData.count = static_cast<uint32_t>(rate / 10.0f);
+		if (emitterData.count < 1)emitterData.count = 1;
 	};
 	float GetEmissionRate()const {
 		return emission.rateOverTime;

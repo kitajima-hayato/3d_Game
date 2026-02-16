@@ -4,6 +4,7 @@
 #include "engine/3d/Object3D.h"
 #include "Game/Application/Map/Map.h"
 #include "Game/Collision/Collider.h"
+#include "Game/Particle/ParticleSystem.h"
 /// <summary>
 /// プレイヤークラス
 /// </summary>
@@ -261,6 +262,11 @@ private:
 	/// </summary>
 	void PlayerTurn();
 
+	/// <summary>
+	/// ダッシュ中に発生するエフェクトの更新
+	/// </summary>
+	void UpdateDashEffect();
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -343,6 +349,17 @@ private:	// メンバ変数
 	// 操作の有効/無効
 	bool controlEnabled_ = true;
 
+	// ダッシュエフェクト用パーティクル
+	// 足元の煙
+	std::unique_ptr<ParticleSystem>dashSmokeEffect_;
+	// ダッシュ開始時の少し派手目用
+	std::unique_ptr<ParticleSystem>dashStartEffect_;
+
+	// パーティクルを出すためのダッシュ状態の追跡
+	bool wasDashing_ = false;
+	uint32_t dashEffectCounter_ = 0;
+	// パーティクルの発生位置をずらす
+	float particleSpawnPosOffset_ = 0.4f;
 
 };
 
