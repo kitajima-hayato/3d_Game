@@ -19,4 +19,4 @@ jobs:
             with:
               msbuild-architecture: x64
           - name: Build
-            run: msbuild CG2_DirectX.sln /t:Build /p:Configuration=Debug /p:Platform=x64
+            run: msbuild MyEngine.sln /t:Build /p:Configuration=Debug /p:Platform=x64
