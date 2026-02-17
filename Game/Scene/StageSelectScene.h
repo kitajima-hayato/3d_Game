@@ -9,57 +9,56 @@
 /// ステージ選択画面のシーン
 /// </summary>
 
-
 class Object3D;
 class Camera;
 class StageSelectScene :
-    public BaseScene
+	public BaseScene
 {
-
-    public:
-    StageSelectScene();
-    ~StageSelectScene();
-
-    /// <summary>
-    /// 初期化処理
-    /// </summary>
-    void Initialize(Engine::DirectXCommon* dxCommon)override;
-
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    void Update()override;
-
-    /// <summary>
-    /// 描画処理
-    /// </summary>
-    void Draw()override;
-
-    /// <summary>
-    /// 終了処理
-    /// </summary>
-    void Finalize()override;
+public:
+	StageSelectScene();
+	~StageSelectScene();
 
 	/// <summary>
-    /// Imgui一括管理
+	/// 初期化処理
+	/// </summary>
+	void Initialize(Engine::DirectXCommon* dxCommon)override;
+
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update()override;
+
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw()override;
+
+	/// <summary>
+	/// 終了処理
+	/// </summary>
+	void Finalize()override;
+
+	/// <summary>
+	/// Imgui一括管理
 	/// </summary>
 	void DrawImgui();
 
 	/// <summary>
 	/// プレイヤー移動処理
 	/// </summary>
-    void PlayerMove();
+	void PlayerMove();
 
 private:
-    /// <summary>
+	/// <summary>
 	/// ステージセレクト入力処理
-    /// </summary>
-    void HandleSelectInput();
+	/// </summary>
+	void HandleSelectInput();
+
 	/// <summary>
 	/// ノード位置をカーソル位置に合わせる
 	/// </summary>
 	void ApplyNodeToCursorTransform();
-    
+
 	/// <summary>
 	/// ステージセレクトグラフ編集ImGui
 	/// </summary>
@@ -78,10 +77,18 @@ private:
 	void UpdateCursorMove();
 
 	/// <summary>
+	/// 2点間の方向を向くためのYaw角を計算
+	/// </summary>
+	/// <param name="from">開始位置</param>
+	/// <param name="to">目標位置</param>
+	/// <returns>Yaw角（ラジアン）</returns>
+	float CalcYawToTarget(const Vector3& from, const Vector3& to) const;
+
+	/// <summary>
 	/// 指定座標からカメラ方向を向くためのヨー角を計算
 	/// </summary>
-	/// <param name="pos"></param>
-	/// <returns></returns>
+	/// <param name="pos">基準位置</param>
+	/// <returns>Yaw角（ラジアン）</returns>
 	float CalcYawFaceCamera(const Vector3& pos)const;
 
 	/// <summary>
@@ -103,31 +110,31 @@ private:
 	std::unique_ptr<Object3D> playerModel;
 	Transform playerTransform;
 
-    // セレクト画面１の土台
+	// セレクト画面１の土台
 	std::unique_ptr<Object3D> stageSelectBase1;
 	Transform stageSelectBase1Transform;
 
-    // 空背景
+	// 空背景
 	std::unique_ptr<Object3D> skyBack;
 	Transform skyBackTransform;
 
-
 	// ステージセレクトグラフ
 	std::unique_ptr<StageSelectGraph> stageSelectGraph;
-    uint32_t currentNodeId = 0;
+	uint32_t currentNodeId = 0;
 	uint32_t startNodeId = 0;
 
 	// ノードモデル群
 	std::vector<std::unique_ptr<Object3D>>nodeModels_;
 	std::vector<Transform>nodeTransforms_;
 
+	// ルートモデル群
 	std::vector<std::unique_ptr<Object3D>> routeModels_;
 	std::vector<Transform> routeTransforms_;
 
-	// stages electUI
+	// ステージセレクトUI
 	std::unique_ptr<Sprite>stageSelect_;
 
-	// kyeUI
+	// キーアイコンUI
 	std::unique_ptr<Sprite> keyIcon_W;
 	Vector2 keyIcon_W_Pos = { 1100.0f,650.0f };
 	std::unique_ptr<Sprite> keyIcon_A;
@@ -137,10 +144,10 @@ private:
 	std::unique_ptr<Sprite> keyIcon_D;
 	Vector2 keyIcon_D_Pos = { 1180.0f,680.0f };
 
-	// esc
+	// Escキー
 	std::unique_ptr<Sprite> keyIcon_Esc;
 	Vector2 keyIcon_Esc_Pos = { 100.0f,650.0f };
-	// enter
+	// Enterキー
 	std::unique_ptr<Sprite> keyIcon_Enter;
 	Vector2 keyIcon_Enter_Pos = { 200.0f,650.0f };
 
@@ -155,46 +162,51 @@ private:
 	Vector2 backUI_Pos_ = { 160.0f, 560.0f };
 
 private:
-	// ノード移動アニメーション用
+	// ===== 移動アニメーション用 =====
+	// 移動中フラグ
 	bool isMoving_ = false;
+	// 移動経過時間
 	float moveTime_ = 0.0f;
-	float moveDuration_ = 0.18f;
+	// 移動にかかる時間
+	float moveDuration_ = 0.35f;
 
-	// 移動前後の座標
+	// 移動開始位置
 	Vector3 moveStartPos_ = {};
+	// 移動目標位置
 	Vector3 moveTargetPos_ = {};
-	Vector3 prevFramePos_ = {};
 
-	// カーソルの半径
-	float cursorRadius_ = 2.5f;
+	// 移動開始時のYaw角
+	float moveStartYaw_ = 0.0f;
+	// 移動目標のYaw角（進行方向）
+	float moveTargetYaw_ = 0.0f;
 
-	
-	// 停止後の「カメラ方向を向く」補間用
+	// ===== 停止後の「カメラ方向を向く」補間用 =====
+	// カメラ方向を向いている最中フラグ
 	bool  isFacing_ = false;
+	// 向き変更の経過時間
 	float faceTime_ = 0.0f;
-	float faceDuration_ = 0.18f;   
+	// 向き変更にかかる時間
+	float faceDuration_ = 0.25f;
+	// 向き変更開始時のYaw角
 	float faceStartYaw_ = 0.0f;
+	// 向き変更目標のYaw角（カメラ方向）
 	float faceTargetYaw_ = 0.0f;
 
-	float faceStartRx_ = 0.0f;
-	float faceStartRz_ = 0.0f;
-
-	float moveSpeed_ = 18.0f;      // ワールド単位/秒（好みで調整）
-	float moveMinDuration_ = 0.18f;
-	float moveMaxDuration_ = 0.55f;
-
-	// --- 回頭（Yaw）制御 ---
-	float yawTurnSpeed_ = 15.0f;   // [rad/sec] 回頭の速さ（大きいほどクイック）
-	float camBiasMove_ = 1.0f;   // 移動中にどれだけカメラ方向へ寄せるか(0..1)
-	float camBiasEnd_ = 0.8f;   // 移動の終盤でカメラ方向へ寄せる量(0..1)
-
-	
-
+	// モデルの向き補正値（モデルが右向きの場合 -90度）
+	const float modelYawOffset_ = -1.570796326f;
 
 #ifdef USE_IMGUI
-	// 選択中ノードが変わったか判定用
+	// ===== ImGui編集用変数 =====
+	// 選択中ノードが変わったか��定用
 	uint32_t prevEditNodeId_ = UINT32_MAX;
-
+	// デバッグ情報表示用
+	bool showDebugWindow_ = true;
+	float debugMoveDistance_ = 0.0f;
+	float debugStartYawDeg_ = 0.0f;
+	float debugTargetYawDeg_ = 0.0f;
+	float debugCurrentYawDeg_ = 0.0f;
+	float debugYawChangeDeg_ = 0.0f;
+	Vector3 debugDirection_ = {};
 
 	// 編集バッファ（毎フレーム上書きされないように保持）
 	int editX_ = 0;
@@ -205,19 +217,20 @@ private:
 	char newStageKey_[64] = "1-1";
 	bool editUnlocked_ = false;
 
+	// 隣接ノード編集用
 	int editNeighUp_ = -1;
 	int editNeighDown_ = -1;
 	int editNeighLeft_ = -1;
 	int editNeighRight_ = -1;
 
-	// フィルタID
-	int filterStageId_ = -1;     // -1で無効
+	// フィルタID（-1で無効）
+	int filterStageId_ = -1;
 	bool filterUnlockedOnly_ = false;
 
-	// JSON
+	// JSON表示用
 	bool jsonDirty_ = true;
 	char jsonBuf_[32768] = {};
-	
+
 	// 編集用ノードID
 	uint32_t editNodeId_ = 0;
 
@@ -232,7 +245,5 @@ private:
 	int neighborDown_ = -1;
 	int neighborLeft_ = -1;
 	int neighborRight_ = -1;
-	
 #endif
 };
-

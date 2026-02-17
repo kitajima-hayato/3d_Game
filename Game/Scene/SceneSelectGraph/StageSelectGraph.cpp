@@ -12,13 +12,13 @@ StageSelectGraph::~StageSelectGraph()
 void StageSelectGraph::Initialize()
 {
 	//// ノードの追加
-	
+
 	// ノード情報をJSONファイルから読み込み
 	LoadMapNodeFromJson("World_1");
 	// ノード境界情報の再計算     
 	RecalculateBounds();
 
-	
+
 }
 
 
@@ -26,7 +26,7 @@ void StageSelectGraph::Finalize()
 {
 }
 
-uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, const std::string& stageKey, bool unlocked)
+uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, const std::string& stageKey, bool unlocked, float defaultYaw)
 {
 	// 新しいノードを作成
 	StageNode newNode{};
@@ -35,6 +35,7 @@ uint32_t StageSelectGraph::AddNode(MapPos pos, uint32_t stageId, const std::stri
 	newNode.stageId = stageId;
 	newNode.stageKey = stageKey;
 	newNode.unlocked = unlocked;
+	newNode.defaultYaw = defaultYaw;
 
 	// 全方向の隣接ノードを無効に設定
 	for (uint32_t i = 0; i < (uint32_t)Direction::count; i++) {
@@ -71,7 +72,7 @@ uint32_t StageSelectGraph::Move(uint32_t currentNodeId, Direction dir) const
 {
 	// 移動先ノードIDを取得
 	uint32_t nextNodeId = nodes_[currentNodeId].neighbor[(uint32_t)dir];
-	
+
 	// 未接続であれば現在のノードを返す
 	if (nextNodeId == INVALID_NODE_ID) {
 		return currentNodeId;
@@ -106,7 +107,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 	file.open(fullPath);
 
 	// ファイルが開けたかどうか
-	if (file.fail()){
+	if (file.fail()) {
 		// エラーメッセージを表示して終了
 		printf("Failed to open file: %s\n", fullPath.c_str());
 		return;
@@ -120,7 +121,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 	// ノード情報の確認
 	assert(deserialized.contains("nodes"));
 	assert(deserialized["nodes"].is_array());
-	
+
 
 
 	// 既存ノード情報のクリア
@@ -150,9 +151,16 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 		bool unlocked = jsonNode["unlocked"].get<bool>();
 		std::string stageKey = jsonNode["stage_key"].get<std::string>();
 
+		// デフォルトYaw情報の取得（存在しない場合は自動計算）
+		float defaultYaw = AUTO_YAW;
+		if (jsonNode.contains("default_yaw")) {
+			if (jsonNode["default_yaw"].is_number()) {
+				defaultYaw = jsonNode["default_yaw"].get<float>();
+			}
+		}
 
 		// ノードの追加
-		AddNode(pos, stageId, stageKey, unlocked);
+		AddNode(pos, stageId, stageKey, unlocked,defaultYaw);
 	}
 
 	// -------- 2パス目：neighbors 設定 --------
@@ -196,7 +204,7 @@ const char* DirectionToString(Direction d)
 	case Direction::Down:  return "Down";
 	case Direction::Left:  return "Left";
 	case Direction::Right: return "Right";
-	default:               return "Unknown"; 
+	default:               return "Unknown";
 	}
 }
 
@@ -214,7 +222,9 @@ nlohmann::json StageSelectGraph::ToJson() const
 		jn["stage_id"] = n.stageId;
 		jn["stage_key"] = n.stageKey;
 		jn["unlocked"] = n.unlocked;
-
+		if (n.defaultYaw != AUTO_YAW) {
+			jn["default_yaw"] = n.defaultYaw;
+		}
 		nlohmann::json neigh = nlohmann::json::object();
 		for (uint32_t i = 0; i < (uint32_t)Direction::count; i++) {
 			uint32_t to = n.neighbor[i];
@@ -322,6 +332,15 @@ bool StageSelectGraph::SetNodeUnlocked(uint32_t id, bool unlocked)
 	return true;
 }
 
+bool StageSelectGraph::SetNodeYaw(uint32_t id, float yaw)
+{
+	// IDのチェック / 範囲外なら失敗
+	if (id >= nodes_.size()) return false;
+	// Yaw角の設定
+	nodes_[id].defaultYaw = yaw;
+	return true;
+}
+
 bool StageSelectGraph::SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid)
 {
 	// IDのチェック / 範囲外なら失敗
@@ -339,3 +358,4 @@ bool StageSelectGraph::ClearNeighbor(uint32_t from, Direction dir)
 	// 隣接ノードを無効に設定
 	return SetNeighbor(from, dir, INVALID_NODE_ID);
 }
+
