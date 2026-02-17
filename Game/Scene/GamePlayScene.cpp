@@ -68,14 +68,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	isPlayerControlLocked_ = true;
 
-	// 自機がダメージを受けたら画面シェイク中に出すスプライト
-	enemyHitSprite_ = std::make_unique<Sprite>();
-	enemyHitSprite_->Initialize("resources/HitDamage.png");
-	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
-	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
 
-	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-	
 
 
 	pauseSystem_ = std::make_unique<PauseSystem>();
@@ -119,32 +112,6 @@ void GamePlayScene::Update()
 	// プレイヤーの更新
 	player->Update();
 	
-
-	bool isEnemyHitNow = player->GetHitEnemy();
-
-	// プレイヤーが敵に当たったらカメラをシェイクする
-	if (player->GetHitEnemy() && !wasEnemyHit_) {
-		enemyHitShakeActive_ = true;
-		//enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		enemyHitTimer_ = 0.0f;
-		// カメラの元の位置を保存
-		enemyHitBasePos = camera->GetTranslate();
-
-	}
-	// 敵を点滅させる
-	//Vector4 currentColor = enemyHitSprite_->GetColor();
-	//if (currentColor.w > 0.0f) {
-	//	// 減算スピードは 0.01f ～ 0.05f くらいで調整
-	//	float newAlpha = (std::max)(0.0f, currentColor.w - 0.02f);
-	//	enemyHitSprite_->SetColor({ currentColor.x, currentColor.y, currentColor.z, newAlpha });
-	//}
-	wasEnemyHit_ = isEnemyHitNow;
-
-	// カメラシェイクの更新
-	if (enemyHitShakeActive_) {
-		// 
-		EnemyHitShake(dt);
-	}
 
 	//sceneTransition->Update();
 
@@ -195,7 +162,7 @@ void GamePlayScene::Update()
 		enemy->Update();
 	}
 
-	// 当たりは判定
+	// 当たり判定
 	CheckCollision();
 	// スプライトの更新
 	gamePlayHUD_->Update();
@@ -340,73 +307,22 @@ void GamePlayScene::CheckCollision()
 void GamePlayScene::UpdateStartCamera(float dt)
 {
 	
-	
 }
 
-void GamePlayScene::EnemyHitShake(float dt)
-{
-	// スタート演出中は無効
-	if (stageStartEventFlag_) {
-		return;
 
-	}
-	enemyHitTimer_ += dt;
-
-	// 減衰
-	float u = std::clamp(1.0f - (enemyHitTimer_ / enemyHitShakeTime_), 0.0f, 1.0f);
-
-	// ２軸(x,y)のシェイク
-	float sx = std::sin(enemyHitTimer_ * 80.0f);
-	float sy = std::sin(enemyHitTimer_ * 100.0f);
-
-	Vector3 offset = { sx * shakeAmp_ * u, sy * shakeAmp_ * u, 0.0f };
-
-	cameraTransform.translate += offset;
-
-	// シェイク終了
-	if (enemyHitTimer_ >= enemyHitShakeTime_) {
-		enemyHitTimer_ = 0.0f;
-		enemyHitShakeActive_ = false;
-
-		// 最終的には元の位置に戻す
-		camera->SetTranslate(enemyHitBasePos);
-		cameraTransform.translate = enemyHitBasePos;
-
-	}
-
-
-}
 
 void GamePlayScene::SpritesInitialize()
 {
-	
-
 	
 }
 
 void GamePlayScene::SpritesUpdate()
 {
 	
-
-	
-	
-	
 }
 
 void GamePlayScene::SpritesDraw()
 {
-
-
-
-
-	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		// ダメージフィードバック
-		/*if (damageFeedback) {
-			enemyHitSprite_->Draw();
-		}*/
-	}
-	
-
 }
 
 
