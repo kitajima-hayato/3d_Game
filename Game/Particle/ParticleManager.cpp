@@ -607,10 +607,10 @@ Particle ParticleManager::MakeSmokeParticle(std::mt19937& randomEngine, const Ve
 {
 	Particle particle;
 
-	std::uniform_real_distribution<float> distPosition(-0.5f, 0.5f);
-	std::uniform_real_distribution<float> distUpSpeed(1.0f, 2.0f);    // 上昇速度
-	std::uniform_real_distribution<float> distSideSpeed(-0.3f, 0.3f); // 横の揺れ
-	std::uniform_real_distribution<float> distLifetime(2.0f, 4.0f);   // 長寿命
+	std::uniform_real_distribution<float> distPosition(-0.3f, 0.3f);
+	std::uniform_real_distribution<float> distUpSpeed(0.3f, 0.8f);    // 上昇速度
+	std::uniform_real_distribution<float> distSideSpeed(-0.2f, 0.2f); // 横の揺れ
+	std::uniform_real_distribution<float> distLifetime(0.5f, 1.0f);   
 
 	// 主に上方向に移動
 	particle.velocity = {
@@ -619,7 +619,7 @@ Particle ParticleManager::MakeSmokeParticle(std::mt19937& randomEngine, const Ve
 		distSideSpeed(randomEngine)   // わずかに横にずれる
 	};
 
-	particle.transform.scale = { 1.0f, 1.0f, 1.0f };  // 大きめ
+	particle.transform.scale = { 0.3f, 0.3f, 0.3f };  // 大きめ
 	particle.transform.rotate = { 0.0f, 0.0f, 0.0f };
 	particle.transform.translate = position + Vector3{
 		distPosition(randomEngine),
@@ -628,7 +628,8 @@ Particle ParticleManager::MakeSmokeParticle(std::mt19937& randomEngine, const Ve
 	};
 
 	// 煙らしい色（グレー）
-	float gray = 0.5f + distPosition(randomEngine) * 0.2f;
+	std::uniform_real_distribution<float> distGray(0.7f, 0.9f);
+	float gray = distGray(randomEngine);
 	particle.color = { gray, gray, gray, 1.0f };
 
 	particle.lifeTime = distLifetime(randomEngine);
@@ -642,27 +643,38 @@ Particle ParticleManager::MakeSmokeParticle(std::mt19937& randomEngine, const Ve
 Particle ParticleManager::MakeSparkParticle(std::mt19937& randomEngine, const Vector3& position)
 {
 	Particle particle;
-
+	// 
 	std::uniform_real_distribution<float> distAngle(0.0f, 2.0f * std::numbers::pi_v<float>);
-	std::uniform_real_distribution<float> distSpeed(5.0f, 10.0f);  // 非常に速い
-	std::uniform_real_distribution<float> distLifetime(0.2f, 0.5f); // 非常に短命
+	// 速め
+	std::uniform_real_distribution<float> distSpeed(3.0f, 8.0f);
+	// 寿命
+	std::uniform_real_distribution<float> distLifetime(0.1f, 0.3f);
+	// 角度
+	std::uniform_real_distribution<float> distUpAngle(-0.5f, 0.5f);
 
 	float angle = distAngle(randomEngine);
 	float speed = distSpeed(randomEngine);
+	float upAngle = distUpAngle(randomEngine);
 
 	// 主に横方向に飛び散る
 	particle.velocity = {
-		std::cos(angle) * speed,
-		std::sin(angle) * speed * 0.5f,  // 少し上向き
-		0.0f
+		std::cos(angle) * speed,          // X方向
+		upAngle * speed * 0.3f,           // Y方向
+		std::sin(angle) * speed * 0.2f    // Z方向
 	};
 
-	particle.transform.scale = { 0.3f, 0.3f, 0.3f };  // 小さい
+	particle.transform.scale = { 0.4f, 0.4f, 0.4f };  // 小さい
 	particle.transform.rotate = { 0.0f, 0.0f, angle };
 	particle.transform.translate = position;
 
-	// スパークらしい色（明るい黄色・白）
-	particle.color = { 1.0f, 1.0f, 0.8f, 1.0f };
+	// スパークらしい色（明るい黄色・オレンジ・白)
+	std::uniform_real_distribution<float> distColor(0.8f, 1.0f);
+	particle.color = {
+		1.0f,                        // 赤は最大
+		distColor(randomEngine),     // 緑はランダム（黄色っぽく）
+		distColor(randomEngine) * 0.2f, // 青は少なめ
+		1.0f
+	};
 
 	particle.lifeTime = distLifetime(randomEngine);
 	particle.currentTime = 0.0f;
@@ -978,6 +990,40 @@ Particle ParticleManager::MakeParticleByType(std::mt19937& randomEngine, const V
 	}
 }
 
+Particle ParticleManager::MakeParticleByTypeWithColor(
+	std::mt19937& randomEngine,
+	const Vector3& position,
+	EffectType type,
+	const Vector4& colorTint)
+{
+	Particle particle;
+
+	switch (type)
+	{
+	case EffectType::Explosion:
+		particle = MakeExplosionParticle(randomEngine, position);
+		break;
+	case EffectType::Smoke:
+		particle = MakeSmokeParticle(randomEngine, position);
+		break;
+	case EffectType::Spark:
+		particle = MakeSparkParticle(randomEngine, position);
+		break;
+	case EffectType::Default:
+	default:
+		particle = MakeParticle(randomEngine, position);
+		break;
+	}
+
+	// 色を乗算で適用
+	particle.color.x *= colorTint.x;
+	particle.color.y *= colorTint.y;
+	particle.color.z *= colorTint.z;
+	particle.color.w *= colorTint.w;
+
+	return particle;
+}
+
 void ParticleManager::EmitWithEffectType(const std::string& name, const Vector3& position, uint32_t count, EffectType effectType)
 {
 	auto it = particleGroups.find(name);
@@ -1033,5 +1079,22 @@ void ParticleManager::EmitComplexMagicCircle(
 	auto it = particleGroups.find(name);
 	if (it != particleGroups.end()) {
 		it->second.particles.push_back(centerParticle);
+	}
+}
+
+void ParticleManager::EmitWithEffectTypeAndColor(
+	const std::string& name,
+	const Vector3& position,
+	uint32_t count,
+	EffectType effectType,
+	const Vector4& colorTint)
+{
+	auto it = particleGroups.find(name);
+	assert(it != particleGroups.end());
+
+	ParticleGroup& group = it->second;
+	for (uint32_t i = 0; i < count; ++i) {
+		Particle newParticle = MakeParticleByTypeWithColor(randomEngine, position, effectType, colorTint);
+		group.particles.push_back(newParticle);
 	}
 }

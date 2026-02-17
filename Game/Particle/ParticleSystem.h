@@ -172,6 +172,34 @@ public:	// Getter / Setter
 	/// <param name="params"></param>
 	void SetMagicCircleParams(const MagicCircleParams& params) { magicCircleParams = params; }
 
+	/// <summary>
+	/// 色のオーバーライド設定
+	/// </summary>
+	/// <param name="color">変更する色</param>
+	void SetColor(const Vector4& color) {
+		colorOverride = color;
+		useColorOverride = true;
+	}
+	/// <summary>
+	/// 色のオーバーライドをクリア
+	/// </summary>
+	void ClearColorOverride() {
+		useColorOverride = false;
+	}
+	/// <summary>
+	/// 色のオーバーライドが有効かどうか
+	/// </summary>
+	/// <returns>有効か無効か</returns>
+	bool IsColorOverrideEnabled()const { return useColorOverride; }
+
+	/// <summary>
+	/// 色のオーバーライド取得
+	/// </summary>
+	/// <returns>現在のカラーの取得</returns>
+	Vector4 GetColorOverride()const { return colorOverride; }
+
+
+
 
 public:	// モジュールへのアクセス
 	EmissionModule& GetEmissionModule() { return emission; }
@@ -211,7 +239,20 @@ private:
 	const float kDeltaTime = 1.0f / 60.0f;
 
 	ParticleManager::EffectType effectType = ParticleManager::EffectType::Default;
-
+	// 魔法陣エフェクト用のパラメータ
 	MagicCircleParams magicCircleParams;
+
+	// 色のオーバーライド
+	Vector4 colorOverride = { 1.0f, 1.0f, 1.0f, 1.0f };
+	// 色のオーバーライドを使用するかどうか
+	bool useColorOverride = false; 
+
+	// モデルの向きの補正値
+	const float modelYawOffset = -1.570796326f;
+
+	// 移動にかかる時間
+	float moveDuration = 0.35f;
+	// 向き変更にかかる時間
+	float faceDuration = 0.25f;
 
 };

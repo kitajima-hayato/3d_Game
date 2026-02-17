@@ -1,7 +1,7 @@
 #include "ParticleSystem.h"
 
 ParticleSystem::ParticleSystem()
-    : currentTime(0.0f)
+	: currentTime(0.0f)
 	, emissionTimer(0.0f)
 	, state(State::Stopped)
 {
@@ -22,17 +22,17 @@ ParticleSystem::ParticleSystem()
 	main.duration = 5.0f;         // 再生時間5秒
 	main.loop = true;            // ループ再生
 	main.startLifetime = 1.0f;   // パーティクルの寿命3秒
-	main.startSpeed = { 0.0f, 0.0f, 0.0f }; 
+	main.startSpeed = { 0.0f, 0.0f, 0.0f };
 	main.startColor = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白色
 }
 
 ParticleSystem::~ParticleSystem()
 {
-   
+
 }
 
 std::unique_ptr<ParticleSystem> ParticleSystem::Create(
-	const std::string& particleName, 
+	const std::string& particleName,
 	const std::string& texturePath)
 {
 	// パーティクルグループの自動生成
@@ -107,7 +107,7 @@ void ParticleSystem::Update()
 
 void ParticleSystem::Emit(uint32_t count)
 {
-    // パーティクルを発生させる
+	// パーティクルを発生させる
 	ParticleManager::GetInstance()->Emit(particleName, transform.translate, count);
 }
 
@@ -133,12 +133,23 @@ void ParticleSystem::EmitInternal()
 		}
 	} else {
 		// 通常のエフェクト
-		ParticleManager::GetInstance()->EmitWithEffectType(
-			particleName,
-			transform.translate,
-			emitterData.count,
-			effectType
-		);
+			// 色のオーバーライドがある場合は色付きで発生（修正）
+		if (useColorOverride) {
+			ParticleManager::GetInstance()->EmitWithEffectTypeAndColor(
+				particleName,
+				transform.translate,
+				emitterData.count,
+				effectType,
+				colorOverride  
+			);
+		} else {
+			ParticleManager::GetInstance()->EmitWithEffectType(
+				particleName,
+				transform.translate,
+				emitterData.count,
+				effectType
+			);
+		}
 	}
 }
 

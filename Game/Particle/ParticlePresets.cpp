@@ -20,15 +20,16 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& 
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& position)
 {
-	auto particleSystem = ParticleSystem::Create("Smoke", "resources/Particle/circle.png");
+	auto particleSystem = ParticleSystem::Create(
+		"Smoke", "resources/Particle/smoke.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
-	particleSystem->SetEmissionRate(100.0f);
+	particleSystem->SetEmissionRate(15.0f);
 	// メイン設定 / ループ再生の有無、寿命など
 	particleSystem->SetLoop(true);
 	particleSystem->GetMainModule().duration = 0.2f;
-	particleSystem->GetMainModule().startLifetime = 0.5f;
+	particleSystem->GetMainModule().startLifetime = 0.8f;
 
 	// 煙タイプを設定
 	particleSystem->SetEffectType(ParticleManager::EffectType::Smoke);
@@ -37,15 +38,16 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& posi
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& position)
 {
-	auto particleSystem = ParticleSystem::Create("Sparks", "resources/Particle/circle.png");
+	auto particleSystem = ParticleSystem::Create(
+		"Sparks", "resources/Particle/star.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
-	particleSystem->SetEmissionRate(100.0f);
+	particleSystem->SetEmissionRate(50.0f);
 	// メイン設定 / ループ再生の有無、寿命など
 	particleSystem->SetLoop(false);
-	particleSystem->GetMainModule().duration = 0.2f;
-	particleSystem->GetMainModule().startLifetime = 0.5f;
+	particleSystem->GetMainModule().duration = 0.15f;
+	particleSystem->GetMainModule().startLifetime = 0.25f;
 
 	// スパークタイプを設定
 	particleSystem->SetEffectType(ParticleManager::EffectType::Spark);
