@@ -128,17 +128,20 @@ void Player::UpdateDashEffect()
 	const bool dashActiveLeft = isDash_ && (dashDirection_ == -1) && movingLeft;
 	const bool dashActive = dashActiveRight || dashActiveLeft;
 
+	// 地面に接地しているか
+	const bool canShowEffect = dashActive && onGround_;
+
 	Vector3 playerPos = playerModel_->GetTranslate();
 
 	// ダッシュ開始時の衝撃波エフェクト
-	if (!wasDashing_ && dashActive) {
+	if (!wasDashing_ && canShowEffect) {
 		dashStartEffect_->SetTranslate(playerPos);
 		// 発生
 		dashStartEffect_->Play();
 	}
 
 	// ダッシュ中の継続エフェクト
-	if (dashActive) {
+	if (canShowEffect) {
 		// 足元の位置を計算
 		Vector3 smokePos = playerPos;
 		// 発生位置を足元らへんに
@@ -163,7 +166,7 @@ void Player::UpdateDashEffect()
 		dashSmokeEffect_->Stop();
 	}
 	// 前フレームの状態を保持
-	wasDashing_ = dashActive;
+	wasDashing_ = canShowEffect;
 }
 
 
@@ -183,9 +186,9 @@ void Player::Initialize(Vector3 position)
 	dashSmokeEffect_ = ParticlePresets::CreateSmoke(position);
 	// 初期は停止
 	dashSmokeEffect_->Pause();
-	dashSmokeEffect_->SetEmissionRate(30.0f);
+	dashSmokeEffect_->SetEmissionRate(15.0f);
 	dashSmokeEffect_->SetLoop(true);
-
+	dashSmokeEffect_->SetColor(Vector4(0.7f, 0.6f, 0.4f, 1.0f));
 	// ダッシュ開始時の衝撃波
 	dashStartEffect_ = ParticlePresets::CreateSparks(position);
 	dashStartEffect_->Pause();
@@ -244,16 +247,25 @@ void Player::UpdateBehavior()
 	Move();
 	// ジャンプ処理
 	Jump();
+
 	// 当たり判定処理
 	CollisionMapInfo collisionInfo;
+
 	// 地面にいなかったらリセット
 	if (playerModel_->GetTranslate().y < deathHeight_ && !onGround_)
 	{
 		// 死亡フラグ
 		isDead_ = true;
 	}
+
 	// 移動量の反映
 	collisionInfo.move = velocity_;
+
+	// 上昇中は確実に地面から離れている（追加）
+	if (velocity_.y > 0.0f) {
+		onGround_ = false;
+	}
+
 	// マップ衝突チェック
 	MapCollision(collisionInfo);
 	// 天井衝突処理
@@ -265,7 +277,6 @@ void Player::UpdateBehavior()
 	// 速度反映
 	PlayerCollisionMove(collisionInfo);
 }
-
 
 void Player::Move()
 {
@@ -502,70 +513,51 @@ void Player::CellingCollisionMove(CollisionMapInfo& collisionInfo)
 
 void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 {
-	// 床に衝突しているかどうか
+	// 着地判定（空中から地面への衝突）
+	if (!onGround_ && collisionInfo.landing) {
+		// 床に衝突したら移動量を調整
+		velocity_.y = 0.0f;
+		onGround_ = true;
+		return;  // 着地したらここで終了
+	}
+
+	// 地面にいる場合の継続判定
 	if (onGround_) {
-		if (velocity_.y > 0.0f) {
-			// 上昇している場合は床に衝突しない
-			onGround_ = false;
-		} else {
-			// 移動後の過度の計算
-			std::array<Vector3, kNumCorners> newPositions;
-			for (uint32_t i = 0; i < newPositions.size(); i++) {
-				// 各コーナーの新しい位置を計算
-				Vector3 position = playerModel_->GetTranslate();
-				// 移動量を加算
-				position += collisionInfo.move;
-				// コーナー位置を取得
-				newPositions[i] = CornerPosition(position, static_cast<Corner>(i));
-			}
-			// 各コーナーの新しい位置で当たり判定を確認
-			BlockType blockType;
-			// プレイヤー直下の判定
-			bool hit = false;
+		// 下方向に速度がない場合のみチェック（安定化）
+		if (velocity_.y <= 0.0f) {
+			// 現在の座標で判定（修正：移動後ではなく現在位置で）
+			Vector3 position = playerModel_->GetTranslate();
+
+			// 足元の2点の位置を取得
+			Vector3 leftBottom = CornerPosition(position, kLeftBottom);
+			Vector3 rightBottom = CornerPosition(position, kRightBottom);
+
+			// 少し下の位置でチェック（より確実に）
+			Vector3 checkOffset = Vector3(0.0f, -status_.kEpsilon * 2.0f, 0.0f);  // ← 2倍に
 
 			// 左点の判定
-			IndexSet indexSet;
-			// 自機の左下がマップチップの何番目にあるのか
-			indexSet = map_->GetMapChipIndexSetByPosition(newPositions[kLeftBottom] + Vector3(0.0f, -status_.kEpsilon, 0.0f));
-			// 取得したインデックスからそのマップチップの種類を取得
-			blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-			// 取得したマップチップの種類が判定を取るブロックなのか判別
-			if (IsHitBlockTable(blockType)) {
-				hit = true;
-			}
-			// ゴールブロックの判定
-			if (IsHitGoalBlockTable(blockType)) {
-				isGoal_ = true;
-			}
-
+			IndexSet leftIndex = map_->GetMapChipIndexSetByPosition(leftBottom + checkOffset);
+			BlockType leftBlock = map_->GetMapChipTypeByIndex(leftIndex.xIndex, leftIndex.yIndex);
 
 			// 右点の判定
-			// 自機の右下がマップチップの何番目にあるのか
-			indexSet = map_->GetMapChipIndexSetByPosition(newPositions[kRightBottom] + Vector3(0.0f, -status_.kEpsilon, 0.0f));
-			// 取得したインデックスからそのマップチップの種類を取得
-			blockType = map_->GetMapChipTypeByIndex(indexSet.xIndex, indexSet.yIndex);
-			// 取得したマップチップの種類が判定を取るブロックなのか判別
-			if (IsHitBlockTable(blockType)) {
-				hit = true;
-			}
+			IndexSet rightIndex = map_->GetMapChipIndexSetByPosition(rightBottom + checkOffset);
+			BlockType rightBlock = map_->GetMapChipTypeByIndex(rightIndex.xIndex, rightIndex.yIndex);
+
+			// どちらかの点が地面に接触していればOK
+			bool leftHit = IsHitBlockTable(leftBlock);
+			bool rightHit = IsHitBlockTable(rightBlock);
+
 			// ゴールブロックの判定
-			if (IsHitGoalBlockTable(blockType)) {
+			if (IsHitGoalBlockTable(leftBlock) || IsHitGoalBlockTable(rightBlock)) {
 				isGoal_ = true;
 			}
 
-			// どちらの点も当たっていなかったら床に衝突していないとする
-			if (!hit) {
+			// 両方の点が地面から離れた場合のみ、地面から離れたとする
+			if (!leftHit && !rightHit) {
 				onGround_ = false;
 			}
 		}
-	} else {
-		if (collisionInfo.landing) {
-			// 床に衝突したら移動量を調整
-			velocity_.y = 0.0f;
-			onGround_ = true;
-		}
 	}
-
 }
 
 void Player::WallCollisionMove(CollisionMapInfo& collisionInfo)

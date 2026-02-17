@@ -43,6 +43,8 @@ struct StageNode {
 	bool unlocked;
 	// 隣接ノードID配列 / 読み方はネイバー
 	int32_t neighbor[(uint32_t)Direction::count];
+	// ノードの向き（移動開始前のYaw）
+	float defaultYaw; 
 };
 
 /// <summary>
@@ -53,6 +55,8 @@ class StageSelectGraph
 public:
 	// 無効なノードID
 	static const uint32_t INVALID_NODE_ID = UINT32_MAX;
+	// デフォルトのYaw値 / これが入っているときは自動で向きを計算する
+	static constexpr float AUTO_YAW = -999.0f; 
 	// コンストラクタ・デストラクタ
 	StageSelectGraph();
 	~StageSelectGraph();
@@ -75,7 +79,7 @@ public:
 	/// <param name="stageId">ステージのID</param>
 	/// <param name="unlocked">解放状態か</param>
 	/// <returns>ステージIDも返す</returns>
-	uint32_t AddNode(MapPos pos,uint32_t stageId,const std::string& stageKey,bool unlocked);
+	uint32_t AddNode(MapPos pos,uint32_t stageId,const std::string& stageKey,bool unlocked,float defaultYaw = AUTO_YAW);
 
 	/// <summary>
 	/// ノード接続
@@ -160,6 +164,7 @@ public:
 	bool SetNodeStageId(uint32_t id, uint32_t stageId);
 	bool SetNodeStageKey(uint32_t id, const std::string& stageKey);
 	bool SetNodeUnlocked(uint32_t id, bool unlocked);
+	bool SetNodeYaw(uint32_t id, float yaw);
 	// 隣接ノード編集 / 追加・削除
 	bool SetNeighbor(uint32_t from, Direction dir, uint32_t toOrInvalid);
 	bool ClearNeighbor(uint32_t from, Direction dir);

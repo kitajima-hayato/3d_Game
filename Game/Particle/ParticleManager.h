@@ -104,6 +104,11 @@ private:
 	/// <returns></returns>
 	Particle MakeParticleByType(std::mt19937& randomEngine, const Vector3& position, EffectType type);
 
+	/// <summary>
+	/// タイプ別パーティクル生成（色指定版）（追加）
+	/// </summary>
+	Particle MakeParticleByTypeWithColor(std::mt19937& randomEngine,const Vector3& position,EffectType type,const Vector4& colorTint);
+
 
 public:
 	/// <summary>
@@ -291,6 +296,16 @@ public:
 	/// <param name="name"></param>
 	/// <param name="position"></param>
 	void EmitComplexMagicCircle(const std::string& name,const Vector3& position);
+
+	/// <summary>
+	/// エフェクトの発生(特殊エフェクト) / 色指定バージョン
+	/// </summary>
+	/// <param name="name">パーティクルグループ名</param>
+	/// <param name="position">発生位置</param>
+	/// <param name="count">発生数</param>
+	/// <param name="effectType">エフェクトタイプ</param>
+	/// <param name="color">色の調整</param>
+	void EmitWithEffectTypeAndColor(const std::string& name, const Vector3& position, uint32_t count, EffectType effectType, const Vector4& color);
 
 private:
 	// DirectXCommon
