@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "Input.h"
 #include "Game/Particle/ParticlePresets.h"
+#include "Game/Application/Enemy/EnemyBase.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -44,14 +45,37 @@ void Player::OnCollision(Collider* other)
 	{
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
-		//  
+		// すでにダメージ中なら何もしない（無敵時間）
 		if (isEnemyHit_) {
-			// すでに当たっているなら何もしない / 無敵時間
 			break;
 		}
-		// エネミー衝突処理
+
+		// 踏みつけ判定
+		// 条件: プレイヤーが落下中 && プレイヤーが敵より上にいる
+		if (velocity_.y < 0.0f) {
+			// プレイヤーと敵のAABBを取得
+			AABB playerAABB = GetAABB();
+			AABB enemyAABB = other->GetAABB();
+
+			// プレイヤーの底辺が敵の上部付近にあるかチェック
+			// プレイヤーの中心が敵の中心より上にある
+			float playerBottom = playerAABB.min.y;
+			float enemyTop = enemyAABB.max.y;
+			float enemyCenter = (enemyAABB.min.y + enemyAABB.max.y) * 0.5f;
+			float playerCenter = (playerAABB.min.y + playerAABB.max.y) * 0.5f;
+
+			// 踏みつけ判定: プレイヤーの中心が敵の中心より上 && プレイヤーの底が敵の上半分にある
+			if (playerCenter > enemyCenter && playerBottom < enemyTop + 0.2f) {
+				// 踏みつけ成功
+				StompEnemy(other);
+				break;
+			}
+		}
+
+		// 踏みつけ失敗 -> 通常のダメージ処理
 		EnemyCollision();
 		break;
+
 	default:
 		// 特に何もしない
 		break;
@@ -64,6 +88,25 @@ void Player::EnemyCollision()
 	isEnemyHit_ = true;
 	flashingFrameCount_ = 0;
 	isVisible_ = true;
+}
+
+void Player::StompEnemy(Collider* enemy)
+{
+	// エネミーを倒す
+	if (EnemyBase* enemyBase = dynamic_cast<EnemyBase*>(enemy)) {
+		enemyBase->OnStomped();  // 敵に踏みつけられたことを通知
+
+		// 敵の位置を取得してエフェクト発生
+		Vector3 enemyPos = enemyBase->GetTranslate();
+		if (stompEffect_) {
+			stompEffect_->SetTranslate(enemyPos);
+			stompEffect_->Play();
+		}
+	}
+
+	// プレイヤーは小ジャンプ（踏みつけた反動）
+	velocity_.y = status_.kStompJumpPower;
+	onGround_ = false;
 }
 
 void Player::FlashingUpdate()
@@ -197,6 +240,11 @@ void Player::Initialize(Vector3 position)
 	// 一度の発生のためループはしない
 	dashStartEffect_->SetLoop(false);
 
+	stompEffect_ = ParticlePresets::CreateSparks(position);
+	stompEffect_->Pause();
+	stompEffect_->SetEmissionRate(30.0f);
+	stompEffect_->SetLoop(false);
+	stompEffect_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 
@@ -220,6 +268,7 @@ void Player::Update()
 	// パーティクルシステムの更新
 	if (dashSmokeEffect_)dashSmokeEffect_->Update();
 	if (dashStartEffect_)dashStartEffect_->Update();
+	if (stompEffect_)stompEffect_->Update();
 }
 
 
@@ -734,6 +783,10 @@ void Player::Finalize()
 	if (dashStartEffect_) {
 		dashStartEffect_->Stop();
 		dashSmokeEffect_.reset();
+	}
+	if (stompEffect_) {
+		stompEffect_->Stop();
+		stompEffect_.reset();
 	}
 }
 

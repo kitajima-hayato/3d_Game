@@ -74,6 +74,8 @@ struct PlayerStatus {
 	float kMaxFallSpeed = 1.0f;
 	// ジャンプ初速度
 	float kJumpPower = 0.5f;
+	// 踏みつけ時のジャンプ力
+	float kStompJumpPower = 0.3f;
 	// 溜め時間
 	float kMaxChargeTime = 0.2f;
 
@@ -267,6 +269,12 @@ private:
 	/// </summary>
 	void UpdateDashEffect();
 
+	/// <summary>
+	///	エネミーを踏みつけたときの処理
+	/// </summary>
+	/// <param name="enemy"></param>
+	void StompEnemy(Collider* enemy);
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -354,6 +362,8 @@ private:	// メンバ変数
 	std::unique_ptr<ParticleSystem>dashSmokeEffect_;
 	// ダッシュ開始時の少し派手目用
 	std::unique_ptr<ParticleSystem>dashStartEffect_;
+	// 踏みつけパーティクルエフェクト
+	std::unique_ptr<ParticleSystem>stompEffect_;
 
 	// パーティクルを出すためのダッシュ状態の追跡
 	bool wasDashing_ = false;
