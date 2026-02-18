@@ -26,6 +26,10 @@ class NormalEnemy :
 	/// </summary>
 	void Action() override;
 
+	/// <summary>
+	/// 踏みつけられたら死亡
+	/// </summary>
+	void OnStomped() override;
 
 
 };
