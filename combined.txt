@@ -832,6 +832,8 @@ public:
 	/// </summary>
 	virtual void Action() = 0;
 
+	virtual void OnStomped() { stats.isAlive = false; }
+
 	/// Collider インターフェースの実装
 	Type GetType()const override { return Type::Enemy; }
 
@@ -857,7 +859,6 @@ public:
 
 	/// エネミーの生存フラグ設定/取得
 	bool IsAlive() const { return stats.isAlive; }
-
 
 	/// エネミーのトランスフォーム設定/取得
 	virtual void SetTransform(const Transform& transform) { stats.transform = transform; }
@@ -1140,6 +1141,13 @@ void NormalEnemy::Action()
 {
 }
 
+void NormalEnemy::OnStomped()
+{
+	// 踏みつけられたら死亡
+	stats.isAlive = false;
+	stats.health = 0;
+}
+
 
 ============================================================
 File Path: Game/Application/Enemy/NormalEnemy.h
@@ -1172,6 +1180,10 @@ class NormalEnemy :
 	/// </summary>
 	void Action() override;
 
+	/// <summary>
+	/// 踏みつけられたら死亡
+	/// </summary>
+	void OnStomped() override;
 
 
 };
@@ -2294,6 +2306,7 @@ File Path: Game/Application/Player/Player.cpp
 #include <algorithm>
 #include "Input.h"
 #include "Game/Particle/ParticlePresets.h"
+#include "Game/Application/Enemy/EnemyBase.h"
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
@@ -2336,14 +2349,37 @@ void Player::OnCollision(Collider* other)
 	{
 		// 敵に衝突したら
 	case Collider::Type::Enemy:
-		//  
+		// すでにダメージ中なら何もしない（無敵時間）
 		if (isEnemyHit_) {
-			// すでに当たっているなら何もしない / 無敵時間
 			break;
 		}
-		// エネミー衝突処理
+
+		// 踏みつけ判定
+		// 条件: プレイヤーが落下中 && プレイヤーが敵より上にいる
+		if (velocity_.y < 0.0f) {
+			// プレイヤーと敵のAABBを取得
+			AABB playerAABB = GetAABB();
+			AABB enemyAABB = other->GetAABB();
+
+			// プレイヤーの底辺が敵の上部付近にあるかチェック
+			// プレイヤーの中心が敵の中心より上にある
+			float playerBottom = playerAABB.min.y;
+			float enemyTop = enemyAABB.max.y;
+			float enemyCenter = (enemyAABB.min.y + enemyAABB.max.y) * 0.5f;
+			float playerCenter = (playerAABB.min.y + playerAABB.max.y) * 0.5f;
+
+			// 踏みつけ判定: プレイヤーの中心が敵の中心より上 && プレイヤーの底が敵の上半分にある
+			if (playerCenter > enemyCenter && playerBottom < enemyTop + 0.2f) {
+				// 踏みつけ成功
+				StompEnemy(other);
+				break;
+			}
+		}
+
+		// 踏みつけ失敗 -> 通常のダメージ処理
 		EnemyCollision();
 		break;
+
 	default:
 		// 特に何もしない
 		break;
@@ -2356,6 +2392,25 @@ void Player::EnemyCollision()
 	isEnemyHit_ = true;
 	flashingFrameCount_ = 0;
 	isVisible_ = true;
+}
+
+void Player::StompEnemy(Collider* enemy)
+{
+	// エネミーを倒す
+	if (EnemyBase* enemyBase = dynamic_cast<EnemyBase*>(enemy)) {
+		enemyBase->OnStomped();  // 敵に踏みつけられたことを通知
+
+		// 敵の位置を取得してエフェクト発生
+		Vector3 enemyPos = enemyBase->GetTranslate();
+		if (stompEffect_) {
+			stompEffect_->SetTranslate(enemyPos);
+			stompEffect_->Play();
+		}
+	}
+
+	// プレイヤーは小ジャンプ（踏みつけた反動）
+	velocity_.y = status_.kStompJumpPower;
+	onGround_ = false;
 }
 
 void Player::FlashingUpdate()
@@ -2489,6 +2544,11 @@ void Player::Initialize(Vector3 position)
 	// 一度の発生のためループはしない
 	dashStartEffect_->SetLoop(false);
 
+	stompEffect_ = ParticlePresets::CreateSparks(position);
+	stompEffect_->Pause();
+	stompEffect_->SetEmissionRate(30.0f);
+	stompEffect_->SetLoop(false);
+	stompEffect_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 
@@ -2512,6 +2572,7 @@ void Player::Update()
 	// パーティクルシステムの更新
 	if (dashSmokeEffect_)dashSmokeEffect_->Update();
 	if (dashStartEffect_)dashStartEffect_->Update();
+	if (stompEffect_)stompEffect_->Update();
 }
 
 
@@ -3027,6 +3088,10 @@ void Player::Finalize()
 		dashStartEffect_->Stop();
 		dashSmokeEffect_.reset();
 	}
+	if (stompEffect_) {
+		stompEffect_->Stop();
+		stompEffect_.reset();
+	}
 }
 
 void Player::ImGui()
@@ -3208,6 +3273,8 @@ struct PlayerStatus {
 	float kMaxFallSpeed = 1.0f;
 	// ジャンプ初速度
 	float kJumpPower = 0.5f;
+	// 踏みつけ時のジャンプ力
+	float kStompJumpPower = 0.3f;
 	// 溜め時間
 	float kMaxChargeTime = 0.2f;
 
@@ -3401,6 +3468,12 @@ private:
 	/// </summary>
 	void UpdateDashEffect();
 
+	/// <summary>
+	///	エネミーを踏みつけたときの処理
+	/// </summary>
+	/// <param name="enemy"></param>
+	void StompEnemy(Collider* enemy);
+
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -3488,6 +3561,8 @@ private:	// メンバ変数
 	std::unique_ptr<ParticleSystem>dashSmokeEffect_;
 	// ダッシュ開始時の少し派手目用
 	std::unique_ptr<ParticleSystem>dashStartEffect_;
+	// 踏みつけパーティクルエフェクト
+	std::unique_ptr<ParticleSystem>stompEffect_;
 
 	// パーティクルを出すためのダッシュ状態の追跡
 	bool wasDashing_ = false;
@@ -7291,14 +7366,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	isPlayerControlLocked_ = true;
 
-	// 自機がダメージを受けたら画面シェイク中に出すスプライト
-	enemyHitSprite_ = std::make_unique<Sprite>();
-	enemyHitSprite_->Initialize("resources/HitDamage.png");
-	enemyHitSprite_->SetPosition({ 0.0f,0.0f });
-	enemyHitSprite_->SetSize({ 1280.0f,720.0f });
 
-	enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-	
 
 
 	pauseSystem_ = std::make_unique<PauseSystem>();
@@ -7342,32 +7410,6 @@ void GamePlayScene::Update()
 	// プレイヤーの更新
 	player->Update();
 	
-
-	bool isEnemyHitNow = player->GetHitEnemy();
-
-	// プレイヤーが敵に当たったらカメラをシェイクする
-	if (player->GetHitEnemy() && !wasEnemyHit_) {
-		enemyHitShakeActive_ = true;
-		//enemyHitSprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-		enemyHitTimer_ = 0.0f;
-		// カメラの元の位置を保存
-		enemyHitBasePos = camera->GetTranslate();
-
-	}
-	// 敵を点滅させる
-	//Vector4 currentColor = enemyHitSprite_->GetColor();
-	//if (currentColor.w > 0.0f) {
-	//	// 減算スピードは 0.01f ～ 0.05f くらいで調整
-	//	float newAlpha = (std::max)(0.0f, currentColor.w - 0.02f);
-	//	enemyHitSprite_->SetColor({ currentColor.x, currentColor.y, currentColor.z, newAlpha });
-	//}
-	wasEnemyHit_ = isEnemyHitNow;
-
-	// カメラシェイクの更新
-	if (enemyHitShakeActive_) {
-		// 
-		EnemyHitShake(dt);
-	}
 
 	//sceneTransition->Update();
 
@@ -7418,7 +7460,7 @@ void GamePlayScene::Update()
 		enemy->Update();
 	}
 
-	// 当たりは判定
+	// 当たり判定
 	CheckCollision();
 	// スプライトの更新
 	gamePlayHUD_->Update();
@@ -7563,73 +7605,22 @@ void GamePlayScene::CheckCollision()
 void GamePlayScene::UpdateStartCamera(float dt)
 {
 	
-	
 }
 
-void GamePlayScene::EnemyHitShake(float dt)
-{
-	// スタート演出中は無効
-	if (stageStartEventFlag_) {
-		return;
 
-	}
-	enemyHitTimer_ += dt;
-
-	// 減衰
-	float u = std::clamp(1.0f - (enemyHitTimer_ / enemyHitShakeTime_), 0.0f, 1.0f);
-
-	// ２軸(x,y)のシェイク
-	float sx = std::sin(enemyHitTimer_ * 80.0f);
-	float sy = std::sin(enemyHitTimer_ * 100.0f);
-
-	Vector3 offset = { sx * shakeAmp_ * u, sy * shakeAmp_ * u, 0.0f };
-
-	cameraTransform.translate += offset;
-
-	// シェイク終了
-	if (enemyHitTimer_ >= enemyHitShakeTime_) {
-		enemyHitTimer_ = 0.0f;
-		enemyHitShakeActive_ = false;
-
-		// 最終的には元の位置に戻す
-		camera->SetTranslate(enemyHitBasePos);
-		cameraTransform.translate = enemyHitBasePos;
-
-	}
-
-
-}
 
 void GamePlayScene::SpritesInitialize()
 {
-	
-
 	
 }
 
 void GamePlayScene::SpritesUpdate()
 {
 	
-
-	
-	
-	
 }
 
 void GamePlayScene::SpritesDraw()
 {
-
-
-
-
-	if (enemyHitShakeActive_ || enemyHitSprite_->GetColor().w > 0.0f) {
-		// ダメージフィードバック
-		/*if (damageFeedback) {
-			enemyHitSprite_->Draw();
-		}*/
-	}
-	
-
 }
 
 
@@ -7764,11 +7755,6 @@ public:
 	void UpdateStartCamera(float dt);
 
 	/// <summary>
-	/// エネミーヒット時のカメラシェイク
-	/// </summary>
-	void EnemyHitShake(float dt);
-
-	/// <summary>
 	/// UI/ダメージ/スプライト類の初期化 / 更新 / 描画
 	/// </summary>
 	void SpritesInitialize();
@@ -7839,16 +7825,7 @@ private:
 	// エネミー配置のオフセット
 	float enemySpawnOffset_ = 0.5f;
 
-	// エネミーヒットのシェイク時間
-	float enemyHitShakeTime_ = 1.0f;
-	// エネミーヒット時のカメラシェイク用
-	bool enemyHitShakeActive_ = false;
-	// シェイク時間
-	float enemyHitTimer_ = 0.0f;
-	// シェイク持続時間 
-	Vector3 enemyHitBasePos{};
-	// 前フレームの敵当たり判定
-	bool wasEnemyHit_ = false;
+	
 	
 
 	std::unique_ptr<ParticleSystem>testParticle_;
@@ -7856,11 +7833,6 @@ private:
 	
 
 	bool isPlayerControlLocked_ = false;
-
-	
-	// エネミーヒット時のシェイク中に出す被弾スプライト
-	std::unique_ptr<Sprite> enemyHitSprite_;
-	float alpha;
 	
 	std::unique_ptr<GamePlayHUD> gamePlayHUD_;
 
