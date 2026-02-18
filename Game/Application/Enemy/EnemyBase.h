@@ -56,6 +56,8 @@ public:
 	/// </summary>
 	virtual void Action() = 0;
 
+	virtual void OnStomped() { stats.isAlive = false; }
+
 	/// Collider インターフェースの実装
 	Type GetType()const override { return Type::Enemy; }
 
@@ -81,7 +83,6 @@ public:
 
 	/// エネミーの生存フラグ設定/取得
 	bool IsAlive() const { return stats.isAlive; }
-
 
 	/// エネミーのトランスフォーム設定/取得
 	virtual void SetTransform(const Transform& transform) { stats.transform = transform; }

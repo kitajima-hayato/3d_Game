@@ -60,3 +60,10 @@ void NormalEnemy::Move()
 void NormalEnemy::Action()
 {
 }
+
+void NormalEnemy::OnStomped()
+{
+	// 踏みつけられたら死亡
+	stats.isAlive = false;
+	stats.health = 0;
+}

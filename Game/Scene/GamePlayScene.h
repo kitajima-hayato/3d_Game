@@ -81,11 +81,6 @@ public:
 	void UpdateStartCamera(float dt);
 
 	/// <summary>
-	/// エネミーヒット時のカメラシェイク
-	/// </summary>
-	void EnemyHitShake(float dt);
-
-	/// <summary>
 	/// UI/ダメージ/スプライト類の初期化 / 更新 / 描画
 	/// </summary>
 	void SpritesInitialize();
@@ -156,16 +151,7 @@ private:
 	// エネミー配置のオフセット
 	float enemySpawnOffset_ = 0.5f;
 
-	// エネミーヒットのシェイク時間
-	float enemyHitShakeTime_ = 1.0f;
-	// エネミーヒット時のカメラシェイク用
-	bool enemyHitShakeActive_ = false;
-	// シェイク時間
-	float enemyHitTimer_ = 0.0f;
-	// シェイク持続時間 
-	Vector3 enemyHitBasePos{};
-	// 前フレームの敵当たり判定
-	bool wasEnemyHit_ = false;
+	
 	
 
 	std::unique_ptr<ParticleSystem>testParticle_;
@@ -173,11 +159,6 @@ private:
 	
 
 	bool isPlayerControlLocked_ = false;
-
-	
-	// エネミーヒット時のシェイク中に出す被弾スプライト
-	std::unique_ptr<Sprite> enemyHitSprite_;
-	float alpha;
 	
 	std::unique_ptr<GamePlayHUD> gamePlayHUD_;
 

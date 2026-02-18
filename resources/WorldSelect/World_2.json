@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "neighbors": {
+        "Right": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 1
+      },
+      "stage_id": 0,
+      "stage_key": "1-1",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Left": 0,
+        "Up": 2,
+        "Down": 4
+      },
+      "position": {
+        "x": 1,
+        "y": 1
+      },
+      "stage_id": 1,
+      "stage_key": "1-2",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Left": 1,
+        "Right": 3
+      },
+      "position": {
+        "x": 2,
+        "y": 0
+      },
+      "stage_id": 2,
+      "stage_key": "1-1",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Left": 2,
+        "Right": 6
+      },
+      "position": {
+        "x": 3,
+        "y": 0
+      },
+      "stage_id": 3,
+      "stage_key": "1-1",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Left": 1,
+        "Right": 5
+      },
+      "position": {
+        "x": 2,
+        "y": 2
+      },
+      "stage_id": 4,
+      "stage_key": "1-2",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Left": 4,
+        "Right": 6
+      },
+      "position": {
+        "x": 3,
+        "y": 2
+      },
+      "stage_id": 5,
+      "stage_key": "1-2",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Down": 5,
+        "Right": 7,
+        "Up": 3
+      },
+      "position": {
+        "x": 4,
+        "y": 1
+      },
+      "stage_id": 6,
+      "stage_key": "1-2",
+      "unlocked": true
+    },
+    {
+      "neighbors": {
+        "Left": 6
+      },
+      "position": {
+        "x": 5,
+        "y": 1
+      },
+      "stage_id": 7,
+      "stage_key": "1-1",
+      "unlocked": true
+    }
+  ]
+}
