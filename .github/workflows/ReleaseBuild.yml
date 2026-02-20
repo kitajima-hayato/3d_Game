@@ -5,7 +5,7 @@ on:
       - master
 env:
       # リポジトリのルートディレクトリを基点としたソリューションファイルのパス
-      SOLUTION_FILE_PATH: CG2_DirectX.sln
+      SOLUTION_FILE_PATH: MyEngine.sln
       # Visual Studio の構成(Debug / Release)
       CONFIGURATION: Release
 jobs:
