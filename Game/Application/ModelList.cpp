@@ -28,7 +28,6 @@ void ModelList::LoadAllModel()
 							   
 	/// GamePlayScene		   
 	ModelManager::GetInstance().LoadModel("Grass.obj");
-	ModelManager::GetInstance().LoadModel("SceneChange.obj");
 	ModelManager::GetInstance().LoadModel("nullBlock.obj");
 	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
 	ModelManager::GetInstance().LoadModel("breakBlock.obj");

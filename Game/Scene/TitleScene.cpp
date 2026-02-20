@@ -21,10 +21,6 @@ TitleScene::~TitleScene()
 
 void TitleScene::Initialize(DirectXCommon* dxCommon)
 {
-	// スプライトの初期化
-	SpriteCommon::GetInstance().Initialize(dxCommon);
-
-
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
@@ -134,11 +130,11 @@ void TitleScene::Update()
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Start);
 	}
 	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
-		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT",TransitionType::Normal);
 	}
 
 	if (Input::GetInstance()->TriggerKey(DIK_0))
@@ -200,9 +196,7 @@ void TitleScene::Finalize()
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
 	
-
-	// スプライトの終了処理
-	SpriteCommon::GetInstance().DeleteInstance();
+	
 }
 
 void TitleScene::LoadAudio()

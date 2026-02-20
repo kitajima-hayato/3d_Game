@@ -104,13 +104,13 @@ void StageClearScene::Update()
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN) ) {
 		switch (selectedItem_) {
 		case ClearMenuItem::OneMore:
-			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");     // もう一回 = 今のステージをやり直すなら GAMEPLAY
+			SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Normal);     // もう一回 = 今のステージをやり直すなら GAMEPLAY
 			break;
 		case ClearMenuItem::Select:
-			SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+			SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT", TransitionType::Normal);
 			break;
 		case ClearMenuItem::Title:
-			SceneManager::GetInstance()->ChangeScene("TITLE");
+			SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE", TransitionType::Normal);
 			break;
 		default:
 			break;

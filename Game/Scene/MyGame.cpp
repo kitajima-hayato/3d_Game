@@ -17,10 +17,12 @@ using namespace Engine;
 void MyGame::Initialize()
 {
 	Framework::Initialize();
+	// シーンマネージャーの初期化
+	SceneManager::GetInstance()->Initialize();
 	// シーンファクトリーの生成
 	sceneFactory_ = make_unique<SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
-	// シーンmanagerに最初のシーンをセット
+	// シーンマネージャーに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
 
 	modelList = make_unique<ModelList>();
