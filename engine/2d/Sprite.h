@@ -140,5 +140,6 @@ private:	// メンバ変数
 	Vector2 textureLeftTop = { 0.0f,0.0f };
 	// テクスチャ切り出しサイズ
 	Vector2 textureSize = { 100.0f,100.0f };
+
 };
 

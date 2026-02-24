@@ -533,13 +533,13 @@ void StageSelectScene::Update()
 		PlayContext::GetInstance().SetSelectedStage(node.stageId, node.stageKey);
 
 		// ステージシーンへ切り替え
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Start);
 	}
 
-	// Escapeキーでタイトルへ
+	// Escキーでタイトルへ
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
 		// タイトルシーンへ切り替え
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE",TransitionType::Normal);
 	}
 
 	// 空背景の更新
