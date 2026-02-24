@@ -3,7 +3,7 @@
 #include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
-#include <SpriteCommon.h>
+
 using Engine::DirectXCommon;
 StageClearScene::StageClearScene()
 {
@@ -15,8 +15,6 @@ StageClearScene::~StageClearScene()
 
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
-	SpriteCommon::GetInstance().Initialize(dxCommon);
-
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,-5.0f,4.0f };

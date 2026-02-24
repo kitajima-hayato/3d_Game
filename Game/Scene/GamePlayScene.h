@@ -1,6 +1,5 @@
 #pragma once
-#include "Audio.h"
-#include "SpriteCommon.h"
+#include "Audio.h"    
 #include "engine/InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"

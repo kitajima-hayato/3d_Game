@@ -22,8 +22,6 @@ GamePlayScene::~GamePlayScene()
 
 void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 {
-	/// スプライトの初期化
-	SpriteCommon::GetInstance().Initialize(dxCommon);
 	/// オーディオの初期化
 	Audio::GetInstance().Initialize();
 	soundData = Audio::GetInstance().LoadWave("resources/mokugyo.wav");
@@ -333,9 +331,6 @@ void GamePlayScene::Finalize()
 
 	/// オーディオの終了処理
 	Audio::GetInstance().SoundUnload(&soundData);
-
-	/// スプライトの終了処理
-	SpriteCommon::GetInstance().DeleteInstance();
 
 }
 

@@ -134,7 +134,7 @@ void TitleScene::Update()
 	}
 	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
-		SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT",TransitionType::Normal);
+		SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT",TransitionType::Start);
 	}
 
 	if (Input::GetInstance()->TriggerKey(DIK_0))

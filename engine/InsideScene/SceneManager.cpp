@@ -30,10 +30,6 @@ void SceneManager::Initialize()
 	transitionManager_ = std::make_unique<TransitionManager>();
 	transitionManager_->Initialize();
 
-	// デフォルトの遷移演出をセット
-	auto normalTransition = std::make_unique<BallWipeTransition>(false);
-	normalTransition->Initialize();
-	transitionManager_->SetTransitionEffect(std::move(normalTransition));
 }
 
 void SceneManager::Update(DirectXCommon* dxCommon)
@@ -43,32 +39,65 @@ void SceneManager::Update(DirectXCommon* dxCommon)
 		transitionManager_->Update(kFixedDeltaTime_);
 
 		// ロード開始タイミングでシーン生成
-		if (transitionManager_->CanStartLoading() && isTransitionRequested_ && !nextScene_) {
-			assert(sceneFactory_);
-			nextScene_ = sceneFactory_->CreateScene(pendingSceneName_);
-		}
+		if (transitionManager_->CanStartLoading() && isTransitionRequested_) {
+			if (!nextScene_) {
+				assert(sceneFactory_);
+				nextScene_ = sceneFactory_->CreateScene(pendingSceneName_);
 
-		// ロード完了後、シーン切り替え実行
-		if (nextScene_ && transitionManager_->GetPhase() == TransitionPhase::Loading) {
-			ExecuteSceneChange(dxCommon);
-			transitionManager_->OnLoadingComplete();
-			isTransitionRequested_ = false;
-			pendingSceneName_.clear();
-		}
-
-		// 遷移中でない場合のみ通常シーン切り替え処理
-		if (!transitionManager_->IsTransitioning()) {
-			// 次のシーンが予約されている場合（遷移無しの従来処理）
-			if (nextScene_ && !isTransitionRequested_) {
-				ExecuteSceneChange(dxCommon);
+				// シーン初期化
+				if (nextScene_) {
+					nextScene_->SetSceneManager(this);
+					nextScene_->Initialize(dxCommon);
+				}
+				// ロードの完了通知
+				transitionManager_->OnLoadingComplete();
 			}
 		}
 
-		// 実行中シーンを更新
-		if (scene_) {
-			scene_->Update();
+		// ロード完了後、シーン切り替え実行
+		if (transitionManager_->GetPhase() == TransitionPhase::FadeIn && 
+			nextScene_ && isTransitionRequested_) {
+			if (scene_) {
+				scene_->Finalize();
+				scene_.reset();
+			}
+
+			// シーンの切り替え
+			scene_ = std::move(nextScene_);
+
+			// リクエストをクリア
+			isTransitionRequested_ = false;
+			pendingSceneName_.clear();
 		}
 	}
+
+	// 遷移中でない場合のみ通常シーン切り替え処理
+	if (!transitionManager_->IsTransitioning() && !isTransitionRequested_) {
+		// 次のシーンが予約されている場合（遷移無しの従来処理）
+		if (nextScene_) {
+			ExecuteSceneChange(dxCommon);
+		}
+	}
+
+	// 実行中シーンを更新
+	if (scene_) {
+		scene_->Update();
+	}
+
+}
+
+void SceneManager::ExecuteSceneChange(Engine::DirectXCommon* dxCommon)
+{
+	// 今のシーンの終了処理
+	if (scene_) {
+		scene_->Finalize();
+		scene_.reset();
+	}
+	// 次のシーンの初期化
+	scene_ = std::move(nextScene_);
+	// シーンマネージャーの設定
+	scene_->SetSceneManager(this);
+	scene_->Initialize(dxCommon);
 }
 
 
@@ -80,7 +109,7 @@ void SceneManager::Draw()
 	}
 
 	// 遷移演出の描画
-	if(transitionManager_){
+	if (transitionManager_) {
 		transitionManager_->Draw();
 	}
 }
@@ -111,11 +140,12 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 }
 
 void SceneManager::ChangeSceneWithTransition(const std::string& sceneName, TransitionType transitionType)
-{
+{ 
 	// 遷移中または既にリクエスト済みなら無視
 	if (isTransitionRequested_ || transitionManager_->IsTransitioning()) {
 		return;
 	}
+
 	// 次のシーン名を保存
 	pendingSceneName_ = sceneName;
 	isTransitionRequested_ = true;
@@ -136,21 +166,6 @@ void SceneManager::ChangeSceneWithTransition(const std::string& sceneName, Trans
 	transitionManager_->StartTransition(transitionType);
 }
 
-void SceneManager::ExecuteSceneChange(Engine::DirectXCommon* dxCommon)
-{
-
-
-	// 今のシーンの終了処理
-	if (scene_) {
-		scene_->Finalize();
-		scene_.reset();
-	}
-	// 次のシーンの初期化
-	scene_ = std::move(nextScene_);
-	// シーンマネージャーの設定
-	scene_->SetSceneManager(this);
-	scene_->Initialize(dxCommon);
-}
 
 
 

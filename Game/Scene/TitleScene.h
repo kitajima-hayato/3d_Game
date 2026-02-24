@@ -1,6 +1,5 @@
 #pragma once
 #include "Audio.h"
-#include "SpriteCommon.h"
 #include "engine/InsideScene/BaseScene.h"
 #include "Sprite.h"
 #include "engine/InsideScene/SceneManager.h"
