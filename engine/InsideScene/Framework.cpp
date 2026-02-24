@@ -19,6 +19,8 @@ void Framework::Initialize()
 	// SRVマネージャーの初期化
 	srvManager = make_unique<SrvManager>();
 	srvManager->Initialize(dxCommon.get());
+	// スプライトコモンの初期化
+	SpriteCommon::GetInstance().Initialize(dxCommon.get());
 	// テクスチャマネージャーの初期化
 	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
 
@@ -52,10 +54,6 @@ void Framework::Initialize()
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 	
 	
-
-	/// マップに合わせる
-	/*cameraTransform.translate = { 7.5f,-4.0f,0.0f };
-	camera->SetTranslate(cameraTransform.translate);*/
 
 }
 
@@ -97,6 +95,7 @@ void Framework::Finalize()
 	Audio::GetInstance().DeleteInstance();
 	Object3DCommon::GetInstance()->DeleteInstance();
 	TextureManager::GetInstance()->DeleteInstance();
+	SpriteCommon::GetInstance().DeleteInstance();
 	ModelManager::GetInstance().Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();

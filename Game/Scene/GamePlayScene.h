@@ -1,13 +1,11 @@
 #pragma once
-#include "Audio.h"
-#include "SpriteCommon.h"
+#include "Audio.h"    
 #include "engine/InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleSystem.h"
-#include "SceneTransition/SceneTransition.h"
 #include "Game/Scene/Pause/PauseSystem.h"
 #include "Game/Application/UI/GamePlayHUD.h"
 #include "Game/Camera/StartCamPhase.h"
@@ -134,8 +132,6 @@ private:
 	std::unique_ptr<BackGround> backGround;
 
 
-	// シーン遷移
-	std::unique_ptr<SceneTransition> sceneTransition;
 
 	// フォローカメラ
 	std::unique_ptr<CameraController> cameraController_;

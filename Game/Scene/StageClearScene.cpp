@@ -3,7 +3,7 @@
 #include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
-#include <SpriteCommon.h>
+
 using Engine::DirectXCommon;
 StageClearScene::StageClearScene()
 {
@@ -15,8 +15,6 @@ StageClearScene::~StageClearScene()
 
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
-	SpriteCommon::GetInstance().Initialize(dxCommon);
-
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,-5.0f,4.0f };
@@ -104,13 +102,13 @@ void StageClearScene::Update()
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN) ) {
 		switch (selectedItem_) {
 		case ClearMenuItem::OneMore:
-			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");     // もう一回 = 今のステージをやり直すなら GAMEPLAY
+			SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Normal);     // もう一回 = 今のステージをやり直すなら GAMEPLAY
 			break;
 		case ClearMenuItem::Select:
-			SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+			SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT", TransitionType::Normal);
 			break;
 		case ClearMenuItem::Title:
-			SceneManager::GetInstance()->ChangeScene("TITLE");
+			SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE", TransitionType::Normal);
 			break;
 		default:
 			break;

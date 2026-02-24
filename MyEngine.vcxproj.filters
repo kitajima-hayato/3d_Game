@@ -162,16 +162,36 @@
     <ClCompile Include="Game\Application\BackGround.cpp">
       <Filter>Game\Application\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp">
-      <Filter>Game\Scene</Filter>
+    <ClCompile Include="Game\Camera\StartCamPhase.cpp">
+      <Filter>Game\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
-    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
-    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
-    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
-    <ClCompile Include="Game\Application\PlayContext.cpp" />
-    <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
-    <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
+    <ClCompile Include="Game\Application\PlayContext.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Transition\BallWipeTransition.cpp">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Transition\ITransitionEffect.cpp">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Transition\TransitionManager.cpp">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\ModelParticleManager.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\ParticlePresets.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -334,16 +354,36 @@
     <ClInclude Include="Game\Application\BackGround.h">
       <Filter>Game\Application\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h">
-      <Filter>Game\Scene</Filter>
+    <ClInclude Include="Game\Camera\StartCamPhase.h">
+      <Filter>Game\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Camera\StartCamPhase.h" />
-    <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
-    <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
-    <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
-    <ClInclude Include="Game\Application\PlayContext.h" />
-    <ClInclude Include="Game\Particle\ParticlePresets.h" />
-    <ClInclude Include="Game\Particle\ModelParticleManager.h" />
+    <ClInclude Include="Game\Application\PlayContext.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Pause\PauseSystem.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\UI\GamePlayHUD.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\UI\DamageFeedBack.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Transition\BallWipeTransition.h">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Transition\ITransitionEffect.h">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Transition\TransitionManager.h">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\ParticlePresets.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\ModelParticleManager.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -411,6 +451,9 @@
     </Filter>
     <Filter Include="engine\base">
       <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\Trannsition">
+      <UniqueIdentifier>{94dc7f4f-9c08-4c3b-8bc6-8aadeefcb463}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

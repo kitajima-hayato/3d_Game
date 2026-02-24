@@ -1,6 +1,8 @@
 #pragma once
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
+#include "Game/Scene/Transition/TransitionManager.h"
+#include <memory>
 // シーン管理クラス
 // シングルトンクラス
 class SceneManager
@@ -35,6 +37,11 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
 	/// <param name="dxCommon"></param>
 	void Update(Engine::DirectXCommon*dxCommon);
 	/// <summary>
@@ -58,7 +65,23 @@ public:
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
 
+	/// <summary>
+	/// シーン変更（遷移演出あり）
+	/// </summary>
+	/// <param name="sceneName">変更するシーンの名前</param>
+	/// <param name="transitionType">遷移のタイプ</param>
+	void ChangeSceneWithTransition(const std::string& sceneName, TransitionType transitionType = TransitionType::Normal);
+	/// <summary>
+	/// 遷移マネージャーの取得
+	/// </summary>
+	TransitionManager* GetTransitionManager() { return transitionManager_.get(); }
 private:
+/// <summary>
+/// シーン切り替えの実行（内部用）
+/// </summary>
+	void ExecuteSceneChange(Engine::DirectXCommon* dxCommon);
+private:
+
 	// 今のシーン
 	std::unique_ptr<BaseScene> scene_ = nullptr;
 	// 次のシーン
@@ -66,6 +89,15 @@ private:
 
 	// シーンファクトリー // 借り物
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+
+	// 遷移マネージャー
+	std::unique_ptr<TransitionManager> transitionManager_ = nullptr;
+	// 遷移中の次のシーン名
+	std::string pendingSceneName_;
+	bool isTransitionRequested_ = false;
+
+	// 固定フレームレート用のデルタタイム
+	static constexpr float kFixedDeltaTime_ = 1.0f / 60.0f;
 	
 };
 

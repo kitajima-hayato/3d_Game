@@ -107,6 +107,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scene\Transition\BallWipeTransition.cpp" />
     <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
     <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
+    <ClCompile Include="Game\Scene\Transition\ITransitionEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MakeMatrix.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -154,7 +156,6 @@
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
-    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\Player\Player.cpp" />
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
@@ -166,8 +167,10 @@
     <ClCompile Include="Game\Application\PlayContext.cpp" />
     <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
     <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
+    <ClCompile Include="Game\Scene\Transition\TransitionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scene\Transition\BallWipeTransition.h" />
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
     <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -217,7 +220,6 @@
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />
-    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\Player\Player.h" />
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
@@ -229,6 +231,8 @@
     <ClInclude Include="Game\Application\PlayContext.h" />
     <ClInclude Include="Game\Particle\ParticlePresets.h" />
     <ClInclude Include="Game\Particle\ModelParticleManager.h" />
+    <ClInclude Include="Game\Scene\Transition\TransitionManager.h" />
+    <ClInclude Include="Game\Scene\Transition\ITransitionEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
