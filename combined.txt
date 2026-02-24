@@ -74,15 +74,19 @@
 └──     ├── SceneSelectGraph/
 └──     └── ├── StageSelectGraph.cpp
 └──     └── └── StageSelectGraph.h
-└──     ├── SceneTransition/
-└──     └── ├── SceneTransition.cpp
-└──     └── └── SceneTransition.h
 └──     ├── StageClearScene.cpp
 └──     ├── StageClearScene.h
 └──     ├── StageSelectScene.cpp
 └──     ├── StageSelectScene.h
 └──     ├── TitleScene.cpp
-└──     └── TitleScene.h
+└──     ├── TitleScene.h
+└──     └── Transition/
+└──         ├── BallWipeTransition.cpp
+└──         ├── BallWipeTransition.h
+└──         ├── ITransitionEffect.cpp
+└──         ├── ITransitionEffect.h
+└──         ├── TransitionManager.cpp
+└──         └── TransitionManager.h
 ├── Lib/
 ├── MyEngine.vcxproj
 ├── MyEngine.vcxproj.filters
@@ -2211,7 +2215,6 @@ void ModelList::LoadAllModel()
 							   
 	/// GamePlayScene		   
 	ModelManager::GetInstance().LoadModel("Grass.obj");
-	ModelManager::GetInstance().LoadModel("SceneChange.obj");
 	ModelManager::GetInstance().LoadModel("nullBlock.obj");
 	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
 	ModelManager::GetInstance().LoadModel("breakBlock.obj");
@@ -7320,8 +7323,6 @@ GamePlayScene::~GamePlayScene()
 
 void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 {
-	/// スプライトの初期化
-	SpriteCommon::GetInstance().Initialize(dxCommon);
 	/// オーディオの初期化
 	Audio::GetInstance().Initialize();
 	soundData = Audio::GetInstance().LoadWave("resources/mokugyo.wav");
@@ -7470,7 +7471,7 @@ void GamePlayScene::Update()
 	// プレイヤーがゴールに触れていたらシーン遷移
 	bool isGoal = player->GetIsGoal();
 	if (isGoal) {
-		sceneManager->ChangeScene("STAGECLEAR");
+		sceneManager->ChangeSceneWithTransition("STAGECLEAR",TransitionType::Normal);
 	}
 
 	
@@ -7632,9 +7633,6 @@ void GamePlayScene::Finalize()
 	/// オーディオの終了処理
 	Audio::GetInstance().SoundUnload(&soundData);
 
-	/// スプライトの終了処理
-	SpriteCommon::GetInstance().DeleteInstance();
-
 }
 
 
@@ -7673,15 +7671,13 @@ void GamePlayScene::DrawImgui()
 File Path: Game/Scene/GamePlayScene.h
 ============================================================
 #pragma once
-#include "Audio.h"
-#include "SpriteCommon.h"
+#include "Audio.h"    
 #include "engine/InsideScene/BaseScene.h"
 #include "engine/math/MyMath.h"
 #include "Game/Application/Enemy/EnemyFactory.h"
 #include "Game/Application/BackGround.h"
 #include "Game/Camera/CameraController.h"
 #include "Game/Particle/ParticleSystem.h"
-#include "SceneTransition/SceneTransition.h"
 #include "Game/Scene/Pause/PauseSystem.h"
 #include "Game/Application/UI/GamePlayHUD.h"
 #include "Game/Camera/StartCamPhase.h"
@@ -7808,8 +7804,6 @@ private:
 	std::unique_ptr<BackGround> backGround;
 
 
-	// シーン遷移
-	std::unique_ptr<SceneTransition> sceneTransition;
 
 	// フォローカメラ
 	std::unique_ptr<CameraController> cameraController_;
@@ -7867,10 +7861,12 @@ using namespace Engine;
 void MyGame::Initialize()
 {
 	Framework::Initialize();
+	// シーンマネージャーの初期化
+	SceneManager::GetInstance()->Initialize();
 	// シーンファクトリーの生成
 	sceneFactory_ = make_unique<SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
-	// シーンmanagerに最初のシーンをセット
+	// シーンマネージャーに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
 
 	modelList = make_unique<ModelList>();
@@ -8027,15 +8023,15 @@ bool PauseSystem::Update()
 			
 			case PauseUI::Action::Retry:
 				// リトライ処理
-				SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+				SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY", TransitionType::Normal);
 				break;
 			case PauseUI::Action::StageSelect:
 				// ステージセレクトへ
-				SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+				SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT", TransitionType::Normal);
 				break;
 			case PauseUI::Action::Title:
 				// タイトルへ
-				SceneManager::GetInstance()->ChangeScene("TITLE");
+				SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE", TransitionType::Normal);
 				break;
 		}
 
@@ -8612,8 +8608,6 @@ StageSelectGraph::~StageSelectGraph()
 
 void StageSelectGraph::Initialize()
 {
-	//// ノードの追加
-
 	// ノード情報をJSONファイルから読み込み
 	LoadMapNodeFromJson("World_1");
 	// ノード境界情報の再計算     
@@ -9144,341 +9138,6 @@ public:
 
 
 ============================================================
-File Path: Game/Scene/SceneTransition/SceneTransition.cpp
-============================================================
-#include "SceneTransition.h"
-#ifdef USE_IMGUI
-#include "engine/base/ImGuiManager.h"
-#endif
-#include "engine/2d/SpriteCommon.h"
-#include "Input.h"
-
-static inline float Clamp01(float x) { return x < 0.f ? 0.f : (x > 1.f ? 1.f : x); }
-static inline float Lerp(float a, float b, float t) { return a + (b - a) * t; }
-static inline float EaseInOut(float t) {
-	return (t < 0.5f) ? (4.f * t * t * t) : (1.f - powf(-2.f * t + 2.f, 3.f) / 2.f);
-}
-static inline float EaseIn(float t) { return t * t * t; }
-void SceneTransition::Initialize(uint32_t division, uint32_t totalFrame)
-{
-	// スプライト分割数を設定
-	spriteCount = division;
-
-	totalFrames_ = std::max<uint32_t>(2, totalFrame);
-
-	// In / Out を半分ずつ
-	inFrames_ = totalFrames_ / 2 + (totalFrames_ % 2);
-	outFrames_ = totalFrames_ / 2;
-
-	phase_ = Phase::In;
-	frame_ = 0;
-
-	spriteDate = {
-		// pos
-		{0.0f,50.0f},
-		// size
-		{0.0f,0.0f},
-		// rotate
-		{0.0f},
-		// color
-		{1.0f,1.0f,1.0f,1.0f}
-	};
-
-	sprites.clear();
-	sprites.reserve(spriteCount);
-
-	const float w = 1280.0f / spriteCount;
-
-	// スプライトカウント分インスタンスを生成
-	for (uint32_t i = 0; i < spriteCount; i++) {
-		Sprite s;
-		s.Initialize(textureFilePath);
-		s.SetPosition({ i * w, 720.0f });
-
-		// サイズ / 左端から右端まで均等に並べる
-		s.SetSize({ w,720.0f });
-
-		s.SetColor({ 1.0f,1.0f,1.0f,1.0f });
-
-		// 登録
-		sprites.push_back(s);
-	}
-
-}
-
-void SceneTransition::Update() {
-	//// フェードイン・フェードアウトの処理
-	//if (!isTransition) {
-	//	for (size_t i = 0; i < sprites.size(); ++i) {
-	//		auto& s = sprites[i];
-	//		float delay = i * 10.0f; // 段階的な遅延
-	//		// 画面を覆うまでフェードイン
-	//		if (timer > delay && timer < delay + 75.0f) {
-	//			Vector2 pos = s.GetPosition();
-	//			pos.y -= 10.0f; // 上昇
-	//			s.SetPosition(pos);
-	//		}
-	//		s.Update();
-	//	}
-	//	if (timer > 75.0f + (spriteCount - 1) * 10.0f) {
-	//		isTransition = true;
-	//		timer = 0.0f;
-	//	}
-	//} else {
-	//	for (size_t i = 0; i < sprites.size(); ++i) {
-	//		auto& s = sprites[i];
-	//		float delay = i * 10.0f; // 段階的な遅延
-	//		// 画面を覆うまでフェードイン
-	//		if (timer > delay && timer < delay + 75.0f) {
-	//			Vector2 pos = s.GetPosition();
-	//			pos.y += 10.0f; // 下降
-	//			s.SetPosition(pos);
-	//		}
-	//		s.Update();
-	//	}
-	//	if (timer > 75.0f + (spriteCount - 1) * 10.0f) {
-	//		isTransition = false;
-	//		timer = 0.0f;
-	//	}
-	//}
-
-	Imgui();
-
-	auto updatePhase = [&](uint32_t phaseFrames, bool reverse) {
-		float phaseT = (phaseFrames == 0) ? 1.0f :
-			static_cast<float>(frame_) / static_cast<float>(phaseFrames);
-		phaseT = Clamp01(phaseT);
-
-		for (uint32_t i = 0; i < spriteCount; ++i) {
-			auto& s = sprites[i];
-
-			float p = Clamp01(phaseT * spriteCount - static_cast<float>(i));
-			p = EaseInOut(p);
-
-			// ここを修正 ↓
-			float startY = reverse ? 0.0f : 720.0f;
-			float endY = reverse ? 720.0f : 0.0f;
-
-			float y = Lerp(startY, endY, p);
-
-			Vector2 pos = s.GetPosition();
-			pos.y = y;
-			s.SetPosition(pos);
-
-
-			s.Update();
-		}
-
-		if (frame_ >= phaseFrames) { frame_ = 0; return true; }
-		++frame_; return false;
-		};
-	switch (phase_) {
-	case Phase::In:
-		// 上方向へ上がる演出（今まで通り）
-		if (updatePhase(inFrames_, /*reverse=*/false)) {
-			// 上がりきったら一気に下げるフェーズへ
-			phase_ = Phase::Out;
-			frame_ = 0;
-		}
-		break;
-
-	case Phase::Out:
-	{
-		// t: 0→1 を outFrames_ で進める
-		float t = (outFrames_ == 0) ? 1.0f
-			: static_cast<float>(frame_) / static_cast<float>(outFrames_);
-		t = Clamp01(t);
-		float te = EaseIn(t); // 落下は加速させる
-
-		// 全スプライト同時に「上(0) → 下(720)」へ落下
-		for (auto& s : sprites) {
-			Vector2 pos = s.GetPosition();
-			float startY = pos.y;         // 直前の位置（通常は 0）
-			float endY = 720.0f;        // 画面下
-			// startY が 0 でない状況でもスムーズに落ちるよう、Lerp を毎フレーム適用
-			pos.y = Lerp(startY, endY, te);
-			s.SetPosition(pos);
-			s.Update();
-		}
-
-		if (frame_ >= outFrames_) {
-			phase_ = Phase::Done; // totalFrame 内は Draw 継続（Done でも描画OKにしているならそのまま）
-			frame_ = 0;
-		} else {
-			++frame_;
-		}
-	}
-	break;
-	}
-
-}
-
-
-
-void SceneTransition::Draw()
-{
-	//sprite->Draw();
-
-	for (auto& s : sprites) {
-		s.Draw();
-	}
-}
-
-void SceneTransition::Imgui()
-{
-#ifdef USE_IMGUI
-	ImGui::Begin("SceneTransition Debug");
-
-	ImGui::Text("=== 状態 ===");
-	const char* phaseNames[] = { "In", "Out", "Done" };
-	ImGui::Text("Phase : %s", phaseNames[static_cast<int>(phase_)]);
-	ImGui::Text("Frame : %u / Total %u", frame_, totalFrames_);
-	ImGui::Text("In  : %u  Out : %u", inFrames_, outFrames_);
-	ImGui::Separator();
-
-	// 進行度バー
-	float normalized = 0.0f;
-	switch (phase_) {
-	case Phase::In:  normalized = static_cast<float>(frame_) / inFrames_;  break;
-	case Phase::Out: normalized = static_cast<float>(frame_) / outFrames_; break;
-	default: break;
-	}
-	ImGui::ProgressBar(normalized, ImVec2(200, 20));
-	ImGui::Text("Progress : %.2f %%", normalized * 100.0f);
-
-	ImGui::Separator();
-	ImGui::Text("=== パラメータ ===");
-	ImGui::DragInt("SpriteCount", reinterpret_cast<int*>(&spriteCount), 1, 1, 100);
-	ImGui::DragInt("TotalFrames", reinterpret_cast<int*>(&totalFrames_), 1, 10, 600);
-	ImGui::DragFloat("BaseY", &baseY_, 1.0f, -2000.0f, 2000.0f);
-	ImGui::DragFloat("TravelY", &travelY_, 1.0f, 0.0f, 3000.0f);
-
-	// 動きの確認をしやすくするための手動コントロール
-	static float speed = 1.0f;
-	ImGui::DragFloat("Speed Multiplier", &speed, 0.01f, 0.1f, 5.0f, "%.2fx");
-
-	// リセットボタン
-	if (ImGui::Button("Reset Transition")) {
-		Initialize(spriteCount, totalFrames_);
-	}
-
-	// 強制フェーズ切り替えボタン
-	ImGui::Separator();
-	if (ImGui::Button("Force -> In")) { phase_ = Phase::In;  frame_ = 0; }
-	ImGui::SameLine();
-	if (ImGui::Button("Force -> Out")) { phase_ = Phase::Out; frame_ = 0; }
-	ImGui::SameLine();
-	if (ImGui::Button("Force -> Done")) { phase_ = Phase::Done; }
-
-	ImGui::Separator();
-	ImGui::Text("=== 個別スプライト情報 ===");
-	for (size_t i = 0; i < sprites.size(); ++i) {
-		const Vector2& pos = sprites[i].GetPosition();
-		ImGui::Text("Sprite[%zu] : Y = %.2f", i, pos.y);
-	}
-
-	ImGui::End();
-#endif
-}
-
-
-float SceneTransition::RandomRange(float min, float max)
-{
-	static std::mt19937 mt{ std::random_device{}() };
-	std::uniform_real_distribution<float> dist(min, max);
-	return dist(mt);
-}
-
-
-============================================================
-File Path: Game/Scene/SceneTransition/SceneTransition.h
-============================================================
-#pragma once
-#include <memory>
-#include "engine/3d/Object3D.h"
-#include "engine/2d/Sprite.h"
-#include <random>
-
-
-class SceneTransition
-{
-	public:
-	enum class Type {
-		kNone,
-		kFadeIn,
-		kFadeOut,
-	};
-
-	enum class Phase {
-		In, Out,Done
-	};
-
-	/// <summary>
-	/// 初期化処理
-	/// </summary>
-	/// <param name="division"></param>
-	void Initialize(uint32_t division,uint32_t totalFrame);
-
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画処理
-	/// </summary>
-	void Draw();
-	/// <summary>
-	/// Imgui
-	/// </summary>
-	void Imgui();
-	
-	/// <summary>
-	/// ランダムな実数値を生成
-	/// </summary>
-	/// <param name="min"></param>
-	/// <param name="max"></param>
-	/// <returns></returns>
-	float RandomRange(float min, float max);
-
-	/// <summary>
-	/// フェーズをDoneに設定
-	/// </summary>
-	bool IsFinished() const { return phase_ == Phase::Done; }
-
-	
-private:
-	// スプライトデータ
-	SpriteData spriteDate;
-	// スプライト
-	std::unique_ptr<Sprite> sprite;
-	// スプライト配列
-	std::vector<Sprite> sprites;
-	// スプライト分割数
-	uint32_t spriteCount;
-	
-	// 進行管理
-	Phase phase_ = Phase::In;
-
-	uint32_t frame_ = 0;
-
-	uint32_t totalFrames_ = 120;
-
-	uint32_t inFrames_ = 60;
-	uint32_t outFrames_ = 60;
-
-	float baseY_ = 720.0f;
-	float travelY_ = 1080.0f;
-
-
-
-	std::string textureFilePath = "resources/Black.png";
-
-};
-
-
-
-============================================================
 File Path: Game/Scene/StageClearScene.cpp
 ============================================================
 #include "StageClearScene.h"
@@ -9486,7 +9145,7 @@ File Path: Game/Scene/StageClearScene.cpp
 #include "engine/InsideScene/Framework.h"
 #include "Input.h"
 #include "ImGuiManager.h"
-#include <SpriteCommon.h>
+
 using Engine::DirectXCommon;
 StageClearScene::StageClearScene()
 {
@@ -9498,8 +9157,6 @@ StageClearScene::~StageClearScene()
 
 void StageClearScene::Initialize(DirectXCommon* dxCommon)
 {
-	SpriteCommon::GetInstance().Initialize(dxCommon);
-
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
 	cameraTransform.translate = { 0.0f,-5.0f,4.0f };
@@ -9587,13 +9244,13 @@ void StageClearScene::Update()
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN) ) {
 		switch (selectedItem_) {
 		case ClearMenuItem::OneMore:
-			SceneManager::GetInstance()->ChangeScene("GAMEPLAY");     // もう一回 = 今のステージをやり直すなら GAMEPLAY
+			SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Normal);     // もう一回 = 今のステージをやり直すなら GAMEPLAY
 			break;
 		case ClearMenuItem::Select:
-			SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+			SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT", TransitionType::Normal);
 			break;
 		case ClearMenuItem::Title:
-			SceneManager::GetInstance()->ChangeScene("TITLE");
+			SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE", TransitionType::Normal);
 			break;
 		default:
 			break;
@@ -10340,13 +9997,13 @@ void StageSelectScene::Update()
 		PlayContext::GetInstance().SetSelectedStage(node.stageId, node.stageKey);
 
 		// ステージシーンへ切り替え
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Start);
 	}
 
-	// Escapeキーでタイトルへ
+	// Escキーでタイトルへ
 	if (Input::GetInstance()->TriggerKey(DIK_ESCAPE)) {
 		// タイトルシーンへ切り替え
-		SceneManager::GetInstance()->ChangeScene("TITLE");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE",TransitionType::Normal);
 	}
 
 	// 空背景の更新
@@ -11295,10 +10952,6 @@ TitleScene::~TitleScene()
 
 void TitleScene::Initialize(DirectXCommon* dxCommon)
 {
-	// スプライトの初期化
-	SpriteCommon::GetInstance().Initialize(dxCommon);
-
-
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
@@ -11408,11 +11061,11 @@ void TitleScene::Update()
 	// ENTERキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN))
 	{
-		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("GAMEPLAY",TransitionType::Start);
 	}
 	else if (Input::GetInstance()->TriggerKey(DIK_SPACE))
 	{
-		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+		SceneManager::GetInstance()->ChangeSceneWithTransition("STAGESELECT",TransitionType::Start);
 	}
 
 	if (Input::GetInstance()->TriggerKey(DIK_0))
@@ -11474,9 +11127,7 @@ void TitleScene::Finalize()
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
 	
-
-	// スプライトの終了処理
-	SpriteCommon::GetInstance().DeleteInstance();
+	
 }
 
 void TitleScene::LoadAudio()
@@ -11525,14 +11176,12 @@ File Path: Game/Scene/TitleScene.h
 ============================================================
 #pragma once
 #include "Audio.h"
-#include "SpriteCommon.h"
 #include "engine/InsideScene/BaseScene.h"
 #include "Sprite.h"
 #include "engine/InsideScene/SceneManager.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ParticleSystem.h"
 #include "Game/Loader/LevelLoader.h"
-#include "SceneTransition/SceneTransition.h"
 #include "Game/Application/BackGround.h"
 
 
@@ -11642,6 +11291,684 @@ private: // ゲーム要素
 	 Camera* camera = nullptr;
 
 	//std::unique_ptr<SceneTransition> sceneTransition;
+
+};
+
+
+
+============================================================
+File Path: Game/Scene/Transition/BallWipeTransition.cpp
+============================================================
+#include "BallWipeTransition.h"
+#include <numbers>
+
+// カラフルな色パレット（ポップで明るい色）
+const std::vector<Vector4> BallWipeTransition::COLOR_PALETTE = {
+	{ 1.0f, 0.3f, 0.3f, 1.0f },  // 赤
+	{ 1.0f, 0.6f, 0.2f, 1.0f },  // オレンジ
+	{ 1.0f, 0.9f, 0.2f, 1.0f },  // 黄色
+	{ 0.4f, 0.9f, 0.4f, 1.0f },  // 緑
+	{ 0.3f, 0.7f, 1.0f, 1.0f },  // 水色
+	{ 0.6f, 0.4f, 1.0f, 1.0f },  // 紫
+	{ 1.0f, 0.4f, 0.8f, 1.0f },  // ピンク
+};
+
+BallWipeTransition::BallWipeTransition(bool isStartTransition)
+	: isStartMode_(isStartTransition)
+	, totalDuration_(0.0f)
+	, currentTime_(0.0f)
+	, currentPhase_(Phase::BallAppear)
+	, coverAlpha_(0.0f)
+	, stampColorIndex_(0)
+{
+	// モードに応じてタイムラインを設定
+	if (isStartMode_) {
+		// 豪華版のタイムライン
+		totalDuration_ = 1.0f;
+		ballAppearTime_ = 0.0f;
+		rollStartTime_ = 0.1f;
+		rollEndTime_ = 0.5f;
+		// 画面を完全に覆う
+		coverCompleteTime_ = 0.55f;
+		// 覆いを解除開始
+		uncoverStartTime_ = 0.65f;
+		stampInterval_ = 20.0f;
+		stampGrowDuration_ = 0.9f;
+		stampShrinkDuration_ = 0.3f;
+	} else {
+		// シンプル版のタイムライン
+		totalDuration_ = 0.5f;
+		ballAppearTime_ = 0.0f;
+		rollStartTime_ = 0.05f;
+		rollEndTime_ = 0.2f;
+		coverCompleteTime_ = 0.25f;
+		uncoverStartTime_ = 0.3f;
+		stampInterval_ = 35.0f;
+		stampGrowDuration_ = 0.6f;
+		stampShrinkDuration_ = 0.15f;
+	}
+}
+
+
+
+void BallWipeTransition::Initialize()
+{
+	currentTime_ = 0.0f;
+	currentPhase_ = Phase::BallAppear;
+	coverAlpha_ = 0.0f;
+	stampColorIndex_ = 0;
+
+	// ボールの初期化(２つ)
+	balls_.clear();
+	balls_.resize(2);
+
+	// 上側のボール
+	balls_[0].sprite = std::make_unique<Sprite>();
+	// 使用するスプライトの指定
+	balls_[0].sprite->Initialize(ballSpriteFilePath_);
+	balls_[0].radius = BALL_RADIUS;
+	balls_[0].isUpper = true;
+	balls_[0].position = { -BALL_RADIUS * 2,UPPER_BALL_Y };
+	balls_[0].rotation = 0.0f;
+	balls_[0].lastStampX = -BALL_RADIUS * 2;
+	balls_[0].sprite->SetSize({ BALL_RADIUS * 2, BALL_RADIUS * 2 });
+	// 中心を基準に回転させる
+	balls_[0].sprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	// 下側のボール
+	balls_[1].sprite = std::make_unique<Sprite>();
+	// 使用するスプライトの指定
+	balls_[1].sprite->Initialize(ballSpriteFilePath_);
+	balls_[1].radius = BALL_RADIUS;
+	balls_[1].isUpper = false;
+	balls_[1].position = { -BALL_RADIUS * 2,LOWER_BALL_Y };
+	balls_[1].rotation = 0.0f;
+	balls_[1].lastStampX = -BALL_RADIUS * 2;
+	balls_[1].sprite->SetSize({ BALL_RADIUS * 2, BALL_RADIUS * 2 });
+	// 中心を基準に回転させる
+	balls_[1].sprite->SetAnchorPoint({ 0.5f,0.5f });
+
+	// 帯（道）の初期化
+	stamps_.clear();
+
+
+	//// カバースプライト（画面全体を覆う）
+	//coverSprite_ = std::make_unique<Sprite>();
+	//coverSprite_->Initialize(trailSpriteFilePath_);
+	//coverSprite_->SetPosition({ 0.0f,0.0f });
+	//coverSprite_->SetSize({ SCREEN_WIDTH,SCREEN_HEIGHT });
+	//coverSprite_->SetColor({ 0.0f,0.0f,0.0f,0.0f });
+
+}
+
+void BallWipeTransition::Start()
+{
+	Initialize();
+}
+
+void BallWipeTransition::Update(float deltaTime)
+{
+	// 遷移時間の更新
+	currentTime_ += deltaTime;
+
+	if (currentPhase_ == Phase::Covered && currentTime_ >= uncoverStartTime_) {
+		for (auto& stamp : stamps_) {
+			stamp.sizeBeforeShrink = stamp.currentSize; // ★現在のサイズを保存
+		}
+		currentPhase_ = Phase::Uncovering;
+	} else if (currentPhase_ == Phase::BallAppear && currentTime_ >= rollStartTime_) {
+		currentPhase_ = Phase::Rolling;
+	} else if (currentPhase_ == Phase::Rolling && currentTime_ >= rollEndTime_) {
+		currentPhase_ = Phase::Covering;
+	} else if (currentPhase_ == Phase::Covering && currentTime_ >= coverCompleteTime_) {
+		currentPhase_ = Phase::Covered;
+	} else if (currentPhase_ == Phase::Uncovering && currentTime_ >= totalDuration_) {
+		currentPhase_ = Phase::Complete;
+	}
+
+	// 各フェーズの更新
+	switch (currentPhase_)
+	{
+	case BallWipeTransition::Phase::BallAppear:
+	case BallWipeTransition::Phase::Rolling:
+		UpdateBalls(deltaTime);
+		UpdateStamps(deltaTime);
+		break;
+	case BallWipeTransition::Phase::Covering:
+	case BallWipeTransition::Phase::Covered:
+	case BallWipeTransition::Phase::Uncovering:
+		UpdateStamps(deltaTime);
+		break;
+	}
+}
+
+void BallWipeTransition::UpdateBalls(float deltaTime)
+{
+	// 転がりフェーズの進行度
+	float rollDuration = rollEndTime_ - rollStartTime_;
+	float rollTime = (std::max)(0.0f, currentTime_ - rollStartTime_);
+	float rollProgress = (std::min)(1.0f, rollTime / rollDuration);
+
+	// ボールを両面端まで移動
+	float targetX = SCREEN_WIDTH + BALL_RADIUS * 2;
+
+	for (auto& ball : balls_) {
+		// 位置の更新
+		float startX = -BALL_RADIUS * 2; // スタート位置（画面外左）
+		float newX = startX + (targetX - startX) * rollProgress;
+		float distance = newX - ball.position.x;
+		ball.position.x = newX;
+
+		// 回転の更新 / 移動距離で連動
+		ball.rotation += distance / ball.radius;
+
+		// スタンプの生成判定（一定間隔ごと）
+		if (ball.position.x - ball.lastStampX >= stampInterval_) {
+			CreateStamp(ball.position, ball.isUpper);
+			ball.lastStampX = ball.position.x;
+		}
+
+		// スプライトに反映
+		ball.sprite->SetPosition(ball.position);
+		ball.sprite->SetRotation(ball.rotation);
+		ball.sprite->Update();
+	}
+}
+
+void BallWipeTransition::CreateStamp(const Vector2& position, bool isUpper)
+{
+	Stamp stamp;
+	stamp.sprite = std::make_unique<Sprite>();
+	stamp.sprite->Initialize(stampSpriteFilePath_);
+	stamp.position = position;
+	stamp.currentSize = 0.0f;
+	stamp.sizeBeforeShrink = 0.0f;
+
+	// サイズをランダムに変化
+	float sizeVariation = (rand() % 20 - 10) / 100.0f;
+	stamp.targetSize = 600.0f + 400.0f * (0.5f + sizeVariation);
+
+	stamp.age = 0.0f;
+	stamp.isUpper = isUpper;
+
+	// カラフルな色を設定
+	stamp.color = GetColorForStamp(stampColorIndex_);
+	stampColorIndex_ = (stampColorIndex_ + 1) % COLOR_PALETTE.size();
+
+	stamp.sprite->SetAnchorPoint({ 0.5f,0.5f });
+	stamps_.push_back(std::move(stamp));
+}
+
+void BallWipeTransition::UpdateStamps(float deltaTime)
+{
+	for (auto& stamp : stamps_) {
+		stamp.age += deltaTime;
+
+
+
+		// Uncoveringフェーズならスタンプを縮小
+		if (currentPhase_ == Phase::Uncovering) {
+			float shrinkTime = currentTime_ - uncoverStartTime_;
+			float shrinkProgress = shrinkTime / stampShrinkDuration_;
+			shrinkProgress = (std::min)(1.0f, shrinkProgress);
+
+			// 縮小アニメーション（イーズイン：加速しながら縮む）
+			float shrinkEase = shrinkProgress * shrinkProgress;
+			// 保存したサイズから0へ
+			stamp.currentSize = stamp.sizeBeforeShrink * (1.0f - shrinkEase);
+
+		} else {
+			// 通常の成長アニメーション
+			float growProgress = stamp.age / stampGrowDuration_;
+			float eased;
+			if (growProgress < 1.0f) {
+				eased = 1.0f - (1.0f - growProgress) * (1.0f - growProgress);
+			} else {
+				float extraTime = growProgress - 1.0f;
+				eased = 1.0f + extraTime * 0.8f;
+				eased = (std::min)(3.5f, eased);
+			}
+			stamp.currentSize = stamp.targetSize * eased;
+		}
+
+
+		// スプライトに反映
+		stamp.sprite->SetPosition(stamp.position);
+		stamp.sprite->SetSize({ stamp.currentSize, stamp.currentSize });
+		stamp.sprite->SetColor(stamp.color);
+		stamp.sprite->Update();
+	}
+}
+
+void BallWipeTransition::UpdateCover(float deltaTime)
+{
+
+}
+
+Vector4 BallWipeTransition::GetColorForStamp(int index)
+{
+	return COLOR_PALETTE[index % COLOR_PALETTE.size()];
+}
+
+void BallWipeTransition::Draw()
+{
+	// スタンプの描画
+	for (const auto& stamp : stamps_) {
+		if (stamp.currentSize > 0.0f) {
+			stamp.sprite->Draw();
+		}
+	}
+	// ボール
+	if (currentPhase_ == Phase::Rolling) {
+
+		for (const auto& ball : balls_) {
+			ball.sprite->Draw();
+		}
+	}
+
+
+}
+
+bool BallWipeTransition::IsHalfway()
+{
+	// 画面が完全に覆われたらロード開始
+	return currentPhase_ >= Phase::Covering;
+}
+
+bool BallWipeTransition::IsComplete()
+{
+	return currentPhase_ == Phase::Complete;
+}
+
+float BallWipeTransition::GetProgress()
+{
+	return (std::min)(1.0f, currentTime_ / totalDuration_);
+}
+
+
+
+
+============================================================
+File Path: Game/Scene/Transition/BallWipeTransition.h
+============================================================
+#pragma once
+#include "ITransitionEffect.h"
+#include "Sprite.h"
+#include <memory>
+#include <vector>
+#include <MyMath.h>
+/// <summary>
+/// ボール転がりワイプ遷移演出
+/// </summary>
+class BallWipeTransition :public ITransitionEffect
+{
+public:
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	BallWipeTransition(bool isStartTransition = false);
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~BallWipeTransition() override = default;
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	// ITransitionEffect インターフェース
+	void Start() override;
+	void Update(float deltaTime) override;
+	void Draw() override;
+	bool IsHalfway()override;
+	bool IsComplete()override;
+	float GetProgress()override;
+
+private:
+	/// <summary>
+	/// ボールの更新
+	/// </summary>
+	void UpdateBalls(float deltaTime);
+
+	/// <summary>
+	/// スタンプの生成
+	/// </summary>
+	/// <param name="position"></param>
+	/// <param name="isUpper"></param>
+	void CreateStamp(const Vector2& position, bool isUpper);
+
+	/// <summary>
+	/// スタンプの更新
+	/// </summary>
+	void UpdateStamps(float deltaTime);
+
+	/// <summary>
+	/// ワイプマスクの更新
+	/// </summary>
+	void UpdateCover(float deltaTime);
+
+	/// <summary>
+	/// カラフルな色を取得
+	/// </summary>
+	Vector4 GetColorForStamp(int index);
+
+	// カラフルな色パレット（コロンワールド風）
+	static const std::vector<Vector4> COLOR_PALETTE;
+private:
+	// モード設定
+	// スタートモード豪華版か
+	bool isStartMode_;
+	// 演出の総時間
+	float totalDuration_;
+	// 現在の経過時間
+	float currentTime_;
+
+	// タイムライン
+	// ボールの出現時間
+	float ballAppearTime_;
+	// 転がり開始時間
+	float rollStartTime_;
+	// 転がり終了時間
+	float rollEndTime_;
+	// カバー完了時間
+	float coverCompleteTime_;
+	// カバー解除開始時間
+	float uncoverStartTime_;
+
+	// 演出のフェーズ
+	enum class Phase {
+		// ボール出現
+		BallAppear,
+		// 転がり中
+		Rolling,
+		// 画面を覆う
+		Covering,
+		// 完全に覆った状態（ロード中）
+		Covered,
+		// 覆いを解除する
+		Uncovering,
+		// 完了
+		Complete
+	};
+	Phase currentPhase_;
+
+	// ボール関連
+	struct Ball {
+
+		std::unique_ptr<Sprite>sprite;
+		Vector2 position;
+		// 回転角度
+		float rotation;
+		// ボールの半径
+		float radius;
+		// 上側のボールか
+		bool isUpper;
+		// 最後にスタンプを押したX座標
+		float lastStampX;
+	};
+	std::vector<Ball> balls_;
+
+
+	struct Stamp
+	{
+		// 画像インスタンス
+		std::unique_ptr<Sprite>sprite;
+		// 座標
+		Vector2 position;
+		// 現在のサイズ
+		float currentSize;
+		// 目標サイズ
+		float targetSize;
+		// 生成からの経過時間
+		float age;
+		// スタンプの色
+		Vector4 color;
+		// 上側の帯か
+		bool isUpper;
+		// スタンプのサイズ前フレーム
+		float sizeBeforeShrink;
+	};
+	std::vector<Stamp>stamps_;
+
+	// スタンプ生成の設定
+	// スタンプを押す間隔
+	float stampInterval_;
+	// スタンプが成長する時間
+	float stampGrowDuration_;
+	// スタンプ縮小時間
+	float stampShrinkDuration_;
+	// 現在の色インデックス
+	int stampColorIndex_;
+
+	// カバー（画面全体を覆うスプライト）
+	//std::unique_ptr<Sprite> coverSprite_;
+	float coverAlpha_ = 0.0f; // カバーの透明度（0.0f ~ 1.0f）
+
+	// スプライトのファイルパス
+	const std::string ballSpriteFilePath_ = "resources/SceneTransition/ball.png";
+	const std::string trailSpriteFilePath_ = "resources/SceneTransition/trail.png";
+	const std::string stampSpriteFilePath_ = "resources/SceneTransition/stamp.png";
+
+
+	// 画面のサイズ
+	static constexpr float SCREEN_WIDTH = 1280.0f;
+	static constexpr float SCREEN_HEIGHT = 720.0f;
+
+	// ボールと帯の設定
+	static constexpr float BALL_RADIUS = 32.0f;
+	static constexpr float UPPER_BALL_Y = 180.0f;  // 上側ボールのY座標
+	static constexpr float LOWER_BALL_Y = 540.0f;  // 下側ボールのY座標
+	static constexpr float STAMP_SIZE_MIN = 80.0f;
+	static constexpr float STAMP_SIZE_MAX = 120.0f;
+};
+
+
+
+============================================================
+File Path: Game/Scene/Transition/ITransitionEffect.cpp
+============================================================
+#include "ITransitionEffect.h"
+
+
+============================================================
+File Path: Game/Scene/Transition/ITransitionEffect.h
+============================================================
+#pragma once
+class ITransitionEffect
+{
+public:
+	/// <summary>
+	/// 仮想デストラクタ
+	/// </summary>
+	virtual ~ITransitionEffect() = default;
+	/// <summary>
+	/// 遷移演出の開始
+	/// </summary>
+	virtual void Start() = 0;
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	virtual void Update(float deltaTime) = 0;
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	virtual void Draw() = 0;
+	/// <summary>
+	/// 演出が中間地点に到達したか
+	/// </summary>
+	virtual bool IsHalfway() = 0;
+	/// <summary>
+	///演出が完了したか
+	/// </summary>
+	virtual bool IsComplete() = 0;
+	/// <summary>
+	/// 演出の進行度を取得する
+	/// </summary>
+	/// <returns>(0.0 ~ 1.0)</returns>
+	virtual float GetProgress() = 0;
+};
+
+
+
+============================================================
+File Path: Game/Scene/Transition/TransitionManager.cpp
+============================================================
+#include "TransitionManager.h"
+
+void TransitionManager::Initialize()
+{
+	phase_ = TransitionPhase::None;
+	loadingComplete_ = false;
+	transitionEffect_.reset();
+}
+
+void TransitionManager::Update(float deltaTime)
+{
+	// 遷移エフェクトが無い / 遷移フェーズがNoneの場合早期リターン
+	if (!transitionEffect_ || phase_ == TransitionPhase::None)return;
+
+	// 遷移演出の開始
+	transitionEffect_->Update(deltaTime);
+
+	// フェーズの遷移処理
+	switch (phase_)
+	{
+	case TransitionPhase::FadeOut:
+		// 中間地点に到達したらLoading状態へ
+		if (transitionEffect_->IsHalfway()) {
+			phase_ = TransitionPhase::Loading;
+		}
+		break;
+	case TransitionPhase::Loading:
+		// ロードの完了を待つ
+		if (loadingComplete_) {
+			phase_ = TransitionPhase::FadeIn;
+			loadingComplete_ = false;
+		}
+		break;
+	case TransitionPhase::FadeIn:
+		if (transitionEffect_->IsComplete()) {
+			phase_ = TransitionPhase::None;
+			transitionEffect_.reset();
+		}
+		break;
+	default:
+		break;
+	}
+
+}
+
+void TransitionManager::Draw()
+{
+	// 遷移エフェクトが
+	if (transitionEffect_ && phase_ != TransitionPhase::None) {
+		transitionEffect_->Draw();
+	}
+}
+
+void TransitionManager::StartTransition(TransitionType type)
+{
+	if (transitionEffect_) {
+		transitionEffect_->Start();
+		phase_ = TransitionPhase::FadeOut;
+		loadingComplete_ = false;
+	}
+}
+
+void TransitionManager::SetTransitionEffect(std::unique_ptr<ITransitionEffect> effect)
+{
+	transitionEffect_ = std::move(effect);
+}
+
+void TransitionManager::OnLoadingComplete()
+{
+	loadingComplete_ = true;
+}
+
+
+============================================================
+File Path: Game/Scene/Transition/TransitionManager.h
+============================================================
+#pragma once
+#include <memory>
+#include "ITransitionEffect.h"
+/// <summary>
+/// シーン遷移の状態
+/// </summary>
+enum class TransitionPhase {
+	None,			// 遷移なし
+	FadeOut,		// フェードアウト中
+	Loading,		// ロード中
+	FadeIn			// フェードイン中
+};
+
+/// <summary>
+/// 遷移の状態
+/// </summary>
+enum class TransitionType {
+	Start,	// タイトル → ゲーム開始（少し凝ってる）
+	Normal,	// 通常のシーン切り替え（遷移速め）
+};
+
+/// <summary>
+/// シーン遷移の管理クラス
+/// </summary>
+class TransitionManager
+{
+public:
+	/// <summary>
+	/// 初期化処理
+	/// </summary>
+	void Initialize();
+	/// <summary>
+	/// 更新処理
+	/// </summary>
+	void Update(float deltaTime);
+	/// <summary>
+	/// 描画処理
+	/// </summary>
+	void Draw();
+	/// <summary>
+	/// 遷移を開始
+	/// </summary>
+	void StartTransition(TransitionType type);
+public:	// Getter / Setter
+	/// <summary>
+	/// 遷移演出のセット
+	/// </summary>
+	/// <param name="effect"></param>
+	void SetTransitionEffect(std::unique_ptr<ITransitionEffect>effect);
+	/// <summary>
+	/// 現在の遷移フェーズの取得
+	/// </summary>
+	/// <returns>現在の遷移フェーズ</returns>
+	TransitionPhase GetPhase() const { return phase_; }
+	/// <summary>
+	/// ロード開始可能か
+	/// </summary>
+	/// <returns>開始していいか</returns>
+	bool CanStartLoading() const { return phase_ == TransitionPhase::Loading; }
+	/// <summary>
+	/// ロードの完了通知
+	/// </summary>
+	void OnLoadingComplete();
+	/// <summary>
+	/// 遷移中かどうか
+	/// </summary>
+	/// <returns>遷移中か</returns>
+	bool IsTransitioning() const { return phase_ != TransitionPhase::None; }
+
+private:
+	// 現在のフェーズ
+	TransitionPhase phase_ = TransitionPhase::None;
+
+	// 遷移演出
+	std::unique_ptr<ITransitionEffect> transitionEffect_ = nullptr;
+
+	// 遷移の終了フラグ
+	bool loadingComplete_ = false;
 
 };
 
@@ -11759,6 +12086,7 @@ File Path: MyEngine.vcxproj
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scene\Transition\BallWipeTransition.cpp" />
     <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
     <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
     <ClCompile Include="Game\Camera\CameraController.cpp" />
@@ -11783,6 +12111,7 @@ File Path: MyEngine.vcxproj
     <ClCompile Include="Game\Scene\GamePlayScene.cpp" />
     <ClCompile Include="engine\base\ImGuiManager.cpp" />
     <ClCompile Include="Game\Loader\LevelLoader.cpp" />
+    <ClCompile Include="Game\Scene\Transition\ITransitionEffect.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\math\MakeMatrix.cpp" />
     <ClCompile Include="engine\3d\Model.cpp" />
@@ -11806,7 +12135,6 @@ File Path: MyEngine.vcxproj
     <ClCompile Include="Game\Application\Enemy\NormalEnemy.cpp" />
     <ClCompile Include="engine\3d\SkyBox\SkyBox.cpp" />
     <ClCompile Include="engine\2d\RenderTexture.cpp" />
-    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp" />
     <ClCompile Include="Game\Application\Player\Player.cpp" />
     <ClCompile Include="Game\Application\Map\Map.cpp" />
     <ClCompile Include="Game\Scene\StageClearScene.cpp" />
@@ -11818,8 +12146,10 @@ File Path: MyEngine.vcxproj
     <ClCompile Include="Game\Application\PlayContext.cpp" />
     <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
     <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
+    <ClCompile Include="Game\Scene\Transition\TransitionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scene\Transition\BallWipeTransition.h" />
     <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
     <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
     <ClInclude Include="Game\Application\Enemy\EnemyType.h" />
@@ -11869,7 +12199,6 @@ File Path: MyEngine.vcxproj
     <ClInclude Include="Game\Loader\LevelLoader.h" />
     <ClInclude Include="engine\3d\SkyBox\SkyBox.h" />
     <ClInclude Include="engine\2d\RenderTexture.h" />
-    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h" />
     <ClInclude Include="Game\Application\Player\Player.h" />
     <ClInclude Include="Game\Application\Map\Map.h" />
     <ClInclude Include="Game\Scene\StageClearScene.h" />
@@ -11881,6 +12210,8 @@ File Path: MyEngine.vcxproj
     <ClInclude Include="Game\Application\PlayContext.h" />
     <ClInclude Include="Game\Particle\ParticlePresets.h" />
     <ClInclude Include="Game\Particle\ModelParticleManager.h" />
+    <ClInclude Include="Game\Scene\Transition\TransitionManager.h" />
+    <ClInclude Include="Game\Scene\Transition\ITransitionEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />
@@ -12072,16 +12403,36 @@ File Path: MyEngine.vcxproj.filters
     <ClCompile Include="Game\Application\BackGround.cpp">
       <Filter>Game\Application\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\SceneTransition\SceneTransition.cpp">
-      <Filter>Game\Scene</Filter>
+    <ClCompile Include="Game\Camera\StartCamPhase.cpp">
+      <Filter>Game\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera\StartCamPhase.cpp" />
-    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp" />
-    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp" />
-    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp" />
-    <ClCompile Include="Game\Application\PlayContext.cpp" />
-    <ClCompile Include="Game\Particle\ParticlePresets.cpp" />
-    <ClCompile Include="Game\Particle\ModelParticleManager.cpp" />
+    <ClCompile Include="Game\Application\PlayContext.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Pause\PauseSystem.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\UI\GamePlayHUD.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Application\UI\DamageFeedBack.cpp">
+      <Filter>Game\Application\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Transition\BallWipeTransition.cpp">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Transition\ITransitionEffect.cpp">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\Transition\TransitionManager.cpp">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\ModelParticleManager.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Particle\ParticlePresets.cpp">
+      <Filter>Game\Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <!-- ヘッダーファイルのItemGroupも同様に統合する必要あり（長いためここでは省略） -->
   <ItemGroup>
@@ -12244,16 +12595,36 @@ File Path: MyEngine.vcxproj.filters
     <ClInclude Include="Game\Application\BackGround.h">
       <Filter>Game\Application\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\SceneTransition\SceneTransition.h">
-      <Filter>Game\Scene</Filter>
+    <ClInclude Include="Game\Camera\StartCamPhase.h">
+      <Filter>Game\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Camera\StartCamPhase.h" />
-    <ClInclude Include="Game\Scene\Pause\PauseSystem.h" />
-    <ClInclude Include="Game\Application\UI\DamageFeedBack.h" />
-    <ClInclude Include="Game\Application\UI\GamePlayHUD.h" />
-    <ClInclude Include="Game\Application\PlayContext.h" />
-    <ClInclude Include="Game\Particle\ParticlePresets.h" />
-    <ClInclude Include="Game\Particle\ModelParticleManager.h" />
+    <ClInclude Include="Game\Application\PlayContext.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Pause\PauseSystem.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\UI\GamePlayHUD.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Application\UI\DamageFeedBack.h">
+      <Filter>Game\Application\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Transition\BallWipeTransition.h">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Transition\ITransitionEffect.h">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\Transition\TransitionManager.h">
+      <Filter>Game\Scene\Trannsition</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\ParticlePresets.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Particle\ModelParticleManager.h">
+      <Filter>Game\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">
@@ -12321,6 +12692,9 @@ File Path: MyEngine.vcxproj.filters
     </Filter>
     <Filter Include="engine\base">
       <UniqueIdentifier>{0790bce2-65e2-41da-bfa7-48956890b70c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\Trannsition">
+      <UniqueIdentifier>{94dc7f4f-9c08-4c3b-8bc6-8aadeefcb463}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -13136,6 +13510,7 @@ private:	// メンバ変数
 	Vector2 textureLeftTop = { 0.0f,0.0f };
 	// テクスチャ切り出しサイズ
 	Vector2 textureSize = { 100.0f,100.0f };
+
 };
 
 
@@ -15414,6 +15789,8 @@ void Framework::Initialize()
 	// SRVマネージャーの初期化
 	srvManager = make_unique<SrvManager>();
 	srvManager->Initialize(dxCommon.get());
+	// スプライトコモンの初期化
+	SpriteCommon::GetInstance().Initialize(dxCommon.get());
 	// テクスチャマネージャーの初期化
 	TextureManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get());
 
@@ -15447,10 +15824,6 @@ void Framework::Initialize()
 	ParticleManager::GetInstance()->Initialize(dxCommon.get(), srvManager.get(), camera.get());
 	
 	
-
-	/// マップに合わせる
-	/*cameraTransform.translate = { 7.5f,-4.0f,0.0f };
-	camera->SetTranslate(cameraTransform.translate);*/
 
 }
 
@@ -15492,6 +15865,7 @@ void Framework::Finalize()
 	Audio::GetInstance().DeleteInstance();
 	Object3DCommon::GetInstance()->DeleteInstance();
 	TextureManager::GetInstance()->DeleteInstance();
+	SpriteCommon::GetInstance().DeleteInstance();
 	ModelManager::GetInstance().Finalize();
 	Input::GetInstance()->DeleteInstance();
 	winAPI->Finalize();
@@ -15683,6 +16057,7 @@ public:
 File Path: engine/InsideScene/SceneManager.cpp
 ============================================================
 #include "SceneManager.h"
+#include "Game/Scene/Transition/BallWipeTransition.h"
 
 using namespace Engine;
 
@@ -15707,54 +16082,148 @@ void SceneManager::DestroyInstance()
 	}
 }
 
+void SceneManager::Initialize()
+{
+	// 遷移マネージャーの初期化
+	transitionManager_ = std::make_unique<TransitionManager>();
+	transitionManager_->Initialize();
+
+}
+
 void SceneManager::Update(DirectXCommon* dxCommon)
 {
-    // 次のシーンが予約されている場合
-    if (nextScene_) {
-        // 今のシーンの終了処理
-        if (scene_) {
-            scene_->Finalize();
-			scene_.reset();
-        }
-        // 次のシーンの初期化
-        scene_ = std::move(nextScene_);
-        // シーンマネージャーの設定
-        scene_->SetSceneManager(this);
-        scene_->Initialize(dxCommon);
-    }
-    // 実行中シーンを更新
-    if (scene_) {
-        scene_->Update();
-    }
+	// 遷移マネージャーの更新
+	if (transitionManager_) {
+		transitionManager_->Update(kFixedDeltaTime_);
+
+		// ロード開始タイミングでシーン生成
+		if (transitionManager_->CanStartLoading() && isTransitionRequested_) {
+			if (!nextScene_) {
+				assert(sceneFactory_);
+				nextScene_ = sceneFactory_->CreateScene(pendingSceneName_);
+
+				// シーン初期化
+				if (nextScene_) {
+					nextScene_->SetSceneManager(this);
+					nextScene_->Initialize(dxCommon);
+				}
+				// ロードの完了通知
+				transitionManager_->OnLoadingComplete();
+			}
+		}
+
+		// ロード完了後、シーン切り替え実行
+		if (transitionManager_->GetPhase() == TransitionPhase::FadeIn && 
+			nextScene_ && isTransitionRequested_) {
+			if (scene_) {
+				scene_->Finalize();
+				scene_.reset();
+			}
+
+			// シーンの切り替え
+			scene_ = std::move(nextScene_);
+
+			// リクエストをクリア
+			isTransitionRequested_ = false;
+			pendingSceneName_.clear();
+		}
+	}
+
+	// 遷移中でない場合のみ通常シーン切り替え処理
+	if (!transitionManager_->IsTransitioning() && !isTransitionRequested_) {
+		// 次のシーンが予約されている場合（遷移無しの従来処理）
+		if (nextScene_) {
+			ExecuteSceneChange(dxCommon);
+		}
+	}
+
+	// 実行中シーンを更新
+	if (scene_) {
+		scene_->Update();
+	}
+
+}
+
+void SceneManager::ExecuteSceneChange(Engine::DirectXCommon* dxCommon)
+{
+	// 今のシーンの終了処理
+	if (scene_) {
+		scene_->Finalize();
+		scene_.reset();
+	}
+	// 次のシーンの初期化
+	scene_ = std::move(nextScene_);
+	// シーンマネージャーの設定
+	scene_->SetSceneManager(this);
+	scene_->Initialize(dxCommon);
 }
 
 
 void SceneManager::Draw()
 {
-    // 実行中シーンが存在する場合のみ描画
-    if (scene_) {
-        scene_->Draw();
-    }
+	// 実行中シーンが存在する場合のみ描画
+	if (scene_) {
+		scene_->Draw();
+	}
+
+	// 遷移演出の描画
+	if (transitionManager_) {
+		transitionManager_->Draw();
+	}
 }
 
 void SceneManager::Finalize()
 {
-    // 最後のシーンの終了処理
-    if (scene_)
-    {
-        scene_->Finalize();
-        scene_.reset();
-    }
+	// 遷移マネージャーの終了
+	if (transitionManager_)
+	{
+		transitionManager_.reset();
+	}
+
+	// 最後のシーンの終了処理
+	if (scene_)
+	{
+		scene_->Finalize();
+		scene_.reset();
+	}
 }
 
 void SceneManager::ChangeScene(const std::string& sceneName)
 {
-    assert(!nextScene_);
-    assert(sceneFactory_);
+	assert(!nextScene_);
+	assert(sceneFactory_);
 
 	// 次のシーン生成
 	nextScene_ = sceneFactory_->CreateScene(sceneName);
 }
+
+void SceneManager::ChangeSceneWithTransition(const std::string& sceneName, TransitionType transitionType)
+{ 
+	// 遷移中または既にリクエスト済みなら無視
+	if (isTransitionRequested_ || transitionManager_->IsTransitioning()) {
+		return;
+	}
+
+	// 次のシーン名を保存
+	pendingSceneName_ = sceneName;
+	isTransitionRequested_ = true;
+
+	// 遷移タイプに応じた演出をセット
+	if (transitionType == TransitionType::Start) {
+		// Start版（少し豪華の方）
+		auto startTransition = std::make_unique<BallWipeTransition>(true);
+		startTransition->Initialize();
+		transitionManager_->SetTransitionEffect(std::move(startTransition));
+	} else {
+		// Normal版（通常の方）
+		auto normalTransition = std::make_unique<BallWipeTransition>(false);
+		normalTransition->Initialize();
+		transitionManager_->SetTransitionEffect(std::move(normalTransition));
+	}
+	// 遷移の開始
+	transitionManager_->StartTransition(transitionType);
+}
+
 
 
 
@@ -15767,6 +16236,8 @@ File Path: engine/InsideScene/SceneManager.h
 #pragma once
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
+#include "Game/Scene/Transition/TransitionManager.h"
+#include <memory>
 // シーン管理クラス
 // シングルトンクラス
 class SceneManager
@@ -15801,6 +16272,11 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
 	/// <param name="dxCommon"></param>
 	void Update(Engine::DirectXCommon*dxCommon);
 	/// <summary>
@@ -15824,7 +16300,23 @@ public:
 	/// <param name="sceneName"></param>
 	void ChangeScene(const std::string& sceneName);
 
+	/// <summary>
+	/// シーン変更（遷移演出あり）
+	/// </summary>
+	/// <param name="sceneName">変更するシーンの名前</param>
+	/// <param name="transitionType">遷移のタイプ</param>
+	void ChangeSceneWithTransition(const std::string& sceneName, TransitionType transitionType = TransitionType::Normal);
+	/// <summary>
+	/// 遷移マネージャーの取得
+	/// </summary>
+	TransitionManager* GetTransitionManager() { return transitionManager_.get(); }
 private:
+/// <summary>
+/// シーン切り替えの実行（内部用）
+/// </summary>
+	void ExecuteSceneChange(Engine::DirectXCommon* dxCommon);
+private:
+
 	// 今のシーン
 	std::unique_ptr<BaseScene> scene_ = nullptr;
 	// 次のシーン
@@ -15832,6 +16324,15 @@ private:
 
 	// シーンファクトリー // 借り物
 	AbstractSceneFactory* sceneFactory_ = nullptr;
+
+	// 遷移マネージャー
+	std::unique_ptr<TransitionManager> transitionManager_ = nullptr;
+	// 遷移中の次のシーン名
+	std::string pendingSceneName_;
+	bool isTransitionRequested_ = false;
+
+	// 固定フレームレート用のデルタタイム
+	static constexpr float kFixedDeltaTime_ = 1.0f / 60.0f;
 	
 };
 
