@@ -67,7 +67,6 @@ void BackGround::Initialize()
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.20f, 0.0f }, { 10.6f, -8.0f, 21.2f }
 		});
 
-	// 花（中景）: 遠すぎないようにzを55前後に
 	AddItem("flower_pink_mid", "Flower_Pink.obj", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.10f, 0.0f }, { 9.4f, -8.0f, 23.3f }
 		});
