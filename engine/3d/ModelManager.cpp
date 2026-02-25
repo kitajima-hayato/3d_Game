@@ -33,13 +33,34 @@ void ModelManager::LoadModel(string_view filePath)
 		// 読み込み済みなら早期リターン
 		return;
 	}
+
 	// モデルの生成とファイル読み込み、初期化
 	unique_ptr<Model>model = make_unique<Model>();
-	model->Initialize(modelCommon.get(), "resources", key);
+
+	// --- 【修正】ディレクトリパスとファイル名を分離する ---
+	std::string fullPath = "resources/" + string(filePath);
+	std::string directoryPath;
+	std::string fileName;
+
+	// 最後のスラッシュの位置を探す
+	size_t lastSlash = fullPath.find_last_of("/\\");
+	if (lastSlash != std::string::npos) {
+		// スラッシュより前をディレクトリパスとする
+		directoryPath = fullPath.substr(0, lastSlash);
+		// スラッシュより後ろをファイル名とする
+		fileName = fullPath.substr(lastSlash + 1);
+	} else {
+		// もしスラッシュが無ければそのまま
+		directoryPath = "resources";
+		fileName = string(filePath);
+	}
+
+	// 分離した正しいディレクトリパスとファイル名を渡す
+	model->Initialize(modelCommon.get(), directoryPath, fileName);
+	// ------------------------------------------------------
 
 	// モデルリストに追加
-	//models[filePath] = move(model);
-	models.insert(make_pair(filePath, move(model)));
+	models.insert(make_pair(key, move(model)));
 }
 
 Model* ModelManager::FindModel(string_view filePath)
