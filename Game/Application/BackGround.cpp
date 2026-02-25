@@ -43,9 +43,7 @@ void BackGround::Initialize()
 		{ 0.0f,0.0f,0.0f },
 		{ 350.0f,-4.0f,150.0f }
 		});
-
 	
-
 	AddItem("soil", "Grass.obj", Transform{
 		{ 40.0f,1.0f,2.0f },
 		{ 0.0f,0.0f,0.0f },
@@ -63,21 +61,21 @@ void BackGround::Initialize()
 	AddItem("flower_orange_front_R", "Flower_Orange.obj", Transform{
 	  { 1.5f, 1.5f, 1.5f }, { 0.0f, 0.20f, 0.0f }, { 8.2f, -7.8f, 21.0f }
 		});
-	AddItem("flower_blue_front_R", "Flower_Purple.obj", Transform{
+	AddItem("flower_blue_front_R", "BackGround/Flower_Purple.obj", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.20f, 0.0f }, { 10.6f, -8.0f, 21.2f }
 		});
 
 	AddItem("flower_pink_mid", "Flower_Pink.obj", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.10f, 0.0f }, { 9.4f, -8.0f, 23.3f }
 		});
-	AddItem("flower_blue_mid", "Flower_Purple.obj", Transform{
+	AddItem("flower_blue_mid", "BackGround/Flower_Purple.obj", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.15f, 0.0f }, { 13.4f, -8.0f, 21.8f }
 		});
 }
 
 void BackGround::Update()
 {
-	// items_.transform を“正”として毎フレーム反映 → 旧コードと同じ値になる
+	
 	for (auto& item : items_) {
 		item.object->SetTransform(item.transform);
 		item.object->Update();

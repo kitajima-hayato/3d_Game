@@ -47,5 +47,7 @@ private:
 	// 足場　土
 	std::unique_ptr<Object3D> soil;
 	Transform soilTransform;
+
+
 };
 

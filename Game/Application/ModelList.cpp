@@ -16,7 +16,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance().LoadModel("title.obj");
 	ModelManager::GetInstance().LoadModel("Fluff.obj");
 	ModelManager::GetInstance().LoadModel("Flower_Pink.obj");
-	ModelManager::GetInstance().LoadModel("Flower_Purple.obj");
+	ModelManager::GetInstance().LoadModel("BackGround/Flower_Purple.obj");
 	ModelManager::GetInstance().LoadModel("Flower_Orange.obj");
 	// タイトル背景			   
 	ModelManager::GetInstance().LoadModel("Back3.obj");
