@@ -160,245 +160,131 @@ File Path: Game/Application/BackGround.cpp
 #ifdef USE_IMGUI
 #include "engine/base/ImGuiManager.h"
 #endif
+
 void BackGround::Initialize()
 {
-	titleBackGround3 = std::make_unique<Object3D>();
-	titleBackGround3->Initialize();
-	titleBackGround3->SetModel("Back3.obj");
-	titleBackGround3Transform = {
+	items_.clear();
+	items_.reserve(7);
+
+	// 旧ファイルと同じ初期値
+	AddItem("skyBack", "BackSky.obj", Transform{
+		{ 400.0f,100.0f,1.0f },
+		{ 0.0f,0.0f,0.0f },
+		{ 7.5f,0.0f,250.0f }
+		});
+	AddItem("titleBackGround3", "Back3.obj", Transform{
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,200.0f }
-	};
-	titleBackGround3->SetTransform(titleBackGround3Transform);
+		});
 
-	// 右に繋げる
-	titleBackGround3_2 = std::make_unique<Object3D>();
-	titleBackGround3_2->Initialize();
-	titleBackGround3_2->SetModel("Back3.obj");
-	titleBackGround3_2Transform = {
+	AddItem("titleBackGround3_2", "Back3.obj", Transform{
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
-	};
-	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+		});
 
-
-
-
-	titleBackGround2 = std::make_unique<Object3D>();
-	titleBackGround2->Initialize();
-	titleBackGround2->SetModel("back2.obj");
-	titleBackGround2Transform = {
+	AddItem("titleBackGround2", "back2.obj", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,150.0f }
-	};
+		});
 
-	titleBackGround2->SetTransform(titleBackGround2Transform);
-
-	titleBackGround2_2 = std::make_unique<Object3D>();
-	titleBackGround2_2->Initialize();
-	titleBackGround2_2->SetModel("back2.obj");
-	titleBackGround2_2Transform = {
+	AddItem("titleBackGround2_2", "back2.obj", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,150.0f }
-	};
-	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
-	titleBackGround2_3 = std::make_unique<Object3D>();
-	titleBackGround2_3->Initialize();
-	titleBackGround2_3->SetModel("back2.obj");
-	titleBackGround2_3Transform = {
+		});
+
+	AddItem("titleBackGround2_3", "back2.obj", Transform{
 		{ 30.0f,60.0f,1.0f },
-		{ 0.0f,-0.0f,0.0f },
+		{ 0.0f,0.0f,0.0f },
 		{ 350.0f,-4.0f,150.0f }
-	};
-	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
-
-
-
-	titleBackGround1 = std::make_unique<Object3D>();
-	titleBackGround1->Initialize();
-	titleBackGround1->SetModel("back1.obj");
-	titleBackGround1Transform = {
-		{ 1.0f,20.0f,10.0f },
-		{ 0.0f,-1.5f,0.0f },
-		{ 7.5f,-2.0f,50.0f }
-	};
-	titleBackGround1->SetTransform(titleBackGround1Transform);
-
-	titleBackGround1_2 = std::make_unique<Object3D>();
-	titleBackGround1_2->Initialize();
-	titleBackGround1_2->SetModel("back1.obj");
-	titleBackGround1_2Transform = {
-		{ 1.0f,20.0f,10.0f },
-		{ 0.0f,1.5f,0.0f },
-		{ 65,-2.0f,50.0f }
-	};
-	titleBackGround1_2->SetTransform(titleBackGround1_2Transform);
-	titleBackGround1_3 = std::make_unique<Object3D>();
-	titleBackGround1_3->Initialize();
-	titleBackGround1_3->SetModel("back1.obj");
-	titleBackGround1_3Transform = {
-		{ 1.0f,20.0f,10.0f },
-		{ 0.0f,-1.5f,0.0f },
-		{ 120,-2.0f,50.0f }
-	};
-	titleBackGround1_3->SetTransform(titleBackGround1_3Transform);
-
-	titleBackGround1_4 = std::make_unique<Object3D>();
-	titleBackGround1_4->Initialize();
-	titleBackGround1_4->SetModel("back1.obj");
-	titleBackGround1_4Transform = {
-		{ 1.0f,20.0f,10.0f },
-		{ 0.0f,1.5f,0.0f },
-		{ 178,-2.0f,50.0f }
-	};
-	titleBackGround1_4->SetTransform(titleBackGround1_4Transform);
-
-	skyBack = std::make_unique<Object3D>();
-	skyBack->Initialize();
-	skyBack->SetModel("BackSky.obj");
-	skyBackTransform = {
-		{ 400.0f,100.0f,1.0f },
-		{ 0.0f,0.0f, 0.0f },
-		{ 7.5f,0.0f,250.0f }
-	};
-	skyBack->SetTransform(skyBackTransform);
-
-	// 足場　土
-	soil = std::make_unique<Object3D>();
-	soil->Initialize();
-	soil->SetModel("Grass.obj");
-	soilTransform = {
+		});
+	
+	AddItem("soil", "Grass.obj", Transform{
 		{ 40.0f,1.0f,2.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 0.0f,-8.0f,20.0f }
-	};
-	soil->SetTransform(soilTransform);
-}
+		});
 
+	// 花
+	AddItem("flower_white_front_L", "Fluff.obj", Transform{
+	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.15f, 0.0f }, { 4.1f, -7.7f, 21.0f }
+		});
+	AddItem("flower_pink_front_L", "Flower_Pink.obj", Transform{
+	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.10f, 0.0f }, { 6.2f, -8.0f, 21.7f }
+		});
+
+	AddItem("flower_orange_front_R", "Flower_Orange.obj", Transform{
+	  { 1.5f, 1.5f, 1.5f }, { 0.0f, 0.20f, 0.0f }, { 8.2f, -7.8f, 21.0f }
+		});
+	AddItem("flower_blue_front_R", "BackGround/Flower_Purple.obj", Transform{
+	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.20f, 0.0f }, { 10.6f, -8.0f, 21.2f }
+		});
+
+	AddItem("flower_pink_mid", "Flower_Pink.obj", Transform{
+	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.10f, 0.0f }, { 9.4f, -8.0f, 23.3f }
+		});
+	AddItem("flower_blue_mid", "BackGround/Flower_Purple.obj", Transform{
+	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.15f, 0.0f }, { 13.4f, -8.0f, 21.8f }
+		});
+}
 
 void BackGround::Update()
 {
-	skyBack->Update();
-
-	// 背景
-	// 少しづつ左に流す 更新
 	
-
-	titleBackGround3->Update();
-	titleBackGround3_2->Update();
-	// 2
-	//titleBackGround2Transform.translate.x -= 0.05f;
-	//titleBackGround2_2Transform.translate.x -= 0.05f;
-	//titleBackGround2_3Transform.translate.x -= 0.05f;
-	//titleBackGround2->SetTransform(titleBackGround2Transform);
-	//titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
-	//titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
-	titleBackGround2->Update();
-	titleBackGround2_2->Update();
-	titleBackGround2_3->Update();
-	// 1
-
-	titleBackGround1->Update();
-	titleBackGround1_2->Update();
-	titleBackGround1_3->Update();
-	titleBackGround1_4->Update();
-	soil->Update();
+	for (auto& item : items_) {
+		item.object->SetTransform(item.transform);
+		item.object->Update();
+	}
 
 	DrawImgui();
 }
 
-
 void BackGround::Draw()
 {
-	skyBack->Draw();
-	titleBackGround3->Draw();
-	titleBackGround3_2->Draw();
-	titleBackGround2->Draw();
-	titleBackGround2_2->Draw();
-	titleBackGround2_3->Draw();
-	titleBackGround1->Draw();
-	titleBackGround1_2->Draw();
-	titleBackGround1_3->Draw();
-	titleBackGround1_4->Draw();
-	soil->Draw();
+	for (auto& item : items_) {
+		item.object->Draw();
+	}
 }
 
 void BackGround::DrawImgui()
 {
-	// ImGuiで各背景の位置調整
-
 #ifdef USE_IMGUI
-
-	// 設定として保存
 	ImGui::Begin("BackGround Transform");
-	// 背景3 srt
-	Transform backGround3Transform = titleBackGround3->GetTransform();
-	ImGui::DragFloat3("titleBackGround3 Scale", &backGround3Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("titleBackGround3 Rotate", &backGround3Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("titleBackGround3 Translate", &backGround3Transform.translate.x, 0.1f);
-	titleBackGround3->SetTransform(backGround3Transform);
 
+	for (auto& item : items_) {
+		std::string sScale = item.debugName + " Scale";
+		std::string sRotate = item.debugName + " Rotate";
+		std::string sTrans = item.debugName + " Translate";
 
-	ImGui::DragFloat3("titleBackGround3_2 Translate", &titleBackGround3_2Transform.translate.x, 0.1f);
-	ImGui::DragFloat3("titleBackGround3_2 Rotate", &titleBackGround3_2Transform.rotate.x, 0.1f);
-	titleBackGround3_2->SetTransform(titleBackGround3_2Transform);
+		ImGui::DragFloat3(sScale.c_str(), &item.transform.scale.x, 0.1f);
+		ImGui::DragFloat3(sRotate.c_str(), &item.transform.rotate.x, 0.1f);
+		ImGui::DragFloat3(sTrans.c_str(), &item.transform.translate.x, 0.1f);
 
-	
+		// 変更を即時反映（次フレーム反映でも良いが、こっちの方が分かりやすい）
+		item.object->SetTransform(item.transform);
+	}
 
-	//背景2 srt
-	titleBackGround2Transform = titleBackGround2->GetTransform();
-	ImGui::DragFloat3("titleBackGround2 Translate", &titleBackGround2Transform.translate.x, 0.1f);
-	titleBackGround2->SetTransform(titleBackGround2Transform);
-
-	titleBackGround2_2Transform = titleBackGround2_2->GetTransform();
-	ImGui::DragFloat3("titleBackGround2_2 Translate", &titleBackGround2_2Transform.translate.x, 0.1f);
-	titleBackGround2_2->SetTransform(titleBackGround2_2Transform);
-	
-	titleBackGround2_3Transform = titleBackGround2_3->GetTransform();
-	ImGui::DragFloat3("titleBackGround2_3 Translate", &titleBackGround2_3Transform.translate.x, 0.1f);
-	titleBackGround2_3->SetTransform(titleBackGround2_3Transform);
-	// 背景1 srt
-	Transform backGround1Transform = titleBackGround1->GetTransform();
-	ImGui::DragFloat3("titleBackGround1 Scale", &backGround1Transform.scale.x, 0.1f);
-	ImGui::DragFloat3("titleBackGround1 Rotate", &backGround1Transform.rotate.x, 0.1f);
-	ImGui::DragFloat3("titleBackGround1 Translate", &backGround1Transform.translate.x, 0.1f);
-	titleBackGround1->SetTransform(backGround1Transform);
-		
-
-
-
-	// スカイバック　
-	ImGui::DragFloat3("SkyBack Translate", &skyBackTransform.translate.x, 0.1f);
-	skyBack->SetTransform(skyBackTransform);
-	// rotate
-	ImGui::DragFloat3("SkyBack Rotate", &skyBackTransform.rotate.x, 0.1f);
-	skyBack->SetTransform(skyBackTransform);
-	// scale
-	ImGui::DragFloat3("SkyBack Scale", &skyBackTransform.scale.x, 0.1f);
-	skyBack->SetTransform(skyBackTransform);
-
-	// Grassの位置調整
-	ImGui::DragFloat3("Soil Translate", &soilTransform.translate.x, 0.1f);
-	soil->SetTransform(soilTransform);
-	// rotate
-	ImGui::DragFloat3("Soil Rotate", &soilTransform.rotate.x, 0.1f);
-	soil->SetTransform(soilTransform);
-	// scale
-	ImGui::DragFloat3("Soil Scale", &soilTransform.scale.x, 0.1f);
-	soil->SetTransform(soilTransform);
 	ImGui::End();
-	
-
-
 #endif
-
-
 }
 
+void BackGround::AddItem(const char* debugName, const char* modelName, const Transform& transform)
+{
+	BgItem item;
+	item.debugName = debugName;
+	item.modelName = modelName;
+	item.transform = transform;
+
+	item.object = std::make_unique<Object3D>();
+	item.object->Initialize();
+	item.object->SetModel(modelName);
+	item.object->SetTransform(transform);
+
+	items_.push_back(std::move(item));
+}
 
 ============================================================
 File Path: Game/Application/BackGround.h
@@ -433,32 +319,17 @@ public:
 	void DrawImgui();
 private:
 	// タイトル背景
-	std::unique_ptr<Object3D> titleBackGround3;
-	Transform titleBackGround3Transform;
+	struct BgItem {
+		std::string debugName;              // ImGui用ラベル
+		std::string modelName;              // 読み込むモデル名
+		Transform transform{};              // 初期Transform & 現在Transform
+		std::unique_ptr<Object3D> object;   // 実体
+	};
 
-	std::unique_ptr<Object3D> titleBackGround3_2;
-	Transform titleBackGround3_2Transform;
+	std::vector<BgItem>items_;
 
-	std::unique_ptr<Object3D> titleBackGround2;
-	Transform titleBackGround2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround2_2;
-	Transform titleBackGround2_2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround2_3;
-	Transform titleBackGround2_3Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1;
-	Transform titleBackGround1Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1_2;
-	Transform titleBackGround1_2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1_3;
-	Transform titleBackGround1_3Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1_4;
-	Transform titleBackGround1_4Transform;
+	// items_ の追加ヘルパ（Initializeを短くする用）
+	void AddItem(const char* debugName, const char* modelName, const Transform& transform);
 
 	// ステージセレクト背景
 	std::unique_ptr<Object3D> skyBack;
@@ -467,6 +338,8 @@ private:
 	// 足場　土
 	std::unique_ptr<Object3D> soil;
 	Transform soilTransform;
+
+
 };
 
 
@@ -2201,6 +2074,10 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance().LoadModel("RainbowPlane.obj");
 	// タイトルロゴ			   
 	ModelManager::GetInstance().LoadModel("title.obj");
+	ModelManager::GetInstance().LoadModel("Fluff.obj");
+	ModelManager::GetInstance().LoadModel("Flower_Pink.obj");
+	ModelManager::GetInstance().LoadModel("BackGround/Flower_Purple.obj");
+	ModelManager::GetInstance().LoadModel("Flower_Orange.obj");
 	// タイトル背景			   
 	ModelManager::GetInstance().LoadModel("Back3.obj");
 	ModelManager::GetInstance().LoadModel("back2.obj");
@@ -10933,7 +10810,6 @@ File Path: Game/Scene/TitleScene.cpp
 #include "TitleScene.h"
 #include "Input.h"
 #include "Object3D.h"
-#include "engine/3d/ModelManager.h"
 #include "Game/Camera/camera.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ModelParticleManager.h"
@@ -10966,7 +10842,7 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 
 	presetEffect = ParticlePresets::CreateSummonCircle({5.0f,-7.0f,20.0f});
-	presetEffect->Play();
+	//presetEffect->Play();
 
 
 	object3D = make_unique<Object3D>();
@@ -10977,7 +10853,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
 	speed = object3D->GetTranslate();
-
 
 
 	playerObject = std::make_unique<Object3D>();
@@ -11017,6 +10892,30 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	pressStartSprite->SetPosition({ -20.0f,100.0f });
 	pressStartSprite->SetSize({ 1280.0f,720.0f });
 
+
+	basePlayerY_ = playerTransform.translate.y;
+
+	// 常時煙（ループ）
+	titleSmoke_ = ParticlePresets::CreateSmoke(playerTransform.translate);
+	titleSmoke_->Pause();
+	titleSmoke_->SetLoop(true);
+	titleSmoke_->SetEmissionRate(15.0f);
+	// 砂煙っぽい色（Player.cppのdashSmokeEffect_と同系）
+	titleSmoke_->SetColor(Vector4(0.7f, 0.6f, 0.4f, 1.0f));
+	titleSmoke_->Play(); // 重要：Playはここで1回だけ（毎フレームしない）
+
+	// ジャンプ開始スパーク（単発）
+	titleJumpSpark_ = ParticlePresets::CreateSparks(playerTransform.translate);
+	titleJumpSpark_->Pause();
+	titleJumpSpark_->SetLoop(false);
+	titleJumpSpark_->SetEmissionRate(50.0f); // 派手目
+
+	// 着地スパーク（単発）
+	titleLandSpark_ = ParticlePresets::CreateSparks(playerTransform.translate);
+	titleLandSpark_->Pause();
+	titleLandSpark_->SetLoop(false);
+	titleLandSpark_->SetEmissionRate(30.0f);
+	titleLandSpark_->SetColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void TitleScene::Update()
@@ -11026,8 +10925,6 @@ void TitleScene::Update()
 
 	background->Update();
 
-	
-
 	//sceneTransition->Update();
 
 #ifdef USE_IMGUI
@@ -11036,8 +10933,6 @@ void TitleScene::Update()
 	particleEmitter->Update();
 	particleEmitter2->Update();
 	presetEffect->Update();
-
-
 
 	titleSprite->Update();
 	pressStartSprite->Update();
@@ -11075,11 +10970,69 @@ void TitleScene::Update()
 		presetEffect->Stop();
 	} else if (Input::GetInstance()->TriggerKey(DIK_9))
 	{
-		particleEmitter->Play();
-		particleEmitter2->Play();
-		presetEffect->Play();
+		//particleEmitter->Play();
+		//particleEmitter2->Play();
+		//presetEffect->Play();
+	}
+	// (1) ジャンプ開始判定（一定間隔）
+	jumpIntervalTimer_++;
+	if (!isJumping_ && jumpIntervalTimer_ >= jumpIntervalFrame_) {
+		isJumping_ = true;
+		jumpFrame_ = 0;
+		jumpIntervalTimer_ = 0;
+
+		// ジャンプ開始スパーク：足元
+		Vector3 footPos = playerTransform.translate;
+		footPos.y -= footOffsetY_;
+		if (titleJumpSpark_) {
+			titleJumpSpark_->SetTranslate(footPos);
+			titleJumpSpark_->Play();
+		}
 	}
 
+	// (2) ジャンプ中の上下（sinで上がって下がる）
+	if (isJumping_) {
+		jumpFrame_++;
+
+		float t = static_cast<float>(jumpFrame_) / static_cast<float>(jumpDurationFrame_);
+		if (t > 1.0f) t = 1.0f;
+
+		// 0 -> PI のsin：最初と最後が0、中央が最大
+		const float pi = 3.14159265f;
+		float yOffset = std::sin(t * pi) * jumpHeight_;
+
+		playerTransform.translate.y = basePlayerY_ + yOffset;
+
+		// 終了（着地）
+		if (jumpFrame_ >= jumpDurationFrame_) {
+			isJumping_ = false;
+			jumpFrame_ = 0;
+			playerTransform.translate.y = basePlayerY_;
+
+			// 着地スパーク：足元
+			Vector3 footPos = playerTransform.translate;
+			footPos.y -= footOffsetY_;
+			if (titleLandSpark_) {
+				titleLandSpark_->SetTranslate(footPos);
+				titleLandSpark_->Play();
+			}
+		}
+	}
+
+	// (3) パーティクル位置追従（足元）
+	Vector3 footPos = playerTransform.translate;
+	footPos.y -= footOffsetY_;
+
+	if (titleSmoke_) {
+		titleSmoke_->SetTranslate(footPos);
+		titleSmoke_->Update();
+	}
+	if (titleJumpSpark_) {
+		titleJumpSpark_->Update();
+	}
+	if (titleLandSpark_) {
+		titleLandSpark_->Update();
+	}
 }
 
 void TitleScene::Draw()
@@ -11290,7 +11243,24 @@ private: // ゲーム要素
 	 /// カメラ
 	 Camera* camera = nullptr;
 
-	//std::unique_ptr<SceneTransition> sceneTransition;
+	 // ===== Title demo player particle & jump (add) =====
+	 std::unique_ptr<ParticleSystem> titleSmoke_;   // 常時煙（走ってる感）
+	 std::unique_ptr<ParticleSystem> titleJumpSpark_; // ジャンプ開始のスパーク（単発）
+	 std::unique_ptr<ParticleSystem> titleLandSpark_; // 着地のスパーク（単発）
+
+	 // ジャンプ演出（物理なしの見た目用）
+	 float basePlayerY_ = 0.0f;   // ジャンプ前の基準Y
+	 bool  isJumping_ = false;
+	 int   jumpFrame_ = 0;
+	 int   jumpIntervalTimer_ = 0;
+
+	 // 調整用（必要ならImGuiで触れるようにしてもOK）
+	 int   jumpIntervalFrame_ = 180;  // 3秒ごとにジャンプ（60fps）
+	 int   jumpDurationFrame_ = 45;   // ジャンプの長さ
+	 float jumpHeight_ = 0.8f;        // ジャンプ高さ
+
+	 // 足元位置の補正（煙・スパークを足元へ）
+	 float footOffsetY_ = 0.4f;
 
 };
 
@@ -14254,13 +14224,34 @@ void ModelManager::LoadModel(string_view filePath)
 		// 読み込み済みなら早期リターン
 		return;
 	}
+
 	// モデルの生成とファイル読み込み、初期化
 	unique_ptr<Model>model = make_unique<Model>();
-	model->Initialize(modelCommon.get(), "resources", key);
+
+	// --- 【修正】ディレクトリパスとファイル名を分離する ---
+	std::string fullPath = "resources/" + string(filePath);
+	std::string directoryPath;
+	std::string fileName;
+
+	// 最後のスラッシュの位置を探す
+	size_t lastSlash = fullPath.find_last_of("/\\");
+	if (lastSlash != std::string::npos) {
+		// スラッシュより前をディレクトリパスとする
+		directoryPath = fullPath.substr(0, lastSlash);
+		// スラッシュより後ろをファイル名とする
+		fileName = fullPath.substr(lastSlash + 1);
+	} else {
+		// もしスラッシュが無ければそのまま
+		directoryPath = "resources";
+		fileName = string(filePath);
+	}
+
+	// 分離した正しいディレクトリパスとファイル名を渡す
+	model->Initialize(modelCommon.get(), directoryPath, fileName);
+	// ------------------------------------------------------
 
 	// モデルリストに追加
-	//models[filePath] = move(model);
-	models.insert(make_pair(filePath, move(model)));
+	models.insert(make_pair(key, move(model)));
 }
 
 Model* ModelManager::FindModel(string_view filePath)
