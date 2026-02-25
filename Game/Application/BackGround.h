@@ -28,32 +28,17 @@ public:
 	void DrawImgui();
 private:
 	// タイトル背景
-	std::unique_ptr<Object3D> titleBackGround3;
-	Transform titleBackGround3Transform;
+	struct BgItem {
+		std::string debugName;              // ImGui用ラベル
+		std::string modelName;              // 読み込むモデル名
+		Transform transform{};              // 初期Transform & 現在Transform
+		std::unique_ptr<Object3D> object;   // 実体
+	};
 
-	std::unique_ptr<Object3D> titleBackGround3_2;
-	Transform titleBackGround3_2Transform;
+	std::vector<BgItem>items_;
 
-	std::unique_ptr<Object3D> titleBackGround2;
-	Transform titleBackGround2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround2_2;
-	Transform titleBackGround2_2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround2_3;
-	Transform titleBackGround2_3Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1;
-	Transform titleBackGround1Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1_2;
-	Transform titleBackGround1_2Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1_3;
-	Transform titleBackGround1_3Transform;
-
-	std::unique_ptr<Object3D> titleBackGround1_4;
-	Transform titleBackGround1_4Transform;
+	// items_ の追加ヘルパ（Initializeを短くする用）
+	void AddItem(const char* debugName, const char* modelName, const Transform& transform);
 
 	// ステージセレクト背景
 	std::unique_ptr<Object3D> skyBack;
@@ -62,5 +47,7 @@ private:
 	// 足場　土
 	std::unique_ptr<Object3D> soil;
 	Transform soilTransform;
+
+
 };
 

@@ -114,7 +114,24 @@ private: // ゲーム要素
 	 /// カメラ
 	 Camera* camera = nullptr;
 
-	//std::unique_ptr<SceneTransition> sceneTransition;
+	 // ===== Title demo player particle & jump (add) =====
+	 std::unique_ptr<ParticleSystem> titleSmoke_;   // 常時煙（走ってる感）
+	 std::unique_ptr<ParticleSystem> titleJumpSpark_; // ジャンプ開始のスパーク（単発）
+	 std::unique_ptr<ParticleSystem> titleLandSpark_; // 着地のスパーク（単発）
+
+	 // ジャンプ演出（物理なしの見た目用）
+	 float basePlayerY_ = 0.0f;   // ジャンプ前の基準Y
+	 bool  isJumping_ = false;
+	 int   jumpFrame_ = 0;
+	 int   jumpIntervalTimer_ = 0;
+
+	 // 調整用（必要ならImGuiで触れるようにしてもOK）
+	 int   jumpIntervalFrame_ = 180;  // 3秒ごとにジャンプ（60fps）
+	 int   jumpDurationFrame_ = 45;   // ジャンプの長さ
+	 float jumpHeight_ = 0.8f;        // ジャンプ高さ
+
+	 // 足元位置の補正（煙・スパークを足元へ）
+	 float footOffsetY_ = 0.4f;
 
 };
 
