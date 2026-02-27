@@ -220,7 +220,7 @@ void Player::Initialize(Vector3 position)
 	playerModel_ = std::make_unique<Object3D>();
 	playerModel_->Initialize();
 	playerModel_->SetTranslate(position);
-	playerModel_->SetModel("Player.obj");
+	playerModel_->SetModel("GamePlay/Player");
 	// 死ぬ高さの設定
 	SetDeathHeight(-1.0f);
 

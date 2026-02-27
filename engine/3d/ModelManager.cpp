@@ -1,4 +1,6 @@
 #include "ModelManager.h"
+#include "Logger.h"
+#include <filesystem>
 
 using namespace std;
 using namespace Engine;
@@ -13,7 +15,6 @@ ModelManager& ModelManager::GetInstance()
 void ModelManager::Finalize()
 {
 	models.clear();
-
 	modelCommon.reset();
 }
 
@@ -23,56 +24,101 @@ void ModelManager::Initialize(DirectXCommon* dxCommon)
 	modelCommon->Initialize(dxCommon);
 }
 
-void ModelManager::LoadModel(string_view filePath)
+static void LogModelLoadError(const std::string& message)
 {
-	// キー文字列の生成
-	const string key(filePath);
-	// 読み込み済みモデルを検索
-	if (models.contains(key))
-	{
-		// 読み込み済みなら早期リターン
-		return;
-	}
+	Logger::Log(message.c_str());
 
-	// モデルの生成とファイル読み込み、初期化
-	unique_ptr<Model>model = make_unique<Model>();
-
-	// --- 【修正】ディレクトリパスとファイル名を分離する ---
-	std::string fullPath = "resources/" + string(filePath);
-	std::string directoryPath;
-	std::string fileName;
-
-	// 最後のスラッシュの位置を探す
-	size_t lastSlash = fullPath.find_last_of("/\\");
-	if (lastSlash != std::string::npos) {
-		// スラッシュより前をディレクトリパスとする
-		directoryPath = fullPath.substr(0, lastSlash);
-		// スラッシュより後ろをファイル名とする
-		fileName = fullPath.substr(lastSlash + 1);
-	} else {
-		// もしスラッシュが無ければそのまま
-		directoryPath = "resources";
-		fileName = string(filePath);
-	}
-
-	// 分離した正しいディレクトリパスとファイル名を渡す
-	model->Initialize(modelCommon.get(), directoryPath, fileName);
-	// ------------------------------------------------------
-
-	// モデルリストに追加
-	models.insert(make_pair(key, move(model)));
 }
 
-Model* ModelManager::FindModel(string_view filePath)
+void ModelManager::LoadModel(string_view modelDir)
 {
-	// キー文字列の生成
-	const string key(filePath);
-	// 読み込み済みモデルを検索
-	if (models.contains(key))
-	{
-		// 読み込みモデルを戻り値として返す
-		return models.at(key).get();
-	}
-	// 読み込み済みでない場合はnullptrを返す
-	return nullptr;
+    const std::string key(modelDir);
+
+    // 既に読み込み済みなら何もしない
+    if (models.contains(key)) {
+        return;
+    }
+
+    // ---- ガード：旧仕様(.obj指定)が残っていたら即わかるようにする ----
+    if (key.find(".obj") != std::string::npos || key.find(".OBJ") != std::string::npos) {
+        // "cubeR.obj" -> "cubeR" にする例を自動生成
+        std::string hint = key;
+        auto pos = hint.rfind('.');
+        if (pos != std::string::npos) {
+            hint = hint.substr(0, pos);
+        }
+
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: LoadModel expects a directory path under resources/, "
+            "but got an .obj path: \"" + key + "\". "
+            "Hint: remove the extension. Example: LoadModel(\"" + hint + "\") instead of LoadModel(\"" + key + "\").";
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+
+    // ---- resources/<modelDir> を探す ----
+    // modelDir が "Player/" のように末尾スラッシュがあってもOKにしたい場合は fs で吸収されます
+    const filesystem::path base = filesystem::path("resources");
+    const filesystem::path dirPath = base / filesystem::path(key);
+
+    if (!filesystem::exists(dirPath) || !filesystem::is_directory(dirPath)) {
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: Model directory not found: \"" + dirPath.string() +
+            "\" (argument=\"" + key + "\")";
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+
+    // ---- フォルダ内の .obj を列挙（1つだけの想定） ----
+    std::vector<filesystem::path> objFiles;
+    for (const auto& entry : filesystem::directory_iterator(dirPath)) {
+        if (!entry.is_regular_file()) { continue; }
+        const filesystem::path p = entry.path();
+        if (p.has_extension() && (p.extension() == ".obj" || p.extension() == ".OBJ")) {
+            objFiles.push_back(p);
+        }
+    }
+
+    if (objFiles.empty()) {
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: No .obj file found in directory: \"" + dirPath.string() +
+            "\" (argument=\"" + key + "\")";
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+    if (objFiles.size() >= 2) {
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: Multiple .obj files found in directory: \"" + dirPath.string() +
+            "\" (argument=\"" + key + "\"). Files:";
+        for (const auto& p : objFiles) {
+            msg += " " + p.filename().string();
+        }
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+
+    // ---- 読み込み対象objを確定 ----
+    const filesystem::path objPath = objFiles[0];
+    const std::string directoryPath = objPath.parent_path().string(); // "resources/Player"
+    const std::string fileName = objPath.filename().string();         // "Player.obj"
+
+    // ---- モデル生成 & 初期化 ----
+    std::unique_ptr<Model> model = std::make_unique<Model>();
+    model->Initialize(modelCommon.get(), directoryPath, fileName);
+
+    // ---- 登録（キーはフォルダ指定のまま�� ----
+    models.insert(std::make_pair(key, std::move(model)));
+}
+
+Model* ModelManager::FindModel(string_view modelDir)
+{
+    const std::string key(modelDir);
+    if (models.contains(key)) {
+        return models.at(key).get();
+    }
+    return nullptr;
 }

@@ -25,7 +25,7 @@ void NormalEnemy::Initialize()
 	model = std::make_unique<Object3D>();
 	model->Initialize();
 	/// モデルの設定
-	model->SetModel("Tentativeenemy.obj");
+	model->SetModel("GamePlay/Enemies/tentativeenemy");
 	/// トランスフォームの設定
 	model->SetTransform(stats.transform);
 }

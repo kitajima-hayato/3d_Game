@@ -27,31 +27,31 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::Air:
 		break;
 	case BlockType::GrassBlock:
-		blockModel->SetModel("Grass.obj");
+		blockModel->SetModel("GamePlay/Blocks/grassblock");
 		break;
 	case BlockType::SoilBlock:
-		blockModel->SetModel("soil.obj");
+		blockModel->SetModel("GamePlay/Blocks/soilblock");
 		break;
 	case BlockType::breakBlock:
-		blockModel->SetModel("breakBlock.obj");
+		blockModel->SetModel("GamePlay/Blocks/breakblock");
 		break;
 	case BlockType::moveBlock:
-		blockModel->SetModel("moveBlock.obj");
+		blockModel->SetModel("GamePlay/Blocks/moveblock");
 		break;
 	case BlockType::sandBlock:
-		blockModel->SetModel("sand.obj");
+		blockModel->SetModel("GamePlay/Blocks/sandblock");
 		break;
 	case BlockType::kGoalUp:
-		blockModel->SetModel("GoalUp.obj");
+		blockModel->SetModel("GamePlay/Blocks/goalblock/up");
 		break;
 	case BlockType::kGoalDown:
-		blockModel->SetModel("GoalDown.obj");
+		blockModel->SetModel("GamePlay/Blocks/goalblock/down");
 		break;
 	case BlockType::Unbreakable:
-		blockModel->SetModel("Unbreakable.obj");
+		blockModel->SetModel("GamePlay/Blocks/unbreakableblock");
 		break;
 	default:
-		blockModel->SetModel("null.obj");
+		blockModel->SetModel("GamePlay/Blocks/grassblock");
 		break;
 	}
 	blockModel->SetTransform(transform);

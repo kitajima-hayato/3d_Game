@@ -45,7 +45,7 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 		{ 5.0f,-7.0f,20.0f }
 	};
 	playerObject_->SetTransform(playerTransform_);
-	playerObject_->SetModel("Player.obj");
+	playerObject_->SetModel("GamePlay/Player");
 
 
 	// OneMore / Select / Title UI
@@ -140,18 +140,18 @@ void StageClearScene::Update()
 	default:
 		break;
 	}
-	//// タイトルへ戻る (1)
-	//if (Input::GetInstance()->TriggerKey(DIK_1)) {
-	//	SceneManager::GetInstance()->ChangeScene("TITLE");
-	//}
-	//// ステージセレクトへ戻る (2)
-	//else if (Input::GetInstance()->TriggerKey(DIK_2)) {
-	//	SceneManager::GetInstance()->ChangeScene("STAGESELECT");
-	//}
-	//// ゲームプレイへ戻る (3)
-	//else if (Input::GetInstance()->TriggerKey(DIK_3)) {
-	//	SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
-	//}
+	// タイトルへ戻る (1)
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+	// ステージセレクトへ戻る (2)
+	else if (Input::GetInstance()->TriggerKey(DIK_2)) {
+		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	}
+	// ゲームプレイへ戻る (3)
+	else if (Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
 
 	playerObject_->Update();
 

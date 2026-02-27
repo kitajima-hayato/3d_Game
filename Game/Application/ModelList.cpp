@@ -3,44 +3,39 @@
 void ModelList::LoadAllModel()
 {
 	/// LoadModelList
-	ModelManager::GetInstance().LoadModel("cubeR.obj");
-	ModelManager::GetInstance().LoadModel("Cube.obj");
 							   
 							   
 	/// TitleScene			   
-	// プレイヤー
-	ModelManager::GetInstance().LoadModel("Player.obj");
-	// レインボープレーン		 
-	ModelManager::GetInstance().LoadModel("RainbowPlane.obj");
-	// タイトルロゴ			   
-	ModelManager::GetInstance().LoadModel("title.obj");
-	ModelManager::GetInstance().LoadModel("Fluff.obj");
-	ModelManager::GetInstance().LoadModel("Flower_Pink.obj");
-	ModelManager::GetInstance().LoadModel("BackGround/Flower_Purple.obj");
-	ModelManager::GetInstance().LoadModel("Flower_Orange.obj");
-	// タイトル背景			   
-	ModelManager::GetInstance().LoadModel("Back3.obj");
-	ModelManager::GetInstance().LoadModel("back2.obj");
-	ModelManager::GetInstance().LoadModel("back1.obj");
-	ModelManager::GetInstance().LoadModel("BackSky.obj");
-	ModelManager::GetInstance().LoadModel("soil.obj");
+	
+	// BackGround
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/fluff");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/flower_pink");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/flower_purple");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/flower_orange");		   
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/mountain_mid");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/mountain_far");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/mountain_front");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/sky");
+
+	
 							   
 	/// StageSelectScene	   
-	ModelManager::GetInstance().LoadModel("SelectBaseGround.obj");
-	ModelManager::GetInstance().LoadModel("Node.obj");
-	ModelManager::GetInstance().LoadModel("RoutePlane.obj");
+	ModelManager::GetInstance().LoadModel("Scenes/StageSelect/Models/baseground");
+	ModelManager::GetInstance().LoadModel("Scenes/StageSelect/Models/node");
+	ModelManager::GetInstance().LoadModel("Scenes/StageSelect/Models/route");
 							   
-	/// GamePlayScene		   
-	ModelManager::GetInstance().LoadModel("Grass.obj");
-	ModelManager::GetInstance().LoadModel("nullBlock.obj");
-	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
-	ModelManager::GetInstance().LoadModel("breakBlock.obj");
-	ModelManager::GetInstance().LoadModel("moveBlock.obj");
-	ModelManager::GetInstance().LoadModel("sand.obj");
-	ModelManager::GetInstance().LoadModel("Unbreakable.obj");
+	/// GamePlayScene // Player // Block  // Enemy
+	ModelManager::GetInstance().LoadModel("GamePlay/Player");
+
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/soilblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/grassblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/nullblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/breakblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/moveblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/sandblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/unbreakableblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/goalblock/up");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/goalblock/down");
 							   
-	ModelManager::GetInstance().LoadModel("GoalUp.obj");
-	ModelManager::GetInstance().LoadModel("GoalDown.obj");
-							   
-	ModelManager::GetInstance().LoadModel("Tentativeenemy.obj");
+	ModelManager::GetInstance().LoadModel("GamePlay/Enemies/tentativeenemy");
 }

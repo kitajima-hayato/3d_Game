@@ -37,19 +37,11 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	//presetEffect->Play();
 
 
-	object3D = make_unique<Object3D>();
-	object3D->Initialize();
-
-	object3D->SetModel("plane.obj");
-	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
-
-	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
-	speed = object3D->GetTranslate();
 
 
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
-	playerObject->SetModel("Player.obj");
+	playerObject->SetModel("GamePlay/Player");
 	playerTransform = {
 		{ 1.0f,1.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
@@ -250,11 +242,6 @@ void TitleScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	ModelParticleManager::GetInstance().Draw();
 
-	// エフェクトの描画
-
-
-
-
 	//sceneTransition->Draw();
 
 
@@ -287,10 +274,6 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite() 
 {
-	sprite_ = make_unique<Sprite>();
-	sprite_->Initialize("resources/gradationLine.png");
-	sprite_->SetPosition({ 0.0f,0.0f });
-	sprite_->SetRotation(0.0f);
 }
 
 void TitleScene::DrawImgui() {
