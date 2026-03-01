@@ -21,7 +21,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create(
-		"Smoke", "resources/Particle/smoke.png");
+		"Smoke", "resources/Effects/Particles/Textures/smoke.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -39,7 +39,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& posi
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create(
-		"Sparks", "resources/Particle/star.png");
+		"Sparks", "resources/Effects/Particles/Textures/star.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -56,7 +56,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& pos
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3& position)
 {
-	auto particleSystem = ParticleSystem::Create("TitleEffect", "resources/Particle/circle.png");
+	auto particleSystem = ParticleSystem::Create("TitleEffect", 
+		"resources/Effects/Particles/Textures/circle.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -71,7 +72,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3& position)
 {
-	auto ps = ParticleSystem::Create("MagicCircle", "resources/Particle/circle.png");
+	auto ps = ParticleSystem::Create("MagicCircle", 
+		"resources/Effects/Particles/Textures/circle.png");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -92,7 +94,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const Vector3& position)
 {
-	auto ps = ParticleSystem::Create("ComplexMagicCircle", "resources/Particle/circle.png");
+	auto ps = ParticleSystem::Create("ComplexMagicCircle", 
+		"resources/Effects/Particles/Textures/circle.png");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -112,7 +115,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const 
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSummonCircle(const Vector3& position)
 {
-	auto ps = ParticleSystem::Create("SummonCircle", "resources/Particle/circle.png");
+	auto ps = ParticleSystem::Create("SummonCircle", 
+		"resources/Effects/Particles/Textures/circle.png");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 

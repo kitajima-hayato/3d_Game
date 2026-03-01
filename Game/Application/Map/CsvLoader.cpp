@@ -1,7 +1,7 @@
 #include "CsvLoader.h"
 #include "Game/Application/Block/Block.h"
 
-const std::string CsvLoader::frontFilePath = "resources/MapData/";
+const std::string CsvLoader::frontFilePath = "resources/Data/MapData/";
 const std::string CsvLoader::extensionCsv_ = ".csv";
 
 
@@ -11,7 +11,7 @@ std::vector<std::vector<int>> CsvLoader::LoadMapInt(const std::string& filePath)
 	// 読み込んだものを格納する変数
 	std::vector<std::vector<int>> mapData;
 	// ファイルを開く
-	std::ifstream file(frontFilePath+filePath);
+	std::ifstream file(frontFilePath + filePath);
 
 	// ファイルが開けなかった場合のエラーチェック
 	if (!file.is_open()) {

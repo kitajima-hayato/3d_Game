@@ -58,8 +58,6 @@ private:
 	//SoundData soundData;
 	//IXAudio2* xaudio2_;
 
-	// スプライト
-	std::unique_ptr<Sprite> sprite_;
 
 	// パーティクルエミッター
 	std::unique_ptr<ParticleSystem> particleEmitter;
@@ -67,20 +65,8 @@ private:
 
 	std::unique_ptr<ParticleSystem> presetEffect;
 
-	// リングエフェクト
-	std::unique_ptr<Object3D> object3D;
-	// 背景
-	std::unique_ptr<Object3D> backgroundObject;
 
 private: // ゲーム要素
-	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
-	Vector3 emitterRotate = { 0.0f, 0.0f, 0.0f };
-	Vector3 emitterTranslate = { 0.0f, 0.0f, 10.0f };
-
-	Transform effectTransform;
-
-	Transform cylinderTransform;
-
 	Vector3 speed = { 0.0f,0.0f,0.0f };
 
 
@@ -94,12 +80,8 @@ private: // ゲーム要素
 	std::unique_ptr<Object3D> playerObject;
 	Transform playerTransform;
 
-	std::unique_ptr<Object3D> Rainbow;
-	Transform rainbowTransform;
 
 	/// タイトルロゴ
-	std::unique_ptr<Object3D> titleLogo;
-	Transform titleLogoTransform;
 
 	// バックグラウンド
 	 std::unique_ptr<BackGround> background;
@@ -113,6 +95,11 @@ private: // ゲーム要素
 
 	 /// カメラ
 	 Camera* camera = nullptr;
+	 const Transform initCameraTransform{
+		 {0.0f,0.0f, -10.0f}, // scale
+		 {0.0f, 0.0f, 0.0f},   // rotate
+		 {7.5f,-4.0f,0.0f} // translate
+	 };
 
 	 // ===== Title demo player particle & jump (add) =====
 	 std::unique_ptr<ParticleSystem> titleSmoke_;   // 常時煙（走ってる感）
@@ -125,7 +112,7 @@ private: // ゲーム要素
 	 int   jumpFrame_ = 0;
 	 int   jumpIntervalTimer_ = 0;
 
-	 // 調整用（必要ならImGuiで触れるようにしてもOK）
+	 // 調整用（
 	 int   jumpIntervalFrame_ = 180;  // 3秒ごとにジャンプ（60fps）
 	 int   jumpDurationFrame_ = 45;   // ジャンプの長さ
 	 float jumpHeight_ = 0.8f;        // ジャンプ高さ

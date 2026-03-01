@@ -136,6 +136,9 @@ private:
 
 	/// カメラ引数
 	Camera* camera = nullptr;
+
+	/// テクスチャのファイルパス
+	const std::string textureFilePath = "resources/_Common/Textures/debug/rostock_laage_airport_4k.dds";
 public:
 
 	/// <summary>

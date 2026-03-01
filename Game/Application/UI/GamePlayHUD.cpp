@@ -4,20 +4,20 @@
 void GamePlayHUD::Initialize()
 {
 	// ポーズアイコン
-	pauseSprite_ = MakeSprite("resources/KyeUI/Esc.png",
+	pauseSprite_ = MakeSprite("resources/_Common/UI/Texture/inputhints/Esc.png",
 		{ 30.0f,30.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,1.0f });
 	// コントロールUI
 	// Dキー
-	controlUI_D = MakeSprite("resources/KyeUI/D.png",
+	controlUI_D = MakeSprite("resources/_Common/UI/Texture/inputhints/D.png",
 		{ 200.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Aキー
-	controlUI_A = MakeSprite("resources/KyeUI/A.png",
+	controlUI_A = MakeSprite("resources/_Common/UI/Texture/inputhints/A.png",
 		{ 100.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Sキー
-	controlUI_S = MakeSprite("resources/KyeUI/S.png",
+	controlUI_S = MakeSprite("resources/_Common/UI/Texture/inputhints/S.png",
 		{ 150.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Wキー
-	controlUI_W = MakeSprite("resources/KyeUI/W.png",
+	controlUI_W = MakeSprite("resources/_Common/UI/Texture/inputhints/W.png",
 		{ 150.0f,20.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 
 	UiActive_ = false;
