@@ -61,18 +61,19 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
-	camera->SetTranslate({7.5f,-4.0f,0.0f});
-	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
+	
+	camera->SetTranslate(initCameraTransform.translate);
+	camera->SetRotate(initCameraTransform.rotate);
 
 	// タイトルスプライトの初期化
 	titleSprite = std::make_unique<Sprite>();
-	titleSprite->Initialize("resources/Title/Title.png");
+	titleSprite->Initialize("resources/Scenes/Title/UI/Texture/Title.png");
 	titleSprite->SetPosition({ 0.0f,0.0f });
 	titleSprite->SetSize({ 1280.0f,720.0f });
 
 	// Press Start スプライトの初期化
 	pressStartSprite = std::make_unique<Sprite>();
-	pressStartSprite->Initialize("resources/Title/PushSpace.png");
+	pressStartSprite->Initialize("resources/Scenes/Title/UI/Texture/PushSpace.png");
 	pressStartSprite->SetPosition({ -20.0f,100.0f });
 	pressStartSprite->SetSize({ 1280.0f,720.0f });
 

@@ -30,7 +30,7 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 
 	// スプライトの初期化
 	clearTextSprite = std::make_unique<Sprite>();
-	clearTextSprite->Initialize("resources/ClearScene/StageClear.png");
+	clearTextSprite->Initialize("resources/Scenes/Clear/UI/Texture/StageClear.png");
 
 	clearTextPos = { 0.0f,0.0f }; 
 	clearTextSprite->SetPosition(clearTextPos);
@@ -50,34 +50,34 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 
 	// OneMore / Select / Title UI
 	oneMore_ = std::make_unique<Sprite>();
-	oneMore_->Initialize("resources/ClearScene/ClearUI_OneMore.png");
+	oneMore_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_OneMore.png");
 	oneMore_->SetPosition({ 250.0f,570.0f });
 	oneMore_->SetSize(oneMoreBaseSize_);
 
 	select_ = std::make_unique<Sprite>();
-	select_->Initialize("resources/ClearScene/ClearUI_Select.png");
+	select_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Select.png");
 	select_->SetPosition({ 550.0f,570.0f });
 	select_->SetSize(selectBaseSize_);
 
 	title_ = std::make_unique<Sprite>();
-	title_->Initialize("resources/ClearScene/ClearUI_Title.png");
+	title_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Title.png");
 	title_->SetPosition({ 850.0f,570.0f });
 	title_->SetSize(titleBaseSize_);
 
 	// KeyIconUi　/ 左下に配置
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
 	keyIcon_A->SetPosition({ 30.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
 	keyIcon_D->SetPosition({ 80.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
 	keyIcon_Enter->SetPosition({ 55.0f, 565.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 }

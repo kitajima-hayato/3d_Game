@@ -91,6 +91,7 @@ private:	// メンバ変数
 	// マテリアルデータ
 	Material* materialData = nullptr;
 
-	std::string cubeMapPath = "resources/rostock_laage_airport_4k.dds";
+	std::string cubeMapPath = "resources/_Common/Textures/debug/rostock_laage_airport_4k.dds";
+
 };
 
