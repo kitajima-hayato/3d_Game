@@ -14,7 +14,7 @@ ModelParticleManager& ModelParticleManager::GetInstance()
 void ModelParticleManager::Initialize()
 {
 	// 破片用のモデルを読み込む 
-	modelName_ = "breakBlock.obj";
+	modelName_ = "GamePlay/Blocks/breakblock";
 
 }
 

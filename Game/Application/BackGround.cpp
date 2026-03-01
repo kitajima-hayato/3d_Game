@@ -9,66 +9,66 @@ void BackGround::Initialize()
 	items_.reserve(7);
 
 	// 旧ファイルと同じ初期値
-	AddItem("skyBack", "BackSky.obj", Transform{
+	AddItem("skyBack", "GamePlay/BackGround/sky", Transform{
 		{ 400.0f,100.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,0.0f,250.0f }
 		});
-	AddItem("titleBackGround3", "Back3.obj", Transform{
+	AddItem("titleBackGround3", "GamePlay/BackGround/mountain_far", Transform{
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,200.0f }
 		});
 
-	AddItem("titleBackGround3_2", "Back3.obj", Transform{
+	AddItem("titleBackGround3_2", "GamePlay/BackGround/mountain_far", Transform{
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
 		});
 
-	AddItem("titleBackGround2", "back2.obj", Transform{
+	AddItem("titleBackGround2", "GamePlay/BackGround/mountain_mid", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,150.0f }
 		});
 
-	AddItem("titleBackGround2_2", "back2.obj", Transform{
+	AddItem("titleBackGround2_2", "GamePlay/BackGround/mountain_mid", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,150.0f }
 		});
 
-	AddItem("titleBackGround2_3", "back2.obj", Transform{
+	AddItem("titleBackGround2_3", "GamePlay/BackGround/mountain_mid", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 350.0f,-4.0f,150.0f }
 		});
 	
-	AddItem("soil", "Grass.obj", Transform{
+	AddItem("soil", "GamePlay/Blocks/grassblock", Transform{
 		{ 40.0f,1.0f,2.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 0.0f,-8.0f,20.0f }
 		});
 
 	// 花
-	AddItem("flower_white_front_L", "Fluff.obj", Transform{
+	AddItem("flower_white_front_L", "GamePlay/BackGround/fluff", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.15f, 0.0f }, { 4.1f, -7.7f, 21.0f }
 		});
-	AddItem("flower_pink_front_L", "Flower_Pink.obj", Transform{
+	AddItem("flower_pink_front_L", "GamePlay/BackGround/flower_pink", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.10f, 0.0f }, { 6.2f, -8.0f, 21.7f }
 		});
 
-	AddItem("flower_orange_front_R", "Flower_Orange.obj", Transform{
+	AddItem("flower_orange_front_R", "GamePlay/BackGround/flower_orange", Transform{
 	  { 1.5f, 1.5f, 1.5f }, { 0.0f, 0.20f, 0.0f }, { 8.2f, -7.8f, 21.0f }
 		});
-	AddItem("flower_blue_front_R", "BackGround/Flower_Purple.obj", Transform{
+	AddItem("flower_blue_front_R", "GamePlay/BackGround/flower_purple", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.20f, 0.0f }, { 10.6f, -8.0f, 21.2f }
 		});
 
-	AddItem("flower_pink_mid", "Flower_Pink.obj", Transform{
+	AddItem("flower_pink_mid", "GamePlay/BackGround/flower_pink", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.10f, 0.0f }, { 9.4f, -8.0f, 23.3f }
 		});
-	AddItem("flower_blue_mid", "BackGround/Flower_Purple.obj", Transform{
+	AddItem("flower_blue_mid", "GamePlay/BackGround/flower_purple", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.15f, 0.0f }, { 13.4f, -8.0f, 21.8f }
 		});
 }

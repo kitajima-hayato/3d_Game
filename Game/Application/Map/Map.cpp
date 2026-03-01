@@ -38,12 +38,6 @@ void Map::Initialize(const std::string& mapFilePath)
 
 	// マップデータの変更検知
 	previousMapData_ = mapChipData_;
-
-	ParticleManager::GetInstance()->CreateParticleGroup(
-        "BreakParticle", "resources/BackSky.png");
-	breakParticleEmitter_ = std::make_unique<ParticleSystem>();
-	breakParticleEmitter_->SetParticleName("BreakParticle");
-	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
     
 }
 

@@ -345,7 +345,7 @@ void StageSelectScene::BuildRoutes()
 			// Object3D作成
 			auto obj = std::make_unique<Object3D>();
 			obj->Initialize();
-			obj->SetModel("RoutePlane.obj"); // ルート用モデル名
+			obj->SetModel("Scenes/StageSelect/Models/route"); // ルート用モデル名
 
 			Transform tr{};
 			tr.translate = mid;
@@ -385,7 +385,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	// プレイヤーオブジェクトの初期化
 	playerModel = std::make_unique<Object3D>();
 	playerModel->Initialize();
-	playerModel->SetModel("Player.obj");
+	playerModel->SetModel("GamePlay/Player");
 	playerTransform = {
 		// scale
 		{2.5f,2.5f,2.5f},
@@ -399,7 +399,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	// 背景オブジェクトの初期化
 	stageSelectBase1 = std::make_unique<Object3D>();
 	stageSelectBase1->Initialize();
-	stageSelectBase1->SetModel("SelectBaseGround.obj");
+	stageSelectBase1->SetModel("Scenes/StageSelect/Models/baseground");
 	stageSelectBase1Transform = {
 		// Scale
 		{ 1.5f, 1.0f, 2.5f },
@@ -413,7 +413,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	// 空背景の初期化
 	skyBack = std::make_unique<Object3D>();
 	skyBack->Initialize();
-	skyBack->SetModel("BackSky.obj");
+	skyBack->SetModel("GamePlay/BackGround/sky");
 	skyBackTransform = {
 		// Scale
 		{ 50.0f, 50.0f, 40.0f },
@@ -449,7 +449,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	{
 		auto obj = std::make_unique<Object3D>();
 		obj->Initialize();
-		obj->SetModel("Node.obj"); // 同じモデル
+		obj->SetModel("Scenes/StageSelect/Models/node"); // 同じモデル
 
 		Transform tr{};
 		tr.scale = { 1.8f, 1.8f, 1.8f };   // 目印なら少し小さく
@@ -470,57 +470,57 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 	// UI初期化
 	stageSelect_ = std::make_unique<Sprite>();
-	stageSelect_->Initialize("resources/StageSelect/StageSelect.png");
+	stageSelect_->Initialize("resources/Scenes/StageSelect/UI/Texture/StageSelect.png");
 	stageSelect_->SetPosition({ 0.0f,0.0f });
 	stageSelect_->SetSize({ 1280.0f,720.0f });
 
 	// KeyIconUi / 左下に配置
 	keyIcon_W = std::make_unique<Sprite>();
-	keyIcon_W->Initialize("resources/KyeUI/W.png");
+	keyIcon_W->Initialize("resources/_Common/UI/Texture/inputhints/W.png");
 	keyIcon_W->SetPosition({ 55.0f, 615.0f });
 	keyIcon_W->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
 	keyIcon_A->SetPosition({ 10.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_S = std::make_unique<Sprite>();
-	keyIcon_S->Initialize("resources/KyeUI/S.png");
+	keyIcon_S->Initialize("resources/_Common/UI/Texture/inputhints/S.png");
 	keyIcon_S->SetPosition({ 55.0f, 660.0f });
 	keyIcon_S->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
 	keyIcon_D->SetPosition({ 100.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	// esc / enter UI配置
 	keyIcon_Esc = std::make_unique<Sprite>();
-	keyIcon_Esc->Initialize("resources/KyeUI/Esc.png");
+	keyIcon_Esc->Initialize("resources/_Common/UI/Texture/inputhints/Esc.png");
 	keyIcon_Esc->SetPosition({ 55.0f, 560.0f });
 	keyIcon_Esc->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
 	keyIcon_Enter->SetPosition({ 55.0f, 505.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 
 	// MoveUI
 	moveUI_ = std::make_unique<Sprite>();
-	moveUI_->Initialize("resources/StageSelect/Move.png");
+	moveUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Move.png");
 	moveUI_->SetPosition(moveUI_Pos_);
 	moveUI_->SetSize({ 125.0f,50.0f });
 
 	// CheckUI
 	checkUI_ = std::make_unique<Sprite>();
-	checkUI_->Initialize("resources/StageSelect/Check.png");
+	checkUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Check.png");
 	checkUI_->SetPosition(checkUI_Pos_);
 	checkUI_->SetSize({ 125.0f,50.0f });
 
 	// BackUI
 	backUI_ = std::make_unique<Sprite>();
-	backUI_->Initialize("resources/StageSelect/Back.png");
+	backUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Back.png");
 	backUI_->SetPosition(backUI_Pos_);
 	backUI_->SetSize({ 125.0f,50.0f });
 }
@@ -642,6 +642,8 @@ void StageSelectScene::DrawImgui()
 	ImGui::Begin("StageSelectScene");
 
 	// カメラ位置の調整
+	cameraTransform.translate = camera->GetTranslate();
+	cameraTransform.rotate = camera->GetRotate();
 	ImGui::DragFloat3("CameraPos", &cameraTransform.translate.x, 0.1f);
 	ImGui::DragFloat3("CameraRot", &cameraTransform.rotate.x, 0.01f);
 	camera->SetTranslate(cameraTransform.translate);

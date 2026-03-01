@@ -12,7 +12,7 @@ StageSelectGraph::~StageSelectGraph()
 void StageSelectGraph::Initialize()
 {
 	// ノード情報をJSONファイルから読み込み
-	LoadMapNodeFromJson("World_1");
+	LoadMapNodeFromJson("stage_select_graph");
 	// ノード境界情報の再計算     
 	RecalculateBounds();
 
@@ -94,7 +94,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 {
 	// JSONファイルからノード情報を読み込む処理
 	// filePathはリソースフォルダからの相対パス
-	const std::string frontFilePath = "resources/WorldSelect";
+	const std::string frontFilePath = "resources/Scenes/StageSelect/Data";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 
@@ -245,7 +245,7 @@ std::string StageSelectGraph::ToJsonString(int indent) const
 void StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
 {
 	// JSONファイルに保存する処理
-	const std::string frontFilePath = "resources/StageSelect";
+	const std::string frontFilePath = "resources/Scenes/StageSelect/Data";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 	// ファイル出力ストリームを開く

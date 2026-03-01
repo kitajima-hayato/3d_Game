@@ -137,38 +137,38 @@ void PauseUI::LoadSprite()
 {
 	// 画面を少し暗くする黒いスプライト
 	auto overlaySprite = std::make_unique<Sprite>();
-	overlaySprite->Initialize("resources/PauseUI/PauseBlack.png");
+	overlaySprite->Initialize("resources/Scenes/Pause/UI/Texture/PauseBlack.png");
 	overlaySprite->SetPosition({ 0.0f,0.0f });
 	overlaySprite->SetSize({ 1280.0f,720.0f });
 	overlaySprite->SetColor({ 1.0f,1.0f,1.0f,0.55f });
 	sprites_.push_back(std::move(overlaySprite));
 
 	auto circleSlot = std::make_unique<Sprite>();
-	circleSlot->Initialize("resources/PauseUI/PauseUICircleSlot_2.png");
+	circleSlot->Initialize("resources/Scenes/Pause/UI/Texture/PauseUICircleSlot_2.png");
 	circleSlot->SetPosition({ 0.0f, 0.0f });
 	circleSlot->SetSize({ 1280.0f,720.0f });
 	sprites_.push_back(std::move(circleSlot));
 
 	// スロット上
 	slotUIUp_ = std::make_unique<Sprite>();
-	slotUIUp_->Initialize("resources/PauseUI/PauseUISlotItemUP_IconB.png");
+	slotUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemUP_IconB.png");
 	slotUIUp_->SetPosition({ 0.0f, 0.0f });
 	slotUIUp_->SetSize({ 1280.0f, 720.0f });
 
 
 	// スロット下
 	slotUIDown_ = std::make_unique<Sprite>();
-	slotUIDown_->Initialize("resources/PauseUI/PauseUISlotItemDown_IconB.png");
+	slotUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemDown_IconB.png");
 	slotUIDown_->SetPosition({ 0.0f, 0.0f });
 	slotUIDown_->SetSize({ 1280.0f, 720.0f });
 	// スロット左
 	slotUILeft_ = std::make_unique<Sprite>();
-	slotUILeft_->Initialize("resources/PauseUI/PauseUISlotItemLeft_IconB.png");
+	slotUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemLeft_IconB.png");
 	slotUILeft_->SetPosition({ 0.0f, 0.0f });
 	slotUILeft_->SetSize({ 1280.0f, 720.0f });
 	// スロット右
 	slotUIRight_ = std::make_unique<Sprite>();
-	slotUIRight_->Initialize("resources/PauseUI/PauseUISlotItemRight_IconB.png");
+	slotUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemRight_IconB.png");
 	slotUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotUIRight_->SetSize({ 1280.0f, 720.0f });
 
@@ -188,28 +188,28 @@ void PauseUI::LoadSprite()
 
 
 	slotTextUIUp_ = std::make_unique<Sprite>();
-	slotTextUIUp_->Initialize("resources/PauseUI/PlayText.png");
+	slotTextUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PlayText.png");
 	slotTextUIUp_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIUp_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUIDown_ = std::make_unique<Sprite>();
-	slotTextUIDown_->Initialize("resources/PauseUI/TitleText.png");
+	slotTextUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/TitleText.png");
 	slotTextUIDown_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIDown_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUILeft_ = std::make_unique<Sprite>();
-	slotTextUILeft_->Initialize("resources/PauseUI/SelectText.png");
+	slotTextUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/SelectText.png");
 	slotTextUILeft_->SetPosition({ 0.0f, 0.0f });
 	slotTextUILeft_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUIRight_ = std::make_unique<Sprite>();
-	slotTextUIRight_->Initialize("resources/PauseUI/ReTryText.png");
+	slotTextUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/ReTryText.png");
 	slotTextUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIRight_->SetSize({ 1280.0f, 720.0f });
 
 
 	decideKeyUI_ = std::make_unique<Sprite>();
-	decideKeyUI_->Initialize("resources/PauseUI/SpaceText.png");
+	decideKeyUI_->Initialize("resources/Scenes/Pause/UI/Texture/SpaceText.png");
 	decideKeyUI_->SetPosition({ 0.0f, 0.0f });
 	decideKeyUI_->SetSize({ 1280.0f, 720.0f });
 

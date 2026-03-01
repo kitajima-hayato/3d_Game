@@ -31,7 +31,7 @@ public: // メンバ関数
 	/// モデルファイルの読み込み
 	/// </summary>
 	/// <param name="filePath">読み込むモデルの名前</param>
-	void LoadModel(std::string_view filePath);
+	void LoadModel(std::string_view modelDir);
 public: // Getter/Setter
 	/// <summary>
 	/// モデルの検索

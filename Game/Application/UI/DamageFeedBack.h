@@ -43,7 +43,7 @@ private:
 	Vector4 flashColorOff_ = { 1.0f,1.0f,1.0f,0.0f };
 
 	// 画像パス
-	std::string texturePath_ = "resources/HitDamage.png";
+	std::string texturePath_ = "resources/Effects/Hit/Textures/HitDamage.png";
 
 private:
 	Player* player_ = nullptr;

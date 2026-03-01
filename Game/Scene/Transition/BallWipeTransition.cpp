@@ -91,12 +91,6 @@ void BallWipeTransition::Initialize()
 	stamps_.clear();
 
 
-	//// カバースプライト（画面全体を覆う）
-	//coverSprite_ = std::make_unique<Sprite>();
-	//coverSprite_->Initialize(trailSpriteFilePath_);
-	//coverSprite_->SetPosition({ 0.0f,0.0f });
-	//coverSprite_->SetSize({ SCREEN_WIDTH,SCREEN_HEIGHT });
-	//coverSprite_->SetColor({ 0.0f,0.0f,0.0f,0.0f });
 
 }
 

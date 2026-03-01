@@ -11,8 +11,8 @@ void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 	this->dxCommon = dxCommon;
 	this->srvManager = srvManager;
 	this->camera = Object3DCommon::GetInstance()->GetDefaultCamera();
-	TextureManager::GetInstance()->LoadTexture("resources/rostock_laage_airport_4k.dds");
-	modelData.material.textureFilePath = "resources/rostock_laage_airport_4k.dds";
+	TextureManager::GetInstance()->LoadTexture(textureFilePath);
+	modelData.material.textureFilePath = textureFilePath;
 	/// パイプラインの生成
 	CreatePipeline();
 	/// ルートシグネチャの生成

@@ -17,7 +17,7 @@ void Model::Initialize(ModelCommon* modelCommon, const string& directorypath, co
 	//テクスチャが指定されていない場合は、デフォルトのテクスチャを使用する
 	if(modelData.material.textureFilePath.empty()) {
 		// デフォルトのテクスチャを使用する
-		modelData.material.textureFilePath = "Resources/texture/default.png";
+		modelData.material.textureFilePath = "Resources/_Common/Textures/debug/default.png";
 	}
 	// .objの参照しているテクスチャファイル読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
