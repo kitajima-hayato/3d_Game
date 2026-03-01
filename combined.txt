@@ -167,66 +167,66 @@ void BackGround::Initialize()
 	items_.reserve(7);
 
 	// 旧ファイルと同じ初期値
-	AddItem("skyBack", "BackSky.obj", Transform{
+	AddItem("skyBack", "GamePlay/BackGround/sky", Transform{
 		{ 400.0f,100.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,0.0f,250.0f }
 		});
-	AddItem("titleBackGround3", "Back3.obj", Transform{
+	AddItem("titleBackGround3", "GamePlay/BackGround/mountain_far", Transform{
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,200.0f }
 		});
 
-	AddItem("titleBackGround3_2", "Back3.obj", Transform{
+	AddItem("titleBackGround3_2", "GamePlay/BackGround/mountain_far", Transform{
 		{ 30.0f,50.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,200.0f }
 		});
 
-	AddItem("titleBackGround2", "back2.obj", Transform{
+	AddItem("titleBackGround2", "GamePlay/BackGround/mountain_mid", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 7.5f,-4.0f,150.0f }
 		});
 
-	AddItem("titleBackGround2_2", "back2.obj", Transform{
+	AddItem("titleBackGround2_2", "GamePlay/BackGround/mountain_mid", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 170.0f,-4.0f,150.0f }
 		});
 
-	AddItem("titleBackGround2_3", "back2.obj", Transform{
+	AddItem("titleBackGround2_3", "GamePlay/BackGround/mountain_mid", Transform{
 		{ 30.0f,60.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 350.0f,-4.0f,150.0f }
 		});
 	
-	AddItem("soil", "Grass.obj", Transform{
+	AddItem("soil", "GamePlay/Blocks/grassblock", Transform{
 		{ 40.0f,1.0f,2.0f },
 		{ 0.0f,0.0f,0.0f },
 		{ 0.0f,-8.0f,20.0f }
 		});
 
 	// 花
-	AddItem("flower_white_front_L", "Fluff.obj", Transform{
+	AddItem("flower_white_front_L", "GamePlay/BackGround/fluff", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.15f, 0.0f }, { 4.1f, -7.7f, 21.0f }
 		});
-	AddItem("flower_pink_front_L", "Flower_Pink.obj", Transform{
+	AddItem("flower_pink_front_L", "GamePlay/BackGround/flower_pink", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.10f, 0.0f }, { 6.2f, -8.0f, 21.7f }
 		});
 
-	AddItem("flower_orange_front_R", "Flower_Orange.obj", Transform{
+	AddItem("flower_orange_front_R", "GamePlay/BackGround/flower_orange", Transform{
 	  { 1.5f, 1.5f, 1.5f }, { 0.0f, 0.20f, 0.0f }, { 8.2f, -7.8f, 21.0f }
 		});
-	AddItem("flower_blue_front_R", "BackGround/Flower_Purple.obj", Transform{
+	AddItem("flower_blue_front_R", "GamePlay/BackGround/flower_purple", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.20f, 0.0f }, { 10.6f, -8.0f, 21.2f }
 		});
 
-	AddItem("flower_pink_mid", "Flower_Pink.obj", Transform{
+	AddItem("flower_pink_mid", "GamePlay/BackGround/flower_pink", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f, 0.10f, 0.0f }, { 9.4f, -8.0f, 23.3f }
 		});
-	AddItem("flower_blue_mid", "BackGround/Flower_Purple.obj", Transform{
+	AddItem("flower_blue_mid", "GamePlay/BackGround/flower_purple", Transform{
 	  { 2.0f, 2.0f, 2.0f }, { 0.0f,-0.15f, 0.0f }, { 13.4f, -8.0f, 21.8f }
 		});
 }
@@ -376,31 +376,31 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::Air:
 		break;
 	case BlockType::GrassBlock:
-		blockModel->SetModel("Grass.obj");
+		blockModel->SetModel("GamePlay/Blocks/grassblock");
 		break;
 	case BlockType::SoilBlock:
-		blockModel->SetModel("soil.obj");
+		blockModel->SetModel("GamePlay/Blocks/soilblock");
 		break;
 	case BlockType::breakBlock:
-		blockModel->SetModel("breakBlock.obj");
+		blockModel->SetModel("GamePlay/Blocks/breakblock");
 		break;
 	case BlockType::moveBlock:
-		blockModel->SetModel("moveBlock.obj");
+		blockModel->SetModel("GamePlay/Blocks/moveblock");
 		break;
 	case BlockType::sandBlock:
-		blockModel->SetModel("sand.obj");
+		blockModel->SetModel("GamePlay/Blocks/sandblock");
 		break;
 	case BlockType::kGoalUp:
-		blockModel->SetModel("GoalUp.obj");
+		blockModel->SetModel("GamePlay/Blocks/goalblock/up");
 		break;
 	case BlockType::kGoalDown:
-		blockModel->SetModel("GoalDown.obj");
+		blockModel->SetModel("GamePlay/Blocks/goalblock/down");
 		break;
 	case BlockType::Unbreakable:
-		blockModel->SetModel("Unbreakable.obj");
+		blockModel->SetModel("GamePlay/Blocks/unbreakableblock");
 		break;
 	default:
-		blockModel->SetModel("null.obj");
+		blockModel->SetModel("GamePlay/Blocks/grassblock");
 		break;
 	}
 	blockModel->SetTransform(transform);
@@ -855,7 +855,7 @@ void FlyingEnemy::Initialize()
 	model = std::make_unique<Object3D>();
 	model->Initialize();
 	/// モデルの設定
-	model->SetModel("Tentativeenemy.obj");
+	model->SetModel("GamePlay/Enemies/tentativeenemy");
 	/// トランスフォームの設定
 	model->SetTransform(stats.transform);
 
@@ -982,7 +982,7 @@ void NormalEnemy::Initialize()
 	model = std::make_unique<Object3D>();
 	model->Initialize();
 	/// モデルの設定
-	model->SetModel("Tentativeenemy.obj");
+	model->SetModel("GamePlay/Enemies/tentativeenemy");
 	/// トランスフォームの設定
 	model->SetTransform(stats.transform);
 }
@@ -1073,7 +1073,7 @@ File Path: Game/Application/Map/CsvLoader.cpp
 #include "CsvLoader.h"
 #include "Game/Application/Block/Block.h"
 
-const std::string CsvLoader::frontFilePath = "resources/MapData/";
+const std::string CsvLoader::frontFilePath = "resources/Data/MapData/";
 const std::string CsvLoader::extensionCsv_ = ".csv";
 
 
@@ -1083,7 +1083,7 @@ std::vector<std::vector<int>> CsvLoader::LoadMapInt(const std::string& filePath)
 	// 読み込んだものを格納する変数
 	std::vector<std::vector<int>> mapData;
 	// ファイルを開く
-	std::ifstream file(frontFilePath+filePath);
+	std::ifstream file(frontFilePath + filePath);
 
 	// ファイルが開けなかった場合のエラーチェック
 	if (!file.is_open()) {
@@ -1320,12 +1320,6 @@ void Map::Initialize(const std::string& mapFilePath)
 
 	// マップデータの変更検知
 	previousMapData_ = mapChipData_;
-
-	ParticleManager::GetInstance()->CreateParticleGroup(
-        "BreakParticle", "resources/BackSky.png");
-	breakParticleEmitter_ = std::make_unique<ParticleSystem>();
-	breakParticleEmitter_->SetParticleName("BreakParticle");
-	breakParticleEmitter_->SetScale({ 0.2f, 0.2f, 0.2f });
     
 }
 
@@ -2063,46 +2057,41 @@ File Path: Game/Application/ModelList.cpp
 void ModelList::LoadAllModel()
 {
 	/// LoadModelList
-	ModelManager::GetInstance().LoadModel("cubeR.obj");
-	ModelManager::GetInstance().LoadModel("Cube.obj");
 							   
 							   
 	/// TitleScene			   
-	// プレイヤー
-	ModelManager::GetInstance().LoadModel("Player.obj");
-	// レインボープレーン		 
-	ModelManager::GetInstance().LoadModel("RainbowPlane.obj");
-	// タイトルロゴ			   
-	ModelManager::GetInstance().LoadModel("title.obj");
-	ModelManager::GetInstance().LoadModel("Fluff.obj");
-	ModelManager::GetInstance().LoadModel("Flower_Pink.obj");
-	ModelManager::GetInstance().LoadModel("BackGround/Flower_Purple.obj");
-	ModelManager::GetInstance().LoadModel("Flower_Orange.obj");
-	// タイトル背景			   
-	ModelManager::GetInstance().LoadModel("Back3.obj");
-	ModelManager::GetInstance().LoadModel("back2.obj");
-	ModelManager::GetInstance().LoadModel("back1.obj");
-	ModelManager::GetInstance().LoadModel("BackSky.obj");
-	ModelManager::GetInstance().LoadModel("soil.obj");
+	
+	// BackGround
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/fluff");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/flower_pink");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/flower_purple");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/flower_orange");		   
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/mountain_mid");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/mountain_far");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/mountain_front");
+	ModelManager::GetInstance().LoadModel("GamePlay/BackGround/sky");
+
+	
 							   
 	/// StageSelectScene	   
-	ModelManager::GetInstance().LoadModel("SelectBaseGround.obj");
-	ModelManager::GetInstance().LoadModel("Node.obj");
-	ModelManager::GetInstance().LoadModel("RoutePlane.obj");
+	ModelManager::GetInstance().LoadModel("Scenes/StageSelect/Models/baseground");
+	ModelManager::GetInstance().LoadModel("Scenes/StageSelect/Models/node");
+	ModelManager::GetInstance().LoadModel("Scenes/StageSelect/Models/route");
 							   
-	/// GamePlayScene		   
-	ModelManager::GetInstance().LoadModel("Grass.obj");
-	ModelManager::GetInstance().LoadModel("nullBlock.obj");
-	ModelManager::GetInstance().LoadModel("XYZLabel.obj");
-	ModelManager::GetInstance().LoadModel("breakBlock.obj");
-	ModelManager::GetInstance().LoadModel("moveBlock.obj");
-	ModelManager::GetInstance().LoadModel("sand.obj");
-	ModelManager::GetInstance().LoadModel("Unbreakable.obj");
+	/// GamePlayScene // Player // Block  // Enemy
+	ModelManager::GetInstance().LoadModel("GamePlay/Player");
+
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/soilblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/grassblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/nullblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/breakblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/moveblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/sandblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/unbreakableblock");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/goalblock/up");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/goalblock/down");
 							   
-	ModelManager::GetInstance().LoadModel("GoalUp.obj");
-	ModelManager::GetInstance().LoadModel("GoalDown.obj");
-							   
-	ModelManager::GetInstance().LoadModel("Tentativeenemy.obj");
+	ModelManager::GetInstance().LoadModel("GamePlay/Enemies/tentativeenemy");
 }
 
 
@@ -2404,7 +2393,7 @@ void Player::Initialize(Vector3 position)
 	playerModel_ = std::make_unique<Object3D>();
 	playerModel_->Initialize();
 	playerModel_->SetTranslate(position);
-	playerModel_->SetModel("Player.obj");
+	playerModel_->SetModel("GamePlay/Player");
 	// 死ぬ高さの設定
 	SetDeathHeight(-1.0f);
 
@@ -3670,7 +3659,7 @@ private:
 	Vector4 flashColorOff_ = { 1.0f,1.0f,1.0f,0.0f };
 
 	// 画像パス
-	std::string texturePath_ = "resources/HitDamage.png";
+	std::string texturePath_ = "resources/Effects/Hit/Textures/HitDamage.png";
 
 private:
 	Player* player_ = nullptr;
@@ -3701,20 +3690,20 @@ File Path: Game/Application/UI/GamePlayHUD.cpp
 void GamePlayHUD::Initialize()
 {
 	// ポーズアイコン
-	pauseSprite_ = MakeSprite("resources/KyeUI/Esc.png",
+	pauseSprite_ = MakeSprite("resources/_Common/UI/Texture/inputhints/Esc.png",
 		{ 30.0f,30.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,1.0f });
 	// コントロールUI
 	// Dキー
-	controlUI_D = MakeSprite("resources/KyeUI/D.png",
+	controlUI_D = MakeSprite("resources/_Common/UI/Texture/inputhints/D.png",
 		{ 200.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Aキー
-	controlUI_A = MakeSprite("resources/KyeUI/A.png",
+	controlUI_A = MakeSprite("resources/_Common/UI/Texture/inputhints/A.png",
 		{ 100.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Sキー
-	controlUI_S = MakeSprite("resources/KyeUI/S.png",
+	controlUI_S = MakeSprite("resources/_Common/UI/Texture/inputhints/S.png",
 		{ 150.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Wキー
-	controlUI_W = MakeSprite("resources/KyeUI/W.png",
+	controlUI_W = MakeSprite("resources/_Common/UI/Texture/inputhints/W.png",
 		{ 150.0f,20.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 
 	UiActive_ = false;
@@ -4805,7 +4794,7 @@ File Path: Game/Loader/LevelLoader.h
 #include <string>  
 #include <fstream>  
 #include <cassert>  
-#include "resources/json/json.hpp"  
+#include "resources/Data/json/json.hpp"  
 #include "engine/math/MyMath.h"  
 #include "engine/3d/Model.h"
 #include "engine/3d/Object3D.h"
@@ -4876,7 +4865,7 @@ ModelParticleManager& ModelParticleManager::GetInstance()
 void ModelParticleManager::Initialize()
 {
 	// 破片用のモデルを読み込む 
-	modelName_ = "breakBlock.obj";
+	modelName_ = "GamePlay/Blocks/breakblock";
 
 }
 
@@ -6583,7 +6572,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create(
-		"Smoke", "resources/Particle/smoke.png");
+		"Smoke", "resources/Effects/Particles/Textures/smoke.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6601,7 +6590,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& posi
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create(
-		"Sparks", "resources/Particle/star.png");
+		"Sparks", "resources/Effects/Particles/Textures/star.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6618,7 +6607,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& pos
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3& position)
 {
-	auto particleSystem = ParticleSystem::Create("TitleEffect", "resources/Particle/circle.png");
+	auto particleSystem = ParticleSystem::Create("TitleEffect", 
+		"resources/Effects/Particles/Textures/circle.png");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6633,7 +6623,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3& position)
 {
-	auto ps = ParticleSystem::Create("MagicCircle", "resources/Particle/circle.png");
+	auto ps = ParticleSystem::Create("MagicCircle", 
+		"resources/Effects/Particles/Textures/circle.png");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -6654,7 +6645,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const Vector3& position)
 {
-	auto ps = ParticleSystem::Create("ComplexMagicCircle", "resources/Particle/circle.png");
+	auto ps = ParticleSystem::Create("ComplexMagicCircle", 
+		"resources/Effects/Particles/Textures/circle.png");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -6674,7 +6666,8 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const 
 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSummonCircle(const Vector3& position)
 {
-	auto ps = ParticleSystem::Create("SummonCircle", "resources/Particle/circle.png");
+	auto ps = ParticleSystem::Create("SummonCircle", 
+		"resources/Effects/Particles/Textures/circle.png");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -7202,7 +7195,7 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 {
 	/// オーディオの初期化
 	Audio::GetInstance().Initialize();
-	soundData = Audio::GetInstance().LoadWave("resources/mokugyo.wav");
+	soundData = Audio::GetInstance().LoadWave("resources/_Common/Audio/debug/mokugyo.wav");
 	xaudio2_ = Audio::GetInstance().GetXAudio2();
 	Audio::GetInstance().SoundPlayWave(xaudio2_, soundData);
 
@@ -8131,38 +8124,38 @@ void PauseUI::LoadSprite()
 {
 	// 画面を少し暗くする黒いスプライト
 	auto overlaySprite = std::make_unique<Sprite>();
-	overlaySprite->Initialize("resources/PauseUI/PauseBlack.png");
+	overlaySprite->Initialize("resources/Scenes/Pause/UI/Texture/PauseBlack.png");
 	overlaySprite->SetPosition({ 0.0f,0.0f });
 	overlaySprite->SetSize({ 1280.0f,720.0f });
 	overlaySprite->SetColor({ 1.0f,1.0f,1.0f,0.55f });
 	sprites_.push_back(std::move(overlaySprite));
 
 	auto circleSlot = std::make_unique<Sprite>();
-	circleSlot->Initialize("resources/PauseUI/PauseUICircleSlot_2.png");
+	circleSlot->Initialize("resources/Scenes/Pause/UI/Texture/PauseUICircleSlot_2.png");
 	circleSlot->SetPosition({ 0.0f, 0.0f });
 	circleSlot->SetSize({ 1280.0f,720.0f });
 	sprites_.push_back(std::move(circleSlot));
 
 	// スロット上
 	slotUIUp_ = std::make_unique<Sprite>();
-	slotUIUp_->Initialize("resources/PauseUI/PauseUISlotItemUP_IconB.png");
+	slotUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemUP_IconB.png");
 	slotUIUp_->SetPosition({ 0.0f, 0.0f });
 	slotUIUp_->SetSize({ 1280.0f, 720.0f });
 
 
 	// スロット下
 	slotUIDown_ = std::make_unique<Sprite>();
-	slotUIDown_->Initialize("resources/PauseUI/PauseUISlotItemDown_IconB.png");
+	slotUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemDown_IconB.png");
 	slotUIDown_->SetPosition({ 0.0f, 0.0f });
 	slotUIDown_->SetSize({ 1280.0f, 720.0f });
 	// スロット左
 	slotUILeft_ = std::make_unique<Sprite>();
-	slotUILeft_->Initialize("resources/PauseUI/PauseUISlotItemLeft_IconB.png");
+	slotUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemLeft_IconB.png");
 	slotUILeft_->SetPosition({ 0.0f, 0.0f });
 	slotUILeft_->SetSize({ 1280.0f, 720.0f });
 	// スロット右
 	slotUIRight_ = std::make_unique<Sprite>();
-	slotUIRight_->Initialize("resources/PauseUI/PauseUISlotItemRight_IconB.png");
+	slotUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemRight_IconB.png");
 	slotUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotUIRight_->SetSize({ 1280.0f, 720.0f });
 
@@ -8182,28 +8175,28 @@ void PauseUI::LoadSprite()
 
 
 	slotTextUIUp_ = std::make_unique<Sprite>();
-	slotTextUIUp_->Initialize("resources/PauseUI/PlayText.png");
+	slotTextUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PlayText.png");
 	slotTextUIUp_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIUp_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUIDown_ = std::make_unique<Sprite>();
-	slotTextUIDown_->Initialize("resources/PauseUI/TitleText.png");
+	slotTextUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/TitleText.png");
 	slotTextUIDown_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIDown_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUILeft_ = std::make_unique<Sprite>();
-	slotTextUILeft_->Initialize("resources/PauseUI/SelectText.png");
+	slotTextUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/SelectText.png");
 	slotTextUILeft_->SetPosition({ 0.0f, 0.0f });
 	slotTextUILeft_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUIRight_ = std::make_unique<Sprite>();
-	slotTextUIRight_->Initialize("resources/PauseUI/ReTryText.png");
+	slotTextUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/ReTryText.png");
 	slotTextUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIRight_->SetSize({ 1280.0f, 720.0f });
 
 
 	decideKeyUI_ = std::make_unique<Sprite>();
-	decideKeyUI_->Initialize("resources/PauseUI/SpaceText.png");
+	decideKeyUI_->Initialize("resources/Scenes/Pause/UI/Texture/SpaceText.png");
 	decideKeyUI_->SetPosition({ 0.0f, 0.0f });
 	decideKeyUI_->SetSize({ 1280.0f, 720.0f });
 
@@ -8486,7 +8479,7 @@ StageSelectGraph::~StageSelectGraph()
 void StageSelectGraph::Initialize()
 {
 	// ノード情報をJSONファイルから読み込み
-	LoadMapNodeFromJson("World_1");
+	LoadMapNodeFromJson("stage_select_graph");
 	// ノード境界情報の再計算     
 	RecalculateBounds();
 
@@ -8568,7 +8561,7 @@ void StageSelectGraph::LoadMapNodeFromJson(const std::string& fileName)
 {
 	// JSONファイルからノード情報を読み込む処理
 	// filePathはリソースフォルダからの相対パス
-	const std::string frontFilePath = "resources/WorldSelect";
+	const std::string frontFilePath = "resources/Scenes/StageSelect/Data";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 
@@ -8719,7 +8712,7 @@ std::string StageSelectGraph::ToJsonString(int indent) const
 void StageSelectGraph::SaveToJsonFile(const std::string& fileName) const
 {
 	// JSONファイルに保存する処理
-	const std::string frontFilePath = "resources/StageSelect";
+	const std::string frontFilePath = "resources/Scenes/StageSelect/Data";
 	const std::string kExtension = ".json";
 	const std::string fullPath = frontFilePath + "/" + fileName + kExtension;
 	// ファイル出力ストリームを開く
@@ -8840,7 +8833,7 @@ File Path: Game/Scene/SceneSelectGraph/StageSelectGraph.h
 #include "MyMath.h"
 #include <vector>
 #include <cstdint>
-#include <resources/json/json.hpp>
+#include "resources/Data/json/json.hpp"
 #include <string>
 
 /// <summary>
@@ -9049,7 +9042,7 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 
 	// スプライトの初期化
 	clearTextSprite = std::make_unique<Sprite>();
-	clearTextSprite->Initialize("resources/ClearScene/StageClear.png");
+	clearTextSprite->Initialize("resources/Scenes/Clear/UI/Texture/StageClear.png");
 
 	clearTextPos = { 0.0f,0.0f }; 
 	clearTextSprite->SetPosition(clearTextPos);
@@ -9064,39 +9057,39 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 		{ 5.0f,-7.0f,20.0f }
 	};
 	playerObject_->SetTransform(playerTransform_);
-	playerObject_->SetModel("Player.obj");
+	playerObject_->SetModel("GamePlay/Player");
 
 
 	// OneMore / Select / Title UI
 	oneMore_ = std::make_unique<Sprite>();
-	oneMore_->Initialize("resources/ClearScene/ClearUI_OneMore.png");
+	oneMore_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_OneMore.png");
 	oneMore_->SetPosition({ 250.0f,570.0f });
 	oneMore_->SetSize(oneMoreBaseSize_);
 
 	select_ = std::make_unique<Sprite>();
-	select_->Initialize("resources/ClearScene/ClearUI_Select.png");
+	select_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Select.png");
 	select_->SetPosition({ 550.0f,570.0f });
 	select_->SetSize(selectBaseSize_);
 
 	title_ = std::make_unique<Sprite>();
-	title_->Initialize("resources/ClearScene/ClearUI_Title.png");
+	title_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Title.png");
 	title_->SetPosition({ 850.0f,570.0f });
 	title_->SetSize(titleBaseSize_);
 
 	// KeyIconUi　/ 左下に配置
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
 	keyIcon_A->SetPosition({ 30.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
 	keyIcon_D->SetPosition({ 80.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
 	keyIcon_Enter->SetPosition({ 55.0f, 565.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 }
@@ -9159,18 +9152,18 @@ void StageClearScene::Update()
 	default:
 		break;
 	}
-	//// タイトルへ戻る (1)
-	//if (Input::GetInstance()->TriggerKey(DIK_1)) {
-	//	SceneManager::GetInstance()->ChangeScene("TITLE");
-	//}
-	//// ステージセレクトへ戻る (2)
-	//else if (Input::GetInstance()->TriggerKey(DIK_2)) {
-	//	SceneManager::GetInstance()->ChangeScene("STAGESELECT");
-	//}
-	//// ゲームプレイへ戻る (3)
-	//else if (Input::GetInstance()->TriggerKey(DIK_3)) {
-	//	SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
-	//}
+	// タイトルへ戻る (1)
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+	// ステージセレクトへ戻る (2)
+	else if (Input::GetInstance()->TriggerKey(DIK_2)) {
+		SceneManager::GetInstance()->ChangeScene("STAGESELECT");
+	}
+	// ゲームプレイへ戻る (3)
+	else if (Input::GetInstance()->TriggerKey(DIK_3)) {
+		SceneManager::GetInstance()->ChangeScene("GAMEPLAY");
+	}
 
 	playerObject_->Update();
 
@@ -9686,7 +9679,7 @@ void StageSelectScene::BuildRoutes()
 			// Object3D作成
 			auto obj = std::make_unique<Object3D>();
 			obj->Initialize();
-			obj->SetModel("RoutePlane.obj"); // ルート用モデル名
+			obj->SetModel("Scenes/StageSelect/Models/route"); // ルート用モデル名
 
 			Transform tr{};
 			tr.translate = mid;
@@ -9726,7 +9719,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	// プレイヤーオブジェクトの初期化
 	playerModel = std::make_unique<Object3D>();
 	playerModel->Initialize();
-	playerModel->SetModel("Player.obj");
+	playerModel->SetModel("GamePlay/Player");
 	playerTransform = {
 		// scale
 		{2.5f,2.5f,2.5f},
@@ -9740,7 +9733,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	// 背景オブジェクトの初期化
 	stageSelectBase1 = std::make_unique<Object3D>();
 	stageSelectBase1->Initialize();
-	stageSelectBase1->SetModel("SelectBaseGround.obj");
+	stageSelectBase1->SetModel("Scenes/StageSelect/Models/baseground");
 	stageSelectBase1Transform = {
 		// Scale
 		{ 1.5f, 1.0f, 2.5f },
@@ -9754,7 +9747,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	// 空背景の初期化
 	skyBack = std::make_unique<Object3D>();
 	skyBack->Initialize();
-	skyBack->SetModel("BackSky.obj");
+	skyBack->SetModel("GamePlay/BackGround/sky");
 	skyBackTransform = {
 		// Scale
 		{ 50.0f, 50.0f, 40.0f },
@@ -9790,7 +9783,7 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 	{
 		auto obj = std::make_unique<Object3D>();
 		obj->Initialize();
-		obj->SetModel("Node.obj"); // 同じモデル
+		obj->SetModel("Scenes/StageSelect/Models/node"); // 同じモデル
 
 		Transform tr{};
 		tr.scale = { 1.8f, 1.8f, 1.8f };   // 目印なら少し小さく
@@ -9811,57 +9804,57 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 	// UI初期化
 	stageSelect_ = std::make_unique<Sprite>();
-	stageSelect_->Initialize("resources/StageSelect/StageSelect.png");
+	stageSelect_->Initialize("resources/Scenes/StageSelect/UI/Texture/StageSelect.png");
 	stageSelect_->SetPosition({ 0.0f,0.0f });
 	stageSelect_->SetSize({ 1280.0f,720.0f });
 
 	// KeyIconUi / 左下に配置
 	keyIcon_W = std::make_unique<Sprite>();
-	keyIcon_W->Initialize("resources/KyeUI/W.png");
+	keyIcon_W->Initialize("resources/_Common/UI/Texture/inputhints/W.png");
 	keyIcon_W->SetPosition({ 55.0f, 615.0f });
 	keyIcon_W->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/KyeUI/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
 	keyIcon_A->SetPosition({ 10.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_S = std::make_unique<Sprite>();
-	keyIcon_S->Initialize("resources/KyeUI/S.png");
+	keyIcon_S->Initialize("resources/_Common/UI/Texture/inputhints/S.png");
 	keyIcon_S->SetPosition({ 55.0f, 660.0f });
 	keyIcon_S->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/KyeUI/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
 	keyIcon_D->SetPosition({ 100.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	// esc / enter UI配置
 	keyIcon_Esc = std::make_unique<Sprite>();
-	keyIcon_Esc->Initialize("resources/KyeUI/Esc.png");
+	keyIcon_Esc->Initialize("resources/_Common/UI/Texture/inputhints/Esc.png");
 	keyIcon_Esc->SetPosition({ 55.0f, 560.0f });
 	keyIcon_Esc->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/KyeUI/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
 	keyIcon_Enter->SetPosition({ 55.0f, 505.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 
 	// MoveUI
 	moveUI_ = std::make_unique<Sprite>();
-	moveUI_->Initialize("resources/StageSelect/Move.png");
+	moveUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Move.png");
 	moveUI_->SetPosition(moveUI_Pos_);
 	moveUI_->SetSize({ 125.0f,50.0f });
 
 	// CheckUI
 	checkUI_ = std::make_unique<Sprite>();
-	checkUI_->Initialize("resources/StageSelect/Check.png");
+	checkUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Check.png");
 	checkUI_->SetPosition(checkUI_Pos_);
 	checkUI_->SetSize({ 125.0f,50.0f });
 
 	// BackUI
 	backUI_ = std::make_unique<Sprite>();
-	backUI_->Initialize("resources/StageSelect/Back.png");
+	backUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Back.png");
 	backUI_->SetPosition(backUI_Pos_);
 	backUI_->SetSize({ 125.0f,50.0f });
 }
@@ -9983,6 +9976,8 @@ void StageSelectScene::DrawImgui()
 	ImGui::Begin("StageSelectScene");
 
 	// カメラ位置の調整
+	cameraTransform.translate = camera->GetTranslate();
+	cameraTransform.rotate = camera->GetRotate();
 	ImGui::DragFloat3("CameraPos", &cameraTransform.translate.x, 0.1f);
 	ImGui::DragFloat3("CameraRot", &cameraTransform.rotate.x, 0.01f);
 	camera->SetTranslate(cameraTransform.translate);
@@ -10845,19 +10840,11 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	//presetEffect->Play();
 
 
-	object3D = make_unique<Object3D>();
-	object3D->Initialize();
-
-	object3D->SetModel("plane.obj");
-	object3D->SetTranslate(Vector3(-4.0f, 0.0f, 10.0f));
-
-	object3D->SetScale(Vector3(0.2f, 0.2f, 0.2f));
-	speed = object3D->GetTranslate();
 
 
 	playerObject = std::make_unique<Object3D>();
 	playerObject->Initialize();
-	playerObject->SetModel("Player.obj");
+	playerObject->SetModel("GamePlay/Player");
 	playerTransform = {
 		{ 1.0f,1.0f,1.0f },
 		{ 0.0f,0.0f,0.0f },
@@ -10877,18 +10864,19 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	// カメラの取得と設定
 	camera = Framework::GetMainCamera();
-	camera->SetTranslate({7.5f,-4.0f,0.0f});
-	camera->SetRotate({ 0.0f, 0.0f, 0.0f });
+	
+	camera->SetTranslate(initCameraTransform.translate);
+	camera->SetRotate(initCameraTransform.rotate);
 
 	// タイトルスプライトの初期化
 	titleSprite = std::make_unique<Sprite>();
-	titleSprite->Initialize("resources/Title/Title.png");
+	titleSprite->Initialize("resources/Scenes/Title/UI/Texture/Title.png");
 	titleSprite->SetPosition({ 0.0f,0.0f });
 	titleSprite->SetSize({ 1280.0f,720.0f });
 
 	// Press Start スプライトの初期化
 	pressStartSprite = std::make_unique<Sprite>();
-	pressStartSprite->Initialize("resources/Title/PushSpace.png");
+	pressStartSprite->Initialize("resources/Scenes/Title/UI/Texture/PushSpace.png");
 	pressStartSprite->SetPosition({ -20.0f,100.0f });
 	pressStartSprite->SetSize({ 1280.0f,720.0f });
 
@@ -11058,11 +11046,6 @@ void TitleScene::Draw()
 	ParticleManager::GetInstance()->Draw();
 	ModelParticleManager::GetInstance().Draw();
 
-	// エフェクトの描画
-
-
-
-
 	//sceneTransition->Draw();
 
 
@@ -11095,10 +11078,6 @@ void TitleScene::LoadAudio()
 
 void TitleScene::LoadSprite() 
 {
-	sprite_ = make_unique<Sprite>();
-	sprite_->Initialize("resources/gradationLine.png");
-	sprite_->SetPosition({ 0.0f,0.0f });
-	sprite_->SetRotation(0.0f);
 }
 
 void TitleScene::DrawImgui() {
@@ -11187,8 +11166,6 @@ private:
 	//SoundData soundData;
 	//IXAudio2* xaudio2_;
 
-	// スプライト
-	std::unique_ptr<Sprite> sprite_;
 
 	// パーティクルエミッター
 	std::unique_ptr<ParticleSystem> particleEmitter;
@@ -11196,20 +11173,8 @@ private:
 
 	std::unique_ptr<ParticleSystem> presetEffect;
 
-	// リングエフェクト
-	std::unique_ptr<Object3D> object3D;
-	// 背景
-	std::unique_ptr<Object3D> backgroundObject;
 
 private: // ゲーム要素
-	Vector3 emitterScale = { 0.0f, 0.0f, 0.0f };
-	Vector3 emitterRotate = { 0.0f, 0.0f, 0.0f };
-	Vector3 emitterTranslate = { 0.0f, 0.0f, 10.0f };
-
-	Transform effectTransform;
-
-	Transform cylinderTransform;
-
 	Vector3 speed = { 0.0f,0.0f,0.0f };
 
 
@@ -11223,12 +11188,8 @@ private: // ゲーム要素
 	std::unique_ptr<Object3D> playerObject;
 	Transform playerTransform;
 
-	std::unique_ptr<Object3D> Rainbow;
-	Transform rainbowTransform;
 
 	/// タイトルロゴ
-	std::unique_ptr<Object3D> titleLogo;
-	Transform titleLogoTransform;
 
 	// バックグラウンド
 	 std::unique_ptr<BackGround> background;
@@ -11242,6 +11203,11 @@ private: // ゲーム要素
 
 	 /// カメラ
 	 Camera* camera = nullptr;
+	 const Transform initCameraTransform{
+		 {0.0f,0.0f, -10.0f}, // scale
+		 {0.0f, 0.0f, 0.0f},   // rotate
+		 {7.5f,-4.0f,0.0f} // translate
+	 };
 
 	 // ===== Title demo player particle & jump (add) =====
 	 std::unique_ptr<ParticleSystem> titleSmoke_;   // 常時煙（走ってる感）
@@ -11254,7 +11220,7 @@ private: // ゲーム要素
 	 int   jumpFrame_ = 0;
 	 int   jumpIntervalTimer_ = 0;
 
-	 // 調整用（必要ならImGuiで触れるようにしてもOK）
+	 // 調整用（
 	 int   jumpIntervalFrame_ = 180;  // 3秒ごとにジャンプ（60fps）
 	 int   jumpDurationFrame_ = 45;   // ジャンプの長さ
 	 float jumpHeight_ = 0.8f;        // ジャンプ高さ
@@ -11362,12 +11328,6 @@ void BallWipeTransition::Initialize()
 	stamps_.clear();
 
 
-	//// カバースプライト（画面全体を覆う）
-	//coverSprite_ = std::make_unique<Sprite>();
-	//coverSprite_->Initialize(trailSpriteFilePath_);
-	//coverSprite_->SetPosition({ 0.0f,0.0f });
-	//coverSprite_->SetSize({ SCREEN_WIDTH,SCREEN_HEIGHT });
-	//coverSprite_->SetColor({ 0.0f,0.0f,0.0f,0.0f });
 
 }
 
@@ -11717,9 +11677,9 @@ private:
 	float coverAlpha_ = 0.0f; // カバーの透明度（0.0f ~ 1.0f）
 
 	// スプライトのファイルパス
-	const std::string ballSpriteFilePath_ = "resources/SceneTransition/ball.png";
-	const std::string trailSpriteFilePath_ = "resources/SceneTransition/trail.png";
-	const std::string stampSpriteFilePath_ = "resources/SceneTransition/stamp.png";
+	const std::string ballSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/ball.png";
+	const std::string trailSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/trail.png";
+	const std::string stampSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/stamp.png";
 
 
 	// 画面のサイズ
@@ -13862,7 +13822,7 @@ void Model::Initialize(ModelCommon* modelCommon, const string& directorypath, co
 	//テクスチャが指定されていない場合は、デフォルトのテクスチャを使用する
 	if(modelData.material.textureFilePath.empty()) {
 		// デフォルトのテクスチャを使用する
-		modelData.material.textureFilePath = "Resources/texture/default.png";
+		modelData.material.textureFilePath = "Resources/_Common/Textures/debug/default.png";
 	}
 	// .objの参照しているテクスチャファイル読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
@@ -14121,7 +14081,8 @@ private:	// メンバ変数
 	// マテリアルデータ
 	Material* materialData = nullptr;
 
-	std::string cubeMapPath = "resources/rostock_laage_airport_4k.dds";
+	std::string cubeMapPath = "resources/_Common/Textures/debug/rostock_laage_airport_4k.dds";
+
 };
 
 
@@ -14190,6 +14151,8 @@ private:
 File Path: engine/3d/ModelManager.cpp
 ============================================================
 #include "ModelManager.h"
+#include "Logger.h"
+#include <filesystem>
 
 using namespace std;
 using namespace Engine;
@@ -14204,7 +14167,6 @@ ModelManager& ModelManager::GetInstance()
 void ModelManager::Finalize()
 {
 	models.clear();
-
 	modelCommon.reset();
 }
 
@@ -14214,58 +14176,103 @@ void ModelManager::Initialize(DirectXCommon* dxCommon)
 	modelCommon->Initialize(dxCommon);
 }
 
-void ModelManager::LoadModel(string_view filePath)
+static void LogModelLoadError(const std::string& message)
 {
-	// キー文字列の生成
-	const string key(filePath);
-	// 読み込み済みモデルを検索
-	if (models.contains(key))
-	{
-		// 読み込み済みなら早期リターン
-		return;
-	}
+	Logger::Log(message.c_str());
 
-	// モデルの生成とファイル読み込み、初期化
-	unique_ptr<Model>model = make_unique<Model>();
-
-	// --- 【修正】ディレクトリパスとファイル名を分離する ---
-	std::string fullPath = "resources/" + string(filePath);
-	std::string directoryPath;
-	std::string fileName;
-
-	// 最後のスラッシュの位置を探す
-	size_t lastSlash = fullPath.find_last_of("/\\");
-	if (lastSlash != std::string::npos) {
-		// スラッシュより前をディレクトリパスとする
-		directoryPath = fullPath.substr(0, lastSlash);
-		// スラッシュより後ろをファイル名とする
-		fileName = fullPath.substr(lastSlash + 1);
-	} else {
-		// もしスラッシュが無ければそのまま
-		directoryPath = "resources";
-		fileName = string(filePath);
-	}
-
-	// 分離した正しいディレクトリパスとファイル名を渡す
-	model->Initialize(modelCommon.get(), directoryPath, fileName);
-	// ------------------------------------------------------
-
-	// モデルリストに追加
-	models.insert(make_pair(key, move(model)));
 }
 
-Model* ModelManager::FindModel(string_view filePath)
+void ModelManager::LoadModel(string_view modelDir)
 {
-	// キー文字列の生成
-	const string key(filePath);
-	// 読み込み済みモデルを検索
-	if (models.contains(key))
-	{
-		// 読み込みモデルを戻り値として返す
-		return models.at(key).get();
-	}
-	// 読み込み済みでない場合はnullptrを返す
-	return nullptr;
+    const std::string key(modelDir);
+
+    // 既に読み込み済みなら何もしない
+    if (models.contains(key)) {
+        return;
+    }
+
+    // ---- ガード：旧仕様(.obj指定)が残っていたら即わかるようにする ----
+    if (key.find(".obj") != std::string::npos || key.find(".OBJ") != std::string::npos) {
+        // "cubeR.obj" -> "cubeR" にする例を自動生成
+        std::string hint = key;
+        auto pos = hint.rfind('.');
+        if (pos != std::string::npos) {
+            hint = hint.substr(0, pos);
+        }
+
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: LoadModel expects a directory path under resources/, "
+            "but got an .obj path: \"" + key + "\". "
+            "Hint: remove the extension. Example: LoadModel(\"" + hint + "\") instead of LoadModel(\"" + key + "\").";
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+
+    // ---- resources/<modelDir> を探す ----
+    // modelDir が "Player/" のように末尾スラッシュがあってもOKにしたい場合は fs で吸収されます
+    const filesystem::path base = filesystem::path("resources");
+    const filesystem::path dirPath = base / filesystem::path(key);
+
+    if (!filesystem::exists(dirPath) || !filesystem::is_directory(dirPath)) {
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: Model directory not found: \"" + dirPath.string() +
+            "\" (argument=\"" + key + "\")";
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+
+    // ---- フォルダ内の .obj を列挙（1つだけの想定） ----
+    std::vector<filesystem::path> objFiles;
+    for (const auto& entry : filesystem::directory_iterator(dirPath)) {
+        if (!entry.is_regular_file()) { continue; }
+        const filesystem::path p = entry.path();
+        if (p.has_extension() && (p.extension() == ".obj" || p.extension() == ".OBJ")) {
+            objFiles.push_back(p);
+        }
+    }
+
+    if (objFiles.empty()) {
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: No .obj file found in directory: \"" + dirPath.string() +
+            "\" (argument=\"" + key + "\")";
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+    if (objFiles.size() >= 2) {
+        std::string msg =
+            "[ModelManager::LoadModel] ERROR: Multiple .obj files found in directory: \"" + dirPath.string() +
+            "\" (argument=\"" + key + "\"). Files:";
+        for (const auto& p : objFiles) {
+            msg += " " + p.filename().string();
+        }
+        LogModelLoadError(msg);
+        assert(false);
+        return;
+    }
+
+    // ---- 読み込み対象objを確定 ----
+    const filesystem::path objPath = objFiles[0];
+    const std::string directoryPath = objPath.parent_path().string(); // "resources/Player"
+    const std::string fileName = objPath.filename().string();         // "Player.obj"
+
+    // ---- モデル生成 & 初期化 ----
+    std::unique_ptr<Model> model = std::make_unique<Model>();
+    model->Initialize(modelCommon.get(), directoryPath, fileName);
+
+    // ---- 登録（キーはフォルダ指定のまま�� ----
+    models.insert(std::make_pair(key, std::move(model)));
+}
+
+Model* ModelManager::FindModel(string_view modelDir)
+{
+    const std::string key(modelDir);
+    if (models.contains(key)) {
+        return models.at(key).get();
+    }
+    return nullptr;
 }
 
 
@@ -14305,7 +14312,7 @@ public: // メンバ関数
 	/// モデルファイルの読み込み
 	/// </summary>
 	/// <param name="filePath">読み込むモデルの名前</param>
-	void LoadModel(std::string_view filePath);
+	void LoadModel(std::string_view modelDir);
 public: // Getter/Setter
 	/// <summary>
 	/// モデルの検索
@@ -14939,8 +14946,8 @@ void SkyBox::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 	this->dxCommon = dxCommon;
 	this->srvManager = srvManager;
 	this->camera = Object3DCommon::GetInstance()->GetDefaultCamera();
-	TextureManager::GetInstance()->LoadTexture("resources/rostock_laage_airport_4k.dds");
-	modelData.material.textureFilePath = "resources/rostock_laage_airport_4k.dds";
+	TextureManager::GetInstance()->LoadTexture(textureFilePath);
+	modelData.material.textureFilePath = textureFilePath;
 	/// パイプラインの生成
 	CreatePipeline();
 	/// ルートシグネチャの生成
@@ -15439,6 +15446,9 @@ private:
 
 	/// カメラ引数
 	Camera* camera = nullptr;
+
+	/// テクスチャのファイルパス
+	const std::string textureFilePath = "resources/_Common/Textures/debug/rostock_laage_airport_4k.dds";
 public:
 
 	/// <summary>
