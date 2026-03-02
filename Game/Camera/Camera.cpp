@@ -34,3 +34,16 @@ void Camera::Update()
 void Camera::Draw()
 {
 }
+
+void Camera::Finalize()
+{
+	transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	fovY = 0.45f;
+	aspectRatio = (float(WinAPI::kClientWidth) / float(WinAPI::kClientHeight));
+	nearClip = 0.1f;
+	farClip = 100.0f;
+	worldMatrix =MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	viewMatrix = Inverse(worldMatrix);
+	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
+	viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
+}

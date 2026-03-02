@@ -2,7 +2,7 @@
 #include "TitleScene.h"
 #include "Input.h"
 #include "Object3D.h"
-#include "Game/Camera/camera.h"
+#include "Game/Camera/Camera.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ModelParticleManager.h"
 #include "Game/Particle/ParticleSystem.h"
@@ -23,7 +23,15 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
-
+	// カメラの取得と設定
+	camera = Framework::GetMainCamera();
+	const Transform initCameraTransform = {
+		 {0.0f,0.0f, -10.0f}, // scale
+		 {0.0f, 0.0f, 0.0f},   // rotate
+		 {7.5f,-4.0f,0.0f} // translate
+	};
+	camera->SetTranslate(initCameraTransform.translate);
+	camera->SetRotate(initCameraTransform.rotate);
 	// パーティクルグループを作成
 	particleEmitter = ParticlePresets::CreateSmoke({ 1.0f,-7.0f,20.0f });
 	particleEmitter->Pause();
@@ -35,8 +43,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	presetEffect = ParticlePresets::CreateSummonCircle({5.0f,-7.0f,20.0f});
 	//presetEffect->Play();
-
-
 
 
 	playerObject = std::make_unique<Object3D>();
@@ -52,18 +58,10 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	
 
-
-	//sceneTransition = std::make_unique<SceneTransition>();
-	//sceneTransition->Initialize();
-
 	background = std::make_unique<BackGround>();
 	background->Initialize();
 
-	// カメラの取得と設定
-	camera = Framework::GetMainCamera();
 	
-	camera->SetTranslate(initCameraTransform.translate);
-	camera->SetRotate(initCameraTransform.rotate);
 
 	// タイトルスプライトの初期化
 	titleSprite = std::make_unique<Sprite>();
@@ -105,12 +103,10 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	//sprite_->Update();
+	
 	camera->Update();
-
 	background->Update();
 
-	//sceneTransition->Update();
 
 #ifdef USE_IMGUI
 	DrawImgui();
@@ -223,27 +219,17 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 
-#pragma region 3Dオブジェクトの描画準備
-
-	//sprite_->Draw();
-#pragma endregion
 
 #pragma region 3Dオブジェクトの描画
 
 	background->Draw();
 
-	//object3D->Draw();
-	//levelData->Draw();
 	playerObject->Draw();
-	//Rainbow->Draw();
-
 	
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	ModelParticleManager::GetInstance().Draw();
-
-	//sceneTransition->Draw();
 
 
 #pragma endregion
@@ -260,6 +246,8 @@ void TitleScene::Finalize()
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
 	
+	// カメラの終了処理
+	camera->Finalize();
 	
 }
 
@@ -288,6 +276,12 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("Translate", &pTransform.translate.x, 0.1f);
 
 	playerObject->SetTransform(pTransform);
+
+	// カメラの配置情報の変更
+	Transform cTransform = { {0.0f,0.0f,0.0f}, camera->GetRotate(),camera->GetTranslate() };
+	ImGui::DragFloat3("Camera Rotate", &cTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Camera Translate", &cTransform.translate.x, 0.1f);
+	
 
 	ImGui::End();
 

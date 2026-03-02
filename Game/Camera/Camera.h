@@ -23,15 +23,19 @@ public:	// メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-		
-public:	
+	/// <summary>
+	/// リセット用終了処理
+	/// </summary>
+	void Finalize();
+
+public:
 	// setter
 	/// <summary>
 	/// 回転・平行移動の設定
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
-	
+
 	/// <summary>
 	/// 視野角の設定
 	/// </summary>
@@ -61,24 +65,24 @@ public:
 	/// 各種行列の取得
 	/// </summary>
 	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; }
-	
+
 	/// <summary>
 	/// ビュー行列の取得
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetViewMatrix()const { return viewMatrix; }
-	
+
 	/// <summary>
 	/// プロジェクション行列の取得
 	/// </summary>
 	const Matrix4x4& GetProjectionMatrix()const { return projectionMatrix; }
-	
+
 	/// <summary>
 	/// ビュープロジェクション行列の取得
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetViewProjectionMatrix()const { return viewProjectionMatrix; }
-	
+
 	/// <summary> 
 	/// 拡縮・回転・平行移動の取得
 	/// </summary>
@@ -100,8 +104,9 @@ private:
 	float farClip = 100.0f;
 	// ワールド行列
 	Matrix4x4 worldMatrix;
+	// ビュー行列
 	Matrix4x4 viewMatrix;
-
+	// プロジェクション行列
 	Matrix4x4 projectionMatrix;
 
 	// ビュープロジェクション行列

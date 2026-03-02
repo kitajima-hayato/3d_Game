@@ -45,6 +45,12 @@ void SceneManager::Update(DirectXCommon* dxCommon)
 				nextScene_ = sceneFactory_->CreateScene(pendingSceneName_);
 
 				// シーン初期化
+				if (scene_) {
+					scene_->Finalize();
+					scene_.reset();
+				}
+
+				// シーン初期化
 				if (nextScene_) {
 					nextScene_->SetSceneManager(this);
 					nextScene_->Initialize(dxCommon);
@@ -55,12 +61,9 @@ void SceneManager::Update(DirectXCommon* dxCommon)
 		}
 
 		// ロード完了後、シーン切り替え実行
-		if (transitionManager_->GetPhase() == TransitionPhase::FadeIn && 
+		if (transitionManager_->GetPhase() == TransitionPhase::FadeIn &&
 			nextScene_ && isTransitionRequested_) {
-			if (scene_) {
-				scene_->Finalize();
-				scene_.reset();
-			}
+
 
 			// シーンの切り替え
 			scene_ = std::move(nextScene_);
@@ -140,7 +143,7 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 }
 
 void SceneManager::ChangeSceneWithTransition(const std::string& sceneName, TransitionType transitionType)
-{ 
+{
 	// 遷移中または既にリクエスト済みなら無視
 	if (isTransitionRequested_ || transitionManager_->IsTransitioning()) {
 		return;
