@@ -114,6 +114,8 @@ private:
 		bool isUpper;
 		// 最後にスタンプを押したX座標
 		float lastStampX;
+		// 次にスタンプを生成するX座標
+		float nextStampX;
 	};
 	std::vector<Ball> balls_;
 
@@ -148,6 +150,8 @@ private:
 	float stampShrinkDuration_;
 	// 現在の色インデックス
 	int stampColorIndex_;
+	// スタンプの生成回数
+	uint32_t stampSpawnCount_;
 
 	// カバー（画面全体を覆うスプライト）
 	//std::unique_ptr<Sprite> coverSprite_;

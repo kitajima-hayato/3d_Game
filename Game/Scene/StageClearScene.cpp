@@ -191,7 +191,8 @@ void StageClearScene::Draw()
 
 void StageClearScene::Finalize()
 {
-
+	// カメラの終了処理
+	camera->Finalize();
 }
 
 void StageClearScene::DrawImgui()

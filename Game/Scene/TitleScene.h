@@ -95,11 +95,7 @@ private: // ゲーム要素
 
 	 /// カメラ
 	 Camera* camera = nullptr;
-	 const Transform initCameraTransform{
-		 {0.0f,0.0f, -10.0f}, // scale
-		 {0.0f, 0.0f, 0.0f},   // rotate
-		 {7.5f,-4.0f,0.0f} // translate
-	 };
+	
 
 	 // ===== Title demo player particle & jump (add) =====
 	 std::unique_ptr<ParticleSystem> titleSmoke_;   // 常時煙（走ってる感）

@@ -541,6 +541,12 @@ void StageSelectScene::Update()
 		// タイトルシーンへ切り替え
 		SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE",TransitionType::Normal);
 	}
+	cameraTransform.translate = { 0.0f,20.0f,0.0f };
+	cameraTransform.rotate = { 0.35f,0.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+	camera->Update();
 
 	// 空背景の更新
 	skyBack->Update();
@@ -625,6 +631,8 @@ void StageSelectScene::Draw()
 
 void StageSelectScene::Finalize()
 {
+	// カメラの終了処理
+	camera->Finalize();
 }
 
 void StageSelectScene::PlayerMove()
