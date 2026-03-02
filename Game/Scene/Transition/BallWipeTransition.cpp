@@ -1,5 +1,5 @@
 #include "BallWipeTransition.h"
-#include <numbers>
+#include <cmath>
 
 // カラフルな色パレット（ポップで明るい色）
 const std::vector<Vector4> BallWipeTransition::COLOR_PALETTE = {
@@ -23,28 +23,39 @@ BallWipeTransition::BallWipeTransition(bool isStartTransition)
 	// モードに応じてタイムラインを設定
 	if (isStartMode_) {
 		// 豪華版のタイムライン
-		totalDuration_ = 1.0f;
+		// 演出の総時間
+		totalDuration_ = 1.5f;
+		// ボールの出現時間
 		ballAppearTime_ = 0.0f;
-		rollStartTime_ = 0.1f;
-		rollEndTime_ = 0.5f;
+		// 転がり開始時間
+		rollStartTime_ = 0.15f;
+		// 転がり終了時間
+		rollEndTime_ = 0.75f;
 		// 画面を完全に覆う
-		coverCompleteTime_ = 0.55f;
+		coverCompleteTime_ = 0.825f;
 		// 覆いを解除開始
-		uncoverStartTime_ = 0.65f;
-		stampInterval_ = 20.0f;
-		stampGrowDuration_ = 0.9f;
-		stampShrinkDuration_ = 0.3f;
+		uncoverStartTime_ = 0.975f;
+		// スタンプを押す間隔 / 小さければ密度が高まる
+		stampInterval_ = 100.0f;
+		// スタンプが成長する時間 / 小さければ成長が速くなり、密度が高まる
+		stampGrowDuration_ = 1.0f;
+		// スタンプが縮む時間 / 小さければ縮むのが速くなり、密度が高まる
+		stampShrinkDuration_ = 0.45f;
 	} else {
-		// シンプル版のタイムライン
-		totalDuration_ = 0.5f;
+		// ノーマル版
+		totalDuration_ = 0.8f;
 		ballAppearTime_ = 0.0f;
-		rollStartTime_ = 0.05f;
-		rollEndTime_ = 0.2f;
-		coverCompleteTime_ = 0.25f;
-		uncoverStartTime_ = 0.3f;
-		stampInterval_ = 35.0f;
-		stampGrowDuration_ = 0.6f;
-		stampShrinkDuration_ = 0.15f;
+
+		rollStartTime_ = 0.08f;
+		rollEndTime_ = 0.40f;
+		coverCompleteTime_ = 0.44f;
+		uncoverStartTime_ = 0.52f;
+
+		// スタンプ密度
+		stampInterval_ = 150.0f;       
+
+		stampGrowDuration_ = 0.5f;
+		stampShrinkDuration_ = 0.24f;
 	}
 }
 
@@ -56,6 +67,7 @@ void BallWipeTransition::Initialize()
 	currentPhase_ = Phase::BallAppear;
 	coverAlpha_ = 0.0f;
 	stampColorIndex_ = 0;
+	stampSpawnCount_ = 0;
 
 	// ボールの初期化(２つ)
 	balls_.clear();
@@ -70,6 +82,7 @@ void BallWipeTransition::Initialize()
 	balls_[0].position = { -BALL_RADIUS * 2,UPPER_BALL_Y };
 	balls_[0].rotation = 0.0f;
 	balls_[0].lastStampX = -BALL_RADIUS * 2;
+	balls_[0].nextStampX = -BALL_RADIUS * 2;
 	balls_[0].sprite->SetSize({ BALL_RADIUS * 2, BALL_RADIUS * 2 });
 	// 中心を基準に回転させる
 	balls_[0].sprite->SetAnchorPoint({ 0.5f,0.5f });
@@ -83,6 +96,7 @@ void BallWipeTransition::Initialize()
 	balls_[1].position = { -BALL_RADIUS * 2,LOWER_BALL_Y };
 	balls_[1].rotation = 0.0f;
 	balls_[1].lastStampX = -BALL_RADIUS * 2;
+	balls_[1].nextStampX = -BALL_RADIUS * 2;
 	balls_[1].sprite->SetSize({ BALL_RADIUS * 2, BALL_RADIUS * 2 });
 	// 中心を基準に回転させる
 	balls_[1].sprite->SetAnchorPoint({ 0.5f,0.5f });
@@ -137,38 +151,38 @@ void BallWipeTransition::Update(float deltaTime)
 
 void BallWipeTransition::UpdateBalls(float deltaTime)
 {
-	// 転がりフェーズの進行度
 	float rollDuration = rollEndTime_ - rollStartTime_;
 	float rollTime = (std::max)(0.0f, currentTime_ - rollStartTime_);
 	float rollProgress = (std::min)(1.0f, rollTime / rollDuration);
 
-	// ボールを両面端まで移動
 	float targetX = SCREEN_WIDTH + BALL_RADIUS * 2;
 
 	for (auto& ball : balls_) {
-		// 位置の更新
-		float startX = -BALL_RADIUS * 2; // スタート位置（画面外左）
+		float startX = -BALL_RADIUS * 2;
 		float newX = startX + (targetX - startX) * rollProgress;
 		float distance = newX - ball.position.x;
 		ball.position.x = newX;
 
-		// 回転の更新 / 移動距離で連動
 		ball.rotation += distance / ball.radius;
 
-		// スタンプの生成判定（一定間隔ごと）
-		if (ball.position.x - ball.lastStampX >= stampInterval_) {
-			CreateStamp(ball.position, ball.isUpper);
-			ball.lastStampX = ball.position.x;
+		// ★等間隔でスタンプ生成（Xを固定）
+		while (ball.position.x >= ball.nextStampX) {
+			Vector2 stampPos = ball.position;
+			stampPos.x = ball.nextStampX;          // ← ここでXをグリッドに固定
+			CreateStamp(stampPos, ball.isUpper);
+
+			ball.lastStampX = ball.nextStampX;
+			ball.nextStampX += stampInterval_;     // 次のグリッドへ
 		}
 
-		// スプライトに反映
 		ball.sprite->SetPosition(ball.position);
 		ball.sprite->SetRotation(ball.rotation);
 		ball.sprite->Update();
 	}
 }
 
-void BallWipeTransition::CreateStamp(const Vector2& position, bool isUpper)
+
+void BallWipeTransition::CreateStamp(const Vector2& position, bool /*isUpper*/)
 {
 	Stamp stamp;
 	stamp.sprite = std::make_unique<Sprite>();
@@ -177,14 +191,27 @@ void BallWipeTransition::CreateStamp(const Vector2& position, bool isUpper)
 	stamp.currentSize = 0.0f;
 	stamp.sizeBeforeShrink = 0.0f;
 
-	// サイズをランダムに変化
-	float sizeVariation = (rand() % 20 - 10) / 100.0f;
-	stamp.targetSize = 600.0f + 400.0f * (0.5f + sizeVariation);
+	// サイズ：ランダムをやめて一定（必要なら固定テーブルで変化させる）
+	stamp.targetSize = 800.0f;
 
 	stamp.age = 0.0f;
-	stamp.isUpper = isUpper;
 
-	// カラフルな色を設定
+	// 3ラインを順番に回す（必ず下段も出る)
+	const float lineY[3] = {
+		SCREEN_HEIGHT * (1.0f / 6.0f), // Top (120)
+		SCREEN_HEIGHT * (3.0f / 6.0f), // Middle (360)
+		SCREEN_HEIGHT * (5.0f / 6.0f)  // Bottom (600)
+	};
+
+	const uint32_t i = stampSpawnCount_++;
+	stamp.position.y = lineY[i % 3];
+
+	// ジッターもランダムをやめて固定パターン（任意）
+	const float yJitterTable[3] = { -12.0f, 0.0f, 12.0f };
+	stamp.position.y += yJitterTable[i % 3];
+	// ===== ここまで =====
+
+	// 色はパレット順でOK（これは毎回同じ）
 	stamp.color = GetColorForStamp(stampColorIndex_);
 	stampColorIndex_ = (stampColorIndex_ + 1) % COLOR_PALETTE.size();
 
@@ -196,8 +223,6 @@ void BallWipeTransition::UpdateStamps(float deltaTime)
 {
 	for (auto& stamp : stamps_) {
 		stamp.age += deltaTime;
-
-
 
 		// Uncoveringフェーズならスタンプを縮小
 		if (currentPhase_ == Phase::Uncovering) {
@@ -217,9 +242,18 @@ void BallWipeTransition::UpdateStamps(float deltaTime)
 			if (growProgress < 1.0f) {
 				eased = 1.0f - (1.0f - growProgress) * (1.0f - growProgress);
 			} else {
+				// targetSize到達後は、上限倍率に“漸近”させて成長を緩やかにする（案B）
 				float extraTime = growProgress - 1.0f;
-				eased = 1.0f + extraTime * 0.8f;
-				eased = (std::min)(3.5f, eased);
+
+				// 追加成長の上限倍率（現状の上限と合わせるなら 3.5f）
+				const float maxMul = 3.5f;
+
+				// 上限に近づく速さ（小さいほどゆっくり、均等に見えやすい）
+				// まずは 1.2f がおすすめ。さらに緩やかにしたいなら 0.8f ～ 1.0f。
+				const float k = 1.2f;
+
+				// 1.0 → maxMul に指数的に近づく（時間が経つほど増分が小さくなる）
+				eased = 1.0f + (maxMul - 1.0f) * (1.0f - std::exp(-k * extraTime));
 			}
 			stamp.currentSize = stamp.targetSize * eased;
 		}
