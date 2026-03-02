@@ -50,9 +50,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	InitializeEnemy();
 
-	//sceneTransition = std::make_unique<SceneTransition>();
-	//sceneTransition->Initialize(10);
-
 	backGround = std::make_unique<BackGround>();
 	backGround->Initialize();
 
@@ -111,8 +108,6 @@ void GamePlayScene::Update()
 	player->Update();
 	
 
-	//sceneTransition->Update();
-
 	
 
 	// エネミーレイヤーが変更されたらエネミーを再生成
@@ -121,8 +116,6 @@ void GamePlayScene::Update()
 	}
 
 
-	// カメラのフォロー範囲
-	cameraController_->SetFollowRange(8.0f, 92.0f);
 	// 開始演出中はプレイヤーへの入力を受け付けない
 	if (isPlayerControlLocked_) {
 		player->SetControlEnabled(false);
@@ -257,7 +250,6 @@ void GamePlayScene::GenerateEnemy()
 				enemyId = "FlyingEnemy";
 				break;
 			default:
-				// 未知のタイプ
 				continue;
 			}
 
@@ -331,6 +323,8 @@ void GamePlayScene::Finalize()
 
 	/// オーディオの終了処理
 	Audio::GetInstance().SoundUnload(&soundData);
+	// カメラの終了処理
+	camera->Finalize();
 
 }
 
