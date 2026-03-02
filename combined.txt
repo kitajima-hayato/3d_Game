@@ -3970,6 +3970,19 @@ void Camera::Draw()
 {
 }
 
+void Camera::Finalize()
+{
+	transform = { {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+	fovY = 0.45f;
+	aspectRatio = (float(WinAPI::kClientWidth) / float(WinAPI::kClientHeight));
+	nearClip = 0.1f;
+	farClip = 100.0f;
+	worldMatrix =MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	viewMatrix = Inverse(worldMatrix);
+	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
+	viewProjectionMatrix = Multiply(viewMatrix, projectionMatrix);
+}
+
 
 ============================================================
 File Path: Game/Camera/Camera.h
@@ -3999,15 +4012,19 @@ public:	// メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-		
-public:	
+	/// <summary>
+	/// リセット用終了処理
+	/// </summary>
+	void Finalize();
+
+public:
 	// setter
 	/// <summary>
 	/// 回転・平行移動の設定
 	/// </summary>
 	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
 	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
-	
+
 	/// <summary>
 	/// 視野角の設定
 	/// </summary>
@@ -4037,24 +4054,24 @@ public:
 	/// 各種行列の取得
 	/// </summary>
 	const Matrix4x4& GetWorldMatrix()const { return worldMatrix; }
-	
+
 	/// <summary>
 	/// ビュー行列の取得
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetViewMatrix()const { return viewMatrix; }
-	
+
 	/// <summary>
 	/// プロジェクション行列の取得
 	/// </summary>
 	const Matrix4x4& GetProjectionMatrix()const { return projectionMatrix; }
-	
+
 	/// <summary>
 	/// ビュープロジェクション行列の取得
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetViewProjectionMatrix()const { return viewProjectionMatrix; }
-	
+
 	/// <summary> 
 	/// 拡縮・回転・平行移動の取得
 	/// </summary>
@@ -4076,8 +4093,9 @@ private:
 	float farClip = 100.0f;
 	// ワールド行列
 	Matrix4x4 worldMatrix;
+	// ビュー行列
 	Matrix4x4 viewMatrix;
-
+	// プロジェクション行列
 	Matrix4x4 projectionMatrix;
 
 	// ビュープロジェクション行列
@@ -7221,9 +7239,6 @@ void GamePlayScene::Initialize(DirectXCommon* dxCommon)
 
 	InitializeEnemy();
 
-	//sceneTransition = std::make_unique<SceneTransition>();
-	//sceneTransition->Initialize(10);
-
 	backGround = std::make_unique<BackGround>();
 	backGround->Initialize();
 
@@ -7282,8 +7297,6 @@ void GamePlayScene::Update()
 	player->Update();
 	
 
-	//sceneTransition->Update();
-
 	
 
 	// エネミーレイヤーが変更されたらエネミーを再生成
@@ -7292,8 +7305,6 @@ void GamePlayScene::Update()
 	}
 
 
-	// カメラのフォロー範囲
-	cameraController_->SetFollowRange(8.0f, 92.0f);
 	// 開始演出中はプレイヤーへの入力を受け付けない
 	if (isPlayerControlLocked_) {
 		player->SetControlEnabled(false);
@@ -7428,7 +7439,6 @@ void GamePlayScene::GenerateEnemy()
 				enemyId = "FlyingEnemy";
 				break;
 			default:
-				// 未知のタイプ
 				continue;
 			}
 
@@ -7502,6 +7512,8 @@ void GamePlayScene::Finalize()
 
 	/// オーディオの終了処理
 	Audio::GetInstance().SoundUnload(&soundData);
+	// カメラの終了処理
+	camera->Finalize();
 
 }
 
@@ -9203,7 +9215,8 @@ void StageClearScene::Draw()
 
 void StageClearScene::Finalize()
 {
-
+	// カメラの終了処理
+	camera->Finalize();
 }
 
 void StageClearScene::DrawImgui()
@@ -9875,6 +9888,12 @@ void StageSelectScene::Update()
 		// タイトルシーンへ切り替え
 		SceneManager::GetInstance()->ChangeSceneWithTransition("TITLE",TransitionType::Normal);
 	}
+	cameraTransform.translate = { 0.0f,20.0f,0.0f };
+	cameraTransform.rotate = { 0.35f,0.0f,0.0f };
+	camera->SetTranslate(cameraTransform.translate);
+	camera->SetRotate(cameraTransform.rotate);
+
+	camera->Update();
 
 	// 空背景の更新
 	skyBack->Update();
@@ -9959,6 +9978,8 @@ void StageSelectScene::Draw()
 
 void StageSelectScene::Finalize()
 {
+	// カメラの終了処理
+	camera->Finalize();
 }
 
 void StageSelectScene::PlayerMove()
@@ -10805,7 +10826,7 @@ File Path: Game/Scene/TitleScene.cpp
 #include "TitleScene.h"
 #include "Input.h"
 #include "Object3D.h"
-#include "Game/Camera/camera.h"
+#include "Game/Camera/Camera.h"
 #include "Game/Particle/ParticleManager.h"
 #include "Game/Particle/ModelParticleManager.h"
 #include "Game/Particle/ParticleSystem.h"
@@ -10826,7 +10847,15 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 	// マルチスレッドでの読み込み
 	LoadAudio();
 	LoadSprite();
-
+	// カメラの取得と設定
+	camera = Framework::GetMainCamera();
+	const Transform initCameraTransform = {
+		 {0.0f,0.0f, -10.0f}, // scale
+		 {0.0f, 0.0f, 0.0f},   // rotate
+		 {7.5f,-4.0f,0.0f} // translate
+	};
+	camera->SetTranslate(initCameraTransform.translate);
+	camera->SetRotate(initCameraTransform.rotate);
 	// パーティクルグループを作成
 	particleEmitter = ParticlePresets::CreateSmoke({ 1.0f,-7.0f,20.0f });
 	particleEmitter->Pause();
@@ -10838,8 +10867,6 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	presetEffect = ParticlePresets::CreateSummonCircle({5.0f,-7.0f,20.0f});
 	//presetEffect->Play();
-
-
 
 
 	playerObject = std::make_unique<Object3D>();
@@ -10855,18 +10882,10 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	
 
-
-	//sceneTransition = std::make_unique<SceneTransition>();
-	//sceneTransition->Initialize();
-
 	background = std::make_unique<BackGround>();
 	background->Initialize();
 
-	// カメラの取得と設定
-	camera = Framework::GetMainCamera();
 	
-	camera->SetTranslate(initCameraTransform.translate);
-	camera->SetRotate(initCameraTransform.rotate);
 
 	// タイトルスプライトの初期化
 	titleSprite = std::make_unique<Sprite>();
@@ -10908,12 +10927,10 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 void TitleScene::Update()
 {
-	//sprite_->Update();
+	
 	camera->Update();
-
 	background->Update();
 
-	//sceneTransition->Update();
 
 #ifdef USE_IMGUI
 	DrawImgui();
@@ -11026,27 +11043,17 @@ void TitleScene::Update()
 void TitleScene::Draw()
 {
 
-#pragma region 3Dオブジェクトの描画準備
-
-	//sprite_->Draw();
-#pragma endregion
 
 #pragma region 3Dオブジェクトの描画
 
 	background->Draw();
 
-	//object3D->Draw();
-	//levelData->Draw();
 	playerObject->Draw();
-	//Rainbow->Draw();
-
 	
 
 	// パーティクルの描画
 	ParticleManager::GetInstance()->Draw();
 	ModelParticleManager::GetInstance().Draw();
-
-	//sceneTransition->Draw();
 
 
 #pragma endregion
@@ -11063,6 +11070,8 @@ void TitleScene::Finalize()
 	// オーディオの終了処理
 	//Audio::GetInstance()->SoundUnload(&soundData);
 	
+	// カメラの終了処理
+	camera->Finalize();
 	
 }
 
@@ -11091,6 +11100,12 @@ void TitleScene::DrawImgui() {
 	ImGui::DragFloat3("Translate", &pTransform.translate.x, 0.1f);
 
 	playerObject->SetTransform(pTransform);
+
+	// カメラの配置情報の変更
+	Transform cTransform = { {0.0f,0.0f,0.0f}, camera->GetRotate(),camera->GetTranslate() };
+	ImGui::DragFloat3("Camera Rotate", &cTransform.rotate.x, 0.1f);
+	ImGui::DragFloat3("Camera Translate", &cTransform.translate.x, 0.1f);
+	
 
 	ImGui::End();
 
@@ -11203,11 +11218,7 @@ private: // ゲーム要素
 
 	 /// カメラ
 	 Camera* camera = nullptr;
-	 const Transform initCameraTransform{
-		 {0.0f,0.0f, -10.0f}, // scale
-		 {0.0f, 0.0f, 0.0f},   // rotate
-		 {7.5f,-4.0f,0.0f} // translate
-	 };
+	
 
 	 // ===== Title demo player particle & jump (add) =====
 	 std::unique_ptr<ParticleSystem> titleSmoke_;   // 常時煙（走ってる感）
@@ -11236,7 +11247,7 @@ private: // ゲーム要素
 File Path: Game/Scene/Transition/BallWipeTransition.cpp
 ============================================================
 #include "BallWipeTransition.h"
-#include <numbers>
+#include <cmath>
 
 // カラフルな色パレット（ポップで明るい色）
 const std::vector<Vector4> BallWipeTransition::COLOR_PALETTE = {
@@ -11260,28 +11271,39 @@ BallWipeTransition::BallWipeTransition(bool isStartTransition)
 	// モードに応じてタイムラインを設定
 	if (isStartMode_) {
 		// 豪華版のタイムライン
-		totalDuration_ = 1.0f;
+		// 演出の総時間
+		totalDuration_ = 1.5f;
+		// ボールの出現時間
 		ballAppearTime_ = 0.0f;
-		rollStartTime_ = 0.1f;
-		rollEndTime_ = 0.5f;
+		// 転がり開始時間
+		rollStartTime_ = 0.15f;
+		// 転がり終了時間
+		rollEndTime_ = 0.75f;
 		// 画面を完全に覆う
-		coverCompleteTime_ = 0.55f;
+		coverCompleteTime_ = 0.825f;
 		// 覆いを解除開始
-		uncoverStartTime_ = 0.65f;
-		stampInterval_ = 20.0f;
-		stampGrowDuration_ = 0.9f;
-		stampShrinkDuration_ = 0.3f;
+		uncoverStartTime_ = 0.975f;
+		// スタンプを押す間隔 / 小さければ密度が高まる
+		stampInterval_ = 100.0f;
+		// スタンプが成長する時間 / 小さければ成長が速くなり、密度が高まる
+		stampGrowDuration_ = 1.0f;
+		// スタンプが縮む時間 / 小さければ縮むのが速くなり、密度が高まる
+		stampShrinkDuration_ = 0.45f;
 	} else {
-		// シンプル版のタイムライン
-		totalDuration_ = 0.5f;
+		// ノーマル版
+		totalDuration_ = 0.8f;
 		ballAppearTime_ = 0.0f;
-		rollStartTime_ = 0.05f;
-		rollEndTime_ = 0.2f;
-		coverCompleteTime_ = 0.25f;
-		uncoverStartTime_ = 0.3f;
-		stampInterval_ = 35.0f;
-		stampGrowDuration_ = 0.6f;
-		stampShrinkDuration_ = 0.15f;
+
+		rollStartTime_ = 0.08f;
+		rollEndTime_ = 0.40f;
+		coverCompleteTime_ = 0.44f;
+		uncoverStartTime_ = 0.52f;
+
+		// スタンプ密度
+		stampInterval_ = 150.0f;       
+
+		stampGrowDuration_ = 0.5f;
+		stampShrinkDuration_ = 0.24f;
 	}
 }
 
@@ -11293,6 +11315,7 @@ void BallWipeTransition::Initialize()
 	currentPhase_ = Phase::BallAppear;
 	coverAlpha_ = 0.0f;
 	stampColorIndex_ = 0;
+	stampSpawnCount_ = 0;
 
 	// ボールの初期化(２つ)
 	balls_.clear();
@@ -11307,6 +11330,7 @@ void BallWipeTransition::Initialize()
 	balls_[0].position = { -BALL_RADIUS * 2,UPPER_BALL_Y };
 	balls_[0].rotation = 0.0f;
 	balls_[0].lastStampX = -BALL_RADIUS * 2;
+	balls_[0].nextStampX = -BALL_RADIUS * 2;
 	balls_[0].sprite->SetSize({ BALL_RADIUS * 2, BALL_RADIUS * 2 });
 	// 中心を基準に回転させる
 	balls_[0].sprite->SetAnchorPoint({ 0.5f,0.5f });
@@ -11320,6 +11344,7 @@ void BallWipeTransition::Initialize()
 	balls_[1].position = { -BALL_RADIUS * 2,LOWER_BALL_Y };
 	balls_[1].rotation = 0.0f;
 	balls_[1].lastStampX = -BALL_RADIUS * 2;
+	balls_[1].nextStampX = -BALL_RADIUS * 2;
 	balls_[1].sprite->SetSize({ BALL_RADIUS * 2, BALL_RADIUS * 2 });
 	// 中心を基準に回転させる
 	balls_[1].sprite->SetAnchorPoint({ 0.5f,0.5f });
@@ -11374,38 +11399,38 @@ void BallWipeTransition::Update(float deltaTime)
 
 void BallWipeTransition::UpdateBalls(float deltaTime)
 {
-	// 転がりフェーズの進行度
 	float rollDuration = rollEndTime_ - rollStartTime_;
 	float rollTime = (std::max)(0.0f, currentTime_ - rollStartTime_);
 	float rollProgress = (std::min)(1.0f, rollTime / rollDuration);
 
-	// ボールを両面端まで移動
 	float targetX = SCREEN_WIDTH + BALL_RADIUS * 2;
 
 	for (auto& ball : balls_) {
-		// 位置の更新
-		float startX = -BALL_RADIUS * 2; // スタート位置（画面外左）
+		float startX = -BALL_RADIUS * 2;
 		float newX = startX + (targetX - startX) * rollProgress;
 		float distance = newX - ball.position.x;
 		ball.position.x = newX;
 
-		// 回転の更新 / 移動距離で連動
 		ball.rotation += distance / ball.radius;
 
-		// スタンプの生成判定（一定間隔ごと）
-		if (ball.position.x - ball.lastStampX >= stampInterval_) {
-			CreateStamp(ball.position, ball.isUpper);
-			ball.lastStampX = ball.position.x;
+		// ★等間隔でスタンプ生成（Xを固定）
+		while (ball.position.x >= ball.nextStampX) {
+			Vector2 stampPos = ball.position;
+			stampPos.x = ball.nextStampX;          // ← ここでXをグリッドに固定
+			CreateStamp(stampPos, ball.isUpper);
+
+			ball.lastStampX = ball.nextStampX;
+			ball.nextStampX += stampInterval_;     // 次のグリッドへ
 		}
 
-		// スプライトに反映
 		ball.sprite->SetPosition(ball.position);
 		ball.sprite->SetRotation(ball.rotation);
 		ball.sprite->Update();
 	}
 }
 
-void BallWipeTransition::CreateStamp(const Vector2& position, bool isUpper)
+
+void BallWipeTransition::CreateStamp(const Vector2& position, bool /*isUpper*/)
 {
 	Stamp stamp;
 	stamp.sprite = std::make_unique<Sprite>();
@@ -11414,14 +11439,27 @@ void BallWipeTransition::CreateStamp(const Vector2& position, bool isUpper)
 	stamp.currentSize = 0.0f;
 	stamp.sizeBeforeShrink = 0.0f;
 
-	// サイズをランダムに変化
-	float sizeVariation = (rand() % 20 - 10) / 100.0f;
-	stamp.targetSize = 600.0f + 400.0f * (0.5f + sizeVariation);
+	// サイズ：ランダムをやめて一定（必要なら固定テーブルで変化させる）
+	stamp.targetSize = 800.0f;
 
 	stamp.age = 0.0f;
-	stamp.isUpper = isUpper;
 
-	// カラフルな色を設定
+	// 3ラインを順番に回す（必ず下段も出る)
+	const float lineY[3] = {
+		SCREEN_HEIGHT * (1.0f / 6.0f), // Top (120)
+		SCREEN_HEIGHT * (3.0f / 6.0f), // Middle (360)
+		SCREEN_HEIGHT * (5.0f / 6.0f)  // Bottom (600)
+	};
+
+	const uint32_t i = stampSpawnCount_++;
+	stamp.position.y = lineY[i % 3];
+
+	// ジッターもランダムをやめて固定パターン（任意）
+	const float yJitterTable[3] = { -12.0f, 0.0f, 12.0f };
+	stamp.position.y += yJitterTable[i % 3];
+	// ===== ここまで =====
+
+	// 色はパレット順でOK（これは毎回同じ）
 	stamp.color = GetColorForStamp(stampColorIndex_);
 	stampColorIndex_ = (stampColorIndex_ + 1) % COLOR_PALETTE.size();
 
@@ -11433,8 +11471,6 @@ void BallWipeTransition::UpdateStamps(float deltaTime)
 {
 	for (auto& stamp : stamps_) {
 		stamp.age += deltaTime;
-
-
 
 		// Uncoveringフェーズならスタンプを縮小
 		if (currentPhase_ == Phase::Uncovering) {
@@ -11454,9 +11490,18 @@ void BallWipeTransition::UpdateStamps(float deltaTime)
 			if (growProgress < 1.0f) {
 				eased = 1.0f - (1.0f - growProgress) * (1.0f - growProgress);
 			} else {
+				// targetSize到達後は、上限倍率に“漸近”させて成長を緩やかにする（案B）
 				float extraTime = growProgress - 1.0f;
-				eased = 1.0f + extraTime * 0.8f;
-				eased = (std::min)(3.5f, eased);
+
+				// 追加成長の上限倍率（現状の上限と合わせるなら 3.5f）
+				const float maxMul = 3.5f;
+
+				// 上限に近づく速さ（小さいほどゆっくり、均等に見えやすい）
+				// まずは 1.2f がおすすめ。さらに緩やかにしたいなら 0.8f ～ 1.0f。
+				const float k = 1.2f;
+
+				// 1.0 → maxMul に指数的に近づく（時間が経つほど増分が小さくなる）
+				eased = 1.0f + (maxMul - 1.0f) * (1.0f - std::exp(-k * extraTime));
 			}
 			stamp.currentSize = stamp.targetSize * eased;
 		}
@@ -11637,6 +11682,8 @@ private:
 		bool isUpper;
 		// 最後にスタンプを押したX座標
 		float lastStampX;
+		// 次にスタンプを生成するX座標
+		float nextStampX;
 	};
 	std::vector<Ball> balls_;
 
@@ -11671,6 +11718,8 @@ private:
 	float stampShrinkDuration_;
 	// 現在の色インデックス
 	int stampColorIndex_;
+	// スタンプの生成回数
+	uint32_t stampSpawnCount_;
 
 	// カバー（画面全体を覆うスプライト）
 	//std::unique_ptr<Sprite> coverSprite_;
@@ -16104,6 +16153,12 @@ void SceneManager::Update(DirectXCommon* dxCommon)
 				nextScene_ = sceneFactory_->CreateScene(pendingSceneName_);
 
 				// シーン初期化
+				if (scene_) {
+					scene_->Finalize();
+					scene_.reset();
+				}
+
+				// シーン初期化
 				if (nextScene_) {
 					nextScene_->SetSceneManager(this);
 					nextScene_->Initialize(dxCommon);
@@ -16114,12 +16169,9 @@ void SceneManager::Update(DirectXCommon* dxCommon)
 		}
 
 		// ロード完了後、シーン切り替え実行
-		if (transitionManager_->GetPhase() == TransitionPhase::FadeIn && 
+		if (transitionManager_->GetPhase() == TransitionPhase::FadeIn &&
 			nextScene_ && isTransitionRequested_) {
-			if (scene_) {
-				scene_->Finalize();
-				scene_.reset();
-			}
+
 
 			// シーンの切り替え
 			scene_ = std::move(nextScene_);
@@ -16199,7 +16251,7 @@ void SceneManager::ChangeScene(const std::string& sceneName)
 }
 
 void SceneManager::ChangeSceneWithTransition(const std::string& sceneName, TransitionType transitionType)
-{ 
+{
 	// 遷移中または既にリクエスト済みなら無視
 	if (isTransitionRequested_ || transitionManager_->IsTransitioning()) {
 		return;
