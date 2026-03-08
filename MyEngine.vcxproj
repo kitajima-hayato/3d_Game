@@ -54,6 +54,7 @@
     <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
     <IncludePath>$(SolutionDir)imgui;$(SolutionDir)DirectXTex;$(IncludePath)</IncludePath>
+    <TargetName>KolonWorld</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

@@ -733,7 +733,7 @@ bool Player::IsHitBlockTable(BlockType type)
 	case BlockType::GrassBlock:
 	case BlockType::SoilBlock:
 	case BlockType::breakBlock:
-	case BlockType::Unbreakable:
+	case BlockType::unBreakable:
 		return true;
 
 	default:

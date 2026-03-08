@@ -65,13 +65,13 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	// タイトルスプライトの初期化
 	titleSprite = std::make_unique<Sprite>();
-	titleSprite->Initialize("resources/Scenes/Title/UI/Texture/Title.png");
+	titleSprite->Initialize("resources/Scenes/Title/UI/Texture/Title.dds");
 	titleSprite->SetPosition({ 0.0f,0.0f });
 	titleSprite->SetSize({ 1280.0f,720.0f });
 
 	// Press Start スプライトの初期化
 	pressStartSprite = std::make_unique<Sprite>();
-	pressStartSprite->Initialize("resources/Scenes/Title/UI/Texture/PushSpace.png");
+	pressStartSprite->Initialize("resources/Scenes/Title/UI/Texture/PushSpace.dds");
 	pressStartSprite->SetPosition({ -20.0f,100.0f });
 	pressStartSprite->SetSize({ 1280.0f,720.0f });
 

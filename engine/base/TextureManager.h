@@ -37,6 +37,11 @@ public:		// メンバ関数
 	/// </summary>
 	void LoadTexture(const std::string& filePath);
 
+	// 追加：まとめ読み込み（最後に1回だけWait）
+	void LoadTextures(const std::vector<std::string>& filePaths);
+
+	// 追加：アップロード完了待ち（最後に1回だけ呼ぶ）
+	void FlushUploads();
 public:	// Getter,Setter
 	/// <summary>
 	/// シングルトンインスタンスの取得
@@ -98,5 +103,8 @@ private:	// メンバ変数
 	// SRVマネージャー
 	SrvManager* srvManager = nullptr;
 
+
+	// 追加：UploadTextureDataが返す中間リソースをWaitまで保持する
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> pendingUploadResources_;
 };
 

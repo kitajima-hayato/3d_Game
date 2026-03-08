@@ -470,57 +470,57 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 	// UI初期化
 	stageSelect_ = std::make_unique<Sprite>();
-	stageSelect_->Initialize("resources/Scenes/StageSelect/UI/Texture/StageSelect.png");
+	stageSelect_->Initialize("resources/Scenes/StageSelect/UI/Texture/StageSelect.dds");
 	stageSelect_->SetPosition({ 0.0f,0.0f });
 	stageSelect_->SetSize({ 1280.0f,720.0f });
 
 	// KeyIconUi / 左下に配置
 	keyIcon_W = std::make_unique<Sprite>();
-	keyIcon_W->Initialize("resources/_Common/UI/Texture/inputhints/W.png");
+	keyIcon_W->Initialize("resources/_Common/UI/Texture/inputhints/W.dds");
 	keyIcon_W->SetPosition({ 55.0f, 615.0f });
 	keyIcon_W->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.dds");
 	keyIcon_A->SetPosition({ 10.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_S = std::make_unique<Sprite>();
-	keyIcon_S->Initialize("resources/_Common/UI/Texture/inputhints/S.png");
+	keyIcon_S->Initialize("resources/_Common/UI/Texture/inputhints/S.dds");
 	keyIcon_S->SetPosition({ 55.0f, 660.0f });
 	keyIcon_S->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.dds");
 	keyIcon_D->SetPosition({ 100.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	// esc / enter UI配置
 	keyIcon_Esc = std::make_unique<Sprite>();
-	keyIcon_Esc->Initialize("resources/_Common/UI/Texture/inputhints/Esc.png");
+	keyIcon_Esc->Initialize("resources/_Common/UI/Texture/inputhints/Esc.dds");
 	keyIcon_Esc->SetPosition({ 55.0f, 560.0f });
 	keyIcon_Esc->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.dds");
 	keyIcon_Enter->SetPosition({ 55.0f, 505.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 
 	// MoveUI
 	moveUI_ = std::make_unique<Sprite>();
-	moveUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Move.png");
+	moveUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Move.dds");
 	moveUI_->SetPosition(moveUI_Pos_);
 	moveUI_->SetSize({ 125.0f,50.0f });
 
 	// CheckUI
 	checkUI_ = std::make_unique<Sprite>();
-	checkUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Check.png");
+	checkUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Check.dds");
 	checkUI_->SetPosition(checkUI_Pos_);
 	checkUI_->SetSize({ 125.0f,50.0f });
 
 	// BackUI
 	backUI_ = std::make_unique<Sprite>();
-	backUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Back.png");
+	backUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Back.dds");
 	backUI_->SetPosition(backUI_Pos_);
 	backUI_->SetSize({ 125.0f,50.0f });
 }
