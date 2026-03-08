@@ -4,20 +4,20 @@
 void GamePlayHUD::Initialize()
 {
 	// ポーズアイコン
-	pauseSprite_ = MakeSprite("resources/_Common/UI/Texture/inputhints/Esc.png",
+	pauseSprite_ = MakeSprite("resources/_Common/UI/Texture/inputhints/Esc.dds",
 		{ 30.0f,30.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,1.0f });
 	// コントロールUI
 	// Dキー
-	controlUI_D = MakeSprite("resources/_Common/UI/Texture/inputhints/D.png",
+	controlUI_D = MakeSprite("resources/_Common/UI/Texture/inputhints/D.dds",
 		{ 200.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Aキー
-	controlUI_A = MakeSprite("resources/_Common/UI/Texture/inputhints/A.png",
+	controlUI_A = MakeSprite("resources/_Common/UI/Texture/inputhints/A.dds",
 		{ 100.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Sキー
-	controlUI_S = MakeSprite("resources/_Common/UI/Texture/inputhints/S.png",
+	controlUI_S = MakeSprite("resources/_Common/UI/Texture/inputhints/S.dds",
 		{ 150.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Wキー
-	controlUI_W = MakeSprite("resources/_Common/UI/Texture/inputhints/W.png",
+	controlUI_W = MakeSprite("resources/_Common/UI/Texture/inputhints/W.dds",
 		{ 150.0f,20.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 
 	UiActive_ = false;

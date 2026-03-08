@@ -89,6 +89,28 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGpuDescriptorHandle(const std::st
 	return it->second.srvHandleGPU;
 }
 
+void TextureManager::FlushUploads()
+{
+	// 何もなければ何もしない
+	if (pendingUploadResources_.empty()) {
+		return;
+	}
+
+	// まとめて1回だけGPU完了待ち
+	dxCommon->WaitCommand();
+
+	// GPU完了後に中間リソースを破棄できる
+	pendingUploadResources_.clear();
+}
+
+void TextureManager::LoadTextures(const std::vector<std::string>& filePaths)
+{
+	for (const auto& p : filePaths) {
+		LoadTexture(p);
+	}
+	FlushUploads();
+}
+
 
 
 
@@ -102,6 +124,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 
 void TextureManager::Finalize()
 {
+	FlushUploads();
 	// テクスチャデータのクリア
 	textureDates.clear();
 }
@@ -133,12 +156,21 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
 	// ミップマップの作成
 	DirectX::ScratchImage mipImages{};
-	// 圧縮フォーマットか調べる
-	if (DirectX::IsCompressed(image.GetMetadata().format)) {
-		// 圧縮フォーマットであればそのまま使用するのでmove
+	const auto meta = image.GetMetadata();
+	const bool isDDS = filePathW.ends_with(L".dds");
+
+	// DDSで mip を持っているなら、それを信頼して再生成しない
+	if (isDDS && meta.mipLevels > 1) {
+		mipImages = std::move(image);
+	} else if (DirectX::IsCompressed(meta.format)) {
+		// 圧縮フォーマットも再生成しない
 		mipImages = std::move(image);
 	} else {
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		hr = DirectX::GenerateMipMaps(
+			image.GetImages(), image.GetImageCount(), meta,
+			DirectX::TEX_FILTER_SRGB, 0, mipImages
+		);
+		assert(SUCCEEDED(hr));
 	}
 
 
@@ -152,7 +184,10 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	// 中間リソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = dxCommon->UploadTextureData(textureData.resource, mipImages);
 	// コマンドのキックを待つ
-	dxCommon->WaitCommand();
+	//dxCommon->WaitCommand();
+
+	// ここでWaitしない。FlushUploads()で待つまで保持する
+	pendingUploadResources_.push_back(intermediateResource);
 
 	// テクスチャデータの要素数番号をSRVのインデックスとする
 	uint32_t srvIndex = static_cast<uint32_t>(textureDates.size()) + kSRVIndexTop;

@@ -158,9 +158,9 @@ private:
 	float coverAlpha_ = 0.0f; // カバーの透明度（0.0f ~ 1.0f）
 
 	// スプライトのファイルパス
-	const std::string ballSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/ball.png";
-	const std::string trailSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/trail.png";
-	const std::string stampSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/stamp.png";
+	const std::string ballSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/ball.dds";
+	const std::string trailSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/trail.dds";
+	const std::string stampSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/stamp.dds";
 
 
 	// 画面のサイズ

@@ -47,7 +47,7 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::kGoalDown:
 		blockModel->SetModel("GamePlay/Blocks/goalblock/down");
 		break;
-	case BlockType::Unbreakable:
+	case BlockType::unBreakable:
 		blockModel->SetModel("GamePlay/Blocks/unbreakableblock");
 		break;
 	default:

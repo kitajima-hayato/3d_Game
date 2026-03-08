@@ -1,0 +1,124 @@
+time,status,src_png,dst_dds,message
+2026-03-05T00:28:38,OK,_Common\Model\XYZLabel\transparent.png,_Common\Model\XYZLabel\transparent.dds,converted
+2026-03-05T00:28:39,OK,_Common\Textures\debug\default.png,_Common\Textures\debug\default.dds,converted
+2026-03-05T00:28:41,OK,_Common\UI\Texture\gradation\gradationLine_flipped.png,_Common\UI\Texture\gradation\gradationLine_flipped.dds,converted
+2026-03-05T00:28:43,OK,_Common\UI\Texture\gradation\gradationLine.png,_Common\UI\Texture\gradation\gradationLine.dds,converted
+2026-03-05T00:28:44,OK,_Common\UI\Texture\inputhints\A.png,_Common\UI\Texture\inputhints\A.dds,converted
+2026-03-05T00:28:45,OK,_Common\UI\Texture\inputhints\D.png,_Common\UI\Texture\inputhints\D.dds,converted
+2026-03-05T00:28:46,OK,_Common\UI\Texture\inputhints\DashUI.png,_Common\UI\Texture\inputhints\DashUI.dds,converted
+2026-03-05T00:28:47,OK,_Common\UI\Texture\inputhints\Enter.png,_Common\UI\Texture\inputhints\Enter.dds,converted
+2026-03-05T00:28:49,OK,_Common\UI\Texture\inputhints\Esc.png,_Common\UI\Texture\inputhints\Esc.dds,converted
+2026-03-05T00:28:50,OK,_Common\UI\Texture\inputhints\moveUI.png,_Common\UI\Texture\inputhints\moveUI.dds,converted
+2026-03-05T00:28:51,OK,_Common\UI\Texture\inputhints\S.png,_Common\UI\Texture\inputhints\S.dds,converted
+2026-03-05T00:28:52,OK,_Common\UI\Texture\inputhints\W.png,_Common\UI\Texture\inputhints\W.dds,converted
+2026-03-05T00:28:54,OK,_Common\UI\Texture\utility\uvChecker.png,_Common\UI\Texture\utility\uvChecker.dds,converted
+2026-03-05T00:28:55,OK,_Common\UI\Texture\utility\white.png,_Common\UI\Texture\utility\white.dds,converted
+2026-03-05T00:28:55,SKIP,Effects\Hit\Textures\HitDamage.png,Effects\Hit\Textures\HitDamage.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\circle.png,Effects\Particles\Textures\circle.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\circle2.png,Effects\Particles\Textures\circle2.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\hanabira.png,Effects\Particles\Textures\hanabira.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\momiji_s.png,Effects\Particles\Textures\momiji_s.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\momiji.png,Effects\Particles\Textures\momiji.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\sakura.png,Effects\Particles\Textures\sakura.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\smoke.png,Effects\Particles\Textures\smoke.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\snow.png,Effects\Particles\Textures\snow.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\square.png,Effects\Particles\Textures\square.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\star.png,Effects\Particles\Textures\star.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\starSmall.png,Effects\Particles\Textures\starSmall.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\sun.png,Effects\Particles\Textures\sun.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\trail_amiami.png,Effects\Particles\Textures\trail_amiami.dds,already exists
+2026-03-05T00:28:55,SKIP,Effects\Particles\Textures\wind.png,Effects\Particles\Textures\wind.dds,already exists
+2026-03-05T00:28:55,SKIP,GamePlay\BackGround\flower_bubs\FlowerBubs.png,GamePlay\BackGround\flower_bubs\FlowerBubs.dds,already exists
+2026-03-05T00:28:59,OK,GamePlay\BackGround\flower_orange\Flower_Orange.png,GamePlay\BackGround\flower_orange\Flower_Orange.dds,converted
+2026-03-05T00:29:05,OK,GamePlay\BackGround\flower_pink\Flower_pink.png,GamePlay\BackGround\flower_pink\Flower_pink.dds,converted
+2026-03-05T00:29:10,OK,GamePlay\BackGround\flower_purple\Flower_Purple.png,GamePlay\BackGround\flower_purple\Flower_Purple.dds,converted
+2026-03-05T00:29:15,OK,GamePlay\BackGround\fluff\Fluff.png,GamePlay\BackGround\fluff\Fluff.dds,converted
+2026-03-05T00:29:19,OK,GamePlay\BackGround\mountain_far\mountain_far.png,GamePlay\BackGround\mountain_far\mountain_far.dds,converted
+2026-03-05T00:29:24,OK,GamePlay\BackGround\mountain_front\mountain_mid.png,GamePlay\BackGround\mountain_front\mountain_mid.dds,converted
+2026-03-05T00:30:18,SKIP,Effects\Hit\Textures\HitDamage.png,Effects\Hit\Textures\HitDamage.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\circle.png,Effects\Particles\Textures\circle.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\circle2.png,Effects\Particles\Textures\circle2.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\hanabira.png,Effects\Particles\Textures\hanabira.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\momiji.png,Effects\Particles\Textures\momiji.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\momiji_s.png,Effects\Particles\Textures\momiji_s.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\sakura.png,Effects\Particles\Textures\sakura.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\smoke.png,Effects\Particles\Textures\smoke.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\snow.png,Effects\Particles\Textures\snow.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\square.png,Effects\Particles\Textures\square.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\star.png,Effects\Particles\Textures\star.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\starSmall.png,Effects\Particles\Textures\starSmall.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\sun.png,Effects\Particles\Textures\sun.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\trail_amiami.png,Effects\Particles\Textures\trail_amiami.dds,already exists
+2026-03-05T00:30:18,SKIP,Effects\Particles\Textures\wind.png,Effects\Particles\Textures\wind.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\flower_bubs\FlowerBubs.png,GamePlay\BackGround\flower_bubs\FlowerBubs.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\flower_orange\Flower_Orange.png,GamePlay\BackGround\flower_orange\Flower_Orange.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\flower_pink\Flower_pink.png,GamePlay\BackGround\flower_pink\Flower_pink.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\flower_purple\Flower_Purple.png,GamePlay\BackGround\flower_purple\Flower_Purple.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\fluff\Fluff.png,GamePlay\BackGround\fluff\Fluff.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\mountain_far\mountain_far.png,GamePlay\BackGround\mountain_far\mountain_far.dds,already exists
+2026-03-05T00:30:18,SKIP,GamePlay\BackGround\mountain_front\mountain_mid.png,GamePlay\BackGround\mountain_front\mountain_mid.dds,already exists
+2026-03-05T00:30:21,OK,GamePlay\BackGround\mountain_mid\mountain_mid.png,GamePlay\BackGround\mountain_mid\mountain_mid.dds,converted
+2026-03-05T00:30:25,OK,GamePlay\BackGround\sky\BackSky.png,GamePlay\BackGround\sky\BackSky.dds,converted
+2026-03-05T00:30:29,OK,GamePlay\Blocks\breakblock\breakBlock.png,GamePlay\Blocks\breakblock\breakBlock.dds,converted
+2026-03-05T00:30:34,OK,GamePlay\Blocks\goalblock\down\goalDown.png,GamePlay\Blocks\goalblock\down\goalDown.dds,converted
+2026-03-05T00:30:39,OK,GamePlay\Blocks\goalblock\up\goalUp.png,GamePlay\Blocks\goalblock\up\goalUp.dds,converted
+2026-03-05T00:30:45,OK,GamePlay\Blocks\grassblock\Grass.png,GamePlay\Blocks\grassblock\Grass.dds,converted
+2026-03-05T00:30:49,OK,GamePlay\Blocks\moveblock\moveBlock.png,GamePlay\Blocks\moveblock\moveBlock.dds,converted
+2026-03-05T00:30:52,OK,GamePlay\Blocks\nullblock\nullBlock.png,GamePlay\Blocks\nullblock\nullBlock.dds,converted
+2026-03-05T00:30:55,OK,GamePlay\Blocks\sandblock\sand.png,GamePlay\Blocks\sandblock\sand.dds,converted
+2026-03-05T00:31:00,OK,GamePlay\Blocks\soilblock\soil.png,GamePlay\Blocks\soilblock\soil.dds,converted
+2026-03-05T00:31:04,OK,GamePlay\Blocks\unbreakableblock\Unbreakable.png,GamePlay\Blocks\unbreakableblock\Unbreakable.dds,converted
+2026-03-05T00:31:08,OK,GamePlay\Enemies\tentativeenemy\TentativeEnemyColor.png,GamePlay\Enemies\tentativeenemy\TentativeEnemyColor.dds,converted
+2026-03-05T00:31:08,SKIP,GamePlay\Player\Player.png,GamePlay\Player\Player.dds,already exists
+2026-03-05T00:31:10,OK,Scenes\Clear\UI\Texture\ClearUI_OneMore.png,Scenes\Clear\UI\Texture\ClearUI_OneMore.dds,converted
+2026-03-05T00:31:12,OK,Scenes\Clear\UI\Texture\ClearUI_Select.png,Scenes\Clear\UI\Texture\ClearUI_Select.dds,converted
+2026-03-05T00:31:14,OK,Scenes\Clear\UI\Texture\ClearUI_Title.png,Scenes\Clear\UI\Texture\ClearUI_Title.dds,converted
+2026-03-05T00:31:18,OK,Scenes\Clear\UI\Texture\StageClear.png,Scenes\Clear\UI\Texture\StageClear.dds,converted
+2026-03-05T00:31:23,OK,Scenes\Pause\UI\Texture\PauseBlack.png,Scenes\Pause\UI\Texture\PauseBlack.dds,converted
+2026-03-05T00:31:29,OK,Scenes\Pause\UI\Texture\PauseUICircleSlot.png,Scenes\Pause\UI\Texture\PauseUICircleSlot.dds,converted
+2026-03-05T00:31:32,OK,Scenes\Pause\UI\Texture\PauseUICircleSlot_2.png,Scenes\Pause\UI\Texture\PauseUICircleSlot_2.dds,converted
+2026-03-05T00:31:35,OK,Scenes\Pause\UI\Texture\PauseUISlotItem.png,Scenes\Pause\UI\Texture\PauseUISlotItem.dds,converted
+2026-03-05T00:31:38,OK,Scenes\Pause\UI\Texture\PauseUISlotItemDown.png,Scenes\Pause\UI\Texture\PauseUISlotItemDown.dds,converted
+2026-03-05T00:31:42,OK,Scenes\Pause\UI\Texture\PauseUISlotItemDown_IconB.png,Scenes\Pause\UI\Texture\PauseUISlotItemDown_IconB.dds,converted
+2026-03-05T00:31:46,OK,Scenes\Pause\UI\Texture\PauseUISlotItemLeft.png,Scenes\Pause\UI\Texture\PauseUISlotItemLeft.dds,converted
+2026-03-05T00:31:48,OK,Scenes\Pause\UI\Texture\PauseUISlotItemLeft_IconB.png,Scenes\Pause\UI\Texture\PauseUISlotItemLeft_IconB.dds,converted
+2026-03-05T00:31:51,OK,Scenes\Pause\UI\Texture\PauseUISlotItemRight.png,Scenes\Pause\UI\Texture\PauseUISlotItemRight.dds,converted
+2026-03-05T00:31:54,OK,Scenes\Pause\UI\Texture\PauseUISlotItemRight_IconB.png,Scenes\Pause\UI\Texture\PauseUISlotItemRight_IconB.dds,converted
+2026-03-05T00:31:57,OK,Scenes\Pause\UI\Texture\PauseUISlotItemUP.png,Scenes\Pause\UI\Texture\PauseUISlotItemUP.dds,converted
+2026-03-05T00:32:00,OK,Scenes\Pause\UI\Texture\PauseUISlotItemUP_IconB.png,Scenes\Pause\UI\Texture\PauseUISlotItemUP_IconB.dds,converted
+2026-03-05T00:32:02,OK,Scenes\Pause\UI\Texture\PlayText.png,Scenes\Pause\UI\Texture\PlayText.dds,converted
+2026-03-05T00:32:05,OK,Scenes\Pause\UI\Texture\PlayUI.png,Scenes\Pause\UI\Texture\PlayUI.dds,converted
+2026-03-05T00:32:08,OK,Scenes\Pause\UI\Texture\ReStratUI.png,Scenes\Pause\UI\Texture\ReStratUI.dds,converted
+2026-03-05T00:32:11,OK,Scenes\Pause\UI\Texture\ReTryText.png,Scenes\Pause\UI\Texture\ReTryText.dds,converted
+2026-03-05T00:32:14,OK,Scenes\Pause\UI\Texture\SelectText.png,Scenes\Pause\UI\Texture\SelectText.dds,converted
+2026-03-05T00:32:19,OK,Scenes\Pause\UI\Texture\SelectUI.png,Scenes\Pause\UI\Texture\SelectUI.dds,converted
+2026-03-05T00:32:22,OK,Scenes\Pause\UI\Texture\SpaceText.png,Scenes\Pause\UI\Texture\SpaceText.dds,converted
+2026-03-05T00:32:25,OK,Scenes\Pause\UI\Texture\TitleText.png,Scenes\Pause\UI\Texture\TitleText.dds,converted
+2026-03-05T00:32:28,OK,Scenes\Pause\UI\Texture\TitleUI.png,Scenes\Pause\UI\Texture\TitleUI.dds,converted
+2026-03-05T00:32:32,OK,Scenes\StageSelect\Models\baseground\SelectBaseGround.png,Scenes\StageSelect\Models\baseground\SelectBaseGround.dds,converted
+2026-03-05T00:32:35,OK,Scenes\StageSelect\Models\node\Node.png,Scenes\StageSelect\Models\node\Node.dds,converted
+2026-03-05T00:32:38,OK,Scenes\StageSelect\Models\route\RoutePlane.png,Scenes\StageSelect\Models\route\RoutePlane.dds,converted
+2026-03-05T00:32:40,OK,Scenes\StageSelect\UI\Texture\Back.png,Scenes\StageSelect\UI\Texture\Back.dds,converted
+2026-03-05T00:32:42,OK,Scenes\StageSelect\UI\Texture\Check.png,Scenes\StageSelect\UI\Texture\Check.dds,converted
+2026-03-05T00:32:44,OK,Scenes\StageSelect\UI\Texture\Move.png,Scenes\StageSelect\UI\Texture\Move.dds,converted
+2026-03-05T00:32:47,OK,Scenes\StageSelect\UI\Texture\StageSelect.png,Scenes\StageSelect\UI\Texture\StageSelect.dds,converted
+2026-03-05T00:32:50,OK,Scenes\Title\UI\Texture\PushEnter.png,Scenes\Title\UI\Texture\PushEnter.dds,converted
+2026-03-05T00:32:53,OK,Scenes\Title\UI\Texture\PushSpace.png,Scenes\Title\UI\Texture\PushSpace.dds,converted
+2026-03-05T00:32:56,OK,Scenes\Title\UI\Texture\Title.png,Scenes\Title\UI\Texture\Title.dds,converted
+2026-03-05T00:32:57,OK,Scenes\Transition\UI\Texture\ball.png,Scenes\Transition\UI\Texture\ball.dds,converted
+2026-03-05T00:32:59,OK,Scenes\Transition\UI\Texture\stamp.png,Scenes\Transition\UI\Texture\stamp.dds,converted
+2026-03-05T00:33:00,OK,Scenes\Transition\UI\Texture\trail.png,Scenes\Transition\UI\Texture\trail.dds,converted
+2026-03-05T00:33:00,SKIP,_Common\Model\XYZLabel\transparent.png,_Common\Model\XYZLabel\transparent.dds,already exists
+2026-03-05T00:33:00,SKIP,_Common\Textures\debug\default.png,_Common\Textures\debug\default.dds,already exists
+2026-03-05T00:33:00,SKIP,_Common\UI\Texture\gradation\gradationLine.png,_Common\UI\Texture\gradation\gradationLine.dds,already exists
+2026-03-05T00:33:00,SKIP,_Common\UI\Texture\gradation\gradationLine_flipped.png,_Common\UI\Texture\gradation\gradationLine_flipped.dds,already exists
+2026-03-05T00:33:00,SKIP,_Common\UI\Texture\inputhints\A.png,_Common\UI\Texture\inputhints\A.dds,already exists
+2026-03-05T00:33:00,SKIP,_Common\UI\Texture\inputhints\D.png,_Common\UI\Texture\inputhints\D.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\inputhints\DashUI.png,_Common\UI\Texture\inputhints\DashUI.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\inputhints\Enter.png,_Common\UI\Texture\inputhints\Enter.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\inputhints\Esc.png,_Common\UI\Texture\inputhints\Esc.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\inputhints\moveUI.png,_Common\UI\Texture\inputhints\moveUI.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\inputhints\S.png,_Common\UI\Texture\inputhints\S.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\inputhints\W.png,_Common\UI\Texture\inputhints\W.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\utility\uvChecker.png,_Common\UI\Texture\utility\uvChecker.dds,already exists
+2026-03-05T00:33:01,SKIP,_Common\UI\Texture\utility\white.png,_Common\UI\Texture\utility\white.dds,already exists

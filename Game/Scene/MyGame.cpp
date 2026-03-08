@@ -13,10 +13,30 @@
 #include "Game/Particle/ModelParticleManager.h"
 
 using namespace Engine;
+static std::vector<std::string> LoadTextureManifest(const std::string& manifestPath)
+{
+	std::ifstream file(manifestPath);
+	if (!file) {
+		throw std::runtime_error("Failed to open texture manifest: " + manifestPath);
+	}
 
+	std::vector<std::string> paths;
+	std::string line;
+	while (std::getline(file, line)) {
+		if (line.empty()) continue;
+		if (!line.empty() && line[0] == '#') continue;
+		paths.push_back(line);
+	}
+	return paths;
+}
 void MyGame::Initialize()
 {
 	Framework::Initialize();
+
+	// 起動時に全テクスチャを読み込む（最後にWaitは1回だけ）
+	const auto paths = LoadTextureManifest("resources/texture_manifest.txt");
+	TextureManager::GetInstance()->LoadTextures(paths);
+
 	// シーンマネージャーの初期化
 	SceneManager::GetInstance()->Initialize();
 	// シーンファクトリーの生成
@@ -98,3 +118,4 @@ void MyGame::Finalize()
 
 	Framework::Finalize();
 }
+
