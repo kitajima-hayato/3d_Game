@@ -15,7 +15,8 @@ enum class BlockType
 	breakBlock = 5,
 	moveBlock = 6,
 	sandBlock = 7,
-	Unbreakable = 8,
+	unBreakable = 8,
+
 	// 範囲検索の最終値
 	/// 検索を行う際にCountを指定することで範囲検索を可能にできる
 	Count,	
