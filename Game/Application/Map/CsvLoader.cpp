@@ -104,6 +104,11 @@ std::vector<std::vector<EnemyType>> CsvLoader::LoadMapEnemyType(const std::strin
 	return enemyData;
 }
 
+std::vector<std::vector<HazardType>> CsvLoader::LoadMapHazardType(const std::string& filePath)
+{
+	return std::vector<std::vector<HazardType>>();
+}
+
 void CsvLoader::SaveMapBlockType(
 	const std::string& filePath,
 	const std::vector<std::vector<BlockType>>& mapData)

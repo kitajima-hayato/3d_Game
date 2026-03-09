@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include "Game/Application/Block/BlockType.h"
+#include "Game/Application/Block/HazardType.h"
 #include "Game/Application/Enemy/EnemyType.h"
 
 class CsvLoader
@@ -25,6 +26,13 @@ public:
 	std::vector<std::vector<EnemyType>> LoadMapEnemyType(const std::string& filePath);
 
 	/// <summary>
+	/// ハザードレイヤーデータの読み込み
+	/// </summary>
+	/// <param name="filePath">読み込むファイル名</param>
+	/// <returns>ハザードタイプのマップデーター</returns>
+	std::vector<std::vector<HazardType>> LoadMapHazardType(const std::string& filePath);	
+
+	/// <summary>
 	/// 現在のマップデータの保存
 	/// </summary>
 	static void SaveMapBlockType(const std::string& filePath,
@@ -32,6 +40,9 @@ public:
 
 	static void SaveMapEnemyType(const std::string& filePath,
 		const std::vector<std::vector<EnemyType>>& enemyData);
+
+	static void SaveMapHazardType(const std::string& filePath,
+		const std::vector<std::vector<HazardType>>& hazardData);
 private:
 	static const std::string frontFilePath;
 	static const std::string extensionCsv_;

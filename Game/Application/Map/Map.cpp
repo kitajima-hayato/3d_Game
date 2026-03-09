@@ -142,6 +142,7 @@ void Map::Update()
                 "MoveBlock",
                 "SandBlock",
 				"Unbreakable",
+				"DamageBlock",
             };
 
             ImGui::Text("Paint Type:");

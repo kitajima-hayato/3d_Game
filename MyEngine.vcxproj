@@ -234,6 +234,7 @@
     <ClInclude Include="Game\Particle\ModelParticleManager.h" />
     <ClInclude Include="Game\Scene\Transition\TransitionManager.h" />
     <ClInclude Include="Game\Scene\Transition\ITransitionEffect.h" />
+    <ClInclude Include="Game\Application\Block\HazardType.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="externals\imgui\LICENSE.txt" />

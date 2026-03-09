@@ -9,11 +9,13 @@
 #include <cstdint>
 #include <string>
 #include "Game/Application/Map/CsvLoader.h"
+#include "Game/Application/Block/HazardType.h"
 /// マップクラス
 
 /// マップチップデータ構造体
 struct MapChipData {
 	std::vector<std::vector<BlockType>> mapData;
+	std::vector<std::vector<HazardType>> hazardData;
 };
 struct EnemyLayerData {
 	std::vector<std::vector<EnemyType>> enemyData;
