@@ -396,7 +396,7 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::kGoalDown:
 		blockModel->SetModel("GamePlay/Blocks/goalblock/down");
 		break;
-	case BlockType::Unbreakable:
+	case BlockType::unBreakable:
 		blockModel->SetModel("GamePlay/Blocks/unbreakableblock");
 		break;
 	default:
@@ -597,7 +597,8 @@ enum class BlockType
 	breakBlock = 5,
 	moveBlock = 6,
 	sandBlock = 7,
-	Unbreakable = 8,
+	unBreakable = 8,
+
 	// 範囲検索の最終値
 	/// 検索を行う際にCountを指定することで範囲検索を可能にできる
 	Count,	
@@ -1298,7 +1299,7 @@ ImVec4 GetBlockColorByType(BlockType blockType) {
 	case BlockType::breakBlock:  return ImVec4(0.8f, 0.8f, 0.4f, 1.0f);
 	case BlockType::moveBlock:   return ImVec4(0.8f, 0.4f, 0.8f, 1.0f);
 	case BlockType::sandBlock:   return ImVec4(0.7f, 0.6f, 0.3f, 1.0f);
-	case BlockType::Unbreakable: return ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+	case BlockType::unBreakable: return ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
 	default:                     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	}
 }
@@ -2906,7 +2907,7 @@ bool Player::IsHitBlockTable(BlockType type)
 	case BlockType::GrassBlock:
 	case BlockType::SoilBlock:
 	case BlockType::breakBlock:
-	case BlockType::Unbreakable:
+	case BlockType::unBreakable:
 		return true;
 
 	default:
@@ -3659,7 +3660,7 @@ private:
 	Vector4 flashColorOff_ = { 1.0f,1.0f,1.0f,0.0f };
 
 	// 画像パス
-	std::string texturePath_ = "resources/Effects/Hit/Textures/HitDamage.png";
+	std::string texturePath_ = "resources/Effects/Hit/Textures/HitDamage.dds";
 
 private:
 	Player* player_ = nullptr;
@@ -3690,20 +3691,20 @@ File Path: Game/Application/UI/GamePlayHUD.cpp
 void GamePlayHUD::Initialize()
 {
 	// ポーズアイコン
-	pauseSprite_ = MakeSprite("resources/_Common/UI/Texture/inputhints/Esc.png",
+	pauseSprite_ = MakeSprite("resources/_Common/UI/Texture/inputhints/Esc.dds",
 		{ 30.0f,30.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,1.0f });
 	// コントロールUI
 	// Dキー
-	controlUI_D = MakeSprite("resources/_Common/UI/Texture/inputhints/D.png",
+	controlUI_D = MakeSprite("resources/_Common/UI/Texture/inputhints/D.dds",
 		{ 200.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Aキー
-	controlUI_A = MakeSprite("resources/_Common/UI/Texture/inputhints/A.png",
+	controlUI_A = MakeSprite("resources/_Common/UI/Texture/inputhints/A.dds",
 		{ 100.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Sキー
-	controlUI_S = MakeSprite("resources/_Common/UI/Texture/inputhints/S.png",
+	controlUI_S = MakeSprite("resources/_Common/UI/Texture/inputhints/S.dds",
 		{ 150.0f,70.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 	// Wキー
-	controlUI_W = MakeSprite("resources/_Common/UI/Texture/inputhints/W.png",
+	controlUI_W = MakeSprite("resources/_Common/UI/Texture/inputhints/W.dds",
 		{ 150.0f,20.0f }, { 50.0f,50.0f }, { 1.0f,1.0f,1.0f,0.5f });
 
 	UiActive_ = false;
@@ -6572,7 +6573,7 @@ File Path: Game/Particle/ParticlePresets.cpp
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& position)
 {
 	// パーティクルシステムの生成
-	auto particleSystem = ParticleSystem::Create("Explosion", "resources/Particle/circle.png");
+	auto particleSystem = ParticleSystem::Create("Explosion", "resources/Particle/circle.dds");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6590,7 +6591,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateExplosion(const Vector3& 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create(
-		"Smoke", "resources/Effects/Particles/Textures/smoke.png");
+		"Smoke", "resources/Effects/Particles/Textures/smoke.dds");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6608,7 +6609,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSmoke(const Vector3& posi
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create(
-		"Sparks", "resources/Effects/Particles/Textures/star.png");
+		"Sparks", "resources/Effects/Particles/Textures/star.dds");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6626,7 +6627,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateSparks(const Vector3& pos
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3& position)
 {
 	auto particleSystem = ParticleSystem::Create("TitleEffect", 
-		"resources/Effects/Particles/Textures/circle.png");
+		"resources/Effects/Particles/Textures/circle.dds");
 	// 位置の設定
 	particleSystem->SetTranslate(position);
 	// エミッション設定 / 描画される粒子の数
@@ -6642,7 +6643,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateTitleEffect(const Vector3
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3& position)
 {
 	auto ps = ParticleSystem::Create("MagicCircle", 
-		"resources/Effects/Particles/Textures/circle.png");
+		"resources/Effects/Particles/Textures/circle.dds");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -6664,7 +6665,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateMagicCircle(const Vector3
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const Vector3& position)
 {
 	auto ps = ParticleSystem::Create("ComplexMagicCircle", 
-		"resources/Effects/Particles/Textures/circle.png");
+		"resources/Effects/Particles/Textures/circle.dds");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -6685,7 +6686,7 @@ std::unique_ptr<ParticleSystem> ParticlePresets::CreateComplexMagicCircle(const 
 std::unique_ptr<ParticleSystem> ParticlePresets::CreateSummonCircle(const Vector3& position)
 {
 	auto ps = ParticleSystem::Create("SummonCircle", 
-		"resources/Effects/Particles/Textures/circle.png");
+		"resources/Effects/Particles/Textures/circle.dds");
 	ps->SetTranslate(position);
 	ps->SetEffectType(ParticleManager::EffectType::MagicCircle);
 
@@ -7739,10 +7740,30 @@ File Path: Game/Scene/MyGame.cpp
 #include "Game/Particle/ModelParticleManager.h"
 
 using namespace Engine;
+static std::vector<std::string> LoadTextureManifest(const std::string& manifestPath)
+{
+	std::ifstream file(manifestPath);
+	if (!file) {
+		throw std::runtime_error("Failed to open texture manifest: " + manifestPath);
+	}
 
+	std::vector<std::string> paths;
+	std::string line;
+	while (std::getline(file, line)) {
+		if (line.empty()) continue;
+		if (!line.empty() && line[0] == '#') continue;
+		paths.push_back(line);
+	}
+	return paths;
+}
 void MyGame::Initialize()
 {
 	Framework::Initialize();
+
+	// 起動時に全テクスチャを読み込む（最後にWaitは1回だけ）
+	const auto paths = LoadTextureManifest("resources/texture_manifest.txt");
+	TextureManager::GetInstance()->LoadTextures(paths);
+
 	// シーンマネージャーの初期化
 	SceneManager::GetInstance()->Initialize();
 	// シーンファクトリーの生成
@@ -7824,6 +7845,7 @@ void MyGame::Finalize()
 
 	Framework::Finalize();
 }
+
 
 
 ============================================================
@@ -8136,38 +8158,38 @@ void PauseUI::LoadSprite()
 {
 	// 画面を少し暗くする黒いスプライト
 	auto overlaySprite = std::make_unique<Sprite>();
-	overlaySprite->Initialize("resources/Scenes/Pause/UI/Texture/PauseBlack.png");
+	overlaySprite->Initialize("resources/Scenes/Pause/UI/Texture/PauseBlack.dds");
 	overlaySprite->SetPosition({ 0.0f,0.0f });
 	overlaySprite->SetSize({ 1280.0f,720.0f });
 	overlaySprite->SetColor({ 1.0f,1.0f,1.0f,0.55f });
 	sprites_.push_back(std::move(overlaySprite));
 
 	auto circleSlot = std::make_unique<Sprite>();
-	circleSlot->Initialize("resources/Scenes/Pause/UI/Texture/PauseUICircleSlot_2.png");
+	circleSlot->Initialize("resources/Scenes/Pause/UI/Texture/PauseUICircleSlot_2.dds");
 	circleSlot->SetPosition({ 0.0f, 0.0f });
 	circleSlot->SetSize({ 1280.0f,720.0f });
 	sprites_.push_back(std::move(circleSlot));
 
 	// スロット上
 	slotUIUp_ = std::make_unique<Sprite>();
-	slotUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemUP_IconB.png");
+	slotUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemUP_IconB.dds");
 	slotUIUp_->SetPosition({ 0.0f, 0.0f });
 	slotUIUp_->SetSize({ 1280.0f, 720.0f });
 
 
 	// スロット下
 	slotUIDown_ = std::make_unique<Sprite>();
-	slotUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemDown_IconB.png");
+	slotUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemDown_IconB.dds");
 	slotUIDown_->SetPosition({ 0.0f, 0.0f });
 	slotUIDown_->SetSize({ 1280.0f, 720.0f });
 	// スロット左
 	slotUILeft_ = std::make_unique<Sprite>();
-	slotUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemLeft_IconB.png");
+	slotUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemLeft_IconB.dds");
 	slotUILeft_->SetPosition({ 0.0f, 0.0f });
 	slotUILeft_->SetSize({ 1280.0f, 720.0f });
 	// スロット右
 	slotUIRight_ = std::make_unique<Sprite>();
-	slotUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemRight_IconB.png");
+	slotUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/PauseUISlotItemRight_IconB.dds");
 	slotUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotUIRight_->SetSize({ 1280.0f, 720.0f });
 
@@ -8187,28 +8209,28 @@ void PauseUI::LoadSprite()
 
 
 	slotTextUIUp_ = std::make_unique<Sprite>();
-	slotTextUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PlayText.png");
+	slotTextUIUp_->Initialize("resources/Scenes/Pause/UI/Texture/PlayText.dds");
 	slotTextUIUp_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIUp_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUIDown_ = std::make_unique<Sprite>();
-	slotTextUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/TitleText.png");
+	slotTextUIDown_->Initialize("resources/Scenes/Pause/UI/Texture/TitleText.dds");
 	slotTextUIDown_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIDown_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUILeft_ = std::make_unique<Sprite>();
-	slotTextUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/SelectText.png");
+	slotTextUILeft_->Initialize("resources/Scenes/Pause/UI/Texture/SelectText.dds");
 	slotTextUILeft_->SetPosition({ 0.0f, 0.0f });
 	slotTextUILeft_->SetSize({ 1280.0f, 720.0f });
 
 	slotTextUIRight_ = std::make_unique<Sprite>();
-	slotTextUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/ReTryText.png");
+	slotTextUIRight_->Initialize("resources/Scenes/Pause/UI/Texture/ReTryText.dds");
 	slotTextUIRight_->SetPosition({ 0.0f, 0.0f });
 	slotTextUIRight_->SetSize({ 1280.0f, 720.0f });
 
 
 	decideKeyUI_ = std::make_unique<Sprite>();
-	decideKeyUI_->Initialize("resources/Scenes/Pause/UI/Texture/SpaceText.png");
+	decideKeyUI_->Initialize("resources/Scenes/Pause/UI/Texture/SpaceText.dds");
 	decideKeyUI_->SetPosition({ 0.0f, 0.0f });
 	decideKeyUI_->SetSize({ 1280.0f, 720.0f });
 
@@ -9054,7 +9076,7 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 
 	// スプライトの初期化
 	clearTextSprite = std::make_unique<Sprite>();
-	clearTextSprite->Initialize("resources/Scenes/Clear/UI/Texture/StageClear.png");
+	clearTextSprite->Initialize("resources/Scenes/Clear/UI/Texture/StageClear.dds");
 
 	clearTextPos = { 0.0f,0.0f }; 
 	clearTextSprite->SetPosition(clearTextPos);
@@ -9074,34 +9096,34 @@ void StageClearScene::Initialize(DirectXCommon* dxCommon)
 
 	// OneMore / Select / Title UI
 	oneMore_ = std::make_unique<Sprite>();
-	oneMore_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_OneMore.png");
+	oneMore_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_OneMore.dds");
 	oneMore_->SetPosition({ 250.0f,570.0f });
 	oneMore_->SetSize(oneMoreBaseSize_);
 
 	select_ = std::make_unique<Sprite>();
-	select_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Select.png");
+	select_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Select.dds");
 	select_->SetPosition({ 550.0f,570.0f });
 	select_->SetSize(selectBaseSize_);
 
 	title_ = std::make_unique<Sprite>();
-	title_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Title.png");
+	title_->Initialize("resources/Scenes/Clear/UI/Texture/ClearUI_Title.dds");
 	title_->SetPosition({ 850.0f,570.0f });
 	title_->SetSize(titleBaseSize_);
 
 	// KeyIconUi　/ 左下に配置
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.dds");
 	keyIcon_A->SetPosition({ 30.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.dds");
 	keyIcon_D->SetPosition({ 80.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.dds");
 	keyIcon_Enter->SetPosition({ 55.0f, 565.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 }
@@ -9817,57 +9839,57 @@ void StageSelectScene::Initialize(DirectXCommon* dxCommon)
 
 	// UI初期化
 	stageSelect_ = std::make_unique<Sprite>();
-	stageSelect_->Initialize("resources/Scenes/StageSelect/UI/Texture/StageSelect.png");
+	stageSelect_->Initialize("resources/Scenes/StageSelect/UI/Texture/StageSelect.dds");
 	stageSelect_->SetPosition({ 0.0f,0.0f });
 	stageSelect_->SetSize({ 1280.0f,720.0f });
 
 	// KeyIconUi / 左下に配置
 	keyIcon_W = std::make_unique<Sprite>();
-	keyIcon_W->Initialize("resources/_Common/UI/Texture/inputhints/W.png");
+	keyIcon_W->Initialize("resources/_Common/UI/Texture/inputhints/W.dds");
 	keyIcon_W->SetPosition({ 55.0f, 615.0f });
 	keyIcon_W->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_A = std::make_unique<Sprite>();
-	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.png");
+	keyIcon_A->Initialize("resources/_Common/UI/Texture/inputhints/A.dds");
 	keyIcon_A->SetPosition({ 10.0f, 635.0f });
 	keyIcon_A->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_S = std::make_unique<Sprite>();
-	keyIcon_S->Initialize("resources/_Common/UI/Texture/inputhints/S.png");
+	keyIcon_S->Initialize("resources/_Common/UI/Texture/inputhints/S.dds");
 	keyIcon_S->SetPosition({ 55.0f, 660.0f });
 	keyIcon_S->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_D = std::make_unique<Sprite>();
-	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.png");
+	keyIcon_D->Initialize("resources/_Common/UI/Texture/inputhints/D.dds");
 	keyIcon_D->SetPosition({ 100.0f, 635.0f });
 	keyIcon_D->SetSize({ 50.0f, 50.0f });
 
 	// esc / enter UI配置
 	keyIcon_Esc = std::make_unique<Sprite>();
-	keyIcon_Esc->Initialize("resources/_Common/UI/Texture/inputhints/Esc.png");
+	keyIcon_Esc->Initialize("resources/_Common/UI/Texture/inputhints/Esc.dds");
 	keyIcon_Esc->SetPosition({ 55.0f, 560.0f });
 	keyIcon_Esc->SetSize({ 50.0f, 50.0f });
 
 	keyIcon_Enter = std::make_unique<Sprite>();
-	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.png");
+	keyIcon_Enter->Initialize("resources/_Common/UI/Texture/inputhints/Enter.dds");
 	keyIcon_Enter->SetPosition({ 55.0f, 505.0f });
 	keyIcon_Enter->SetSize({ 50.0f, 50.0f });
 
 	// MoveUI
 	moveUI_ = std::make_unique<Sprite>();
-	moveUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Move.png");
+	moveUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Move.dds");
 	moveUI_->SetPosition(moveUI_Pos_);
 	moveUI_->SetSize({ 125.0f,50.0f });
 
 	// CheckUI
 	checkUI_ = std::make_unique<Sprite>();
-	checkUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Check.png");
+	checkUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Check.dds");
 	checkUI_->SetPosition(checkUI_Pos_);
 	checkUI_->SetSize({ 125.0f,50.0f });
 
 	// BackUI
 	backUI_ = std::make_unique<Sprite>();
-	backUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Back.png");
+	backUI_->Initialize("resources/Scenes/StageSelect/UI/Texture/Back.dds");
 	backUI_->SetPosition(backUI_Pos_);
 	backUI_->SetSize({ 125.0f,50.0f });
 }
@@ -10889,13 +10911,13 @@ void TitleScene::Initialize(DirectXCommon* dxCommon)
 
 	// タイトルスプライトの初期化
 	titleSprite = std::make_unique<Sprite>();
-	titleSprite->Initialize("resources/Scenes/Title/UI/Texture/Title.png");
+	titleSprite->Initialize("resources/Scenes/Title/UI/Texture/Title.dds");
 	titleSprite->SetPosition({ 0.0f,0.0f });
 	titleSprite->SetSize({ 1280.0f,720.0f });
 
 	// Press Start スプライトの初期化
 	pressStartSprite = std::make_unique<Sprite>();
-	pressStartSprite->Initialize("resources/Scenes/Title/UI/Texture/PushSpace.png");
+	pressStartSprite->Initialize("resources/Scenes/Title/UI/Texture/PushSpace.dds");
 	pressStartSprite->SetPosition({ -20.0f,100.0f });
 	pressStartSprite->SetSize({ 1280.0f,720.0f });
 
@@ -11726,9 +11748,9 @@ private:
 	float coverAlpha_ = 0.0f; // カバーの透明度（0.0f ~ 1.0f）
 
 	// スプライトのファイルパス
-	const std::string ballSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/ball.png";
-	const std::string trailSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/trail.png";
-	const std::string stampSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/stamp.png";
+	const std::string ballSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/ball.dds";
+	const std::string trailSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/trail.dds";
+	const std::string stampSpriteFilePath_ = "resources/Scenes/Transition/UI/Texture/stamp.dds";
 
 
 	// 画面のサイズ
@@ -12012,6 +12034,7 @@ File Path: MyEngine.vcxproj
     <IntDir>$(SolutionDir)..\generated\obj\$(ProjectName)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\generated\outputs\$(Configuration)\</OutDir>
     <IncludePath>$(SolutionDir)imgui;$(SolutionDir)DirectXTex;$(IncludePath)</IncludePath>
+    <TargetName>KolonWorld</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -13871,7 +13894,7 @@ void Model::Initialize(ModelCommon* modelCommon, const string& directorypath, co
 	//テクスチャが指定されていない場合は、デフォルトのテクスチャを使用する
 	if(modelData.material.textureFilePath.empty()) {
 		// デフォルトのテクスチャを使用する
-		modelData.material.textureFilePath = "Resources/_Common/Textures/debug/default.png";
+		modelData.material.textureFilePath = "Resources/_Common/Textures/debug/default.dds";
 	}
 	// .objの参照しているテクスチャファイル読み込み
 	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
@@ -18178,6 +18201,28 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetGpuDescriptorHandle(const std::st
 	return it->second.srvHandleGPU;
 }
 
+void TextureManager::FlushUploads()
+{
+	// 何もなければ何もしない
+	if (pendingUploadResources_.empty()) {
+		return;
+	}
+
+	// まとめて1回だけGPU完了待ち
+	dxCommon->WaitCommand();
+
+	// GPU完了後に中間リソースを破棄できる
+	pendingUploadResources_.clear();
+}
+
+void TextureManager::LoadTextures(const std::vector<std::string>& filePaths)
+{
+	for (const auto& p : filePaths) {
+		LoadTexture(p);
+	}
+	FlushUploads();
+}
+
 
 
 
@@ -18191,6 +18236,7 @@ void TextureManager::Initialize(DirectXCommon* dxCommon, SrvManager* srvManager)
 
 void TextureManager::Finalize()
 {
+	FlushUploads();
 	// テクスチャデータのクリア
 	textureDates.clear();
 }
@@ -18222,12 +18268,21 @@ void TextureManager::LoadTexture(const std::string& filePath)
 
 	// ミップマップの作成
 	DirectX::ScratchImage mipImages{};
-	// 圧縮フォーマットか調べる
-	if (DirectX::IsCompressed(image.GetMetadata().format)) {
-		// 圧縮フォーマットであればそのまま使用するのでmove
+	const auto meta = image.GetMetadata();
+	const bool isDDS = filePathW.ends_with(L".dds");
+
+	// DDSで mip を持っているなら、それを信頼して再生成しない
+	if (isDDS && meta.mipLevels > 1) {
+		mipImages = std::move(image);
+	} else if (DirectX::IsCompressed(meta.format)) {
+		// 圧縮フォーマットも再生成しない
 		mipImages = std::move(image);
 	} else {
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+		hr = DirectX::GenerateMipMaps(
+			image.GetImages(), image.GetImageCount(), meta,
+			DirectX::TEX_FILTER_SRGB, 0, mipImages
+		);
+		assert(SUCCEEDED(hr));
 	}
 
 
@@ -18241,7 +18296,10 @@ void TextureManager::LoadTexture(const std::string& filePath)
 	// 中間リソースの生成
 	Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource = dxCommon->UploadTextureData(textureData.resource, mipImages);
 	// コマンドのキックを待つ
-	dxCommon->WaitCommand();
+	//dxCommon->WaitCommand();
+
+	// ここでWaitしない。FlushUploads()で待つまで保持する
+	pendingUploadResources_.push_back(intermediateResource);
 
 	// テクスチャデータの要素数番号をSRVのインデックスとする
 	uint32_t srvIndex = static_cast<uint32_t>(textureDates.size()) + kSRVIndexTop;
@@ -18318,6 +18376,11 @@ public:		// メンバ関数
 	/// </summary>
 	void LoadTexture(const std::string& filePath);
 
+	// 追加：まとめ読み込み（最後に1回だけWait）
+	void LoadTextures(const std::vector<std::string>& filePaths);
+
+	// 追加：アップロード完了待ち（最後に1回だけ呼ぶ）
+	void FlushUploads();
 public:	// Getter,Setter
 	/// <summary>
 	/// シングルトンインスタンスの取得
@@ -18379,6 +18442,9 @@ private:	// メンバ変数
 	// SRVマネージャー
 	SrvManager* srvManager = nullptr;
 
+
+	// 追加：UploadTextureDataが返す中間リソースをWaitまで保持する
+	std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> pendingUploadResources_;
 };
 
 
