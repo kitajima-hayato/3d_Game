@@ -30,7 +30,10 @@ public:
 	/// </summary>
 	/// <param name="filePath">読み込むファイル名</param>
 	/// <returns>ハザードタイプのマップデーター</returns>
-	std::vector<std::vector<HazardType>> LoadMapHazardType(const std::string& filePath);	
+	std::vector<std::vector<HazardType>> LoadMapHazardType(
+		const std::string& filePath,
+		uint32_t width,
+		uint32_t height);
 
 	/// <summary>
 	/// 現在のマップデータの保存

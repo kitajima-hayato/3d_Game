@@ -286,6 +286,12 @@ private:
 	/// <returns></returns>
 	bool IsTouchingDamageBlock();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	bool IsTouchingHazardSpike()const;
+
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
 	void SetDeathHeight(float deathHeight) { deathHeight_ = deathHeight; }
@@ -305,6 +311,7 @@ public:	/// Setter / Getter
 	// 操作の有効/無効
 	void SetControlEnabled(bool enabled) { controlEnabled_ = enabled; }
 	bool IsControlEnabled() const { return controlEnabled_; }
+
 
 
 private:	// メンバ変数

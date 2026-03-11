@@ -166,6 +166,49 @@ bool Player::IsTouchingDamageBlock()
 	return false;
 }
 
+bool Player::IsTouchingHazardSpike() const
+{
+	if (!map_ || !playerModel_) { return false; }
+
+	const AABB playerAABB = GetAABB();
+
+	// AABBの四隅付近でインデックス範囲を作る（damageBlock の実装と同じ考え方）
+	IndexSet minIdx = map_->GetMapChipIndexSetByPosition(Vector3(playerAABB.min.x, playerAABB.max.y, 0.0f));
+	IndexSet maxIdx = map_->GetMapChipIndexSetByPosition(Vector3(playerAABB.max.x, playerAABB.min.y, 0.0f));
+
+	const uint32_t w = map_->GetWidth();
+	const uint32_t h = map_->GetHeight();
+	if (w == 0 || h == 0) { return false; }
+
+	auto clampIndex = [](uint32_t v, uint32_t maxExclusive) {
+		return (v >= maxExclusive) ? (maxExclusive - 1) : v;
+		};
+
+	// マップ外を含む場合のガード
+	if (minIdx.xIndex >= w && maxIdx.xIndex >= w) return false;
+	if (minIdx.yIndex >= h && maxIdx.yIndex >= h) return false;
+
+	const uint32_t x0 = clampIndex((std::min)(minIdx.xIndex, maxIdx.xIndex), w);
+	const uint32_t x1 = clampIndex((std::max)(minIdx.xIndex, maxIdx.xIndex), w);
+	const uint32_t y0 = clampIndex((std::min)(minIdx.yIndex, maxIdx.yIndex), h);
+	const uint32_t y1 = clampIndex((std::max)(minIdx.yIndex, maxIdx.yIndex), h);
+
+	for (uint32_t y = y0; y <= y1; ++y) {
+		for (uint32_t x = x0; x <= x1; ++x) {
+			const HazardType hz = map_->GetHazardTypeByIndex(x, y);
+			if (hz != HazardType::Spike) { continue; }
+
+			// ちゃんと触れてるか Rect で確認（判定が安定する）
+			const Rect r = map_->GetRectByIndex(x, y);
+			if (IntersectsAABBRect2D(playerAABB, r)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void Player::FlashingUpdate()
 {
 	// エネミーにヒットしていたら点滅処理 / 無敵時間
@@ -384,25 +427,9 @@ void Player::UpdateBehavior()
 	PlayerCollisionMove(collisionInfo);
 
 	// ダメージブロックに触れているか
-	const bool touchingNow = IsTouchingDamageBlock(); 
-	if (touchingNow) {
-		// 侵入時1回
-		if (!wasTouchingDamageBlock_) {
-			TakeDamage();
-			damageTouchFrames_ = 0; // 侵入直後から周期を数え直す
-		} else {
-			// 接触継続：周期ダメージ
-			damageTouchFrames_++;
-			if (damageTouchFrames_ >= damageTickIntervalFrames_) {
-				TakeDamage();
-				damageTouchFrames_ = 0;
-			}
-		}
-	} else {
-		damageTouchFrames_ = 0;
+	if (IsTouchingHazardSpike()) {
+		TakeDamage();
 	}
-
-	wasTouchingDamageBlock_ = touchingNow;
 }
 
 void Player::Move()
