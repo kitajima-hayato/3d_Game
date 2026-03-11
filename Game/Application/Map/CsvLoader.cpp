@@ -104,6 +104,34 @@ std::vector<std::vector<EnemyType>> CsvLoader::LoadMapEnemyType(const std::strin
 	return enemyData;
 }
 
+
+std::vector<std::vector<HazardType>> CsvLoader::LoadMapHazardType(const std::string& filePath, uint32_t width, uint32_t height)
+{
+	// まず None 埋めで作っておく（ファイルが無くても必ず正しいサイズになる）
+	std::vector<std::vector<HazardType>> hazardData(
+		height, std::vector<HazardType>(width, HazardType::None));
+
+	std::ifstream file(frontFilePath + filePath + extensionCsv_);
+	if (!file.is_open()) {
+		return hazardData; // ファイル無い = Noneのまま返す
+	}
+
+	std::string line;
+	uint32_t y = 0;
+	while (std::getline(file, line) && y < height) {
+		std::stringstream ss(line);
+		std::string value;
+		uint32_t x = 0;
+		while (std::getline(ss, value, ',') && x < width) {
+			int intVal = std::stoi(value);
+			hazardData[y][x] = static_cast<HazardType>(intVal);
+			++x;
+		}
+		++y;
+	}
+	return hazardData;
+}
+
 void CsvLoader::SaveMapBlockType(
 	const std::string& filePath,
 	const std::vector<std::vector<BlockType>>& mapData)
@@ -148,6 +176,29 @@ void CsvLoader::SaveMapEnemyType(
 		const uint32_t width = static_cast<uint32_t>(enemyData[y].size());
 		for (uint32_t x = 0; x < width; ++x) {
 			int val = static_cast<int>(enemyData[y][x]);
+			file << val;
+			if (x < width - 1) {
+				file << ",";        // カンマ区切り
+			}
+		}
+		file << "\n";               // 行ごとに改行
+	}
+
+}
+
+void CsvLoader::SaveMapHazardType(const std::string& filePath, 
+	const std::vector<std::vector<HazardType>>& hazardData)
+{
+	std::string filePathFull = frontFilePath + filePath;
+	std::ofstream file(filePathFull);
+	if (!file.is_open()) {
+		throw std::runtime_error("CSVファイルを書き込み用に開けません: " + filePath);
+	}
+	const uint32_t height = static_cast<uint32_t>(hazardData.size());
+	for (uint32_t y = 0; y < height; ++y) {
+		const uint32_t width = static_cast<uint32_t>(hazardData[y].size());
+		for (uint32_t x = 0; x < width; ++x) {
+			int val = static_cast<int>(hazardData[y][x]);
 			file << val;
 			if (x < width - 1) {
 				file << ",";        // カンマ区切り

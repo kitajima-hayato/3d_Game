@@ -36,6 +36,7 @@ void ModelList::LoadAllModel()
 	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/unbreakableblock");
 	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/goalblock/up");
 	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/goalblock/down");
+	ModelManager::GetInstance().LoadModel("GamePlay/Blocks/damageblock");
 							   
 	ModelManager::GetInstance().LoadModel("GamePlay/Enemies/tentativeenemy");
 }

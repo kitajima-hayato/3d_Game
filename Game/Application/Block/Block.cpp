@@ -50,6 +50,9 @@ void Block::Initialize(BlockType blockType, Vector3 position) {
 	case BlockType::unBreakable:
 		blockModel->SetModel("GamePlay/Blocks/unbreakableblock");
 		break;
+	case BlockType::damageBlock:
+		blockModel->SetModel("GamePlay/Blocks/damageblock");
+		break;
 	default:
 		blockModel->SetModel("GamePlay/Blocks/grassblock");
 		break;

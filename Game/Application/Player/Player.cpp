@@ -8,6 +8,7 @@
 #endif
 
 
+
 Collider::Type Player::GetType() const
 {
 	// 判定タイプがプレイヤーであることを返す
@@ -34,6 +35,16 @@ AABB Player::GetAABB() const
 
 	// AABBを返す
 	return aabb;
+}
+
+static bool IntersectsAABBRect2D(const AABB& aabb, const Rect& rect)
+{
+	// XYの平面だけで衝突判定をとる
+	if (aabb.max.x < rect.left) return false;
+	if (aabb.min.x > rect.right) return false;
+	if (aabb.max.y < rect.bottom) return false;
+	if (aabb.min.y > rect.top) return false;
+	return true;
 }
 
 void Player::OnCollision(Collider* other)
@@ -73,7 +84,7 @@ void Player::OnCollision(Collider* other)
 		}
 
 		// 踏みつけ失敗 -> 通常のダメージ処理
-		EnemyCollision();
+		TakeDamage();
 		break;
 
 	default:
@@ -82,8 +93,11 @@ void Player::OnCollision(Collider* other)
 	}
 }
 
-void Player::EnemyCollision()
+void Player::TakeDamage()
 {
+	// すでに無敵だったら無視
+	if (isEnemyHit_) { return; }
+
 	// 点滅スタートの初期化のみ
 	isEnemyHit_ = true;
 	flashingFrameCount_ = 0;
@@ -107,6 +121,92 @@ void Player::StompEnemy(Collider* enemy)
 	// プレイヤーは小ジャンプ（踏みつけた反動）
 	velocity_.y = status_.kStompJumpPower;
 	onGround_ = false;
+}
+
+bool Player::IsTouchingDamageBlock() 
+{
+	if (!map_ || !playerModel_) { return false; }
+
+	const AABB playerAABB = GetAABB();
+
+	// AABBの四隅付近でインデックス範囲を作る
+	// Map::GetMapChipIndexSetByPosition はマップ外だと (width,height) を返す仕様なので、clampして使う
+	IndexSet minIdx = map_->GetMapChipIndexSetByPosition(Vector3(playerAABB.min.x, playerAABB.max.y, 0.0f)); // 左上寄り
+	IndexSet maxIdx = map_->GetMapChipIndexSetByPosition(Vector3(playerAABB.max.x, playerAABB.min.y, 0.0f)); // 右下寄り
+
+	const uint32_t w = map_->GetWidth();
+	const uint32_t h = map_->GetHeight();
+	if (w == 0 || h == 0) { return false; }
+
+	auto clampIndex = [](uint32_t v, uint32_t maxExclusive) {
+		return (v >= maxExclusive) ? (maxExclusive - 1) : v;
+		};
+
+	// マップ外を含む場合のガード（全部マップ外なら非接触）
+	if (minIdx.xIndex >= w && maxIdx.xIndex >= w) return false;
+	if (minIdx.yIndex >= h && maxIdx.yIndex >= h) return false;
+
+	const uint32_t x0 = clampIndex((std::min)(minIdx.xIndex, maxIdx.xIndex), w);
+	const uint32_t x1 = clampIndex((std::max)(minIdx.xIndex, maxIdx.xIndex), w);
+	const uint32_t y0 = clampIndex((std::min)(minIdx.yIndex, maxIdx.yIndex), h);
+	const uint32_t y1 = clampIndex((std::max)(minIdx.yIndex, maxIdx.yIndex), h);
+
+	for (uint32_t y = y0; y <= y1; ++y) {
+		for (uint32_t x = x0; x <= x1; ++x) {
+			const BlockType t = map_->GetMapChipTypeByIndex(x, y);
+			if (!IsHitBlockDamageTable(t)) { continue; }
+
+			const Rect r = map_->GetRectByIndex(x, y);
+			if (IntersectsAABBRect2D(playerAABB, r)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool Player::IsTouchingHazardSpike() const
+{
+	if (!map_ || !playerModel_) { return false; }
+
+	const AABB playerAABB = GetAABB();
+
+	// AABBの四隅付近でインデックス範囲を作る（damageBlock の実装と同じ考え方）
+	IndexSet minIdx = map_->GetMapChipIndexSetByPosition(Vector3(playerAABB.min.x, playerAABB.max.y, 0.0f));
+	IndexSet maxIdx = map_->GetMapChipIndexSetByPosition(Vector3(playerAABB.max.x, playerAABB.min.y, 0.0f));
+
+	const uint32_t w = map_->GetWidth();
+	const uint32_t h = map_->GetHeight();
+	if (w == 0 || h == 0) { return false; }
+
+	auto clampIndex = [](uint32_t v, uint32_t maxExclusive) {
+		return (v >= maxExclusive) ? (maxExclusive - 1) : v;
+		};
+
+	// マップ外を含む場合のガード
+	if (minIdx.xIndex >= w && maxIdx.xIndex >= w) return false;
+	if (minIdx.yIndex >= h && maxIdx.yIndex >= h) return false;
+
+	const uint32_t x0 = clampIndex((std::min)(minIdx.xIndex, maxIdx.xIndex), w);
+	const uint32_t x1 = clampIndex((std::max)(minIdx.xIndex, maxIdx.xIndex), w);
+	const uint32_t y0 = clampIndex((std::min)(minIdx.yIndex, maxIdx.yIndex), h);
+	const uint32_t y1 = clampIndex((std::max)(minIdx.yIndex, maxIdx.yIndex), h);
+
+	for (uint32_t y = y0; y <= y1; ++y) {
+		for (uint32_t x = x0; x <= x1; ++x) {
+			const HazardType hz = map_->GetHazardTypeByIndex(x, y);
+			if (hz != HazardType::Spike) { continue; }
+
+			// ちゃんと触れてるか Rect で確認（判定が安定する）
+			const Rect r = map_->GetRectByIndex(x, y);
+			if (IntersectsAABBRect2D(playerAABB, r)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void Player::FlashingUpdate()
@@ -325,6 +425,11 @@ void Player::UpdateBehavior()
 	WallCollisionMove(collisionInfo);
 	// 速度反映
 	PlayerCollisionMove(collisionInfo);
+
+	// ダメージブロックに触れているか
+	if (IsTouchingHazardSpike()) {
+		TakeDamage();
+	}
 }
 
 void Player::Move()
@@ -574,7 +679,7 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 	if (onGround_) {
 		// 下方向に速度がない場合のみチェック（安定化）
 		if (velocity_.y <= 0.0f) {
-			// 現在の座標で判定（修正：移動後ではなく現在位置で）
+			// 現在の座標で判定
 			Vector3 position = playerModel_->GetTranslate();
 
 			// 足元の2点の位置を取得
@@ -582,7 +687,7 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			Vector3 rightBottom = CornerPosition(position, kRightBottom);
 
 			// 少し下の位置でチェック（より確実に）
-			Vector3 checkOffset = Vector3(0.0f, -status_.kEpsilon * 2.0f, 0.0f);  // ← 2倍に
+			Vector3 checkOffset = Vector3(0.0f, -status_.kEpsilon * 2.0f, 0.0f);
 
 			// 左点の判定
 			IndexSet leftIndex = map_->GetMapChipIndexSetByPosition(leftBottom + checkOffset);
@@ -592,19 +697,23 @@ void Player::LandingCollisionMove(CollisionMapInfo& collisionInfo)
 			IndexSet rightIndex = map_->GetMapChipIndexSetByPosition(rightBottom + checkOffset);
 			BlockType rightBlock = map_->GetMapChipTypeByIndex(rightIndex.xIndex, rightIndex.yIndex);
 
-			// どちらかの点が地面に接触していればOK
-			bool leftHit = IsHitBlockTable(leftBlock);
-			bool rightHit = IsHitBlockTable(rightBlock);
+
+			// 両方の点が地面から離れた場合のみ、地面から離れたとする
+			if (!IsHitBlockTable(leftBlock) && !IsHitBlockTable(rightBlock)) {
+				onGround_ = false;
+			}
 
 			// ゴールブロックの判定
 			if (IsHitGoalBlockTable(leftBlock) || IsHitGoalBlockTable(rightBlock)) {
 				isGoal_ = true;
 			}
 
-			// 両方の点が地面から離れた場合のみ、地面から離れたとする
-			if (!leftHit && !rightHit) {
-				onGround_ = false;
+			// ダメージブロックの判定
+			if (IsHitBlockDamageTable(leftBlock) || IsHitBlockDamageTable(rightBlock)) {
+				// ダメージ処理
+				TakeDamage();
 			}
+
 		}
 	}
 }
@@ -760,6 +869,17 @@ bool Player::IsHitBlockBreakableTable(BlockType type)
 	default:
 		return false;
 	}
+}
+
+bool Player::IsHitBlockDamageTable(BlockType type)
+{
+	// ダメージブロックかどうか
+	// ダメージブロックに当たったらダメージ処理へ
+	switch (type) {
+	case BlockType::damageBlock:
+		return true;
+	}
+	return false;
 }
 
 void Player::DebugPlayerReset()
