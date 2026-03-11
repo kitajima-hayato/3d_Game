@@ -137,7 +137,7 @@ void GamePlayScene::Update()
 		baseCameraPos_ = cameraController_->GetCameraPosition();
 
 	} else {
-				// 開始演出中は基準位置もカメラ位置も開始演出の位置にする
+		// 開始演出中は基準位置もカメラ位置も開始演出の位置にする
 		baseCameraPos_ = cameraTransform.translate;
 
 	}

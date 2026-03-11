@@ -9,11 +9,13 @@
 #include <cstdint>
 #include <string>
 #include "Game/Application/Map/CsvLoader.h"
+#include "Game/Application/Block/HazardType.h"
 /// マップクラス
 
 /// マップチップデータ構造体
 struct MapChipData {
 	std::vector<std::vector<BlockType>> mapData;
+	std::vector<std::vector<HazardType>> hazardData;
 };
 struct EnemyLayerData {
 	std::vector<std::vector<EnemyType>> enemyData;
@@ -89,6 +91,11 @@ public:
 	/// </summary>
 	void LoadMapData(const std::string& mapFilePath);
 
+	/// <summary>
+	/// ハザードブロックの生成
+	/// </summary>
+	void GenerateHazardObjects();
+
 
 public:	// Setter / Getter
 	/// <summary>
@@ -158,11 +165,18 @@ public:	// Setter / Getter
 	/// <param name="yIndex">当たった壊せるブロックの縦Indexの番号</param>
 	void BreakBlock(uint32_t xIndex, uint32_t yIndex);
 
+	/// <summary>
+	/// インデックスからマップチップの種類を設定
+	/// </summary>
+	HazardType GetHazardTypeByIndex(uint32_t xIndex, uint32_t yIndex) const;
 private:
 	// マップチップデータ
 	MapChipData mapChipData_;
 	// エネミーレイヤーデータ
 	EnemyLayerData enemyLayerData_;
+	// ハザードブロックの描画用
+	std::vector<std::vector<std::unique_ptr<Object3D>>>hazardObjects_;
+
 
 	// 変更検知
 	bool isMapDataChanged_ = false;

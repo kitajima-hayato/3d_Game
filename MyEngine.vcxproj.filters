@@ -384,6 +384,7 @@
     <ClInclude Include="Game\Particle\ModelParticleManager.h">
       <Filter>Game\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Application\Block\HazardType.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="engine">

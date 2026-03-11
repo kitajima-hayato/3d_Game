@@ -15,8 +15,6 @@ void StageSelectGraph::Initialize()
 	LoadMapNodeFromJson("stage_select_graph");
 	// ノード境界情報の再計算     
 	RecalculateBounds();
-
-
 }
 
 

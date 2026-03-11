@@ -240,9 +240,14 @@ private:
 	/// <summary>
 	/// 壊せるブロック当たり判定テーブル
 	/// </summary>
-	/// <param name="type"></param>
-	/// <returns></returns>
+	/// <param name="type">プレイヤーにダメージを与えるブロック</param>
+	/// <returns>ダメージの判定があるブロックか</returns>
 	bool IsHitBlockBreakableTable(BlockType type);
+
+	/// <summary>
+	/// ダメージブロック当たり判定テーブル
+	/// </summary>
+	bool IsHitBlockDamageTable(BlockType type);
 
 	/// <summary>
 	/// デバッグ用プレイヤー死亡時リセット
@@ -252,7 +257,7 @@ private:
 	/// <summary>
 	/// エネミーに当たった場合の衝突処理
 	/// </summary>
-	void EnemyCollision();
+	void TakeDamage();
 
 	/// <summary>
 	///	点滅更新処理
@@ -274,7 +279,18 @@ private:
 	/// </summary>
 	/// <param name="enemy"></param>
 	void StompEnemy(Collider* enemy);
+	
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	bool IsTouchingDamageBlock();
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	bool IsTouchingHazardSpike()const;
 
 public:	/// Setter / Getter
 	// 死亡判定の高さを設定
@@ -295,6 +311,7 @@ public:	/// Setter / Getter
 	// 操作の有効/無効
 	void SetControlEnabled(bool enabled) { controlEnabled_ = enabled; }
 	bool IsControlEnabled() const { return controlEnabled_; }
+
 
 
 private:	// メンバ変数
@@ -371,5 +388,11 @@ private:	// メンバ変数
 	// パーティクルの発生位置をずらす
 	float particleSpawnPosOffset_ = 0.4f;
 
+	// ダメージブロックに触れているかの追跡
+	bool wasTouchingDamageBlock_ = false;
+
+	// ダメージブロックに触れてからのフレーム数を追跡
+	uint32_t damageTouchFrames_ = 0;
+	uint32_t damageTickIntervalFrames_ = 30;
 };
 
